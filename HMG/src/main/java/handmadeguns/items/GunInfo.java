@@ -21,7 +21,7 @@ import static handmadeguns.HandmadeGunsCore.cfg_defaultknockbacky;
 
 public class GunInfo {
 	
-	public final UUID field_110179_h = UUID.fromString("254F543F-8B6F-407F-931B-4B76FEB8BA0D");
+	public static final UUID field_110179_h = UUID.fromString("254F543F-8B6F-407F-931B-4B76FEB8BA0D");
 	public int power;
 	public int bulletRound = 30;
 	public float speed;

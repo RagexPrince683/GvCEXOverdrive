@@ -105,6 +105,7 @@ public class AIAttackGun extends EntityAIBase {
         if (entityliving == null || entityliving.isDead || forget > 500000) {
             aiming = 0;
             shooter.setAttackTarget(null);
+            shooter.setSneaking(false);
             forget = 0;
             lastSeenPosition = null;
             return false;
@@ -168,8 +169,10 @@ public class AIAttackGun extends EntityAIBase {
                     }
                     if (!canSee) {
                         aiming = 0;
+                        shooter.setSneaking(false);
                     } else {
                         aiming++;
+                        shooter.setSneaking(true);
                     }
                     if (maxrange > tocurrentAttackToPosition && isnotblinded &&
                             ((canSee && aiming > 40) || (!canSee && Warningcoolcnt < 0 && tocurrentAttackToPosition > 16))

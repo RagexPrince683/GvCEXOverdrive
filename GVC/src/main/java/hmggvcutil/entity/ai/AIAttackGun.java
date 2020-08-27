@@ -70,9 +70,11 @@ public class AIAttackGun extends EntityAIBase {
                 boolean see = shooter.getEntitySenses().canSee(target);
                 if (!see) {
                     shooter.setAttackTarget(null);
+                    shooter.setSneaking(false);
                     aimtimer = 0;
                 } else {
                     aimtimer++;
+                    shooter.setSneaking(true);
                     forget ++ ;
                     shooter.getLookHelper().setLookPosition(target.posX, target.posY + target.getEyeHeight(), target.posZ, 90F, 90F);
 
