@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 import static handmadeguns.client.render.HMGRenderItemGun_U_NEW.*;
-import static handmadeguns.event.RenderTickSmoothing.smooth;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 
 public class PartsRender_Gun extends PartsRender {
@@ -295,7 +294,7 @@ public class PartsRender_Gun extends PartsRender {
 		HMG_proxy.getMCInstance().getTextureManager().bindTexture(texture);
 		part_Render(parts, state, flame, remainbullets, OffsetAndRotation);
 	}
-	public void partModel_render(HMGGunParts parts, GunState state, float flame, int remainbullets, HMGGunParts_Motion_PosAndRotation OffsetAndRotation){
+	public boolean partModel_render(HMGGunParts parts, GunState state, float flame, int remainbullets, HMGGunParts_Motion_PosAndRotation OffsetAndRotation){
 		HMGGunParts_Motion_PosAndRotation rotationCenterAndRotation = parts.getRenderinfCenter();
 		if(parts.isLarm){
 			renderarmL();
@@ -305,14 +304,14 @@ public class PartsRender_Gun extends PartsRender {
 		HMGGunParts_Motion_PosAndRotation elevationInfo = parts.getSomethingPositions(guntemp.currentElevation,0);
 		if (elevationInfo != null) {
 			if(!elevationInfo.renderOnOff){
-				return;
+				return true;
 			}
 			transformParts(rotationCenterAndRotation,elevationInfo,parts);
 		}
 		HMGGunParts_Motion_PosAndRotation selectorInfo = parts.getSomethingPositions(guntemp.selector,1);
 		if (selectorInfo != null) {
 			if(!selectorInfo.renderOnOff){
-				return;
+				return true;
 			}
 			transformParts(rotationCenterAndRotation,selectorInfo,parts);
 		}
@@ -329,7 +328,7 @@ public class PartsRender_Gun extends PartsRender {
 				transformParts(rotationCenterAndRotation,baserotationCenterAndRotation,parts);
 			}
 		}
-		super.partModel_render(parts, state, flame, remainbullets, OffsetAndRotation);
+		return super.partModel_render(parts, state, flame, remainbullets, OffsetAndRotation);
 	}
 	
 	public float armrotationxr;

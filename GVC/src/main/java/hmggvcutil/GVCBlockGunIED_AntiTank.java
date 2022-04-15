@@ -42,11 +42,9 @@ public class GVCBlockGunIED_AntiTank extends Block
     {
     	if (!par1World.isRemote)
         {
-            if(par5Entity instanceof EntityLiving){
-                ((EntityLiving)par5Entity).attackEntityFrom(new DamageSource("explosion"),500);
-            }
-    	par1World.createExplosion(null, par2, par3+1, par4, 3.0F, false);
-    	par1World.setBlockToAir(par2, par3, par4);
+            (par5Entity).attackEntityFrom(new DamageSource("explosion"),1500);
+            par1World.createExplosion(null, par2, par3+1, par4, 2.0F, true);
+            par1World.setBlockToAir(par2, par3, par4);
         }
     	
     }

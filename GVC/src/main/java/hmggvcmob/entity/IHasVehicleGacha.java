@@ -1,9 +1,11 @@
 package hmggvcmob.entity;
 
-import net.minecraft.tileentity.TileEntity;
+import handmadevehicle.VehicleSpawnGachaOBJ;
+
+import java.util.ArrayList;
 
 public interface IHasVehicleGacha {
-	VehicleSpawnGachaOBJ[] getVehicleGacha();
+	ArrayList<VehicleSpawnGachaOBJ> getVehicleGacha();
 	int getVehicleGacha_rate_sum();
 	void setVehicleName(String string);
 }

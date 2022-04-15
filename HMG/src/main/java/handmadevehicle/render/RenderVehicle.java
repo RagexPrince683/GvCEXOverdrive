@@ -1,5 +1,6 @@
 package handmadevehicle.render;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import handmadevehicle.entity.parts.IMultiTurretVehicle;
 import handmadevehicle.entity.parts.IVehicle;
 import handmadevehicle.entity.parts.ModifiedBoundingBox;
@@ -55,7 +56,7 @@ public class RenderVehicle extends Render {
 	float xsxs;
 	public void doRender(Entity entity, double p_76986_2_, double p_76986_4_, double p_76986_6_,
 	                     float entityYaw, float in_partialTicks) {
-		
+		FMLClientHandler.instance().getWorldClient().theProfiler.startSection("RenderVehicle");
 		if(entity instanceof IMultiTurretVehicle && entity instanceof IVehicle && ((IVehicle) entity).getBaseLogic().prefab_vehicle.modelSetAndData != null){
 			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			skeletonTexturesz = ((IVehicle) entity).getBaseLogic().prefab_vehicle.modelSetAndData.texture;
@@ -66,23 +67,23 @@ public class RenderVehicle extends Render {
 			allTurrets = currentBaseLogic.allturrets;
 			partialTicks = in_partialTicks;
 			TurretObj[] turretObjs = currentBaseLogic.turrets;
-			
+
 			GL11.glShadeModel(GL11.GL_SMOOTH);
-			
+
 			this.bindEntityTexture(entity);
 			GL11.glPushMatrix();
 			GL11.glTranslatef((float) p_76986_2_, (float) p_76986_4_, (float) p_76986_6_);
 			GL11.glRotatef(180F, 0.0F, 1.0F, 0.0F);
 			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 			GL11.glTranslatef((float) currentBaseLogic.prefab_vehicle.rotcenterVec.x, (float) currentBaseLogic.prefab_vehicle.rotcenterVec.y, (float) currentBaseLogic.prefab_vehicle.rotcenterVec.z);
-			
+
 			Quat4d currentquat = new Quat4d(0,0,0,1);
 			currentquat.interpolate(currentBaseLogic.prevbodyRot,currentBaseLogic.bodyRot, (double) partialTicks);
 			double[] xyz = eulerfromQuat((currentquat));
 			xyz[0] = toDegrees(xyz[0]);
 			xyz[1] = toDegrees(xyz[1]);
 			xyz[2] = toDegrees(xyz[2]);
-			
+
 			GL11.glRotatef(180 - (float)xyz[1], 0.0F, 1.0F, 0.0F);
 			GL11.glRotatef((float) xyz[0], 1.0F, 0.0F, 0.0F);
 			GL11.glRotatef((float) xyz[2], 0.0F, 0.0F, 1.0F);
@@ -105,15 +106,6 @@ public class RenderVehicle extends Render {
 			}
 
 			if(currentBaseLogic.prefab_vehicle.partslist != null){
-				if(pass == 1) {
-					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					GL11.glDepthMask(false);
-					glAlphaFunc(GL_LEQUAL, 1);
-				}else {
-					GL11.glDepthMask(true);
-					glAlphaFunc(GL_EQUAL, 1);
-				}
 				partsRender_vehicle.pass = pass;
 				partsRender_vehicle.model = this.vehicleModel;
 				partsRender_vehicle.mother = this;
@@ -121,7 +113,7 @@ public class RenderVehicle extends Render {
 			}else {
 				if(pass == 1) {
 					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+					glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 					GL11.glDepthMask(false);
 					glAlphaFunc(GL_LEQUAL, 1);
 				}else {
@@ -151,8 +143,6 @@ public class RenderVehicle extends Render {
 						GL11.glPopMatrix();
 					}
 				//GL11.glRotatef(-(180.0F - entityYaw), 0.0F, 1.0F, 0.0F);
-				
-				
 			}
 			GL11.glPopMatrix();
 			GL11.glPushMatrix();
@@ -186,6 +176,7 @@ public class RenderVehicle extends Render {
 			GL11.glShadeModel(GL_FLAT);
 			GL11.glPopAttrib();
 		}
+		entity.worldObj.theProfiler.endSection();
 
 //		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 //		GL11.glPopMatrix();
@@ -217,17 +208,17 @@ public class RenderVehicle extends Render {
 //
 //		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 //		GL11.glPopMatrix();
-	
-	
+
+
 	}
-	
+
 	private void renderReticle(int pass,TurretObj aturretobj,String motherName){
-		
+
 		if(aturretobj.prefab_turret.hasReflexSight) {
 			glClear(GL_STENCIL_BUFFER_BIT);
 			glEnable(GL_STENCIL_TEST);
 			glStencilMask(1);
-			
+
 			glStencilFunc(
 					GL_ALWAYS,   // GLenum func
 					1,          // GLint ref
@@ -255,23 +246,23 @@ public class RenderVehicle extends Render {
 						true,   // GLboolean blue
 						true);
 			}
-			
+
 			GL11.glDisable(GL11.GL_LIGHTING);
 			float lastBrightnessX = OpenGlHelper.lastBrightnessX;
 			float lastBrightnessY = OpenGlHelper.lastBrightnessY;
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
 			glDisable(GL_DEPTH_TEST);
-			
-			
+
+
 			glStencilFunc(
 					GL_EQUAL,   // GLenum func
 					1,          // GLint ref
 					~0);// GLuint mask
-			
+
 			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 			glAlphaFunc(GL_ALWAYS, 1);
 			GL11.glDepthMask(false);
-			
+
 			GL11.glDepthFunc(GL11.GL_ALWAYS);//強制描画
 			vehicleModel.renderPart(motherName + "Reticle");
 			GL11.glDepthFunc(GL11.GL_LEQUAL);
@@ -282,7 +273,7 @@ public class RenderVehicle extends Render {
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)lastBrightnessX, (float)lastBrightnessY);
 			if(pass == 1) {
 				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 				GL11.glDepthMask(false);
 				glAlphaFunc(GL_LESS, 1);
 			}else {

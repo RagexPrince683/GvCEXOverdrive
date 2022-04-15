@@ -1,7 +1,9 @@
 package hmgx_lmmrinker.AI;
 
+import handmadeguns.items.GunInfo;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadevehicle.SlowPathFinder.WorldForPathfind;
+import handmadevehicle.entity.EntityVehicle;
 import littleMaidMobX.*;
 import mmmlibx.lib.MMM_Helper;
 import net.minecraft.entity.Entity;
@@ -11,12 +13,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
 import static java.lang.Math.toDegrees;
+import static net.minecraft.realms.RealmsMth.ceil;
 import static net.minecraft.util.MathHelper.wrapAngleTo180_float;
 
 public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
@@ -31,11 +35,11 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
     public WorldForPathfind worldForPathfind;
     protected EntityLivingBase fTarget;
     protected int fForget;
-    /** �^�[�Q�b�g�̗̑͂������ԃJ�E���g�A�b�v����B���C�h�̈ʒu�������_���[�W��^�����Ȃ��ꍇ�Ɉړ������邽�߂̃J�E���^  */
+
     protected int fTargetDamegeCounter;
-    /** �^�[�Q�b�g�̗̑� */
+
     protected float fTargetHealth;
-    /** 1=�E���A2=�����A0=�ҋ@ */
+
     protected int fTargetSearchDir;
 
 
@@ -105,13 +109,13 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
         return next;
     }
 
+    private int coolingPrg = 0;
     @Override
     public void updateTask() {
 
         double backupPosX = fMaid.posX;
         double backupPosZ = fMaid.posZ;
-        // �v���C���[�ɏ���Ă���Ǝː��Ƀv���C���[������A���ĂȂ��Ȃ邽�ߋ͂��ɖڕW�G���e�B�e�B�ɋ߂Â���
-        // �֐��𔲂���O�Ɍ��ɖ߂��K�v������̂œr���� return ���Ȃ�����
+
         if(fMaid.ridingEntity instanceof EntityPlayer)
         {
             double dtx = fTarget.posX - fMaid.posX;
@@ -126,7 +130,7 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
         double ldist = fMaid.getDistanceSqToEntity(fTarget);
         boolean lsee = fMaid.getEntitySenses().canSee(fTarget);
 
-        // ���E�̊O�ɏo�����莞�ԂŖO����
+
         if (lsee) {
             fForget = 0;
         } else {
@@ -134,24 +138,23 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
         }
 
 
-        // �U���Ώۂ�����
+
         fMaid.getLookHelper().setLookPositionWithEntity(fTarget, 90F, 90F);
 
         if (ldist < lrange) {
-            // �L���˒���
+
             double atx = fTarget.posX - fMaid.posX;
             double aty = fTarget.posY - fMaid.posY;
             double atz = fTarget.posZ - fMaid.posZ;
             if (fTarget.isEntityAlive()) {
 
-                // �^�[�Q�b�g��HP�ɕω�������ꍇ�A�U�����p��
+
                 if(fTarget.getHealth() != fTargetHealth)
                 {
                     fTargetHealth = fTarget.getHealth();
                     fTargetDamegeCounter = 0;
                     fTargetSearchDir = 0;
                 }
-                // �^�[�Q�b�g��HP�ɕω��������ꍇ�A�J�E���g�J�n���Ɉړ�������ς���
                 else
                 {
                     if(fTargetDamegeCounter == 0)
@@ -162,33 +165,33 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
                 }
 
                 ItemStack litemstack = fMaid.getCurrentEquippedItem();
-                // �G�Ƃ̃x�N�g��
+
                 double atl = atx * atx + aty * aty + atz * atz;
                 double il = -1D;
                 double milsq = 10D;
                 Entity masterEntity = fMaid.getMaidMasterEntity();
                 if (masterEntity != null && !fMaid.isPlaying()) {
-                    // ��Ƃ̃x�N�g��
+
                     double amx = masterEntity.posX - fMaid.posX;
                     double amy = masterEntity.posY - fMaid.posY;//-2D
                     double amz = masterEntity.posZ - fMaid.posZ;
 
-                    // ���̒l���O�`�P�Ȃ�^�[�Q�b�g�Ƃ̊ԂɎ傪����
+
                     il = (amx * atx + amy * aty + amz * atz) / atl;
 
-                    // �ː��x�N�g���Ǝ�Ƃ̐����x�N�g��
+
                     double mix = (fMaid.posX + il * atx) - masterEntity.posX;
                     double miy = (fMaid.posY + il * aty) - masterEntity.posY;// + 2D;
                     double miz = (fMaid.posZ + il * atz) - masterEntity.posZ;
-                    // �ː������Ƃ̋���
+
                     milsq = mix * mix + miy * miy + miz * miz;
 //					mod_LMM_littleMaidMob.Debug("il:%f, milsq:%f", il, milsq);
                 }
 
-                // �傪�ː���ɂ���
+
                 if(!(milsq > 3D || il < 0D))
                 {
-                    // �~�܂��Ă���ꍇ�A�ړ�������
+
                     if(fTargetSearchDir == 0)
                     {
                         fTargetSearchDir = getNextDir();
@@ -198,25 +201,25 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
                 if (litemstack != null && (litemstack.getItem() instanceof HMGItem_Unified_Guns) && (litemstack.getMaxDamage()!= litemstack.getItemDamage())) {
                     fMaid.mstatAimeBow = true;
                     getAvatarIF().getValueVectorFire(atx, aty, atz, atl);
-                    // �_�C���A���w�����Ȃ疡���ւ̌�˂��C�����y��
+
                     boolean lcanattack = true;
                     boolean ldotarget = true;
                     double tpr = Math.sqrt(atl);
                     Entity lentity = MMM_Helper.getRayTraceEntity(fMaid.maidAvatar, tpr + 1.0F, 1.0F, 1.0F);
                     Item helmid = !fMaid.isMaskedMaid() ? null : fInventory.armorInventory[3].getItem();
                     if (helmid == Items.diamond_helmet || helmid == Items.golden_helmet) {
-                        // �ː����̊m�F
+
                         if (lentity != null && fMaid.getIFF(lentity)) {
                             lcanattack = false;
 //							mod_LMM_littleMaidMob.Debug("ID:%d-friendly fire to ID:%d.", fMaid.entityId, lentity.entityId);
                         }
                     }
-                    if (lentity ==null||lentity == fTarget) {
+                    if (lentity ==null||lentity == fTarget||lentity instanceof EntityVehicle) {
                         ldotarget = true;
                     }
                     else if(fMaid.getIFF(lentity))
                     {
-                        // �^�[�Q�b�g�łȂ��A�����Ȃ�U�����~
+
                         ldotarget = false;
                     }
                     lcanattack &= (milsq > 3D || il < 0D);
@@ -244,7 +247,8 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
                             tpz += atz;
                         } else if(fTargetSearchDir==0) {
                         }
-                        fMaid.getNavigator().setPath(worldForPathfind.getEntityPathToXYZ(fMaid,(int)tpx, (int)tpy, (int)tpz,30,true,true,true,true),1.0);
+                        PathEntity pathEntity = worldForPathfind.getEntityPathToXYZ(fMaid,(int)tpx, (int)tpy, (int)tpz,30,true,true,true,true);
+                        if(pathEntity != null)fMaid.getNavigator().setPath(pathEntity,1.0);
                     }else {
                         fMaid.getNavigator().clearPathEntity();
                     }
@@ -256,13 +260,15 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
                         float Angulardifference = wrapAngleTo180_float(fMaid.rotationYaw - targetrote);
                         if(abs(Angulardifference)<90){
                             if (litemstack.getItem() instanceof HMGItem_Unified_Guns) {
-                                if ((fMaid.getSwingStatusDominant().getItemInUseCount() <= 0)) {
-                                    // �V���[�g
-                                    // �t���I�[�g����͎ˌ���~
+                                if ((fMaid.getSwingStatusDominant().getItemInUseCount() <= 0) && coolingPrg < 0) {
+                                    GunInfo gunInfo = ((HMGItem_Unified_Guns) litemstack.getItem()).gunInfo;
+                                    float dif = ((HMGItem_Unified_Guns) litemstack.getItem()).getDiffusion(litemstack);
+                                    if(dif > gunInfo.spreadDiffusionMax/4){
+                                        coolingPrg = ceil((dif - gunInfo.spreadDiffusionmin)/gunInfo.spreadDiffusionReduceRate) + 10;
+                                    }
                                     if (((HMGItem_Unified_Guns) litemstack.getItem()).getburstCount(litemstack.getTagCompound().getInteger("HMGMode")) == -1) {
-                                        // �t���I�[�g�����̏ꍇ�͎ː��m�F
-                                        fMaid.setSwing(60, LMM_EnumSound.sighting);
-                                        swingState.setItemInUse(litemstack, 60, fMaid);
+                                        fMaid.setSwing(30, LMM_EnumSound.sighting);
+                                        swingState.setItemInUse(litemstack, 20, fMaid);
                                         LMM_LittleMaidMobX.Debug("id:%d redygun.", fMaid.getEntityId());
                                     } else {
                                         LMM_LittleMaidMobX.Debug("id:%d shoot.", fMaid.getEntityId());
@@ -273,6 +279,7 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
                                         swingState.setItemInUse(litemstack, 20, fMaid);
                                     }
                                 }
+                                coolingPrg--;
                             }
                         }else {
                             fAvatar.stopUsingItem();
@@ -286,60 +293,18 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
                     }
 //            		maidAvatarEntity.setValueRotation();
                     getAvatarIF().setValueVector();
-                    // �A�C�e�����S���Ȃ���
                     if (litemstack.stackSize <= 0) {
                         fMaid.destroyCurrentEquippedItem();
                         fMaid.getNextEquipItem();
                     } else {
                         fInventory.setInventoryCurrentSlotContents(litemstack);
                     }
-
-                    // ��������Entity���`�F�b�N����maidAvatarEntity�����Ȃ������m�F
-//                    List<Entity> newentitys = worldObj.loadedEntityList.subList(lastentityid, worldObj.loadedEntityList.size());
-//                    boolean shootingflag = false;
-//                    if (newentitys != null && newentitys.size() > 0) {
-//                        LMM_LittleMaidMobX.Debug(String.format("new FO entity %d", newentitys.size()));
-//                        for (Entity te : newentitys) {
-//                            if (te.isDead) {
-//                                shootingflag = true;
-//                                continue;
-//                            }
-//                            try {
-//                                // ���đ̂̎��u��������
-//                                Field fd[] = te.getClass().getDeclaredFields();
-////                				mod_littleMaidMob.Debug(String.format("%s, %d", e.getClass().getName(), fd.length));
-//                                for (Field ff : fd) {
-//                                    // �ϐ���������Avatar�Ɠ������������ƒu��������
-//                                    ff.setAccessible(true);
-//                                    Object eo = ff.get(te);
-//                                    if (eo != null && eo.equals(fAvatar)) {
-//                                        ff.set(te, this.fMaid);
-//                                        LMM_LittleMaidMobX.Debug("Replace FO Owner.");
-//                                    }
-//                                }
-//                            }
-//                            catch (Exception exception) {
-//                                exception.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                    // ���ɖ������Ă����ꍇ�̏���
-//                    if (shootingflag) {
-//                        for (Object obj : worldObj.loadedEntityList) {
-//                            if (obj instanceof EntityCreature && !(obj instanceof LMM_EntityLittleMaid)) {
-//                                EntityCreature ecr = (EntityCreature)obj;
-//                                if (ecr.getEntityToAttack() == fAvatar) {
-//                                    ecr.setTarget(fMaid);
-//                                }
-//                            }
-//                        }
-//                    }
                 }
             }
         } else {
             fTargetDamegeCounter = 0;
             if (fMaid.getNavigator().noPath()) {
-                LMM_LittleMaidMobX.Debug("id:%d Target renge out.", fMaid.getEntityId());
+                LMM_LittleMaidMobX.Debug("id:%d Target range out.", fMaid.getEntityId());
                 fMaid.setAttackTarget(null);
             }
             if (fMaid.isWeaponFullAuto() && getAvatarIF().getIsItemTrigger()) {
@@ -351,7 +316,7 @@ public class EntityAIAttackHMGun extends EntityAIBase implements LMM_IEntityAI {
         }
 
 
-        // �v���C���[���ː��ɓ���Ȃ��悤�ɁA�ύX�������C�h����̈ʒu�����ɖ߂�
+
         fMaid.posX = backupPosX;
         fMaid.posZ = backupPosZ;
     }

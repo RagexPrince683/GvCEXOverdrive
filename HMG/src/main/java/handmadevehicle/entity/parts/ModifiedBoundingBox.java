@@ -520,6 +520,7 @@ public class ModifiedBoundingBox extends AxisAlignedBB {
         startVec = Utils.transformVecByQuat(startVec,temp);
         endVec = Utils.transformVecByQuat(endVec,temp);
 
+
         startVec.add(rotcenterVec);
         endVec.add(rotcenterVec);
 //        System.out.println("start" + startVec);
@@ -643,16 +644,18 @@ public class ModifiedBoundingBox extends AxisAlignedBB {
         for(int cnt = 0;cnt < tempHitpoint.length;cnt++){
             VectorAndHitSide a_Hitpoint = tempHitpoint[cnt];
             if(a_Hitpoint == null)continue;
+            a_Hitpoint.hitside += cnt*6;
             double tempdist = start.squareDistanceTo(a_Hitpoint.vector3d.x,a_Hitpoint.vector3d.y,a_Hitpoint.vector3d.z);
             if(tempdist < dist || dist == -1){
                 dist = tempdist;
                 temp_return = a_Hitpoint;
             }
         }
-//        System.out.println("debug "  + hitside);
         if(temp_return != null) {
+//            System.out.println("debug "  + temp_return.hitside);
             MovingObjectPosition temp_moving = new MovingObjectPosition(0, 0, 0, temp_return.hitside, getMinecraftVecObj(temp_return.vector3d));
-            temp_moving.hitInfo = temp_return.vector3d_relative;
+            if(temp_return.vector3d_normal == null)temp_moving.hitInfo = temp_return.vector3d_relative;
+            else temp_moving.hitInfo = new Vector3d[]{temp_return.vector3d_relative,temp_return.vector3d_normal};
             return temp_moving;
         }
         return null;

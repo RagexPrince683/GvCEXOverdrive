@@ -17,7 +17,9 @@ import cpw.mods.fml.common.discovery.ContainerType;
 import cpw.mods.fml.common.discovery.ModCandidate;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import handmadeguns.blocks.HMGBlockMounter;
 import handmadeguns.command.HMG_CommandReloadparm;
 import handmadeguns.entity.*;
@@ -27,8 +29,11 @@ import handmadeguns.event.HMGLivingUpdateEvent;
 import handmadeguns.event.RenderTickSmoothing;
 import handmadeguns.items.HMGItemBullet;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
+import handmadevehicle.entity.EntityDummy_rider;
+import littleMaidMobX.LMM_EntityLittleMaid;
 import net.minecraft.block.Block;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.IntHashMap;
 import net.minecraftforge.client.model.ModelFormatException;
 import org.apache.commons.io.FileUtils;
 
@@ -56,13 +61,15 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import handmadeguns.gui.HMGGuiHandler;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import static handmadeguns.client.render.HMGRenderItemGun_U_NEW.isentitysprinting;
+import static handmadeguns.HMGGunMaker.checkBeforeReadfile;
 
 
 @Mod(
@@ -73,6 +80,7 @@ import static handmadeguns.client.render.HMGRenderItemGun_U_NEW.isentitysprintin
 public class HandmadeGunsCore {
 	public static float textureOffsetU;//for textureAnimation
 	public static float textureOffsetV;
+	public static float smooth = 0;
 	static Field mcResourcePackRepository;
 	static Field repositoryEntries;
 	@SidedProxy(clientSide = "handmadeguns.ClientProxyHMG", serverSide = "handmadeguns.CommonSideProxyHMG")
@@ -105,6 +113,8 @@ public class HandmadeGunsCore {
 
 	public static int cfg_ADS_Sneaking;
 	public static boolean cfg_ADS_Toggle;
+	public static boolean cfg_Avoid_ALL_ConflictKeys;
+	public static boolean cfg_Sneak_ByADSKey;
 	public static String cfg_Avoid_Hit_Entitys;
 	public static boolean cfg_ThreadHitCheck;
 	public static int cfg_ThreadHitCheck_split_length;
@@ -177,7 +187,9 @@ public class HandmadeGunsCore {
 		cfg_Cartridgetime	= lconf.get("Cartridge", "cfg_Cartridgetime", 200).getInt(200);
 		cfg_muzzleflash	= lconf.get("Gun", "cfg_MuzzleFlash", true).getBoolean(true);
 		cfg_ADS_Sneaking	= lconf.get("Gun", "cfg_ADS_Sneaking",  0).getInt(0);
-		cfg_ADS_Toggle	= lconf.get("Gun", "cfg_ADS_Sneaking",  false).getBoolean(false);
+		cfg_ADS_Toggle	= lconf.get("Gun", "cfg_ADS_Key_Toggle",  true).getBoolean(true);
+		cfg_Sneak_ByADSKey	= lconf.get("Gun", "cfg_Sneak_ByADSKey",  false).getBoolean(false);
+		cfg_Avoid_ALL_ConflictKeys	= lconf.get("Gun", "cfg_Avoid_ALL_ConflictKeys",  true).getBoolean(true);
 		cfg_blockdestroy = lconf.get("Gun", "cfg_blockdestroy",  true).getBoolean(true);
 		cfg_Avoid_Hit_Entitys = lconf.getString("Gun", "cfg_AvoidHit",  "","");
 		cfg_ThreadHitCheck = lconf.get("Gun", "cfg_ThreadHitCheck", true).getBoolean(true);
@@ -504,6 +516,33 @@ public class HandmadeGunsCore {
 							}
 						}
 					}
+					File packAdditionalSettings = new File(apack, "additionalSettings.txt");
+					HMGGunMaker.damageCof = 1;
+					HMGGunMaker.speedCof = 1;
+					if (packAdditionalSettings.isFile() && checkBeforeReadfile(packAdditionalSettings)) {
+						try {
+							BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(packAdditionalSettings), "Shift-JIS"));
+
+							String str;
+							while ((str = br.readLine()) != null) { // 1行ずつ読み込む
+								String[] key = str.split(",");
+								switch (key[0]) {
+									case "damageCof":
+										HMGGunMaker.damageCof = Float.parseFloat(key[1]);
+									case "speedCof":
+										HMGGunMaker.speedCof = Float.parseFloat(key[1]);
+
+								}
+							}
+							br.close(); // ファイルを閉じる
+						} catch (UnsupportedEncodingException e) {
+							e.printStackTrace();
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 					File diregun = new File(apack, "guns");
 					File[] filegun = diregun.listFiles();
 					Arrays.sort(filegun, new Comparator<File>() {
@@ -617,7 +656,7 @@ public class HandmadeGunsCore {
 		EntityRegistry.registerModEntity(HMGEntityBullet_Flame.class, "Bullet_Flame_HMG", 275, this, 4096, 5, false);
 
 		EntityRegistry.registerModEntity(HMGEntityBulletCartridge.class, "BulletCartridge_HMG", 255, this, 128, 5, true);
-		EntityRegistry.registerModEntity(PlacedGunEntity.class, "PlacedGun", 253, this, 128, 1, true);
+		EntityRegistry.registerModEntity(PlacedGunEntity.class, "PlacedGun", 253, this, 65536, 1, true);
 		Block mounter = new HMGBlockMounter(1).setBlockName("ItemHolder").setBlockTextureName("handmadeguns:camp");
 		GameRegistry.registerBlock(mounter, "ItemHolder");
 		GameRegistry.addRecipe(new ItemStack(mounter, 1),
@@ -663,76 +702,146 @@ public class HandmadeGunsCore {
 		//TODO:END_INJECT_FUNCTION--------------------------------------------------------------------------------------------------------------------------------
 
 
-		HMG_proxy.reisterSomething();
+		HMG_proxy.registerSomething();
 		HMG_proxy.registerTileEntity();
 		HMG_proxy.InitRendering();
 		HMG_proxy.getEntityPlayerInstance();
 	}
 
 
+	static Field keyBind_pressed;
+	static Field keyBind_pressTime;
+	static Field keyBind_hash;
 	@SubscribeEvent
 	public void KeyHandlingEvent(KeyInputEvent event)
 	{
-		Minecraft minecraft = Minecraft.getMinecraft();
-		Entity entity = Minecraft.getMinecraft().renderViewEntity;
-		//	EntityPlayer entityplayer = (EntityPlayer)entity;
-		//EntityPlayer entityplayer = Minecraft.getMinecraft().thePlayer;
-		if(entity != null && entity instanceof EntityPlayer){
-			EntityPlayer entityplayer = (EntityPlayer)entity;
-			ItemStack itemstack = ((EntityPlayer)(entityplayer)).getCurrentEquippedItem();
+		checkConflict(Keyboard.getEventKey());
+	}
+	@SubscribeEvent
+	public void MouseHandlingEvent(InputEvent.MouseInputEvent event)
+	{
+		checkConflict(Mouse.getEventButton() - 100);
+	}
+	public static ArrayList<KeyBinding> TrackedKeyBinding_Vanilla;
 
-//			if (proxy.Reloadkeyispressed()) {
-//				if(itemstack != null && itemstack.getItem() instanceof HMGXItemGunBase){
-//					HMGPacketHandler.INSTANCE.sendToServer(new HMGMessageKeyPressed(1));
-//				}
-//			}
-//			if (proxy.Rightkeyispressed()) {
-//				if(itemstack != null && itemstack.getItem() instanceof HMGXItemGunBase){
-//					HMGPacketHandler.INSTANCE.sendToServer(new HMGMessageKeyPressed(2));
-//				}
-//			}
-//			if (proxy.Attachmentkeyispressed()) {
-//				if(itemstack != null && itemstack.getItem() instanceof HMGXItemGunBase)
-//				{
-//					HMGPacketHandler.INSTANCE.sendToServer(new HMGMessageKeyPressed(5));
-//				}
-//			}
+	public void checkConflict(int checkKey){
+
+		if(TrackedKeyBinding_Vanilla == null){
+			TrackedKeyBinding_Vanilla = new ArrayList<KeyBinding>();//
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindAttack);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindUseItem);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindForward);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindLeft);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindBack);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindRight);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindJump);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindSneak);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindDrop);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindInventory);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindChat);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindPlayerList);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindPickBlock);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindCommand);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindScreenshot);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindTogglePerspective);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindSmoothCamera);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindSprint);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.field_152396_an);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.field_152397_ao);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.field_152398_ap);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.field_152399_aq);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.field_152395_am);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindsHotbar[0]);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindsHotbar[1]);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindsHotbar[2]);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindsHotbar[3]);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindsHotbar[4]);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindsHotbar[5]);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindsHotbar[6]);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindsHotbar[7]);
+			TrackedKeyBinding_Vanilla.add(HMG_proxy.getMCInstance().gameSettings.keyBindsHotbar[8]);
 		}
-		//if (ClientProxyHMG.Jump.isPressed()) {
-		//	if(itemstack != null && itemstack.getItem() instanceof HMGItemGunBase){
-		//		HMGPacketHandler.INSTANCE.sendToServer(new HMGMessageKeyPressed(3));
-		//	}
-		//}
 
 
+		{
+			KeyBinding[] keys = null;
+			if(cfg_Avoid_ALL_ConflictKeys){
+				keys = Minecraft.getMinecraft().gameSettings.keyBindings;
+			}else {
+				keys = new KeyBinding[KeyBinding_mod.TrackedKeyBinding.size() + TrackedKeyBinding_Vanilla.size()];
+				int cnt = 0;
+				for(KeyBinding keyBinding : TrackedKeyBinding_Vanilla){
+					keys[cnt] = keyBinding;
+					cnt++;
+				}
+				for(KeyBinding_mod keyBinding : KeyBinding_mod.TrackedKeyBinding){
+					keys[cnt] = keyBinding.keyBinding;
+					cnt++;
+				}
+			}
+			if(keyBind_pressed == null){
+				keyBind_pressed = ReflectionHelper.findField(KeyBinding.class, "field_74513_e","pressed");
+			}
+			if(keyBind_pressTime == null){
+				keyBind_pressTime = ReflectionHelper.findField(KeyBinding.class, "field_151474_i","pressTime");
+			}
+			if(keyBind_hash == null){
+				keyBind_hash = ReflectionHelper.findField(KeyBinding.class, "field_74514_b","hash");
+			}
+			try {
+				IntHashMap hash = (IntHashMap) keyBind_hash.get(null);
+				KeyBinding conflictCheckKey = (KeyBinding) hash.lookup(checkKey);
+				if(conflictCheckKey != null) {
+					for (Object o : keys) {
+						KeyBinding keyBinding = (KeyBinding) o;
+						if (keyBinding != conflictCheckKey && keyBinding.getKeyCode() == conflictCheckKey.getKeyCode()) {
+							keyBind_pressed.setBoolean(keyBinding, conflictCheckKey.getIsKeyPressed());
+							if(conflictCheckKey.getIsKeyPressed())keyBind_pressTime.setInt(keyBinding, keyBind_pressTime.getInt(keyBinding)+1);
+//							System.out.println("engaged_Conflict\n" + keyBinding.getKeyDescription() +"\n" + conflictCheckKey.getKeyDescription());
+						}
+					}
+				}
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	public static boolean Key_ADS(Entity entityplayer){
-		if(entityplayer == null)return false;
-		if(entityplayer instanceof EntityPlayer){
-			if(((EntityPlayer) entityplayer).getHeldItem() != null
-					&& ((EntityPlayer) entityplayer).getHeldItem().getItem() instanceof HMGItem_Unified_Guns
-					&& ((HMGItem_Unified_Guns) ((EntityPlayer) entityplayer).getHeldItem().getItem()).gunInfo.needcock
-					&& ((EntityPlayer) entityplayer).getHeldItem().getTagCompound() != null
-					&& !((EntityPlayer) entityplayer).getHeldItem().getTagCompound().getBoolean("Cocking")){
+	public static boolean Key_ADS(Entity entity){
+		if(entity == null)return false;
+		if(entity.ridingEntity instanceof EntityDummy_rider)return true;
+		if(islmmloaded && entity instanceof LMM_EntityLittleMaid){
+			return true;
+		}else
+		if(entity instanceof EntityPlayer){
+			if(((EntityPlayer) entity).getHeldItem() != null
+					&& ((EntityPlayer) entity).getHeldItem().getItem() instanceof HMGItem_Unified_Guns
+					&& ((HMGItem_Unified_Guns) ((EntityPlayer) entity).getHeldItem().getItem()).gunInfo.needcock
+					&& ((EntityPlayer) entity).getHeldItem().getTagCompound() != null
+					&& !((EntityPlayer) entity).getHeldItem().getTagCompound().getBoolean("Cocking")){
 				return false;
 			}
 			boolean flag;
 			if(cfg_ADS_Sneaking == 1){
-				flag = HMG_proxy.ADSclick();
+				flag = HMG_proxy.ADSClick();
 			}else if(cfg_ADS_Sneaking == 2) {
-				flag = entityplayer.isSneaking();
+				flag = entity.isSneaking();
 			}else{
-				flag = HMG_proxy.ADSclick() || entityplayer.isSneaking();
+				flag = HMG_proxy.ADSClick() || entity.isSneaking();
 			}
+//			System.out.println("debug" + HMG_proxy.ADSclick());
 
-			if(HMG_proxy.ADSclick() && HMG_proxy.getEntityPlayerInstance() == entityplayer &&
-					!isentitysprinting(HMG_proxy.getEntityPlayerInstance()))((EntityClientPlayerMP) HMG_proxy.getEntityPlayerInstance()).movementInput.sneak = true;
+//			try {
+//				throw new StackTracer("debug");
+//			}catch (Exception e){
+//				e.printStackTrace();
+//			}
+
 			return flag;
-		}else if(entityplayer instanceof PlacedGunEntity){
+		}else if(entity instanceof PlacedGunEntity){
 			return true;
 		}else{
-			return entityplayer.isSneaking();
+			return entity.isSneaking();
 		}
 	}
 

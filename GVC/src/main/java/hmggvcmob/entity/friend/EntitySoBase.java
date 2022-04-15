@@ -1,14 +1,11 @@
 package hmggvcmob.entity.friend;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import handmadevehicle.entity.EntityDummy_rider;
 import hmggvcmob.GVCMobPlus;
 import hmggvcmob.ai.AITargetFlag;
-import hmggvcmob.ai.PlatoonOBJ;
+import hmggvcmob.entity.util.PlatoonOBJ;
 import hmggvcmob.camp.CampObj;
-import hmggvcmob.entity.IPlatoonable;
 import hmggvcmob.entity.IflagBattler;
-import hmggvcmob.entity.guerrilla.EntityGBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
@@ -21,11 +18,9 @@ import java.util.List;
 
 import static handmadevehicle.Utils.canMoveEntity;
 import static hmggvcmob.GVCMobPlus.*;
-import static hmggvcutil.GVCUtils.platoonMatched;
 
 public class EntitySoBase extends EntitySoBases implements IflagBattler {
 
-	public boolean candespawn = true;
 
 	public EntitySoBase(World par1World) {
 		super(par1World);
@@ -78,7 +73,7 @@ public class EntitySoBase extends EntitySoBases implements IflagBattler {
 
 	protected boolean canDespawn()
 	{
-		return candespawn && getAttackTarget() == null && !isPlatoonLeader() && (getLinkedVehicle() == null || !getLinkedVehicle().mc_Entity.canDespawn);
+		return canDespawn && getAttackTarget() == null && !isPlatoonLeader() && (getLinkedVehicle() == null || !getLinkedVehicle().mc_Entity.canDespawn);
 	}
 	protected boolean func_146066_aG()
 	{

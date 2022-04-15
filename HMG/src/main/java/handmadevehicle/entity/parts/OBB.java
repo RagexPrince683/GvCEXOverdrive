@@ -1,5 +1,6 @@
 package handmadevehicle.entity.parts;
 
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGFace;
 import handmadevehicle.Utils;
 import handmadevehicle.entity.parts.logics.BaseLogic;
 import handmadevehicle.entity.parts.turrets.TurretObj;
@@ -111,7 +112,7 @@ public class OBB {
         maxYforColCheck = modifiedBoundingBox.posY + (Utils.getMaxinsomeVectors(points,1));
         maxZforColCheck = modifiedBoundingBox.posZ + (Utils.getMaxinsomeVectors(points,2));
     }
-    
+
     public VectorAndHitSide getIntercept(ModifiedBoundingBox modifiedBoundingBox,Vector3d startVec,Vector3d endVec,Vector3d posVec,Vector3d rotcenterVec){
         {
             Quat4d temp = new Quat4d(turretRotation);
@@ -142,115 +143,142 @@ public class OBB {
             startVec.add(info.boxRotCenter);
             endVec.add(info.boxRotCenter);
         }
-        Vector3d vec32 = getIntermediateWithXValue(startVec, endVec, minvertex.x);
-        Vector3d vec33 = getIntermediateWithXValue(startVec, endVec, maxvertex.x);
-    
-        Vector3d vec34 = getIntermediateWithYValue(startVec, endVec, minvertex.y);
-        Vector3d vec35 = getIntermediateWithYValue(startVec, endVec, maxvertex.y);
-    
-        Vector3d vec36 = getIntermediateWithZValue(startVec, endVec, minvertex.z);
-        Vector3d vec37 = getIntermediateWithZValue(startVec, endVec, maxvertex.z);
-    
-    
-        if (!this.isVecInYZ(getMinecraftVecObj(vec32))) {
-            vec32 = null;
-        }
-    
-        if (!this.isVecInYZ(getMinecraftVecObj(vec33))) {
-            vec33 = null;
-        }
-    
-        if (!this.isVecInXZ(getMinecraftVecObj(vec34))) {
-            vec34 = null;
-        }
-    
-        if (!this.isVecInXZ(getMinecraftVecObj(vec35))) {
-            vec35 = null;
-        }
-    
-        if (!this.isVecInXY(getMinecraftVecObj(vec36))) {
-            vec36 = null;
-        }
-    
-        if (!this.isVecInXY(getMinecraftVecObj(vec37))) {
-            vec37 = null;
-        }
-    
-        Vector3d vec38 = null;
-    
-        if (vec32 != null) {
-            vec38 = vec32;
-        }
-    
-        if (vec33 != null && (vec38 == null || getDistanceSq(startVec, vec33) < getDistanceSq(startVec, vec38))) {
-            vec38 = vec33;
-        }
-    
-        if (vec34 != null && (vec38 == null || getDistanceSq(startVec, vec34) < getDistanceSq(startVec, vec38))) {
-            vec38 = vec34;
-        }
-    
-        if (vec35 != null && (vec38 == null || getDistanceSq(startVec, vec35) < getDistanceSq(startVec, vec38))) {
-            vec38 = vec35;
-        }
-    
-        if (vec36 != null && (vec38 == null || getDistanceSq(startVec, vec36) < getDistanceSq(startVec, vec38))) {
-            vec38 = vec36;
-        }
-    
-        if (vec37 != null && (vec38 == null || getDistanceSq(startVec, vec37) < getDistanceSq(startVec, vec38))) {
-            vec38 = vec37;
-        }
-    
-        if (vec38 == null) {
+        if(info.model_forHitChecks != null){
+            Vector3d hitVec = new Vector3d();
+            HMGFace hitFace = info.model_forHitChecks.hitCheck(startVec,endVec,hitVec);
+//            System.out.println("debug" + hitFace);
+            if(hitFace != null) {
+                Vector3d relative = new Vector3d();
+                relative.sub(endVec, startVec);
+                hitVec.sub(info.boxRotCenter);
+                hitVec = Utils.transformVecByQuat(hitVec, info.boxRotation);
+                hitVec.add(info.boxRotCenter);
+
+                hitVec.sub(turretRotCenter);
+                hitVec = Utils.transformVecByQuat(hitVec, turretRotation);
+                hitVec.add(turretRotCenter);
+
+                hitVec.sub(rotcenterVec);
+                hitVec = Utils.transformVecByQuat(hitVec, modifiedBoundingBox.rot);
+                hitVec.add(rotcenterVec);
+                transformVecforMinecraft(hitVec);
+//                System.out.println(hitVec);
+
+                hitVec.add(posVec);
+                return new VectorAndHitSide(hitVec, relative,hitFace.faceNormal_Javax, 0);
+            }
+            return null;
+        }else {
+            Vector3d vec32 = getIntermediateWithXValue(startVec, endVec, minvertex.x);
+            Vector3d vec33 = getIntermediateWithXValue(startVec, endVec, maxvertex.x);
+
+            Vector3d vec34 = getIntermediateWithYValue(startVec, endVec, minvertex.y);
+            Vector3d vec35 = getIntermediateWithYValue(startVec, endVec, maxvertex.y);
+
+            Vector3d vec36 = getIntermediateWithZValue(startVec, endVec, minvertex.z);
+            Vector3d vec37 = getIntermediateWithZValue(startVec, endVec, maxvertex.z);
+
+
+            if (!this.isVecInYZ(getMinecraftVecObj(vec32))) {
+                vec32 = null;
+            }
+
+            if (!this.isVecInYZ(getMinecraftVecObj(vec33))) {
+                vec33 = null;
+            }
+
+            if (!this.isVecInXZ(getMinecraftVecObj(vec34))) {
+                vec34 = null;
+            }
+
+            if (!this.isVecInXZ(getMinecraftVecObj(vec35))) {
+                vec35 = null;
+            }
+
+            if (!this.isVecInXY(getMinecraftVecObj(vec36))) {
+                vec36 = null;
+            }
+
+            if (!this.isVecInXY(getMinecraftVecObj(vec37))) {
+                vec37 = null;
+            }
+
+            Vector3d vec38 = null;
+
+            if (vec32 != null) {
+                vec38 = vec32;
+            }
+
+            if (vec33 != null && (vec38 == null || getDistanceSq(startVec, vec33) < getDistanceSq(startVec, vec38))) {
+                vec38 = vec33;
+            }
+
+            if (vec34 != null && (vec38 == null || getDistanceSq(startVec, vec34) < getDistanceSq(startVec, vec38))) {
+                vec38 = vec34;
+            }
+
+            if (vec35 != null && (vec38 == null || getDistanceSq(startVec, vec35) < getDistanceSq(startVec, vec38))) {
+                vec38 = vec35;
+            }
+
+            if (vec36 != null && (vec38 == null || getDistanceSq(startVec, vec36) < getDistanceSq(startVec, vec38))) {
+                vec38 = vec36;
+            }
+
+            if (vec37 != null && (vec38 == null || getDistanceSq(startVec, vec37) < getDistanceSq(startVec, vec38))) {
+                vec38 = vec37;
+            }
+
+            if (vec38 == null) {
                 return null;
-        } else {
-            byte b0 = -1;
-        
-            if (vec38 == vec32) {
-                b0 = 5;
-            }
-        
-            if (vec38 == vec33) {
-                b0 = 4;
-            }
-        
-            if (vec38 == vec34) {
-                b0 = 1;
-            }
-        
-            if (vec38 == vec35) {
-                b0 = 0;
-            }
-        
-            if (vec38 == vec36) {
-                b0 = 2;
-            }
-        
-            if (vec38 == vec37) {
-                b0 = 3;
-            }
+            } else {
+                byte b0 = -1;
 
-            Vector3d relative =  new Vector3d();
-            relative.sub(endVec,startVec);
-            vec38.sub(info.boxRotCenter);
-            vec38 = Utils.transformVecByQuat(vec38, info.boxRotation);
-            vec38.add(info.boxRotCenter);
+                if (vec38 == vec32) {
+                    b0 = 5;
+                }
 
-            vec38.sub(turretRotCenter);
-            vec38 = Utils.transformVecByQuat(vec38, turretRotation);
-            vec38.add(turretRotCenter);
+                if (vec38 == vec33) {
+                    b0 = 4;
+                }
 
-            vec38.sub(rotcenterVec);
-            vec38 = Utils.transformVecByQuat(vec38, modifiedBoundingBox.rot);
-            vec38.add(rotcenterVec);
-            transformVecforMinecraft(vec38);
+                if (vec38 == vec34) {
+                    b0 = 1;
+                }
+
+                if (vec38 == vec35) {
+                    b0 = 0;
+                }
+
+                if (vec38 == vec36) {
+                    b0 = 2;
+                }
+
+                if (vec38 == vec37) {
+                    b0 = 3;
+                }
+
+                Vector3d relative = new Vector3d();
+                relative.sub(endVec, startVec);
+                vec38.sub(info.boxRotCenter);
+                vec38 = Utils.transformVecByQuat(vec38, info.boxRotation);
+                vec38.add(info.boxRotCenter);
+
+                vec38.sub(turretRotCenter);
+                vec38 = Utils.transformVecByQuat(vec38, turretRotation);
+                vec38.add(turretRotCenter);
+
+                vec38.sub(rotcenterVec);
+                vec38 = Utils.transformVecByQuat(vec38, modifiedBoundingBox.rot);
+                vec38.add(rotcenterVec);
+                transformVecforMinecraft(vec38);
 //            System.out.println("3"+vec38);
-        
-            vec38.add(posVec);
+
+                vec38.add(posVec);
 //                return new MovingObjectPosition(0, 0, 0, b0, getMinecraftVecObj(vec38));
-            return new VectorAndHitSide(vec38,relative,b0);
+                return new VectorAndHitSide(vec38, relative, b0);
 //            tempHitSide[cnt] = b0;
+            }
         }
     }
     

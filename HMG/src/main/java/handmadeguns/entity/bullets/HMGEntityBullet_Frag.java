@@ -32,6 +32,7 @@ public class HMGEntityBullet_Frag extends HMGEntityBulletBase implements IEntity
 
 	public HMGEntityBullet_Frag(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, String modelname) {
 		super(worldIn, throwerIn, damege, bspeed, bure, modelname);
+		this.noex = false;
 	}
 
 	/**

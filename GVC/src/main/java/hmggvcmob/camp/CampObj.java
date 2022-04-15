@@ -5,8 +5,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.scoreboard.Team;
 
-import static hmggvcmob.GVCMobPlus.cfg_flagspawninterval;
-import static hmggvcmob.GVCMobPlus.cfg_flagspawnlevel;
+import static hmggvcmob.GVCMobPlus.cfg_beaconSpawnInterval;
+import static hmggvcmob.GVCMobPlus.cfg_beaconSpawnLevel;
 
 public class CampObj extends Team {
 	public String campName;
@@ -18,14 +18,14 @@ public class CampObj extends Team {
 	public String campBlockTextureItem;
 
 	public int flagWidth = 2;
-	public int spawnEntitiesAve = cfg_flagspawnlevel;
+	public int spawnEntitiesAve = cfg_beaconSpawnLevel;
 	public int spawnRaiderEntitiesAve = 8;
 	public int raiderGroupNum = 8;
 	public int maxFlagHeight = 10000;
 
 	public boolean playerIsFriend = false;
 
-	public int flagSpawnInterval = cfg_flagspawninterval;
+	public int flagSpawnInterval = cfg_beaconSpawnInterval;
 
 	public CampObj[] raiderIgnoreList;
 

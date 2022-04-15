@@ -19,6 +19,7 @@ public class Prefab_Turret {
 	public int fire_cannon_perOneShot = 1;
 	public boolean positionLinked = true;
 	public boolean onlyAim = false;
+	public boolean onlyRadar = false;
 
 	public boolean syncTurretAngle = false;
 	public boolean lockToPilotAngle = false;
@@ -53,6 +54,8 @@ public class Prefab_Turret {
 	public String[] gunStackwhitelist;
 	public String[] damageSound = {"gvcmob:gvcmob.armorhit"};
 	public String[] bounceSound = {"gvcmob:gvcmob.ArmorBounce"};
+	public boolean canAutoPickUpStack = false;
+	public int replaceStackTime = 0;
 
 	public Prefab_Turret(){
 		gunInfo = new GunInfo();

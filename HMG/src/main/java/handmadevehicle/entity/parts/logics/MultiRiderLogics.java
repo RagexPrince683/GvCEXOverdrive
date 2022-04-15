@@ -1,12 +1,12 @@
 package handmadevehicle.entity.parts.logics;
 
-import handmadevehicle.entity.parts.SeatInfo;
+import handmadevehicle.entity.parts.SeatObject;
 import net.minecraft.entity.Entity;
 
 public interface MultiRiderLogics {
 	Entity[] getRiddenEntityList();
-	SeatInfo[] getRiddenSeatList();
-	boolean pickupEntity(Entity p_70085_1_, int StartSeachSeatNum);
+	SeatObject[] getRiddenSeatList();
+	boolean pickupEntity(Entity p_70085_1_, int StartSeachSeatNum,boolean dir);
 	boolean isRidingEntity(Entity entity);
 	default void disMountEntity(Entity p_70085_1_){
 		if(p_70085_1_ == null)return;
@@ -25,6 +25,7 @@ public interface MultiRiderLogics {
 		//		p_70085_1_.mountEntity(this);
 	}
 	default boolean ispilot(Entity entity){
+		if(entity == null)return false;
 		return getRiddenEntityList()[getpilotseatid()] == entity;
 	}
 	default int getpilotseatid(){

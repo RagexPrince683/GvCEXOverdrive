@@ -2,9 +2,7 @@ package hmggvcmob.entity.guerrilla;
 
 
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
-import handmadevehicle.SlowPathFinder.WorldForPathfind;
 import hmggvcutil.GVCUtils;
-import hmggvcmob.ai.AIAttackGun;
 import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIOpenDoor;
@@ -25,9 +23,7 @@ public class GVCEntityGuerrilla_Flamer extends EntityGBase
     {
         super(par1World);
         this.setSize(0.6F, 1.8F);
-        this.tasks.addTask(1,aiAttackGun = new AIAttackGun(this,20,10,80,30,true,true,new WorldForPathfind(worldObj)));
         this.tasks.removeTask(new EntityAIOpenDoor(this, true));
-        spread = 5;
         //独自射撃処理
     }
     protected void applyEntityAttributes()

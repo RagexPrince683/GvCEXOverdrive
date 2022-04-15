@@ -41,6 +41,9 @@ public class HMGGunMaker {
 	public static ScriptEngine currentScript;
 	public static FileReader currentScriptFile;
 
+	public static float damageCof = 0;
+	public static float speedCof = 0;
+
 
 
 
@@ -278,10 +281,9 @@ public class HMGGunMaker {
 		currentIndex = 0;
 
 		try {
-			File file = file1;
 			// File file = new File(configfile,"hmg_handmadeguns.txt");
-			if (checkBeforeReadfile(file)) {
-				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file),"Shift-JIS"));
+			if (checkBeforeReadfile(file1)) {
+				BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file1),"Shift-JIS"));
 
 				String str;
 				while ((str = br.readLine()) != null) { // 1行ずつ読み込む
@@ -446,6 +448,11 @@ public class HMGGunMaker {
 								rotationz = parseFloat(type[1]);
 								rotationzr = parseFloat(type[2]);
 								rotationzs = parseFloat(type[3]);
+								break;
+							case "setADSPointToINFO":
+								gunInfo.setmodelADSPosAndRotation(modelwidthx + seatoffset[0],modelhigh + seatoffset[1],modelwidthz + seatoffset[2]);
+								gunInfo.setADSoffsetRed(modelwidthxr + seatoffset[0],modelhighr + seatoffset[1],modelwidthzr + seatoffset[2]);
+								gunInfo.setADSoffsetScope(modelwidthxs + seatoffset[0],modelhighs + seatoffset[1],modelwidthzs + seatoffset[2]);
 								break;
 							case "ModelArm":
 								arm = parseBoolean(type[1]);
@@ -1191,7 +1198,7 @@ public class HMGGunMaker {
 								LanguageRegistry.instance().addNameForObject(newgun, "en_US", GunName);
 							}
 
-							Guns.add(newgun);
+							if(gunInfo.canInRoot)Guns.add(newgun);
 							/*
 							 * for(int ii = 0; ii < itemstack; ++ii){ //addi =
 							 * new Item[GameRegistry.findItem("HandmadeGuns",
@@ -1574,7 +1581,7 @@ public class HMGGunMaker {
 	public HMGGunParts createGunPart(String[] strings,int motherID,HMGGunParts mother){
 		return new HMGGunParts(strings[1],motherID,mother);
 	}
-	private static boolean checkBeforeReadfile(File file) {
+	public static boolean checkBeforeReadfile(File file) {
 		if (file.exists()) {
 			if (file.isFile() && file.canRead()) {
 				return true;
@@ -1867,10 +1874,10 @@ public class HMGGunMaker {
 	public static void readFireInfo(GunInfo gunInfo,String[] type){
 		switch (type[0]){
 			case "BulletPower":
-				gunInfo.power = parseInt(type[1]);
+				gunInfo.power = (int) (parseInt(type[1]) * damageCof);
 				break;
 			case "BulletSpeed":
-				gunInfo.speed = parseFloat(type[1]);
+				gunInfo.speed = parseFloat(type[1]) * speedCof;
 				break;
 			case "BulletGravity":
 				gunInfo.gravity = parseFloat(type[1]);
@@ -1883,6 +1890,12 @@ public class HMGGunMaker {
 				break;
 			case "Acceleration":
 				gunInfo.acceleration = parseFloat(type[1]);
+				break;
+			case "accelerationDelay":
+				gunInfo.accelerationDelay = parseInt(type[1]);
+				break;
+			case "accelerationFuse":
+				gunInfo.accelerationFuse = parseInt(type[1]);
 				break;
 			case "Induction_precision":
 				gunInfo.induction_precision = parseFloat(type[1]);
@@ -2306,6 +2319,12 @@ public class HMGGunMaker {
 			case "displayPredict":
 				gunInfo.displayPredict = parseBoolean(type[1]);
 				break;
+			case "displayPredict_MoveSight":
+				gunInfo.displayPredict_MoveSight = parseBoolean(type[1]);
+				break;
+			case "displayPredict_ConsiderMyLooking":
+				gunInfo.displayPredict_ConsiderMyLooking = parseBoolean(type[1]);
+				break;
 			case "seekerSize":
 				gunInfo.seekerSize = Double.parseDouble(type[1]);
 				break;
@@ -2321,6 +2340,12 @@ public class HMGGunMaker {
 			case "semiActive":
 				gunInfo.semiActive = parseBoolean(type[1]);
 				gunInfo.isActive = false;
+				break;
+			case "SACLOS_Homing":
+				gunInfo.SACLOS_Homing = parseBoolean(type[1]);
+				break;
+			case "chunkLoaderBullet":
+				gunInfo.chunkLoaderBullet = parseBoolean(type[1]);
 				break;
 			case "isActive":
 				gunInfo.isActive = parseBoolean(type[1]);
@@ -2362,6 +2387,9 @@ public class HMGGunMaker {
 			case "hasVT":
 				gunInfo.hasVT = parseBoolean(type[1]);
 				break;
+			case "forceVT":
+				gunInfo.forceVT = parseBoolean(type[1]);
+				break;
 			case "VTRange":
 				gunInfo.VTRange = Double.parseDouble(type[1]);
 				break;
@@ -2371,13 +2399,15 @@ public class HMGGunMaker {
 			case "OnEntity_RotationYawPoint":
 				gunInfo.posGetter.turretRotationYawPoint = new double[]{parseDouble(type[1]), parseDouble(type[2]), parseDouble(type[3])};
 				gunInfo.posGetter.turretYawCenterpos = new Vector3d(gunInfo.posGetter.turretRotationYawPoint);
+				gunInfo.posGetter.turretYawCenterpos.z *= -1;
 				break;
 			case "OnEntity_RotationPitchPoint":
 				gunInfo.posGetter.turretRotationPitchPoint = new double[]{parseDouble(type[1]), parseDouble(type[2]), parseDouble(type[3])};
 				gunInfo.posGetter.turretPitchCenterpos = new Vector3d(gunInfo.posGetter.turretRotationPitchPoint);
+				gunInfo.posGetter.turretPitchCenterpos.z *= -1;
 				break;
 			case "OnEntity_BarrelPoint":
-				gunInfo.posGetter.barrelpos = new double[]{parseDouble(type[1]), parseDouble(type[2]), parseDouble(type[3])};
+				gunInfo.posGetter.barrelpos = new double[]{parseDouble(type[1]), parseDouble(type[2]), -parseDouble(type[3])};
 				gunInfo.posGetter.cannonPos = new Vector3d(gunInfo.posGetter.barrelpos);
 				gunInfo.posGetter.cartPos = new Vector3d(gunInfo.posGetter.barrelpos);
 				break;
@@ -2391,7 +2421,7 @@ public class HMGGunMaker {
 					double[] aBarrelPos = multi_barrelpos[i];
 					aBarrelPos[0] = parseDouble(type[id * 3 + 2]);
 					aBarrelPos[1] = parseDouble(type[id * 3 + 3]);
-					aBarrelPos[2] = parseDouble(type[id * 3 + 4]);
+					aBarrelPos[2] = -parseDouble(type[id * 3 + 4]);
 					gunInfo.posGetter.multiCannonPos[i] = new Vector3d(aBarrelPos);
 					gunInfo.posGetter.multiCartPos[i] = new Vector3d(aBarrelPos);
 					id++;
@@ -2428,6 +2458,9 @@ public class HMGGunMaker {
 			case "sightOffset_zeroIn_add":
 				int i = parseInt(type[1]);
 				gunInfo.sightOffset_zeroIn[i] = new Vector3d(parseDouble(type[2]),parseDouble(type[3]),parseDouble(type[4]));
+				break;
+			case "isHighAngleFire":
+				gunInfo.isHighAngleFire = parseBoolean(type[1]);
 				break;
 		}
 	}

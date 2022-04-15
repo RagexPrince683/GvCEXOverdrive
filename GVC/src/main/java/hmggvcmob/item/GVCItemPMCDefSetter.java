@@ -50,10 +50,14 @@ public class GVCItemPMCDefSetter extends Item {
             }else {
                 EntityPMCBase target = searchEntity(itemStack, entityPlayer, world);
                 if (target != null) {
+                    String platoonName = itemStack.hasDisplayName() ? itemStack.getDisplayName() :null;
+                    if(platoonName != null)target.platoonName = platoonName;
+//                    System.out.println("" + target.platoonName);
                     if (target.getPlatoon() == null)target.makePlatoon();
                     else {
                         target.enlistPlatoon(false);
-                        target = (EntityPMCBase) target.getPlatoon().leader.entity;
+                        if( target.getPlatoon().leader != null)
+                            target = (EntityPMCBase) target.getPlatoon().leader.entity;
                     }
                     switch (mode) {
                         case 1:

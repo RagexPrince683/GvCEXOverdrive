@@ -17,8 +17,8 @@ public class HMVPacketHandler {
         int id=0;
         INSTANCE.registerMessage(HMVMMessageKeyPressedHandler.class, HMVMMessageKeyPressed.class, ++id, Side.SERVER);
         INSTANCE.registerMessage(HMVMHandleVehicleState.class, HMVPakcetVehicleState.class, ++id, Side.CLIENT);
-        INSTANCE.registerMessage(HMVHandleSeatData.class, HMVPacketSeatData.class, ++id, Side.CLIENT);
-        INSTANCE.registerMessage(HMVHandleSeatData.class, HMVPacketSeatData.class, ++id, Side.SERVER);
+//        INSTANCE.registerMessage(HMVHandleSeatData.class, HMVPacketSeatData.class, ++id, Side.CLIENT);
+//        INSTANCE.registerMessage(HMVHandleSeatData.class, HMVPacketSeatData.class, ++id, Side.SERVER);
         INSTANCE.registerMessage(HMVMHandleVehicleTurretSync.class, HMVPakcetVehicleTurretSync.class, ++id, Side.CLIENT);
         INSTANCE.registerMessage(HMVHandlePickNewEntity.class, HMVPacketPickNewEntity.class, ++id, Side.CLIENT);
         INSTANCE.registerMessage(HMVHandleDisMountEntity.class, HMVPacketDisMountEntity.class, ++id, Side.SERVER);

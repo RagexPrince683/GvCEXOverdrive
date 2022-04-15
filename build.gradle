@@ -16,19 +16,6 @@ buildscript {
 }
 
 
-allprojects {
-    apply plugin: 'forge'
-
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    version = "1.0"
-    archivesBaseName = project.projectDir.name
-
-    minecraft{
-        version = "1.7.10-10.13.4.1614-1.7.10"
-        runDir = "eclipse"
-    }
-}
 
 
 dependencies {
@@ -47,28 +34,44 @@ dependencies {
 
 }
 
-processResources
-{
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
-
 allprojects {
+    apply plugin: 'forge'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    archivesBaseName = project.projectDir.name
+
+    minecraft{
+        version = "1.7.10-10.13.4.1614-1.7.10"
+        runDir = "eclipse"
+    }
+
+
     tasks.withType(JavaExec) {
         jvmArgs "-Xms4G", "-Xmx4G"
+    }
+
+
+    afterEvaluate {
+        processResources {
+            // this will ensure that this task is redone when the versions change.
+            inputs.property "modid", project.name
+            inputs.property "version", project.version
+            inputs.property "mcversion", project.minecraft.version
+
+            // replace stuff in mcmod.info, nothing else
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
+
+                // replace version and mcversion
+                expand 'version': project.version, 'mcversion': project.minecraft.version, 'modid': project.name
+            }
+
+            // copy everything else, thats not the mcmod.info
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
     }
 }

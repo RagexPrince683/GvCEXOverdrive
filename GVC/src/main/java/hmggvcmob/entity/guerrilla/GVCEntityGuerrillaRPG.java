@@ -4,6 +4,7 @@ package hmggvcmob.entity.guerrilla;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadevehicle.SlowPathFinder.WorldForPathfind;
 import hmggvcmob.ai.*;
+import hmggvcmob.ai.newai.AIAttackEntityByGun;
 import hmggvcmob.entity.IHasVehicleGacha;
 import hmggvcutil.GVCUtils;
 import net.minecraft.block.Block;
@@ -23,10 +24,6 @@ public class GVCEntityGuerrillaRPG extends EntityGBase implements IHasVehicleGac
         super(par1World);
         this.setSize(0.6F, 1.8F);
         if(cfg_blockdestory)this.tasks.addTask(1,new AIBuilder(this,worldForPathfind));
-        this.tasks.addTask(2,aiAttackGun = new AIAttackGun(this,160,5,10,15,true,true,new WorldForPathfind(worldObj)));
-        spread = 3;
-        canuseAlreadyPlacedGun = false;
-        canusePlacedGun = false;
     }
     protected void applyEntityAttributes()
     {

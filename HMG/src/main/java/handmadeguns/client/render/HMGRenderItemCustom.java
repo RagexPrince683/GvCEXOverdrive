@@ -135,8 +135,8 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 			//INSERT : フレームバッファに描画開始
 			//       : 保険でMatrixを一層深く
 			//       : 銃のテクスチャを再bind
-			FBO.start();
-			GL11.glPushMatrix();
+//			FBO.start();
+//			GL11.glPushMatrix();
 			FMLClientHandler.instance().getClient().getTextureManager().bindTexture(this.texture);
 			glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			//INSERT-END
@@ -201,47 +201,47 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 
 
 
-			//INSET : Matrixを上層へ復元
-			//      : FBOからテクスチャIDを取得
-			//      : 画面に出力できるようにMatrixを保存し初期化
-			//      : テクスチャをViwerPortに出力
-			//      : 保存したMatrixを呼び戻す
-			GL11.glPopMatrix();
-			int tex = FBO.end();
-
-			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
-
-			glPushMatrix();
-			glDisable(GL_DEPTH_TEST);
-
-			glMatrixMode(GL_PROJECTION);
-			FloatBuffer projectionMatrix = BufferUtils.createFloatBuffer(16);
-			glGetFloat(GL_PROJECTION_MATRIX, projectionMatrix);
-			glLoadIdentity();
-
-			glMatrixMode(GL_MODELVIEW);
-			FloatBuffer modelViewMatrix = BufferUtils.createFloatBuffer(16);
-			glGetFloat(GL_PROJECTION_MATRIX, modelViewMatrix);
-			glLoadIdentity();
-
-			glOrtho(0,1,1,0,-1,1);
-			glDisable(GL_CULL_FACE);
-			glBindTexture(GL_TEXTURE_2D, tex);
-			glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			glBegin(GL_QUADS);
-			glTexCoord2d(0.0D, 1.0D);glVertex2d(0.0D, 0.0D);
-			glTexCoord2d(0.0D, 0.0D);glVertex2d(0.0D, 1.0D);
-			glTexCoord2d(1.0D, 0.0D);glVertex2d(1.0D, 1.0D);
-			glTexCoord2d(1.0D, 1.0D);glVertex2d(1.0D, 0.0D);
-			glEnd();
-			glEnable(GL_CULL_FACE);
-
-			glMatrixMode(GL_PROJECTION);
-			glLoadMatrix(projectionMatrix);
-			glMatrixMode(GL_MODELVIEW);
-			glLoadMatrix(modelViewMatrix);
-			glPopMatrix();
-			//INSERT-END
+//			//INSET : Matrixを上層へ復元
+//			//      : FBOからテクスチャIDを取得
+//			//      : 画面に出力できるようにMatrixを保存し初期化
+//			//      : テクスチャをViwerPortに出力
+//			//      : 保存したMatrixを呼び戻す
+//			GL11.glPopMatrix();
+//			int tex = FBO.end();
+//
+//			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
+//
+//			glPushMatrix();
+//			glDisable(GL_DEPTH_TEST);
+//
+//			glMatrixMode(GL_PROJECTION);
+//			FloatBuffer projectionMatrix = BufferUtils.createFloatBuffer(16);
+//			glGetFloat(GL_PROJECTION_MATRIX, projectionMatrix);
+//			glLoadIdentity();
+//
+//			glMatrixMode(GL_MODELVIEW);
+//			FloatBuffer modelViewMatrix = BufferUtils.createFloatBuffer(16);
+//			glGetFloat(GL_PROJECTION_MATRIX, modelViewMatrix);
+//			glLoadIdentity();
+//
+//			glOrtho(0,1,1,0,-1,1);
+//			glDisable(GL_CULL_FACE);
+//			glBindTexture(GL_TEXTURE_2D, tex);
+//			glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+//			glBegin(GL_QUADS);
+//			glTexCoord2d(0.0D, 1.0D);glVertex2d(0.0D, 0.0D);
+//			glTexCoord2d(0.0D, 0.0D);glVertex2d(0.0D, 1.0D);
+//			glTexCoord2d(1.0D, 0.0D);glVertex2d(1.0D, 1.0D);
+//			glTexCoord2d(1.0D, 1.0D);glVertex2d(1.0D, 0.0D);
+//			glEnd();
+//			glEnable(GL_CULL_FACE);
+//
+//			glMatrixMode(GL_PROJECTION);
+//			glLoadMatrix(projectionMatrix);
+//			glMatrixMode(GL_MODELVIEW);
+//			glLoadMatrix(modelViewMatrix);
+//			glPopMatrix();
+//			//INSERT-END
 			FMLClientHandler.instance().getClient().getTextureManager().bindTexture(this.texture);
 			GL11.glDepthFunc(GL11.GL_LEQUAL);
 			glEnable(GL_DEPTH_TEST);

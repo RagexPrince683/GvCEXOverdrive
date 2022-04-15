@@ -1,10 +1,9 @@
 package hmggvcmob.event;
 
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import handmadeguns.event.GunSoundEvent;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
-import hmggvcmob.GVCMobPlus;
+import hmggvcmob.entity.EntityMGAX55;
 import hmggvcmob.tile.TileEntityFlag;
 import hmggvcutil.GVCUtils;
 import hmggvcmob.entity.TU95;
@@ -13,8 +12,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelFormatException;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -23,11 +22,14 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static hmggvcmob.GVCMobPlus.*;
 
 public class GVCMXEntityEvent {
     public static List<Entity> soundedentity = new ArrayList<>();
+
 
     @SubscribeEvent
     public void canupdate(EntityEvent.CanUpdate event){
@@ -90,12 +92,12 @@ public class GVCMXEntityEvent {
 		EntityLivingBase entity = event.entityLiving;
 
 		if(entity instanceof EntityPlayer) {
-			double dist = 4096;
+			double dist = 16384;
 			TileEntityFlag closestFlag = null;
 			for(Object obj : entity.worldObj.loadedTileEntityList){
 				if(obj instanceof TileEntityFlag) {
 					TileEntityFlag tileEntity = (TileEntityFlag) obj;
-					if(tileEntity.flagHeight >= tileEntity.campObj.maxFlagHeight/2 && tileEntity.campObj == forPlayer) {
+					if(tileEntity.flagHeight >= tileEntity.campObj.maxFlagHeight/2 && tileEntity.campObj.playerIsFriend) {
 						double tempDist = tileEntity.getDistanceFrom(entity.posX, entity.posY, entity.posZ);
 						if (tempDist < dist || dist == -1) {
 							dist = tempDist;
@@ -110,6 +112,17 @@ public class GVCMXEntityEvent {
 				((EntityPlayer)entity).setPositionAndUpdate(closestFlag.xCoord + 0.5,closestFlag.yCoord+1,closestFlag.zCoord + 0.5);
 				event.setCanceled(true);
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public void entitydamaged(LivingHurtEvent event)
+	{
+		EntityLivingBase entity = event.entityLiving;
+
+		if ((entity != null && entity.ridingEntity instanceof EntityMGAX55)) {
+			event.ammount = 0;
+			event.setCanceled(true);
 		}
 	}
 }

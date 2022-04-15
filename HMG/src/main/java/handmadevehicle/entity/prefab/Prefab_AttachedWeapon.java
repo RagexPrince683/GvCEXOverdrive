@@ -17,6 +17,10 @@ public class Prefab_AttachedWeapon {
 	public Prefab_AttachedWeapon[] prefab_Childturrets;
 	public Prefab_AttachedWeapon[] prefab_ChildOnBarrel;
 	public Vector3d turretsPos;//砲塔搭載位置
+
+	public float initialRotationYaw;
+	public float initialRotationPitch;
+
 	public int linkedGunStackID = -1;
 	
 //	public TurretObj getTurretOBJ(World world, IVehicle motherEntity, TurretObj[] turretObjs_all, int[] nonprimitiveID){
@@ -40,6 +44,8 @@ public class Prefab_AttachedWeapon {
 		current.linkedGunStackID = linkedGunStackID;
 		current.motherRotCenter = motherEntity.getBaseLogic().prefab_vehicle.rotcenterVec;
 		current.onMotherPos = turretsPos;
+		current.turretrotationYaw = initialRotationYaw;
+		current.turretrotationPitch = initialRotationPitch;
 		if(prefab_turret.useVehicleInventory){
 			current.connectedInventory = motherEntity.getBaseLogic().inventoryVehicle;
 		}
@@ -48,6 +54,7 @@ public class Prefab_AttachedWeapon {
 			else turretObjs_all[motherTurretID].addchild_triggerLinked(current);
 			current.isMother = false;
 		}else {
+//			System.out.println("" + current.getName());
 			current.isMother = true;
 		}
 		return current;

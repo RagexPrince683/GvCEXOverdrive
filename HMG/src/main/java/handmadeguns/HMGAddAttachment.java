@@ -259,7 +259,7 @@ public class HMGAddAttachment
 							((HMGItemSightBase)newitem).scopeonly = textureOnly;
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -274,7 +274,7 @@ public class HMGAddAttachment
 							if(hud != null)((HMGItemSightBase)newitem).scopetexture = new ResourceLocation("handmadeguns:textures/misc/" + hud);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -289,7 +289,7 @@ public class HMGAddAttachment
 							if(hud != null)((HMGItemSightBase)newitem).scopetexture = new ResourceLocation("handmadeguns:textures/misc/" + hud);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -301,7 +301,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture).setCreativeTab(HandmadeGunsCore.tabhmg);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -313,7 +313,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture).setCreativeTab(HandmadeGunsCore.tabhmg);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -325,7 +325,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture).setCreativeTab(HandmadeGunsCore.tabhmg);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -337,7 +337,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture).setCreativeTab(HandmadeGunsCore.tabhmg);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -349,7 +349,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture).setCreativeTab(HandmadeGunsCore.tabhmg);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -361,7 +361,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture).setCreativeTab(HandmadeGunsCore.tabhmg);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -378,7 +378,7 @@ public class HMGAddAttachment
 							((HMGItemAttachmentBase)newitem).slowdownrate = slowdownrate;
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -396,7 +396,7 @@ public class HMGAddAttachment
 							((HMGItemAttachmentBase)newitem).slowdownrate = slowdownrate;
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -409,7 +409,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -423,7 +423,7 @@ public class HMGAddAttachment
 							
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -439,7 +439,7 @@ public class HMGAddAttachment
 							((HMG_simpleMaterial)newitem).cosume_onCraft = cosume_onCraft;
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -450,7 +450,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -461,7 +461,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -472,7 +472,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -483,7 +483,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}
@@ -497,7 +497,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
-								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							}else{
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
 							}

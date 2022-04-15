@@ -120,16 +120,18 @@ public class GVCItemGuerrillaEgg extends Item
                 //entityskeleton.mountEntity(entityskeleton1);
                 --par1ItemStack.stackSize;
                 return true;
-            }else  if(this.mob == 11){
-                ++par5;
-                int var12 = MathHelper.floor_double((double)(par2EntityPlayer.rotationYaw));
-                GVCEntityAAG entityskeleton = new GVCEntityAAG(par3World);
-                entityskeleton.setLocationAndAngles(par4+0.5, par5, par6+0.5, var12, 0.0F);
-                entityskeleton.setCurrentItemOrArmor(0, new ItemStack(GVCUtils.fn_pkm));
-                par3World.spawnEntityInWorld(entityskeleton);
-                --par1ItemStack.stackSize;
-                return true;
-            }else if(this.mob == 12){
+            }else
+//                if(this.mob == 11){
+//                ++par5;
+//                int var12 = MathHelper.floor_double((double)(par2EntityPlayer.rotationYaw));
+//                GVCEntityAAG entityskeleton = new GVCEntityAAG(par3World);
+//                entityskeleton.setLocationAndAngles(par4+0.5, par5, par6+0.5, var12, 0.0F);
+//                entityskeleton.setCurrentItemOrArmor(0, new ItemStack(GVCUtils.fn_pkm));
+//                par3World.spawnEntityInWorld(entityskeleton);
+//                --par1ItemStack.stackSize;
+//                return true;
+//            }else
+                if(this.mob == 12){
                 ++par5;
                 int var12 = MathHelper.floor_double((double)(par2EntityPlayer.rotationYaw));
                 GVCEntityGuerrillaM entityskeleton = new GVCEntityGuerrillaM(par3World);

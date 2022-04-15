@@ -39,7 +39,9 @@ public class GunInfo {
 	public float onTurretScale = 1.0f;
 	public boolean restrictTurretMoveSpeed;
 	public float turretspeedY = -1;
+	public float turretMotorAccelaY = -1;
 	public float turretspeedP = -1;
+	public float turretMotorAccelaP = -1;
 	public float turreboxW = 0.8f;
 	public float turreboxH = 0.8f;
 	public int turretMaxHP = -1;
@@ -156,7 +158,9 @@ public class GunInfo {
 	public float  bouncelimit = 90;
 	public float  resistance = 0.99f;
 	public float  acceleration;
-	public float gravity = 0.029F;
+	public int accelerationDelay = 0;
+	public int accelerationFuse = -1;
+	public float gravity = 0.049F;
 	public boolean canbounce = false;
 	public ArrayList<Integer> burstcount = new ArrayList<Integer>(){
 //		{
@@ -188,9 +192,12 @@ public class GunInfo {
 	public boolean canlockEntity = false;
 	public boolean displayPredict = false;
 	public boolean displayPredict_MoveSight = true;
+	public boolean displayPredict_ConsiderMyLooking = true;
 	public double seekerSize = 60;
 	public float seekerSize_bullet = 90;
 	public boolean semiActive = false;
+	public boolean SACLOS_Homing = false;
+	public boolean chunkLoaderBullet = false;
 	public boolean isActive = false;
 	public boolean lock_to_Vehicle = false;
 	public double lookDown = 1;
@@ -225,11 +232,14 @@ public class GunInfo {
 	public float damagerange;
 
 	public boolean hasVT   = false;
+	public boolean forceVT   = false;
 	public double  VTRange = 10;
 	public double  VTWidth = 30;
 
 	public float resistanceinWater;
-	
+
+	public boolean isHighAngleFire;
+
 	public static Vec3 getLook(float p_70676_1_, Entity entity)
 	{
 	    float f1;
@@ -244,5 +254,25 @@ public class GunInfo {
 	    f3 = -MathHelper.cos(-entity.rotationPitch * 0.017453292F);
 	    f4 = MathHelper.sin(-entity.rotationPitch * 0.017453292F);
 	    return Vec3.createVectorHelper((double)(f2 * f3), (double)f4, (double)(f1 * f3));
+	}
+
+
+	public void setmodelADSPosAndRotation(double px,double py,double pz){
+		sightPosN = new double[]{(-px)*0.2 * inworldScale,(-py)*0.2 * inworldScale,-pz*0.2 * inworldScale};
+	}
+	public void setADSoffsetRed(double px,double py,double pz){
+		sightPosR = new double[]{(-px)*0.2 * inworldScale,(-py)*0.2 * inworldScale,-pz*0.2 * inworldScale};
+	}
+	public void setADSoffsetScope(double px,double py,double pz){
+		sightPosS = new double[]{(-px)*0.2 * inworldScale,(-py)*0.2 * inworldScale,-pz*0.2 * inworldScale};
+	}
+	public void setmodelADSPosAndRotation_ForVehicle(double px,double py,double pz){
+		sightPosN = new double[]{(-px) * inworldScale,(-py) * inworldScale,-pz * inworldScale};
+	}
+	public void setADSoffsetRed_ForVehicle(double px,double py,double pz){
+		sightPosR = new double[]{(-px) * inworldScale,(-py) * inworldScale,-pz * inworldScale};
+	}
+	public void setADSoffsetScope_ForVehicle(double px,double py,double pz){
+		sightPosS = new double[]{(-px) * inworldScale,(-py) * inworldScale,-pz * inworldScale};
 	}
 }

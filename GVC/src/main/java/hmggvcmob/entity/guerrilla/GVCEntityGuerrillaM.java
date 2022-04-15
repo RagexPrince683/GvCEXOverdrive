@@ -1,5 +1,7 @@
 package hmggvcmob.entity.guerrilla;
 
+import handmadeguns.Util.GunsUtils;
+import hmggvcmob.tile.TileEntityFlag;
 import hmggvcutil.GVCUtils;
 
 import java.util.Calendar;
@@ -33,10 +35,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.AchievementList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import static hmggvcmob.GVCMobPlus.cfg_mob_setCamp;
-import static hmggvcmob.GVCMobPlus.fn_Guerrillaflag;
+import static hmggvcmob.GVCMobPlus.*;
 
 public class GVCEntityGuerrillaM extends EntityMob
 {
@@ -46,6 +48,7 @@ public class GVCEntityGuerrillaM extends EntityMob
     public GVCEntityGuerrillaM(World par1World)
     {
         super(par1World);
+        renderDistanceWeight = Double.MAX_VALUE;
         this.tasks.addTask(1, new EntityAISwimming(this));
         this.tasks.addTask(2, new EntityAIRestrictSun(this));
         this.tasks.addTask(3, new EntityAIFleeSun(this, 1.0D));
@@ -87,6 +90,8 @@ public class GVCEntityGuerrillaM extends EntityMob
     */
     public void onLivingUpdate()
     {
+        if(cfg_noGuerrillaSpawnAsInfantry)this.setDead();
+        else
         if (!this.worldObj.isRemote)
         {
             if (cfg_mob_setCamp && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) && this.worldObj.rand.nextInt(1200) == 0)
@@ -233,6 +238,47 @@ public class GVCEntityGuerrillaM extends EntityMob
         return EnumCreatureAttribute.UNDEAD;
     }
 
+    @Override
+    public boolean getCanSpawnHere()
+    {
+        {
+            EntityPlayer entityPlayer = this.worldObj.getClosestPlayerToEntity(this,256);
+            if(entityPlayer != null){
+
+
+                if(entityPlayer.getDistanceSqToEntity(this) < cfg_minimumGuerrillaSpawnDistance)
+                    return false;//近距離にスポーンするのはキツすぎる
+            }
+        }
+        if(cfg_noGuerrillaSpawnInView)for(Object o : this.worldObj.playerEntities){
+            EntityPlayer entityPlayer = (EntityPlayer) o;
+            Vec3 vec3 = Vec3.createVectorHelper(this.posX, this.posY + this.getEyeHeight(), this.posZ);
+            Vec3 vec31 = Vec3.createVectorHelper(entityPlayer.posX, entityPlayer.posY + entityPlayer.getEyeHeight(), entityPlayer.posZ);
+            if(GunsUtils.getMovingObjectPosition_forBlock_CheckEmpty(worldObj,vec3, vec31,3,new Block[] {Blocks.glass,Blocks.glass_pane,Blocks.stained_glass,Blocks.stained_glass_pane})){
+                return false;//視線が通る範囲にプレイヤーが居るならキャンセルする。視界内にスポーンするのがクソゲだったので
+            }
+        }
+        {
+            double dist = 9216;
+            TileEntityFlag closestFlag = null;
+            for (Object obj : this.worldObj.loadedTileEntityList) {
+                if (obj instanceof TileEntityFlag) {
+                    TileEntityFlag tileEntity = (TileEntityFlag) obj;
+                    if (tileEntity.flagHeight >= tileEntity.campObj.maxFlagHeight / 2 && tileEntity.campObj == forPlayer) {
+                        double tempDist = tileEntity.getDistanceFrom(this.posX, tileEntity.yCoord, this.posZ);
+                        if (tempDist < dist || dist == -1) {
+                            dist = tempDist;
+                            closestFlag = tileEntity;
+                        }
+                    }
+                }
+            }
+            if (closestFlag != null) {
+                return false;
+            }
+        }
+        return super.getCanSpawnHere();
+    }
 
     /**
      * Handles updating while being ridden by an entity

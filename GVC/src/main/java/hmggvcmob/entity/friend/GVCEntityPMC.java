@@ -2,12 +2,14 @@ package hmggvcmob.entity.friend;
 
 
 import handmadevehicle.SlowPathFinder.WorldForPathfind;
+import hmggvcmob.ai.newai.AIAttackEntityByGun;
 import hmggvcutil.GVCUtils;
-import hmggvcmob.ai.AIAttackGun;
 import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
+import static hmggvcmob.GVCMobPlus.cfg_guerrillasrach;
 
 public class GVCEntityPMC extends EntityPMCBase
 {
@@ -15,13 +17,19 @@ public class GVCEntityPMC extends EntityPMCBase
     {
         super(par1World);
         this.setSize(0.6F, 1.8F);
-        this.tasks.addTask(1,aiAttackGun = new AIAttackGun(this,80,20,10,10,true,true,new WorldForPathfind(worldObj)));
     }
     
     public void addRandomArmor()
     {
         super.addRandomArmor();
         this.setCurrentItemOrArmor(0, new ItemStack(GVCUtils.fn_g36));
+    }
+    protected void applyEntityAttributes()
+    {
+        super.applyEntityAttributes();
+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(movespeed = 0.33000000417232513D);
+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(cfg_guerrillasrach*2);
     }
 
 //    public void onUpdate()

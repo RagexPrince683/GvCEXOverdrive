@@ -31,11 +31,9 @@ public class AIBuilder extends EntityAIBase {
 		if(((IflagBattler)entityBuilder).getTargetCampPosition() != null){
 			targetPos = getJavaxVecFromIntArray(((IflagBattler)entityBuilder).getTargetCampPosition());
 		}else if(entityBuilder.getAttackTarget() != null &&
-				((IGVCmob)entityBuilder).getAttackGun().setUp() &&
 				!entityBuilder.canEntityBeSeen(entityBuilder.getAttackTarget())){
-			targetPos = ((IGVCmob)entityBuilder).getSeeingPosition();
+			targetPos = ((IGVCmob)entityBuilder).getAimPos();
 			if(targetPos != null){
-				((IGVCmob)entityBuilder).getAttackGun().forceStop = true;
 				targetPos = new Vector3d(targetPos);
 				targetPos.y -=1;
 			}
@@ -45,7 +43,6 @@ public class AIBuilder extends EntityAIBase {
 		if(targetPos != null && isThereObstacle()){
 			return true;
 		}
-		((IGVCmob)entityBuilder).getAttackGun().forceStop = false;
 		return false;
 	}
 	public void startExecuting() {
@@ -93,16 +90,13 @@ public class AIBuilder extends EntityAIBase {
 				Vector3d temporary = new Vector3d(toTargetPos);
 				temporary.scale(3);
 				temporary.add(entityPos);
-				entityBuilder.getNavigator().setPath(worldForPathfind.getEntityPathToXYZ(entityBuilder,
-						MathHelper.floor_double(temporary.x),
-						MathHelper.floor_double(temporary.y),
-						MathHelper.floor_double(temporary.z),
-						80,true, false, false, false),1);
+				((IGVCmob)entityBuilder).getMoveToPositionMng().setMovingSpeed(1);
+				((IGVCmob)entityBuilder).getMoveToPositionMng().getMoveToPos().set(temporary);
 				making = 0;
 			} else {
 				if (making == 0)
 					entityPos = new Vector3d(entityBuilder.posX, entityBuilder.posY - 1, entityBuilder.posZ);
-				entityBuilder.getNavigator().clearPathEntity();
+				((IGVCmob)entityBuilder).getMoveToPositionMng().stop();
 				if (entityBuilder.getHeldItem() == null)
 					entityBuilder.setCurrentItemOrArmor(0, new ItemStack(Item.getItemFromBlock(Blocks.dirt)));
 				entityBuilder.setSneaking(true);
@@ -153,7 +147,6 @@ public class AIBuilder extends EntityAIBase {
 		entityBuilder.setSneaking(false);
 		making = 0;
 		prevDigPos = null;
-		((IGVCmob)entityBuilder).getAttackGun().forceStop = false;
 	}
 
 	public boolean isThereObstacle(){

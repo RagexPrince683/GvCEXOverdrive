@@ -90,7 +90,7 @@ public class VehicleContainer extends Container {
 	{
 		ItemStack itemstack = null;
 		Slot slot = (Slot)this.inventorySlots.get(slotID);
-		
+
 		if (slot != null && slot.getHasStack())
 		{
 			ItemStack itemstack1 = slot.getStack();
@@ -98,8 +98,7 @@ public class VehicleContainer extends Container {
 			
 			if (slot.inventory == userInventory)
 			{
-				if (!this.mergeItemStack(itemstack1, 0, inventoryVehicle.getSizeInventory(), false))
-				{
+				if (!this.mergeItemStack(itemstack1, 0, inventoryVehicle.getSizeInventory(), false)) {
 					return null;
 				}
 			}
@@ -146,17 +145,19 @@ public class VehicleContainer extends Container {
 				{
 					int l = itemstack1.stackSize + moveingStack.stackSize;
 
-					if (l <= moveingStack.getMaxStackSize())
+					if (l <= moveingStack.getMaxStackSize() && l <= inventoryVehicle.getInventoryStackLimit(k))
 					{
 						moveingStack.stackSize = 0;
 						itemstack1.stackSize = l;
 						slot.onSlotChanged();
 						flag1 = true;
 					}
-					else if (itemstack1.stackSize < moveingStack.getMaxStackSize())
+					else if (itemstack1.stackSize < moveingStack.getMaxStackSize() && itemstack1.stackSize <= inventoryVehicle.getInventoryStackLimit(k))
 					{
-						moveingStack.stackSize -= moveingStack.getMaxStackSize() - itemstack1.stackSize;
-						itemstack1.stackSize = moveingStack.getMaxStackSize();
+						int stackMax = moveingStack.getMaxStackSize();
+						if(moveingStack.getMaxStackSize() > inventoryVehicle.getInventoryStackLimit(k))stackMax = inventoryVehicle.getInventoryStackLimit(k);
+						moveingStack.stackSize -= stackMax - itemstack1.stackSize;
+						itemstack1.stackSize = stackMax;
 						slot.onSlotChanged();
 						flag1 = true;
 					}
@@ -188,14 +189,18 @@ public class VehicleContainer extends Container {
 			{
 				slot = (Slot)this.inventorySlots.get(k);
 				itemstack1 = slot.getStack();
+				int inventoryLimit = inventoryVehicle.getInventoryStackLimit(k);
 
 				if (itemstack1 == null && slot.isItemValid(moveingStack))
 				{
-					slot.putStack(moveingStack.copy());
+					ItemStack copiedStack = moveingStack.copy();
+					slot.putStack(copiedStack);
 					slot.onSlotChanged();
-					moveingStack.stackSize = 0;
-					flag1 = true;
-					break;
+					moveingStack.stackSize -= copiedStack.stackSize;
+					if(moveingStack.stackSize == 0) {
+						flag1 = true;
+						break;
+					}
 				}
 
 				if (p_75135_4_)

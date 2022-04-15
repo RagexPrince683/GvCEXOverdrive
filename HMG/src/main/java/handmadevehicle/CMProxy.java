@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import static handmadevehicle.HMVehicle.hmv_commandReloadparm;
+import static handmadevehicle.events.HMVRenderSomeEvent.playerSeatID;
 
 public class CMProxy {
 	Field boundingboxField = null;
@@ -220,5 +221,9 @@ public class CMProxy {
 
 	public boolean isSneaking(){
 		return false;
+	}
+
+	public int clientPlayerSeatID(){
+		return 0;
 	}
 }

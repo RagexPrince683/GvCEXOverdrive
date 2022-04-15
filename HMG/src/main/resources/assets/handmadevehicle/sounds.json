@@ -1,0 +1,4 @@
+{
+"ArmorBounce": {"category": "neutral","sounds": ["ArmorBounce"]},
+"armorhit": {"category": "neutral","sounds": ["armorhit"]}
+}

@@ -1,15 +1,14 @@
 package hmggvcmob.entity.friend;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import handmadeguns.entity.IFF;
 import handmadeguns.entity.PlacedGunEntity;
 import handmadevehicle.entity.EntityDummy_rider;
 import handmadevehicle.entity.parts.Modes;
-import hmggvcmob.ai.PlatoonOBJ;
+import hmggvcmob.entity.util.PlatoonOBJ;
 import hmggvcmob.camp.CampObj;
 import hmggvcmob.entity.IGVCmob;
 import hmggvcmob.entity.IflagBattler;
-import hmggvcmob.entity.PlatoonInfoData;
+import hmggvcmob.entity.util.PlatoonInfoData;
 import hmggvcmob.item.GVCItemPMCDefSetter;
 import hmggvcmob.network.GVCMPacketHandler;
 import hmggvcmob.network.GVCPacket_PlatoonInfoSync;
@@ -39,24 +38,22 @@ public class EntityPMCBase extends EntitySoBases implements IFF,IGVCmob, IflagBa
 	public boolean interact(EntityPlayer entityPlayer) {
 		if(entityPlayer.getHeldItem() != null && entityPlayer.getHeldItem().getItem() instanceof GVCItemPMCDefSetter && entityPlayer.getHeldItem().hasDisplayName()){
 
-			HMG_proxy.setRightclicktimer();
+			HMG_proxy.setRightClickTimer();
 			platoonName = entityPlayer.getHeldItem().getDisplayName();
 			this.setCustomNameTag(platoonName);
 			return true;
 		}
 
-		List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(3, 3
-				, 3));
+		List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(5, 5
+				, 5));
 
 		if (list != null && !list.isEmpty() && cfg_guerrillacanusePlacedGun && canuseAlreadyPlacedGun && !worldObj.isRemote) {
 			for (int i = 0; i < list.size(); ++i) {
 				Entity entity = (Entity) list.get(i);
-				 {
-					if (entity.riddenByEntity == null && entity instanceof PlacedGunEntity) {
-						this.mountEntity((PlacedGunEntity) entity);
-						this.setCurrentItemOrArmor(0, null);
-						break;
-					}
+				if (entity.riddenByEntity == null && entity instanceof PlacedGunEntity) {
+					this.mountEntity((PlacedGunEntity) entity);
+					this.setCurrentItemOrArmor(0, null);
+					break;
 				}
 			}
 		}
@@ -69,7 +66,7 @@ public class EntityPMCBase extends EntitySoBases implements IFF,IGVCmob, IflagBa
 		super.applyEntityAttributes();
 		this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(movespeed = 0.33000000417232513D);
 		this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(20.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(cfg_guerrillasrach);
+		this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(cfg_guerrillasrach*2);
 		//this.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).setBaseValue(30.0D);
 	}
 	public EntityPMCBase(World par1World) {

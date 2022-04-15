@@ -18,7 +18,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import static handmadeguns.event.RenderTickSmoothing.smooth;
+import static handmadeguns.HandmadeGunsCore.smooth;
 import static net.minecraft.util.MathHelper.wrapAngleTo180_float;
 
 public class PlacedGun_Render extends Render {

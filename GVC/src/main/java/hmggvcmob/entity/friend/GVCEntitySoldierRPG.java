@@ -1,28 +1,29 @@
 package hmggvcmob.entity.friend;
 
 
-import handmadevehicle.SlowPathFinder.WorldForPathfind;
 import hmggvcmob.ai.AIBuilder;
 import hmggvcmob.entity.IHasVehicleGacha;
-import hmggvcmob.entity.VehicleSpawnGachaOBJ;
+import handmadevehicle.VehicleSpawnGachaOBJ;
 import hmggvcutil.GVCUtils;
-import hmggvcmob.ai.AIAttackGun;
 import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+
+import static handmadevehicle.AddNewVehicle.vehicleSpawnGachaOBJs_Soldier;
+import static handmadevehicle.AddNewVehicle.vehicleSpawnGachaOBJs_Soldier_sum;
+import static hmggvcmob.GVCMobPlus.cfg_blockdestory;
+
 public class GVCEntitySoldierRPG extends EntitySoBase implements IHasVehicleGacha
 {
-    public static VehicleSpawnGachaOBJ[] vehicleSpawnGachaOBJ;
-    public static int vehilceGacha_rate_sum = 0;
 
     public GVCEntitySoldierRPG(World par1World)
     {
         super(par1World);
         this.setSize(0.6F, 1.8F);
-		this.tasks.addTask(2, aiAttackGun = new AIAttackGun(this, 120,20, 10, 5, true,true,new WorldForPathfind(worldObj)));
-        this.tasks.addTask(1,new AIBuilder(this,worldForPathfind));
+        if(cfg_blockdestory)this.tasks.addTask(1,new AIBuilder(this,worldForPathfind));
     }
     protected void applyEntityAttributes()
     {
@@ -72,11 +73,11 @@ public class GVCEntitySoldierRPG extends EntitySoBase implements IHasVehicleGach
         this.playSound("mob.skeleton.step", 0.15F, 1.0F);
     }
     @Override
-    public VehicleSpawnGachaOBJ[] getVehicleGacha() {
-        return vehicleSpawnGachaOBJ;
+    public ArrayList<VehicleSpawnGachaOBJ> getVehicleGacha() {
+        return vehicleSpawnGachaOBJs_Soldier;
     }
     @Override
     public int getVehicleGacha_rate_sum() {
-        return vehilceGacha_rate_sum;
+        return vehicleSpawnGachaOBJs_Soldier_sum;
     }
 }

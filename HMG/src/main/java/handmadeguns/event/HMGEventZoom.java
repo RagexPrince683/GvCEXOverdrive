@@ -46,7 +46,10 @@ import java.util.Iterator;
 
 import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 import static handmadeguns.client.render.HMGRenderItemGun_U_NEW.*;
+import static handmadeguns.items.guns.HMGItem_Unified_Guns.computeMoveSpeed_WithoutGunModifier;
 import static handmadevehicle.Utils.*;
+import static handmadevehicle.events.HMVRenderSomeEvent.entityCurrentPos;
+import static handmadevehicle.render.RenderVehicle.partialTicks;
 import static net.minecraft.client.gui.Gui.icons;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
@@ -56,6 +59,7 @@ public class HMGEventZoom {
 
 	// public HMGItemGunBase gunbase;
 
+	public static float currentZoomLevel = 1;
 	public boolean zoomtype;
 	public Item itemss;
 	public boolean needreset = false;
@@ -84,7 +88,7 @@ public class HMGEventZoom {
 //		System.out.println("speedModify_\t" + iattributeinstance.getAttributeValue());
 //		System.out.println("debug_FOV\t\t" + event.newfov);
 
-		if (FMLCommonHandler.instance().getSide() == Side.CLIENT) {
+		{
 //			System.out.println("modify\t\t" + HMG_proxy.getCurrentAttributeModifier());
 //			System.out.println("speedModify\t\t" + iattributeinstance.getAttributeValue());
 
@@ -95,13 +99,9 @@ public class HMGEventZoom {
 //				}
 //				entityPlayer.getAttributeMap().removeAttributeModifiers(HMG_proxy.getCurrentAttributeModifier());
 //			}
-
 			{
-
-
-
 				iattributeinstance = entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
-				double value = HMG_proxy.computeMoveSpeed_WithoutGunModifier((ModifiableAttributeInstance) iattributeinstance);
+				double value = computeMoveSpeed_WithoutGunModifier((ModifiableAttributeInstance) iattributeinstance);
 //				System.out.println("changed\t\t\t" + value);
 				float f = 1.0F;
 
@@ -169,23 +169,28 @@ public class HMGEventZoom {
 						if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
 							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomrer) {
 								event.newfov = event.newfov / gunbase.gunInfo.scopezoomred;
+								currentZoomLevel = gunbase.gunInfo.scopezoomred;
 							}
 						} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
 							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres) {
 								event.newfov = event.newfov / gunbase.gunInfo.scopezoomscope;
+								currentZoomLevel = gunbase.gunInfo.scopezoomscope;
 							}
 						} else if (itemstackSight.getItem() instanceof HMGItemSightBase) {
 							if (gunbase.gunInfo.canobj && !((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
 								event.newfov = event.newfov / ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
+								currentZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
 							}
 						}else {
 							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) {
 								event.newfov = event.newfov / gunbase.gunInfo.scopezoombase;
+								currentZoomLevel = gunbase.gunInfo.scopezoombase;
 							}
 						}
 					} else {
 						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) {
 							event.newfov = event.newfov / gunbase.gunInfo.scopezoombase;
+							currentZoomLevel = gunbase.gunInfo.scopezoombase;
 						}
 					}
 				}
@@ -203,6 +208,9 @@ public class HMGEventZoom {
 	@SubscribeEvent
 	public void displayHUD(RenderGameOverlayEvent.Post event) {
 		if (event.type == RenderGameOverlayEvent.ElementType.ALL) {
+			GL11.glEnable(GL_BLEND);
+			GL11.glEnable(GL11.GL_ALPHA_TEST);
+			GL11.glAlphaFunc(GL11.GL_GREATER, 0);
 			Minecraft minecraft = FMLClientHandler.instance().getClient();
 			ScaledResolution scaledresolution = new ScaledResolution(minecraft, minecraft.displayWidth,
 					minecraft.displayHeight);
@@ -224,8 +232,6 @@ public class HMGEventZoom {
 				}
 			}
 			if (gunstack != previtemstack) {
-				ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-						1.0d, "cameraZoom", "field_78503_V");
 				needreset = true;
 			}
 			// FontRenderer fontrenderer = minecraft.fontRenderer;
@@ -299,6 +305,7 @@ public class HMGEventZoom {
 										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer) {
 											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 													gunItem.gunInfo.scopezoomred, "cameraZoom", "field_78503_V");
+											currentZoomLevel = gunItem.gunInfo.scopezoomred;
 											needreset = true;
 										}
 										if (gunItem.gunInfo.zoomrert) {
@@ -308,6 +315,7 @@ public class HMGEventZoom {
 										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomres) {
 											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 													gunItem.gunInfo.scopezoomscope, "cameraZoom", "field_78503_V");
+											currentZoomLevel = gunItem.gunInfo.scopezoomscope;
 											needreset = true;
 										}
 										if (gunItem.gunInfo.zoomrest) {
@@ -317,6 +325,7 @@ public class HMGEventZoom {
 										if (!gunItem.gunInfo.canobj || ((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
 											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 													((HMGItemSightBase) itemstackSight.getItem()).zoomlevel, "cameraZoom", "field_78503_V");
+											currentZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
 											needreset = true;
 										}
 										if (((HMGItemSightBase) itemstackSight.getItem()).scopetexture != null) {
@@ -327,6 +336,7 @@ public class HMGEventZoom {
 									if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomren) {
 										ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 												gunItem.gunInfo.scopezoombase, "cameraZoom", "field_78503_V");
+										currentZoomLevel = gunItem.gunInfo.scopezoombase;
 										needreset = true;
 									}
 									if (gunItem.gunInfo.zoomrent) {
@@ -356,22 +366,26 @@ public class HMGEventZoom {
 										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer) {
 											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 													1.0d, "cameraZoom", "field_78503_V");
+											currentZoomLevel = 1;
 										}
 									} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
 										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomres) {
 											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 													1.0d, "cameraZoom", "field_78503_V");
+											currentZoomLevel = 1;
 										}
 									} else if (itemstackSight.getItem() instanceof HMGItemSightBase) {
 										if (!gunItem.gunInfo.canobj || ((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
 											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 													1.0d, "cameraZoom", "field_78503_V");
+											currentZoomLevel = 1;
 										}
 									}
 								} else {
 									if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomren) {
 										ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 												1.0d, "cameraZoom", "field_78503_V");
+										currentZoomLevel = 1;
 									}
 								}
 								// minecraft.gameSettings.fovSetting = 70.0F;
@@ -379,14 +393,21 @@ public class HMGEventZoom {
 							}
 							if (gunItem.gunInfo.canlock && nbt != null) {
 								//todo 3Dにしたので根本から作り直し
-								Vector3d vecToLockonPos = null;
+								Vector3d vecToLockTargetPos = null;
+								float currentRotationYaw = (minecraft.renderViewEntity.prevRotationYawHead + (minecraft.renderViewEntity.rotationYawHead - minecraft.renderViewEntity.prevRotationYawHead) * partialTicks);
+
+								float currentRotationPit = (minecraft.renderViewEntity.prevRotationPitch + (minecraft.renderViewEntity.rotationPitch - minecraft.renderViewEntity.prevRotationPitch) * partialTicks);
 								if (nbt.getBoolean("islockedentity")) {
 									Entity TGT = entityplayer.worldObj.getEntityByID(nbt.getInteger("TGT"));
 									if (TGT != null) {
-										vecToLockonPos = new Vector3d();
-										vecToLockonPos.set(TGT.posX, TGT.posY + TGT.height / 2, TGT.posZ);
-										vecToLockonPos.sub(new Vector3d(new double[]{entityplayer.posX, entityplayer.posY, entityplayer.posZ}));
-										vecToLockonPos.normalize();
+
+
+										vecToLockTargetPos = new Vector3d();
+										vecToLockTargetPos.add(entityCurrentPos(TGT));
+										vecToLockTargetPos.sub(entityCurrentPos(minecraft.renderViewEntity));
+										vecToLockTargetPos.normalize()
+										;
+										vecToLockTargetPos.normalize();
 
 
 										if (gunItem.gunInfo.displayPredict) {
@@ -407,21 +428,21 @@ public class HMGEventZoom {
 													, PredictedTargetPos.z - minecraft.renderViewEntity.posZ
 											);
 											vecToLockTarget_PredictPos.normalize();
-											RotateVectorAroundY(vecToLockTarget_PredictPos, minecraft.renderViewEntity.rotationYawHead);
-											RotateVectorAroundX(vecToLockTarget_PredictPos, minecraft.renderViewEntity.rotationPitch);
+											RotateVectorAroundY(vecToLockTarget_PredictPos, currentRotationYaw);
+											RotateVectorAroundX(vecToLockTarget_PredictPos, currentRotationPit);
 											renderLockOnMarker(minecraft, gunItem.gunInfo.predictMarker, vecToLockTarget_PredictPos);
 										}
 									}
 								} else if (nbt.getBoolean("islockedblock")) {
-									vecToLockonPos = new Vector3d();
-									vecToLockonPos.set(nbt.getDouble("LockedPosX"), nbt.getDouble("LockedPosY"), nbt.getDouble("LockedPosZ"));
-									vecToLockonPos.sub(new Vector3d(new double[]{entityplayer.posX, entityplayer.posY, entityplayer.posZ}));
-									vecToLockonPos.normalize();
+									vecToLockTargetPos = new Vector3d();
+									vecToLockTargetPos.set(nbt.getDouble("LockedPosX"), nbt.getDouble("LockedPosY"), nbt.getDouble("LockedPosZ"));
+									vecToLockTargetPos.sub(new Vector3d(new double[]{entityplayer.posX, entityplayer.posY, entityplayer.posZ}));
+									vecToLockTargetPos.normalize();
 								}
-								if (vecToLockonPos != null) {
-									RotateVectorAroundY(vecToLockonPos, entityplayer.rotationYawHead);
-									RotateVectorAroundX(vecToLockonPos, entityplayer.rotationPitch);
-									renderLockOnMarker(minecraft, gunItem.gunInfo.lockOnMarker, vecToLockonPos);
+								if (vecToLockTargetPos != null) {
+									RotateVectorAroundY(vecToLockTargetPos, currentRotationYaw);
+									RotateVectorAroundX(vecToLockTargetPos, currentRotationPit);
+									renderLockOnMarker(minecraft, gunItem.gunInfo.lockOnMarker, vecToLockTargetPos);
 								}
 							}
 
@@ -516,6 +537,7 @@ public class HMGEventZoom {
 					if (needreset) {
 						ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 								1.0d, "cameraZoom", "field_78503_V");
+						currentZoomLevel = 1;
 						needreset = false;
 					}
 					if (this.zoomtype) {
@@ -555,8 +577,6 @@ public class HMGEventZoom {
 			GL11.glPopMatrix();
 			previtemstack = gunstack;
 		}
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(icons);
 	}
@@ -723,16 +743,16 @@ public class HMGEventZoom {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.startDrawingQuads();
-		float width = 256;
-		float height = 128;
+		float width = 40;
+		float height = 20;
 		float xoffset = -width/2f;
 		float yoffset = -height/2f;
 
 		for(int x = -1; x < 2 ;x++) for(int y = -1; y < 2 ;y++) {
-			tessellator.addVertexWithUV(xoffset + width * x, yoffset + height * (y + 1)			, 40.0D, 1.0D, 0.0D);
-			tessellator.addVertexWithUV(xoffset + width * (x + 1), yoffset + height * (y + 1)	, 40.0D, 0.0D, 0.0D);
-			tessellator.addVertexWithUV(xoffset + width * (x + 1), yoffset + height * y			, 40.0D, 0.0D, 1.0D);
-			tessellator.addVertexWithUV(xoffset + width * x, yoffset + height * y				, 40.0D, 1.0D, 1.0D);
+			tessellator.addVertexWithUV(xoffset + width * x, yoffset + height * (y + 1)			, 10.0D, x < 0 ? 0 : x > 0 ? 1 : 1.0D, y < 0 ? 0 : y > 0 ? 1 : 0.0D);
+			tessellator.addVertexWithUV(xoffset + width * (x + 1), yoffset + height * (y + 1)	, 10.0D, x < 0 ? 0 : x > 0 ? 1 : 0.0D, y < 0 ? 0 : y > 0 ? 1 : 0.0D);
+			tessellator.addVertexWithUV(xoffset + width * (x + 1), yoffset + height * y			, 10.0D, x < 0 ? 0 : x > 0 ? 1 : 0.0D, y < 0 ? 0 : y > 0 ? 1 : 1.0D);
+			tessellator.addVertexWithUV(xoffset + width * x, yoffset + height * y				, 10.0D, x < 0 ? 0 : x > 0 ? 1 : 1.0D, y < 0 ? 0 : y > 0 ? 1 : 1.0D);
 		}
 //		tessellator.addVertexWithUV(x + xoffset, y + yoffset + height*2			, 0.0D, 0.0D, 1.0D);
 //		tessellator.addVertexWithUV(x + xoffset + width, y + yoffset + height*2	, 0.0D, 1.0D, 1.0D);
@@ -749,8 +769,8 @@ public class HMGEventZoom {
 		GL11.glPopMatrix();
 		GL11.glEnable(GL_DEPTH_TEST);
 		GL11.glEnable(GL_ALPHA_TEST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	}
 	public static void renderPumpkinBlur(Minecraft minecraft, String adss)
 	{
@@ -806,7 +826,8 @@ public class HMGEventZoom {
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 //		OpenGlHelper.glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR, 1, 0);
 		GL11.glAlphaFunc(GL11.GL_GREATER, 0);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);
+//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		minecraft.getTextureManager().bindTexture(crosstex);
 //		GL11.glTranslatef(i/2f, j/2f,0);
 		double x =bure*2d/10d;
@@ -848,10 +869,9 @@ public class HMGEventZoom {
 		GL11.glPopAttrib();
 		GL11.glDepthMask(true);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		bind(Gui.icons);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 	private void bind(ResourceLocation res)
 	{
@@ -861,7 +881,7 @@ public class HMGEventZoom {
 	public static void setUp3DView(Minecraft minecraft,float partialTicks){
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		Project.gluPerspective(HMG_proxy.getFOVModifier(minecraft,partialTicks,true), (float)minecraft.displayWidth / (float)minecraft.displayHeight, 0.05F, 300.0f);
+		Project.gluPerspective(HMG_proxy.getFOVModifier(minecraft,partialTicks,true), (float)minecraft.displayWidth / (float)minecraft.displayHeight, 0.01F, FMLClientHandler.instance().getClient().gameSettings.renderDistanceChunks * 16 * 2.0F);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 	}

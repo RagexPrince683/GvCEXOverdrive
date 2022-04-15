@@ -3,22 +3,16 @@ package hmggvcmob;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import handmadeguns.HMGGunMaker;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
+import hmggvcmob.block.*;
 import hmggvcmob.camp.CampObj;
 import hmggvcmob.event.EventRenderPlatoonInfo;
 import hmggvcmob.item.*;
 import hmggvcmob.item.GVCItemPMCEgg;
-import hmggvcmob.block.GVCBlockFlag;
-import hmggvcmob.block.GVCBlockGuerrillaCamp;
-import hmggvcmob.block.GVCBlockGuerrillaCamp2;
-import hmggvcmob.block.GVCBlockMobSpawnerExtended;
-import hmggvcmob.block.GVCXBlockFriendCamp;
 import hmggvcmob.entity.*;
 import hmggvcmob.entity.friend.*;
 import hmggvcmob.entity.guerrilla.*;
@@ -37,7 +31,6 @@ import java.util.Map;
 import hmggvcmob.util.SpotObj;
 import hmggvcmob.world.WWorld;
 import hmggvcutil.GVCUtils;
-import handmadevehicle.HMVehicle;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EnumCreatureType;
@@ -53,6 +46,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
 import static hmggvcmob.GVCMobPlus.modid;
+import static hmggvcmob.event.GVCMRenderSomeEvent.nearestCampFindEvent;
 
 @Mod(modid=modid, name=modid, version="HD11", dependencies="required-after:GVCGuns;required-after:HMVehicle")
 public class GVCMobPlus
@@ -75,8 +69,13 @@ public class GVCMobPlus
     public static boolean cfg_guerrillaspawndrawn;
     public static float cfg_soldierspawnnormal;
     public static boolean cfg_noVanillaMob;
-    public static int cfg_flagspawnlevel;
-    public static int cfg_flagspawninterval;
+    public static int cfg_beaconSpawnLevel;
+    public static int cfg_beaconSpawnInterval;
+    public static int cfg_minimumGuerrillaSpawnDistance;
+    public static boolean cfg_noGuerrillaSpawnInView;
+    public static boolean cfg_noGuerrillaSpawnAsInfantry;
+    public static boolean cfg_noGuerrillaSpawnAsTanker;
+    public static boolean cfg_noGuerrillaSpawnAsPlane;
     public static boolean cfg_canspawnguerrilla;
     public static boolean cfg_canspawnsolider;
     public static boolean cfg_cansetIED;
@@ -132,20 +131,27 @@ public class GVCMobPlus
     public static Item fn_soldierheliegg;
     public static Item fn_soldierbmpegg;
     public static Block fn_mobspawner;
+    public static Block fn_mobspawner_Onetime;
     public static GVCBlockMobSpawnerExtended GKspawner;
     public static GVCBlockMobSpawnerExtended tankspawner;
     public static GVCBlockMobSpawnerExtended APCspawner;
     public static GVCBlockFlag fn_SoldierFlag;
     public static CampObj soldiers;
+    public static GVCBlockFlag fn_SoldierFlag_AirBase;
+    public static CampObj soldiers_AirBase;
     public static GVCBlockFlag fn_PlayerFlag;
     public static CampObj forPlayer;
     public static GVCBlockFlag fn_PlayerFlag_withRaid;
     public static CampObj boxes_withRaid;
     public static Block fn_Guerrillaflag;
     public static CampObj guerrillas;
+    public static Block fn_Guerrillaflag_AirBase;
+    public static CampObj guerrillas_AirBase;
     public static int bulletbase = 61;
     public static Item gvcmx_reqsupport_arty;
     public static Item gvcmx_reqsupport_heli;
+    public static Item gvcmx_reqsupport_attacker;
+    public static Item gvcmx_reqsupport_fighter;
     public static Item defsetter;
     public static List Guns_AR = new ArrayList();
     public static List Guns_SG = new ArrayList();
@@ -161,7 +167,7 @@ public class GVCMobPlus
     protected static File configFile;
 
     public static ArrayList<SpotObj> spotObjs = new ArrayList<SpotObj>();
-    
+
     public static Achievement No_place_to_HIDE;
     public static Achievement killedGuerrilla;
     public static Achievement Union_Army;
@@ -175,7 +181,7 @@ public class GVCMobPlus
     public static Achievement Gun_of_the_Lost_Country;
     public static Achievement beacon_defensive;
     public static Achievement supply;
-    
+
     public static String id_of_No_place_to_HIDE =           "achievement.No_place_to_HIDE";
     public static String id_of_killedGuerrilla =            "achievement.killedGuerrilla";
     public static String id_of_union =                      "achievement.union";
@@ -192,8 +198,8 @@ public class GVCMobPlus
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent pEvent)
     {
-    
-        
+
+
         configFile = pEvent.getSuggestedConfigurationFile();
         Configuration lconf = new Configuration(configFile);
         lconf.load();
@@ -213,38 +219,44 @@ public class GVCMobPlus
         for (int i = 0; i < ignoretgtmob.length; i++) {
             ignoreSoTargetEntity.put(ignoretgtmob[i], Integer.valueOf(i));
         }
-        {
-
-            String[] types = lconf.get("Vehicle", "cfg_Soldier_VehicleType",new String[]{"10",
-                    "BMP-1:30",
-                    "Mi-24:30",
-                    "T-90A:15",
-                    "SU-25:10",
-                    "BRDM-2:5",
-                    "MiG-21:1"}).getStringList();
-            GVCEntitySoldierRPG.vehicleSpawnGachaOBJ = new VehicleSpawnGachaOBJ[types.length];
-            int cnt = 0;
-            for(String atype:types){
-                GVCEntitySoldierRPG.vehicleSpawnGachaOBJ[cnt] = new VehicleSpawnGachaOBJ(atype);
-                GVCEntitySoldierRPG.vehilceGacha_rate_sum+=GVCEntitySoldierRPG.vehicleSpawnGachaOBJ[cnt].rate;
-                cnt++;
-            }
-        }
-        {
-            String[] types = lconf.get("Vehicle", "cfg_Guerrilla_VehicleType",new String[]{"50",
-                    "T-34-85_mod:10",
-                    "TOYOTA:30",
-                    "F-86K:5"}).getStringList();
-            GVCEntityGuerrillaRPG.vehicleSpawnGachaOBJ = new VehicleSpawnGachaOBJ[types.length];
-            int cnt = 0;
-            for(String atype:types){
-                GVCEntityGuerrillaRPG.vehicleSpawnGachaOBJ[cnt] = new VehicleSpawnGachaOBJ(atype);
-                GVCEntityGuerrillaRPG.vehilceGacha_rate_sum+=GVCEntityGuerrillaRPG.vehicleSpawnGachaOBJ[cnt].rate;
-                cnt++;
-            }
-        }
-        cfg_flagspawnlevel = lconf.get("Guerrilla", "cfg_FlagSpawnLevel", 16).getInt(16);
-        cfg_flagspawninterval = lconf.get("Guerrilla", "cfg_Flagspawninterval", 2000).getInt(2000);
+//        {
+//
+//            String[] soldierVehicle = lconf.get("Vehicle", "cfg_Soldier_VehicleType",new String[]{"10",
+//                    "BMP-1:30",
+//                    "Mi-24:30",
+//                    "T-90A:15",
+//                    "SU-25:10",
+//                    "BRDM-2:5",
+//                    "MiG-21:1"}).getStringList();
+//            GVCEntitySoldierRPG.vehicleSpawnGachaOBJ = new VehicleSpawnGachaOBJ[soldierVehicle.length];
+//            int cnt = 0;
+//            for(String atype: soldierVehicle){
+//                GVCEntitySoldierRPG.vehicleSpawnGachaOBJ[cnt] = new VehicleSpawnGachaOBJ(atype);
+//                GVCEntitySoldierRPG.vehilceGacha_rate_sum+=GVCEntitySoldierRPG.vehicleSpawnGachaOBJ[cnt].rate;
+//                cnt++;
+//            }
+//        }
+//        {
+//            String[] guerrillaVehicle = lconf.get("Vehicle", "cfg_Guerrilla_VehicleType",new String[]{"50",
+//                    "T-34-85_mod:10",
+//                    "TOYOTA:30",
+//                    "F-86K:5"}).getStringList();
+//            GVCEntityGuerrillaRPG.vehicleSpawnGachaOBJ = new VehicleSpawnGachaOBJ[guerrillaVehicle.length];
+//            int cnt = 0;
+//            for(String atype: guerrillaVehicle){
+//                GVCEntityGuerrillaRPG.vehicleSpawnGachaOBJ[cnt] = new VehicleSpawnGachaOBJ(atype);
+//                GVCEntityGuerrillaRPG.vehilceGacha_rate_sum+=GVCEntityGuerrillaRPG.vehicleSpawnGachaOBJ[cnt].rate;
+//                cnt++;
+//            }
+//        }
+        cfg_beaconSpawnLevel = lconf.get("Guerrilla", "cfg_BeaconSpawnLevel", 16).getInt(16);
+        cfg_beaconSpawnInterval = lconf.get("Guerrilla", "cfg_Flagspawninterval", 2000).getInt(2000);
+        cfg_minimumGuerrillaSpawnDistance = lconf.get("Guerrilla", "cfg_minimumGuerrillaSpawnDistance", 64).getInt(64);
+        cfg_minimumGuerrillaSpawnDistance *= cfg_minimumGuerrillaSpawnDistance;
+        cfg_noGuerrillaSpawnInView = lconf.get("Guerrilla", "cfg_noGuerrillaSpawnInView", true).getBoolean(true);
+        cfg_noGuerrillaSpawnAsInfantry = lconf.get("Guerrilla", "cfg_noGuerrillaSpawnAsInfantry", false).getBoolean(false);
+        cfg_noGuerrillaSpawnAsTanker = lconf.get("Guerrilla", "cfg_noGuerrillaSpawnAsTanker", false).getBoolean(false);
+        cfg_noGuerrillaSpawnAsPlane = lconf.get("Guerrilla", "cfg_noGuerrillaSpawnAsPlane", false).getBoolean(false);
         cfg_cansetIED = lconf.get("world", "cfg_CansetIED", true).getBoolean(true);
         cfg_blockdestory = lconf.get("world", "cfg_BlockDestory", true,"It's only for mob. not for destroying by gun. see HandmadeGuns.cfg").getBoolean(true);
 
@@ -266,6 +278,8 @@ public class GVCMobPlus
 
         fn_mobspawner = new GVCBlockMobSpawnerExtended().setBlockName("MobSpawnerKai").setBlockTextureName("gvcmob:mobspawner");
         GameRegistry.registerBlock(fn_mobspawner, "MobSpawnerKai");
+        fn_mobspawner_Onetime = new GVCBlockMobSpawnerOnetime().setBlockName("MobSpawnerOnetime").setBlockTextureName("gvcmob:mobspawner");
+        GameRegistry.registerBlock(fn_mobspawner_Onetime, "MobSpawnerOnetime");
         GKspawner = new GVCBlockMobSpawnerExtended();
         GKspawner.setBlockName("MobSpawnerKai_IRVING").setBlockTextureName("gvcmob:mobspawner");
         GKspawner.mobname = "GVCMob.IRVING";
@@ -326,11 +340,11 @@ public class GVCMobPlus
         guerrillas.campBlockTextureModel= "gvcmob:textures/model/gflagtexture.png";
         guerrillas.campName = "ALLIES Radical Party";
         campsHash.put(guerrillas.campName,guerrillas);
-
         guerrillas.teamEntityClasses = new Class[]{ GVCEntityGuerrilla.class,GVCEntityGuerrilla.class,GVCEntityGuerrilla.class,GVCEntityGuerrilla.class, GVCEntityGuerrillaMG.class,GVCEntityGuerrillaMG.class, GVCEntityGuerrillaSP.class, GVCEntityGuerrillaRPG.class };
         fn_Guerrillaflag = new GVCBlockFlag(guerrillas).setBlockName("GuerrillaBaseFlagBlock").setBlockTextureName("gvcmob:mobspawner");
         guerrillas.campsBlock = fn_Guerrillaflag;
         GameRegistry.registerBlock(fn_Guerrillaflag, "GuerrillaBaseFlagBlock");
+
 
         fn_guerrillaegg = new GVCItemGuerrillaEgg(0).setUnlocalizedName("GuerrillaEgg").setTextureName("gvcmob:guerrillaegg");
         GameRegistry.registerItem(fn_guerrillaegg, "GuerrillaEgg");
@@ -348,7 +362,7 @@ public class GVCMobPlus
         GameRegistry.registerItem(fn_guerrillaattackheliegg, "WZ10Egg");
 
 //        GameRegistry.registerItem(new ItemSpoter(),"test");
-        
+
         fn_gkegg = new GVCItemGuerrillaEgg(6).setUnlocalizedName("GKEgg").setTextureName("gvcmob:gkegg");
         GameRegistry.registerItem(fn_gkegg, "GKEgg");
         fn_tankegg = new GVCItemGuerrillaEgg(7).setUnlocalizedName("TankEgg").setTextureName("gvcmob:tankegg");
@@ -423,13 +437,15 @@ public class GVCMobPlus
         GameRegistry.registerItem(gvcmx_reqsupport_arty, "requestSupport_arty");
         gvcmx_reqsupport_heli = new GVCXrequestSupport(1).setUnlocalizedName("requestSupport_heli").setTextureName("gvcmob:requestsupport_heli");
         GameRegistry.registerItem(gvcmx_reqsupport_heli, "requestSupport_Heli");
+        GameRegistry.registerItem(gvcmx_reqsupport_fighter = new GVCXrequestSupport(2).setUnlocalizedName("requestsupport_fighter").setTextureName("gvcmob:requestsupport_fighter"), "requestsupport_fighter");
+        GameRegistry.registerItem(gvcmx_reqsupport_attacker = new GVCXrequestSupport(3).setUnlocalizedName("requestsupport_attacker").setTextureName("gvcmob:requestsupport_attacker"), "requestsupport_attacker");
         arenaUnit = new GVCItemarenaUnit().setUnlocalizedName("arenaUnit").setTextureName("gvcmob:arenaUnit").setMaxStackSize(64);
         GameRegistry.registerItem(arenaUnit, "arenaUnit");
         defsetter = new GVCItemPMCDefSetter().setUnlocalizedName("defsetter").setTextureName("gvcmob:defsetter");
         GameRegistry.registerItem(defsetter, "defsetter");
 
         GVCMPacketHandler.init();
-        
+
     }
 
     public static void Debug(String pText, Object... pData)
@@ -458,7 +474,7 @@ public class GVCMobPlus
 //        EntityRegistry.registerModEntity(GVCEntityHeli.class, "Heli", ++id, this, 250, 3, true);
 //        EntityRegistry.registerModEntity(GVCEntityWZ10AttackHeli.class, "WZ10Attackheli", ++id, this, 250, 3, true);
 //        EntityRegistry.registerModEntity(GVCEntityJeep.class, "Jeep", ++id, this, 250, 3, true);
-        EntityRegistry.registerModEntity(GVCEntityAAG.class, "AAG", ++id, this, 250, 3, true);
+//        EntityRegistry.registerModEntity(GVCEntityAAG.class, "AAG", ++id, this, 250, 3, true);
 
         EntityRegistry.registerModEntity(GVCEntityAA.class, "AA", ++id, this, 250, 3, true);
         EntityRegistry.registerModEntity(GVCEntityDrawn.class, "Drawn", ++id, this, 250, 3, true);
@@ -573,33 +589,34 @@ public class GVCMobPlus
                 'd', Items.diamond,
                 'e', Items.egg
         );
-        GameRegistry.addRecipe(new ItemStack(fn_pmctankT90, 1),
-                "ddd",
-                "ded",
-                "ddd",
-                'e', Blocks.emerald_block,
-                'd', Blocks.diamond_block
-        );
-        GameRegistry.addRecipe(new ItemStack(arenaUnit, 1),
-                "ddd",
-                "eee",
-                "ddd",
-                'd', Items.gunpowder,
-                'e', Blocks.iron_bars
-        );
         GameRegistry.addRecipe(new ItemStack(gvcmx_reqsupport_arty, 1),
-                "ddd",
+                "dad",
                 "aaa",
-                "ddd",
+                "dad",
                 'd', Items.emerald,
                 'a', Items.redstone
         );
         GameRegistry.addRecipe(new ItemStack(gvcmx_reqsupport_heli, 1),
-                "dad",
+                "ddd",
                 "dad",
                 "dad",
                 'd', Items.emerald,
                 'a', Items.redstone
+        );
+        GameRegistry.addRecipe(new ItemStack(gvcmx_reqsupport_attacker, 1),
+                "eee",
+                "ere",
+                "eee",
+                'e', Items.emerald,
+                'r', Items.redstone
+        );
+        GameRegistry.addRecipe(new ItemStack(gvcmx_reqsupport_fighter, 1),
+                "eee",
+                "ere",
+                "ede",
+                'e', Items.emerald,
+                'r', Items.redstone,
+                'd', Items.diamond
         );
         GameRegistry.addRecipe(new ItemStack(defsetter, 1),
                 "I ",
@@ -695,8 +712,8 @@ public class GVCMobPlus
                 }
             }
         }
-    
-    
+
+
         No_place_to_HIDE = new Achievement(id_of_No_place_to_HIDE, "No_place_to_HIDE", 0, 0, new ItemStack(fn_guerrillaegg, 1, 15), null).initIndependentStat().registerStat();
 
         killedGuerrilla = new Achievement(id_of_killedGuerrilla, "killedGuerrilla", 1, 1, new ItemStack(GVCUtils.fn_ak74, 1, 15), No_place_to_HIDE).initIndependentStat().registerStat();
@@ -724,30 +741,40 @@ public class GVCMobPlus
         Achievement[] achievements = new Achievement[] { No_place_to_HIDE, killedGuerrilla,Union_Army,Old_soldiers_never_fade,power_of_number,unmanned_Craft,war_has_changed,unending_war,METAL_GEAR,spear_the_gungnir,Gun_of_the_Lost_Country,beacon_defensive};
         AchievementPage.registerAchievementPage(new AchievementPage("Guerrilla VS Command mod : HD Edition", achievements));
     }
-    
+
+
+
     @Mod.EventHandler
     public void postInit(FMLServerStartingEvent event) {
         GVCMXEntityEvent gvcmxEntityEvent = new GVCMXEntityEvent();
         FMLCommonHandler.instance().bus().register(gvcmxEntityEvent);
         MinecraftForge.EVENT_BUS.register(gvcmxEntityEvent);
     }
+    @Mod.EventHandler
+    public void onGameClosing(FMLServerStoppingEvent closeEvent){
+        System.out.println("debug");
+        nearestCampFindEvent.shutdown();
+    }
 
     public void spawn(BiomeGenBase biome)
     {
         if (cfg_canspawnguerrilla)
         {
-            EntityRegistry.addSpawn(GVCEntityGuerrilla.class, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, EnumCreatureType.monster, new BiomeGenBase[] { biome });
+            if(!cfg_noGuerrillaSpawnAsInfantry) {
+                EntityRegistry.addSpawn(GVCEntityGuerrilla.class, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, EnumCreatureType.monster, new BiomeGenBase[]{biome});
 
-            EntityRegistry.addSpawn(GVCEntityGuerrillaSP.class, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, EnumCreatureType.monster, new BiomeGenBase[] { biome });
+                EntityRegistry.addSpawn(GVCEntityGuerrillaSP.class, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, EnumCreatureType.monster, new BiomeGenBase[]{biome});
 
-            EntityRegistry.addSpawn(GVCEntityGuerrillaRPG.class, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, EnumCreatureType.monster, new BiomeGenBase[] { biome });
+                EntityRegistry.addSpawn(GVCEntityGuerrillaRPG.class, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, EnumCreatureType.monster, new BiomeGenBase[]{biome});
 
-            EntityRegistry.addSpawn(GVCEntityGuerrillaSG.class, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, EnumCreatureType.monster, new BiomeGenBase[] { biome });
+                EntityRegistry.addSpawn(GVCEntityGuerrillaSG.class, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, EnumCreatureType.monster, new BiomeGenBase[]{biome});
 
-            EntityRegistry.addSpawn(GVCEntityGuerrillaBM.class, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, EnumCreatureType.monster, new BiomeGenBase[] { biome });
+                EntityRegistry.addSpawn(GVCEntityGuerrillaBM.class, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, cfg_guerrillaspawnnomal * 3, EnumCreatureType.monster, new BiomeGenBase[]{biome});
 
-            EntityRegistry.addSpawn(GVCEntityGuerrillaM.class, cfg_guerrillaspawnnomal * 1, cfg_guerrillaspawnnomal * 4, cfg_guerrillaspawnnomal * 4, EnumCreatureType.monster, new BiomeGenBase[] { biome });
-
+                EntityRegistry.addSpawn(GVCEntityGuerrillaM.class, cfg_guerrillaspawnnomal * 1, cfg_guerrillaspawnnomal * 4, cfg_guerrillaspawnnomal * 4, EnumCreatureType.monster, new BiomeGenBase[]{biome});
+            }else {
+                EntityRegistry.addSpawn(GVCEntityGuerrillaRPG.class, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, cfg_guerrillaspawnnomal * 2, EnumCreatureType.monster, new BiomeGenBase[]{biome});
+            }
             if(cfg_blockdestory)EntityRegistry.addSpawn(GVCEntityGuerrilla_Flamer.class, cfg_guerrillaspawnnomal * 1, cfg_guerrillaspawnnomal * 1, cfg_guerrillaspawnnomal * 1, EnumCreatureType.monster, new BiomeGenBase[] { biome });
 
             EntityRegistry.addSpawn(GVCEntityGK.class, cfg_guerrillaspawntank * 6, cfg_guerrillaspawntank * 2, cfg_guerrillaspawntank * 3, EnumCreatureType.monster, new BiomeGenBase[] { biome });

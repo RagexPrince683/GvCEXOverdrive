@@ -17,13 +17,13 @@ public class StructuresStartDungeonBase extends StructureStart {
 
     Random rnd;
 
-    int dir;
+    int dir = 0;
     public StructuresStartDungeonBase(DungeonData_withSettings dungeonData_withSettings,World par1World, Random par2Random, int par3, int par4) {
         super(par3, par4);
         dungeonDataWithSettings = dungeonData_withSettings;
         dungeonData = dungeonData_withSettings.dungeonData;
         rnd =par2Random;
-        dir = rnd.nextInt(4);
+        if(dungeonData_withSettings.enableRotate)dir = rnd.nextInt(4);
 //		System.out.println("x = " + par3*16 + " , z = " + par4*16 + " , length" + length + " , course " + (course?"X":"Z"));
         for (int id = 0; id < dungeonData.size(); id++) {
             components.add(newComponent(par1World,par2Random,par3*16, par4*16,id,dir));

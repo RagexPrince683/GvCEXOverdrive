@@ -6,6 +6,7 @@ import handmadeguns.entity.bullets.HMGEntityBullet;
 import handmadeguns.entity.bullets.HMGEntityBulletExprode;
 import handmadeguns.network.PacketSpawnParticle;
 import handmadevehicle.SlowPathFinder.WorldForPathfind;
+import hmggvcmob.entity.IGVCmob;
 import hmggvcmob.entity.IIRVING;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -66,10 +67,11 @@ public class AIGKFire extends EntityAIBase{
         IRVING_body.getLookHelper().setLookPositionWithEntity(target,90,90);
 
         if(attackTime>20){
-            if(IRVING_body.onGround || IRVING_body.isWet())
-                IRVING_body.getNavigator().setPath(worldForPathfind.getEntityPathToXYZ(IRVING_body,(int)target.posX,(int)target.posY,(int)target.posZ,80f,true, false, false, true),1);
+            ((IGVCmob)IRVING_body).getMoveToPositionMng().getMoveToPos().set(
+                    (int)target.posX,(int)target.posY,(int)target.posZ);
+            ((IGVCmob)IRVING_body).getMoveToPositionMng().setMovingSpeed(1);
         }else {
-            IRVING_body.getNavigator().clearPathEntity();
+            ((IGVCmob)IRVING_body).getMoveToPositionMng().stop();
         }
 
         double d5 = target.posX - IRVING_body.posX;

@@ -56,9 +56,9 @@ public class GVCEntityGK extends EntityGBase implements IIRVING
 		super(par1World);
 		canRideVehicle = false;
 		this.setSize(2.5F, 4F);
-		this.tasks.removeTask(AIattackOncollidetoPlayer);
-		this.tasks.removeTask(AIattackOncollidetoVillager);
-		this.tasks.removeTask(AIattackOncollidetoSoldier);
+		this.tasks.removeTask(AIAttackOnCollideToPlayer);
+		this.tasks.removeTask(AIAttackOnCollideToVillager);
+		this.tasks.removeTask(AIAttackOnCollideToSoldier);
 		this.tasks.removeTask(AIRestrictOpenDoor);
 		this.tasks.removeTask(EntityAIOpenDoor);
 		this.tasks.removeTask(AIMoveTowardsRestriction);
@@ -66,9 +66,9 @@ public class GVCEntityGK extends EntityGBase implements IIRVING
 		this.tasks.addTask(1,new AIGKkick(this,this,3.5f));
 		this.tasks.addTask(2,new AIGKFire(this,new WorldForPathfind(worldObj)));
 		this.tasks.addTask(3,new EntityAIWander(this,1));
-		this.targetTasks.removeTask(AIattackOncollidetoPlayer);
-		this.targetTasks.removeTask(AIattackOncollidetoVillager);
-		this.targetTasks.removeTask(AIattackOncollidetoSoldier);
+		this.targetTasks.removeTask(AIAttackOnCollideToPlayer);
+		this.targetTasks.removeTask(AIAttackOnCollideToVillager);
+		this.targetTasks.removeTask(AIAttackOnCollideToSoldier);
 		this.targetTasks.removeTask(EntityAIOpenDoor);
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
 		this.jumpCycle3 = 120;

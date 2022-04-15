@@ -3,6 +3,7 @@ package hmggvcmob.entity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import handmadeguns.entity.bullets.HMGEntityBulletExprode;
+import hmggvcmob.entity.friend.GVCEntitySoldierRPG;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -331,15 +332,49 @@ public class EntitySupportTGT extends Entity {
                         }
                         case 1: {
                             if (!this.worldObj.isRemote) {
-//                                if (shootingEntity instanceof EntityPlayerMP)
-//                                    ((EntityPlayerMP) shootingEntity).addChatComponentMessage(new ChatComponentTranslation(
-//                                            "roger that! Our heli will go toward X= " + field_145791_d + ", Z = " + field_145789_f + "!"));
-//                                GVCEntitySoldierHeli entityskeleton = new GVCEntitySoldierHeli(worldObj);
-//                                Vec3 playersdir = Vec3.createVectorHelper(shootingEntity.posX - field_145791_d,shootingEntity.posY - field_145792_e,shootingEntity.posZ - field_145789_f);
-//                                playersdir.normalize();
-//                                entityskeleton.setLocationAndAngles(field_145791_d, field_145792_e + 64, field_145789_f, 0, 0.0F);
-//                                entityskeleton.setthrottle(2.5f);
-//                                this.worldObj.spawnEntityInWorld(entityskeleton);
+                                if (shootingEntity instanceof EntityPlayerMP)
+                                    ((EntityPlayerMP) shootingEntity).addChatComponentMessage(new ChatComponentTranslation(
+                                            "roger that! we send a gun ship to X= " + field_145791_d + ", Z = " + field_145789_f + "!"));
+                                GVCEntitySoldierRPG entityskeleton = new GVCEntitySoldierRPG(worldObj);
+                                Vec3 playersdir = Vec3.createVectorHelper(shootingEntity.posX - field_145791_d,shootingEntity.posY - field_145792_e,shootingEntity.posZ - field_145789_f);
+                                playersdir = playersdir.normalize();
+                                entityskeleton.setLocationAndAngles(field_145791_d + playersdir.xCoord * 80, field_145792_e + 100, field_145789_f + playersdir.zCoord * 80, shootingEntity.rotationYawHead, 0.0F);
+                                entityskeleton.summoningVehicle = "Mi-24";
+                                entityskeleton.makePlatoon();
+                                entityskeleton.setTargetCampPosition(new int[]{field_145791_d, field_145792_e, field_145789_f});
+                                this.worldObj.spawnEntityInWorld(entityskeleton);
+                            }
+                            break;
+                        }
+                        case 2: {
+                            if (!this.worldObj.isRemote) {
+                                if (shootingEntity instanceof EntityPlayerMP)
+                                    ((EntityPlayerMP) shootingEntity).addChatComponentMessage(new ChatComponentTranslation(
+                                            "roger that! we send a fighter to X= " + field_145791_d + ", Z = " + field_145789_f + "!"));
+                                GVCEntitySoldierRPG entityskeleton = new GVCEntitySoldierRPG(worldObj);
+                                Vec3 playersdir = Vec3.createVectorHelper(shootingEntity.posX - field_145791_d,shootingEntity.posY - field_145792_e,shootingEntity.posZ - field_145789_f);
+                                playersdir = playersdir.normalize();
+                                entityskeleton.setLocationAndAngles(field_145791_d + playersdir.xCoord * 80, field_145792_e + 140, field_145789_f + playersdir.zCoord * 80, shootingEntity.rotationYawHead, 0.0F);
+                                entityskeleton.summoningVehicle = "MiG-29";
+                                entityskeleton.makePlatoon();
+                                entityskeleton.setTargetCampPosition(new int[]{field_145791_d, field_145792_e, field_145789_f});
+                                this.worldObj.spawnEntityInWorld(entityskeleton);
+                            }
+                            break;
+                        }
+                        case 3: {
+                            if (!this.worldObj.isRemote) {
+                                if (shootingEntity instanceof EntityPlayerMP)
+                                    ((EntityPlayerMP) shootingEntity).addChatComponentMessage(new ChatComponentTranslation(
+                                            "roger that! we send a Attacker to X= " + field_145791_d + ", Z = " + field_145789_f + "!"));
+                                GVCEntitySoldierRPG entityskeleton = new GVCEntitySoldierRPG(worldObj);
+                                Vec3 playersdir = Vec3.createVectorHelper(shootingEntity.posX - field_145791_d,shootingEntity.posY - field_145792_e,shootingEntity.posZ - field_145789_f);
+                                playersdir = playersdir.normalize();
+                                entityskeleton.setLocationAndAngles(field_145791_d + playersdir.xCoord * 80, field_145792_e + 100, field_145789_f + playersdir.zCoord * 80, shootingEntity.rotationYawHead, 0.0F);
+                                entityskeleton.summoningVehicle = "SU-25";
+                                entityskeleton.makePlatoon();
+                                entityskeleton.setTargetCampPosition(new int[]{field_145791_d, field_145792_e, field_145789_f});
+                                this.worldObj.spawnEntityInWorld(entityskeleton);
                             }
                             break;
                         }

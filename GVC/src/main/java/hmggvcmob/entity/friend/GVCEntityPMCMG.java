@@ -2,6 +2,7 @@ package hmggvcmob.entity.friend;
 
 
 import handmadevehicle.SlowPathFinder.WorldForPathfind;
+import hmggvcmob.ai.newai.AIAttackEntityByGun;
 import hmggvcutil.GVCUtils;
 import hmggvcmob.ai.AIAttackGun;
 import net.minecraft.block.Block;
@@ -11,12 +12,10 @@ import net.minecraft.world.World;
 
 public class GVCEntityPMCMG extends EntityPMCBase
 {
-    public GVCEntityPMCMG(World par1World)
-    {
+    public GVCEntityPMCMG(World par1World) {
         super(par1World);
         spread = 3;
         this.setSize(0.6F, 1.8F);
-        this.tasks.addTask(1,aiAttackGun = new AIAttackGun(this,120,20,60,10,true,true,new WorldForPathfind(worldObj)));
     }
     
     public void addRandomArmor()

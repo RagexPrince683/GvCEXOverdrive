@@ -8,6 +8,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -126,6 +128,11 @@ public class GVCEntityAPCSpawn extends EntityGBase
         
     }
 
+
+    protected boolean isValidLightLevel()
+    {
+        return true;
+    }
     /**
      * Called when this EntityThrowable hits a block or entity.
      */

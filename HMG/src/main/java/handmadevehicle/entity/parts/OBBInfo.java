@@ -1,11 +1,14 @@
 package handmadevehicle.entity.parts;
 
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGGroupObject;
+
 import javax.vecmath.Quat4d;
 import javax.vecmath.Vector3d;
 
 public class OBBInfo {
 	public Vector3d pos;
 	public Vector3d size;
+	public float armor = 0;
 	public float armor_Top = 0;
 	public float armor_Bottom = 0;
 	public float armor_Front = 0;
@@ -16,6 +19,8 @@ public class OBBInfo {
 
 	public Vector3d boxRotCenter = new Vector3d(0,0,0);
 	public Quat4d boxRotation = new Quat4d(0,0,0,1);
+
+	public HMGGroupObject model_forHitChecks;
 
 	public OBBInfo(Vector3d pos,Vector3d directs){
 		this.pos = pos;

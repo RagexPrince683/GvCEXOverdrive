@@ -16,7 +16,7 @@ import static net.minecraft.util.DamageSource.inWall;
 public class HMGLivingUpdateEvent {
     @SubscribeEvent
     public void canupdate(EntityEvent.CanUpdate event){
-        if(event.entity instanceof HMGEntityBulletBase){
+        if(event.entity instanceof HMGEntityBulletBase && !((HMGEntityBulletBase) event.entity).chunkLoaderBullet){
             event.entity.setDead();
         }
         if(event.entity instanceof EntityVehicle && ((EntityVehicle) event.entity).canDespawn){

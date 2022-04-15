@@ -83,8 +83,8 @@ public class InventoryVehicle implements IInventory {
 	public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_)
 	{
 		this.items[p_70299_1_] = p_70299_2_;
-		if (p_70299_2_ != null && p_70299_2_.stackSize > this.getInventoryStackLimit()) {
-			p_70299_2_.stackSize = this.getInventoryStackLimit();
+		if (p_70299_2_ != null && p_70299_2_.stackSize > this.getInventoryStackLimit(p_70299_1_)) {
+			p_70299_2_.stackSize = this.getInventoryStackLimit(p_70299_1_);
 		}
 
 		this.markDirty();
@@ -105,6 +105,14 @@ public class InventoryVehicle implements IInventory {
 	@Override
 	public int getInventoryStackLimit()
 	{
+		return 64;
+	}
+
+	public int getInventoryStackLimit(int slotID)
+	{
+		if(slotID<baseLogic.prefab_vehicle.weaponSlotNum){
+			return 1;
+		}
 		return 64;
 	}
 	

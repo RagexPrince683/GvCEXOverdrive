@@ -92,7 +92,7 @@ public class AINearestAttackableTarget extends EntityAITarget {
                             flag &= !((IFF) taskOwner).is_this_entity_friend(targetEntity);
                         }
                         if (flag) {
-                            if ((taskOwner.getEntitySenses().canSee(targetEntity) || ((IGVCmob) taskOwner).canhearsound(targetEntity)) && (targetEntity.riddenByEntity == null || !(targetEntity.riddenByEntity instanceof GVCEntityBox && targetEntity.distanceWalkedModified - targetEntity.prevDistanceWalkedModified < dist / 10)))
+                            if ((taskOwner.getEntitySenses().canSee(targetEntity) || ((IGVCmob) taskOwner).canhearsound(targetEntity)) && (targetEntity.riddenByEntity == null || !(targetEntity.riddenByEntity instanceof GVCEntityBox && (targetEntity.distanceWalkedModified - targetEntity.prevDistanceWalkedModified == 0 || dist > 64))))
                                 return true;
                         }
                     }
@@ -118,17 +118,8 @@ public class AINearestAttackableTarget extends EntityAITarget {
                 flag &= !((IFF) taskOwner).is_this_entity_friend(targetEntity);
             }
             if(flag) {
-                if (targetEntity != null && (targetEntity.riddenByEntity == null || !(targetEntity.riddenByEntity instanceof GVCEntityBox && targetEntity.distanceWalkedModified - targetEntity.prevDistanceWalkedModified < dist / 10))) {
+                if (targetEntity != null && (targetEntity.riddenByEntity == null || !(targetEntity.riddenByEntity instanceof GVCEntityBox && (targetEntity.distanceWalkedModified - targetEntity.prevDistanceWalkedModified == 0 || dist > 64)))) {
                     this.taskOwner.setAttackTarget(this.targetEntity);
-                    if(this.taskOwner.ridingEntity instanceof EntityDummy_rider){
-                        BaseLogic riding = ((EntityDummy_rider) this.taskOwner.ridingEntity).linkedBaseLogic;
-                        for(Entity entity:riding.riddenByEntities){
-                            if(entity instanceof EntityCreature){
-                                ((EntityCreature) entity).setAttackTarget(this.targetEntity);
-                                ((EntityCreature) entity).setTarget(this.targetEntity);
-                            }
-                        }
-                    }
                     this.taskOwner.setTarget(this.targetEntity);
                 }
             }

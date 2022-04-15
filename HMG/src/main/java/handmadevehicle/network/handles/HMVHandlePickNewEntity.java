@@ -39,12 +39,14 @@ public class HMVHandlePickNewEntity implements IMessageHandler<HMVPacketPickNewE
 			world = HMG_proxy.getCilentWorld();
 			if(world != null) {
 				Entity picking;
-				Entity picked;
 				if ((picking = world.getEntityByID(message.pickingEntityID)) != null && picking instanceof IVehicle) {
 					Entity[] entitylist = ((IVehicle) picking).getRiddenEntityList();
 					int cnt = 0;
 					for (int a_id : message.pickedEntityIDs) {
-						picked = world.getEntityByID(a_id);
+						Entity picked = null;
+						if(a_id != -1) {
+							picked = world.getEntityByID(a_id);
+						}
 						entitylist[cnt] = picked;
 						cnt++;
 					}

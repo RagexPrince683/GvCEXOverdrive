@@ -2,8 +2,9 @@ package hmggvcmob.entity;
 
 import handmadevehicle.entity.parts.Hasmode;
 import handmadevehicle.entity.parts.Modes;
-import hmggvcmob.ai.EntityAndPos;
-import hmggvcmob.ai.PlatoonOBJ;
+import hmggvcmob.entity.util.EntityAndPos;
+import hmggvcmob.entity.util.PlatoonOBJ;
+import hmggvcmob.entity.util.PlatoonInfoData;
 
 public interface IPlatoonable extends Hasmode {
 	void makePlatoon();//分隊に周囲のエンティティを追加

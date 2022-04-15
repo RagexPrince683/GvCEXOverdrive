@@ -4,6 +4,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import hmggvcmob.tile.TileEntityFlag;
 import hmggvcmob.tile.TileEntityMobSpawner_Extend;
+import hmggvcmob.tile.TileEntityMobSpawner_OneTime;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
@@ -37,6 +38,7 @@ public class CommonSideProxyGVCM {
 //		GameRegistry.registerTileEntity(GVCTileEntityMobSpawner.class, "GVCTile_MobSpawner");
 		GameRegistry.registerTileEntity(TileEntityFlag.class, "FlagTile");
 		GameRegistry.registerTileEntity(TileEntityMobSpawner_Extend.class, "MobspawnerEX");
+		GameRegistry.registerTileEntity(TileEntityMobSpawner_OneTime.class, "MobspawnerOneTime");
 	}
 	public void setNextstepdistance(Entity instance, int value){
 		try {

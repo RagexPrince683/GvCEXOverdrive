@@ -1,7 +1,6 @@
 package handmadeguns.client.render;
 
 import handmadeguns.HandmadeGunsCore;
-import handmadeguns.event.RenderTickSmoothing;
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
 import net.minecraft.client.Minecraft;
@@ -28,7 +27,7 @@ import java.nio.FloatBuffer;
 
 import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 import static handmadeguns.event.HMGEventZoom.setUp3DView;
-import static handmadeguns.event.RenderTickSmoothing.smooth;
+import static handmadeguns.HandmadeGunsCore.smooth;
 import static java.lang.Math.abs;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -321,9 +320,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glPushMatrix();
-		GL11.glEnable(GL_BLEND);
-		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4f(1, 1, 1, 1F);
+//		GL11.glColor4f(1, 1, 1, 1);
 		switch (type) {
 			case INVENTORY:
 				glMatrixForRenderInInventory();
@@ -332,15 +329,6 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			{
 
 				for(pass = 0;pass<2;pass++) {
-					if (pass == 1) {
-						glEnable(GL_BLEND);
-						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-						GL11.glDepthMask(false);
-						glAlphaFunc(GL_LEQUAL, 1);
-					} else {
-						GL11.glDepthMask(true);
-						glAlphaFunc(GL_EQUAL, 1);
-					}
 					partsRender_gun.pass = pass;
 					isfirstperson = true;
 					EntityLivingBase entity = (EntityLivingBase) data[1];
@@ -444,6 +432,8 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 						}
 					}
 					setUp3DView(Minecraft.getMinecraft(),smoothing);
+					GL11.glScalef(0.1f,0.1f,0.1f);
+					GL11.glClearDepth(0);
 
 					EntityPlayer entityplayer = (EntityPlayer)Minecraft.getMinecraft().thePlayer;
 					float f1 = entityplayer.distanceWalkedModified - entityplayer.prevDistanceWalkedModified;
@@ -463,7 +453,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 							this.setUpGunPos_equipe_sprint(0,1 - smoothing);
 						} else if (prevADSState) {//ADS中にリロード開始
 							this.setUpGunPos_ADS(-1.4f, 1 - smoothing);
-						}
+						}else this.setUpGunPos_equipe(0);
 					}else if (firstPerson_ADSState && prevADSState) {//リロードは初期位置で行っているのでリロード終了時移動の必要は無し
 						this.setUpGunPos_ADS(-1.4f);
 					} else if(firstPerson_ADSState){//走り始め
@@ -488,15 +478,6 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			}
 			case EQUIPPED: {//thrid
 				pass = MinecraftForgeClient.getRenderPass();
-				if(pass == 1) {
-					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					GL11.glDepthMask(false);
-					glAlphaFunc(GL_LEQUAL, 1);
-				}else {
-					GL11.glDepthMask(true);
-					glAlphaFunc(GL_EQUAL, 1);
-				}
 				partsRender_gun.pass = pass;
 				isfirstperson = false;
 				EntityLivingBase entity = (EntityLivingBase) data[1];
@@ -518,15 +499,6 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			}
 			case ENTITY: {
 				pass = MinecraftForgeClient.getRenderPass();
-				if(pass == 1) {
-					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					GL11.glDepthMask(false);
-					glAlphaFunc(GL_LEQUAL, 1);
-				}else {
-					GL11.glDepthMask(true);
-					glAlphaFunc(GL_EQUAL, 1);
-				}
 				partsRender_gun.pass = pass;
 				isfirstperson = false;
 				Minecraft.getMinecraft().renderEngine.bindTexture(guntexture);
@@ -534,15 +506,12 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				GL11.glScalef(0.4f * scala * gunitem.gunInfo.inworldScale * (isPlacedGun ? gunitem.gunInfo.onTurretScale : 1), 0.4f * scala * gunitem.gunInfo.inworldScale * (isPlacedGun ? gunitem.gunInfo.onTurretScale : 1), 0.4f * scala * gunitem.gunInfo.inworldScale * (isPlacedGun ? gunitem.gunInfo.onTurretScale : 1));
 				rendering_situation(gunstack,null);
 				GL11.glPopMatrix();
-				smoothing = RenderTickSmoothing.smooth;
+				smoothing = HandmadeGunsCore.smooth;
 				break;
 			}
 			case FIRST_PERSON_MAP:
 				break;
 		}
-
-		GL11.glDepthMask(true);
-		GL11.glDisable(GL_BLEND);
 		GL11.glPopMatrix();
 		GL11.glPopAttrib();
 	}
@@ -578,24 +547,39 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		GL11.glRotatef(180f, 0.0F, 0.0F, 1.0F);
 		if(gunitem != null && nbt != null && gunitem.gunInfo.sightOffset_zeroIn != null && nbt.getInteger("currentElevation") >= 0 && gunitem.gunInfo.sightOffset_zeroIn.length>nbt.getInteger("currentElevation")) {
 			Vector3d sightOffset_zeroIn = gunitem.gunInfo.sightOffset_zeroIn[nbt.getInteger("currentElevation")];
+//			System.out.println("" + sightOffset_zeroIn);
 			GL11.glTranslatef((float) sightOffset_zeroIn.x / modelscala,
 					(float) sightOffset_zeroIn.y / modelscala,
 					(float) sightOffset_zeroIn.z / modelscala);// 0.694,1.03,-1.0//-1.4F
 		}
 		GL11.glTranslatef(onads_modelPosX,
 				onads_modelPosY,
-				onads_modelPosZ);// 0.694,1.03,-1.0//-1.4F
+				onads_modelPosZ);
 		GL11.glRotatef(onads_modelRotationY, 0.0F, 1.0F, 0.0F);
 		GL11.glRotatef(onads_modelRotationX, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(onads_modelRotationZ, 0.0F, 0.0F, 1.0F);
+
+		if(gunitem != null && nbt != null) {
+			int currentElevation = nbt.getInteger("currentElevation");
+			if (currentElevation < 0) currentElevation = 0;
+			if (currentElevation >= gunitem.gunInfo.sightOffset_zeroIn.length)
+				currentElevation = gunitem.gunInfo.sightOffset_zeroIn.length - 1;
+//			System.out.println("debug" + gunitem.gunInfo.elevationOffsets.get(currentElevation));
+			if (!gunitem.gunInfo.elevationOffsets.isEmpty()) {
+				GL11.glRotatef(gunitem.gunInfo.elevationOffsets.get(currentElevation), 1, 0.0F, 0.0F);
+			}
+		}
+
+
 	}
 	public void setUpGunPos_ADS(float reco,float interPole) {
 		GL11.glRotatef(180f, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(180f, 0.0F, 0.0F, 1.0F);
-		GL11.glTranslatef(modelPosX * (1 - interPole), modelPosY * (1 - interPole), (modelPosZ + 1.4f) * (1 - interPole));// -0.2F//-0.7,0.7,0
+		GL11.glTranslatef(modelPosX * (1 - interPole), modelPosY * (1 - interPole), (modelPosZ) * (1 - interPole));// -0.2F//-0.7,0.7,0
 
 		if(gunitem != null && nbt != null && gunitem.gunInfo.sightOffset_zeroIn != null && nbt.getInteger("currentElevation") >= 0 && gunitem.gunInfo.sightOffset_zeroIn.length>nbt.getInteger("currentElevation")) {
 			Vector3d sightOffset_zeroIn = gunitem.gunInfo.sightOffset_zeroIn[nbt.getInteger("currentElevation")];
+//			System.out.println("" + sightOffset_zeroIn);
 			GL11.glTranslatef((float) sightOffset_zeroIn.x / modelscala * interPole,
 					(float) sightOffset_zeroIn.y / modelscala * interPole,
 					(float) sightOffset_zeroIn.z / modelscala * interPole);// 0.694,1.03,-1.0//-1.4F
@@ -606,6 +590,17 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		GL11.glRotatef(onads_modelRotationY * interPole, 0.0F, 1.0F, 0.0F);
 		GL11.glRotatef(onads_modelRotationX * interPole, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(onads_modelRotationZ * interPole, 0.0F, 0.0F, 1.0F);
+
+		if(gunitem != null && nbt != null) {
+			int currentElevation = nbt.getInteger("currentElevation");
+			if (currentElevation < 0) currentElevation = 0;
+			if (currentElevation >= gunitem.gunInfo.sightOffset_zeroIn.length)
+				currentElevation = gunitem.gunInfo.sightOffset_zeroIn.length - 1;
+//			System.out.println("debug" + gunitem.gunInfo.elevationOffsets.get(currentElevation));
+			if (!gunitem.gunInfo.elevationOffsets.isEmpty()) {
+				GL11.glRotatef(gunitem.gunInfo.elevationOffsets.get(currentElevation) * interPole, 1, 0.0F, 0.0F);
+			}
+		}
 	}
 
 	public void glMatrixForRenderInEntity(float reco) {
@@ -729,8 +724,12 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 //		}
 //	}
 
-	public static boolean isentitysprinting(Entity entity){
-		return entity != null && (entity.isSprinting() && !nbt.getBoolean("set_up"));
+	public static boolean isentitysprinting(EntityLivingBase entity){
+		NBTTagCompound nbt = HMGRenderItemGun_U_NEW.nbt;
+		if(nbt == null){
+			if(entity.getHeldItem() != null)nbt = entity.getHeldItem().getTagCompound();
+		}
+		return entity != null && (entity.isSprinting() && (nbt == null || !nbt.getBoolean("set_up")));
 	}
 	private static FloatBuffer setColorBuffer(float p_74521_0_, float p_74521_1_, float p_74521_2_, float p_74521_3_) {
 		colorBuffer.clear();
@@ -773,7 +772,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				state[0] = GunState.Cock;
 				partsRender_gun.partSidentification(state, cockingprogress, remainbullets);
 			} else if (!recoiled) {
-				GL11.glRotatef(jump * (10 - recoileprogress), 1.0f, 0.0f, 0.0f);
+				GL11.glRotatef(jump * (10 - recoileprogress)/10, 1.0f, 0.0f, 0.0f);
 				state[0] = GunState.Recoil;
 				partsRender_gun.partSidentification(state, recoileprogress, remainbullets);
 			} else {
@@ -781,7 +780,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				partsRender_gun.partSidentification(state, (float) 0, remainbullets);
 			}
 		} else {
-			if (this.isentitysprinting(entity)) {
+			if (entity instanceof EntityLivingBase && isentitysprinting((EntityLivingBase) entity)) {
 				partsRender_gun.partSidentification(new GunState[]{GunState.Default}, (float) 0, remainbullets);
 			} else {
 				int cockingtime = this.getintfromnbt("CockingTime");

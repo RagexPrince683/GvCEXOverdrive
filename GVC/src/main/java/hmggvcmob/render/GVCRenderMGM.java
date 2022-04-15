@@ -672,7 +672,14 @@ public class GVCRenderMGM extends Render {
 		model.renderPart("LLegJoint");
 		model.renderPart("RLegJoint");
 		model.renderPart("crotch&Body");
+		GL11.glPushMatrix();
+		GL11.glTranslatef((float) 0, (float) 3.088, (float) -3.259);
+		GL11.glRotatef(entity.legSneak_State_Progress, 1.0F, 0.0F, 0.0F);
+		GL11.glTranslatef((float) 0, (float) -3.088, (float) 3.259);
 		model.renderPart("WeaponModuleArm");
+		GL11.glTranslatef((float) 0, (float) 5.826, (float) -5.597);
+		GL11.glRotatef(-entity.legSneak_State_Progress, 1.0F, 0.0F, 0.0F);
+		GL11.glTranslatef((float) 0, (float) -5.826, (float) 5.597);
 		model.renderPart("WeaponModule");
 		model.renderPart("Radome");
 		model.renderPart("RadomeHead");
@@ -683,6 +690,7 @@ public class GVCRenderMGM extends Render {
 		GL11.glRotatef(entity.RailGUNrotationPitch, 1.0F, 0.0F, 0.0F);
 		GL11.glTranslatef((float) EntityMGAX55.gunpos[0][0], -(float) EntityMGAX55.gunpos[0][1], -(float) EntityMGAX55.gunpos[0][2]);
 		model.renderPart("RailGun");
+		GL11.glPopMatrix();
 		GL11.glPopMatrix();
 
 

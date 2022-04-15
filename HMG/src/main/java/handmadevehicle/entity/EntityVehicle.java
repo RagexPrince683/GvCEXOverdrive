@@ -5,6 +5,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import handmadeguns.Util.GunsUtils;
 import handmadeguns.entity.IFF;
 import handmadeguns.entity.I_SPdamageHandle;
 import handmadevehicle.AddNewVehicle;
@@ -30,7 +31,11 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Vector3d;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static cpw.mods.fml.common.network.ByteBufUtils.readTag;
 import static cpw.mods.fml.common.network.ByteBufUtils.writeTag;
@@ -40,7 +45,7 @@ import static handmadevehicle.HMVehicle.HMV_Proxy;
 import static handmadevehicle.HMVehicle.itemWrench;
 import static handmadevehicle.Utils.*;
 import static java.lang.Integer.parseInt;
-import static java.lang.Math.abs;
+import static java.lang.Math.*;
 
 public class EntityVehicle extends Entity implements IFF,IVehicle,IMultiTurretVehicle,IEntityAdditionalSpawnData, I_SPdamageHandle ,IhasMoveHelper {
 	public String typename;
@@ -92,6 +97,11 @@ public class EntityVehicle extends Entity implements IFF,IVehicle,IMultiTurretVe
 		baseLogic = new BaseLogic(worldObj, this);
 		this.moveHelperForVehicle = new MoveHelperForVehicle(this,baseLogic);
 		Prefab_Vehicle_Base infos = AddNewVehicle.seachInfo(typename);
+		if(infos == null){
+			System.out.println("there is no " + typename);
+			System.out.println("Please check your packs folder");
+			return;
+		}
 		baseLogic.setinfo(infos);
 		nboundingbox = new ModifiedBoundingBox(boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ,
 				0, 1.5, 0,
@@ -165,8 +175,26 @@ public class EntityVehicle extends Entity implements IFF,IVehicle,IMultiTurretVe
 		if (!this.worldObj.isRemote)
 		{
 			this.collideWithNearbyEntities();
+		}else {
+			this.worldObj.theProfiler.startSection("HMV_Sound_CanSeeCheck");
+			canSeeCheck(HMG_proxy.getMCInstance().renderViewEntity,this);
+			this.worldObj.theProfiler.endSection();
 		}
 		despawnEntity();
+	}
+	static Vec3 vec3 = Vec3.createVectorHelper(0,0,0);
+	static Vec3 vec31 = Vec3.createVectorHelper(0,0,0);
+	static ExecutorService exec = Executors.newWorkStealingPool();
+	public void canSeeCheck(Entity a, Entity b){
+		vec3.xCoord = a.posX;
+		vec3.yCoord = a.posY + a.getEyeHeight();
+		vec3.zCoord = a.posZ;
+
+		vec31.xCoord = b.posX;
+		vec31.yCoord = b.posY + b.getEyeHeight();
+		vec31.zCoord = b.posZ;
+
+		canSeeFlag = GunsUtils.getMovingObjectPosition_forBlock_CheckEmpty(a.worldObj, this.vec3, this.vec31, 10);
 	}
 	public void setLocationAndAngles(double p_70012_1_, double p_70012_3_, double p_70012_5_, float p_70012_7_, float p_70012_8_)
 	{
@@ -174,6 +202,14 @@ public class EntityVehicle extends Entity implements IFF,IVehicle,IMultiTurretVe
 		this.prevPosY = this.posY = p_70012_3_ + (double)this.yOffset;
 		this.prevPosZ = this.posZ = p_70012_5_;
 		this.rotationYaw = p_70012_7_;
+		if(this.baseLogic != null){
+			this.baseLogic.bodyrotationYaw = p_70012_7_;
+			double[] xyz = eulerfromQuat(this.baseLogic.bodyRot);
+			xyz[1] = toDegrees(xyz[1]);
+			AxisAngle4d axisYAngled = new AxisAngle4d(unitY,
+					(toRadians(this.baseLogic.bodyrotationYaw) - xyz[1])/2);
+			this.baseLogic.bodyRot = quatRotateAxis(this.baseLogic.bodyRot,axisYAngled);
+		}
 		this.rotationPitch = p_70012_8_;
 		this.setPosition(this.posX, this.posY, this.posZ);
 	}
@@ -260,47 +296,55 @@ public class EntityVehicle extends Entity implements IFF,IVehicle,IMultiTurretVe
 			OBB box = nboundingbox.boxes[boxId];
 			int hitside = movingObjectPosition.sideHit % 6;
 			double angle_sin = 0;
-			Vector3d Incident_vector = new Vector3d();
-			Incident_vector.normalize((Vector3d) movingObjectPosition.hitInfo);
-			switch (hitside) {
-				case 2: //正面
+
+			if(movingObjectPosition.hitInfo instanceof Vector3d) {
+				Vector3d Incident_vector = new Vector3d();
+				Incident_vector.normalize((Vector3d) movingObjectPosition.hitInfo);
+				switch (hitside) {
+					case 2: //正面
 //					System.out.println("front");
-					angle_sin = abs(Incident_vector.z);
-					temparomor = box.info.armor_Front;
-					break;
-				case 4://ヒダリ
+						angle_sin = abs(Incident_vector.z);
+						temparomor = box.info.armor_Front;
+						break;
+					case 4://ヒダリ
 //					System.out.println("left");
-					angle_sin = abs(Incident_vector.x);
-					temparomor = box.info.armor_SideLeft;
-					break;
-				case 5://ミギ
+						angle_sin = abs(Incident_vector.x);
+						temparomor = box.info.armor_SideLeft;
+						break;
+					case 5://ミギ
 //					System.out.println("right");
-					angle_sin = abs(Incident_vector.x);
-					temparomor = box.info.armor_SideRight;
-					break;
-				case 0://上
+						angle_sin = abs(Incident_vector.x);
+						temparomor = box.info.armor_SideRight;
+						break;
+					case 0://上
 //					System.out.println("top");
-					angle_sin = abs(Incident_vector.y);
-					temparomor = box.info.armor_Top;
-					break;
-				case 1://下
+						angle_sin = abs(Incident_vector.y);
+						temparomor = box.info.armor_Top;
+						break;
+					case 1://下
 //					System.out.println("bottom");
-					angle_sin = abs(Incident_vector.y);
-					temparomor = box.info.armor_Bottom;
-					break;
-				case 3: //背面
+						angle_sin = abs(Incident_vector.y);
+						temparomor = box.info.armor_Bottom;
+						break;
+					case 3: //背面
 //					System.out.println("back");
-					angle_sin = abs(Incident_vector.z);
-					temparomor = box.info.armor_Back;
-					break;
-			}
+						angle_sin = abs(Incident_vector.z);
+						temparomor = box.info.armor_Back;
+						break;
+				}
 //			System.out.println("angle_sin" + angle_sin);
-			temparomor /=angle_sin;
+				temparomor /= angle_sin;
+			}else if(movingObjectPosition.hitInfo instanceof Vector3d[]) {
+				temparomor = box.info.armor;
+				angle_sin = abs(angle_cos(((Vector3d[]) movingObjectPosition.hitInfo)[0],(((Vector3d[]) movingObjectPosition.hitInfo)[1])));
+
+				temparomor /= angle_sin;
+			}
 //			System.out.println("temparomor" + temparomor);
 			if (level <= temparomor) {
 				if (!source.getDamageType().equals("mob"))
-					this.playSound("gvcmob:gvcmob.ArmorBounce", 0.5F, 1/(level / temparomor));
-			}else this.playSound("gvcmob:gvcmob.armorhit",5, 1F);
+					this.playSound("handmadevehicle:ArmorBounce", 0.5F, 1/(level / temparomor));
+			}else this.playSound("handmadevehicle:armorhit",5, 1F);
 			level -= temparomor;
 			if(level<0)level = 0;
 		}
@@ -399,9 +443,6 @@ public class EntityVehicle extends Entity implements IFF,IVehicle,IMultiTurretVe
 		return true;
 	}
 
-	public void mountEntity(Entity p_70078_1_){
-		pickupEntity(p_70078_1_,0);
-	}
 	public void heal(float par2){
 		if(deathTicks != 0)return;
 		baseLogic.health += par2;
@@ -473,7 +514,7 @@ public class EntityVehicle extends Entity implements IFF,IVehicle,IMultiTurretVe
 		}
 	}
 	public boolean pickupEntity(Entity p_70085_1_, int StartSeachSeatNum){
-		return this.getBaseLogic().pickupEntity(p_70085_1_,StartSeachSeatNum);
+		return this.getBaseLogic().pickupEntity(p_70085_1_,StartSeachSeatNum, false);
 	}
 
 //	public Vec3 getLook(float p_70676_1_)
@@ -957,5 +998,11 @@ public class EntityVehicle extends Entity implements IFF,IVehicle,IMultiTurretVe
 	@Override
 	public MoveHelperForVehicle getmoveHelper() {
 		return moveHelperForVehicle;
+	}
+
+	private boolean canSeeFlag = false;
+	@Override
+	public boolean getCanSeeFlag(){
+		return canSeeFlag;
 	}
 }

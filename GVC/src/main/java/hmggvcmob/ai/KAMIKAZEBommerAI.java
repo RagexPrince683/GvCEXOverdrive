@@ -1,5 +1,6 @@
 package hmggvcmob.ai;
 
+import hmggvcmob.entity.IGVCmob;
 import hmggvcmob.entity.guerrilla.GVCEntityGuerrillaBM;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -33,7 +34,7 @@ public class KAMIKAZEBommerAI extends EntityAIBase
 	 */
 	public void startExecuting()
 	{
-		this.swellingCreeper.getNavigator().clearPathEntity();
+		((IGVCmob)swellingCreeper).getMoveToPositionMng().stop();
 		this.creeperAttackTarget = this.swellingCreeper.getAttackTarget();
 	}
 

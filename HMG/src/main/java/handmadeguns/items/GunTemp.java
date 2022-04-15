@@ -37,6 +37,8 @@ public class GunTemp {
 	public boolean connectedTurret;
 
 	public void readPropertyFromNBT(GunInfo gunInfo, NBTTagCompound nbt, boolean isADS, World world){
+		isADS |= currentConnectedTurret != null;
+
 		if (this.connectedTurret = nbt.getBoolean("IsTurretStack") && this.currentConnectedTurret == null) {
 			return;
 		}
@@ -68,5 +70,10 @@ public class GunTemp {
 		this.LockedPosZ = nbt.getInteger("LockedPosZ");
 		this.currentElevation = nbt.getInteger("currentElevation");
 		this.selector = nbt.getInteger("HMGMode");
+
+//		if(!world.isRemote){
+//			if(currentConnectedTurret != null)System.out.println("" +currentConnectedTurret.getName());
+//			System.out.println("debug" + this.tempspread);
+//		}
 	}
 }

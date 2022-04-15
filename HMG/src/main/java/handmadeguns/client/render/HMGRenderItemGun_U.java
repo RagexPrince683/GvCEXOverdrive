@@ -1327,7 +1327,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 						glEnable(GL_BLEND);
 						glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 						GL11.glDepthMask(false);
-						glAlphaFunc(GL_LEQUAL, 1);
+						glAlphaFunc(GL_LESS, 1);
 					}else {
 						GL11.glDepthMask(true);
 						glAlphaFunc(GL_EQUAL, 1);

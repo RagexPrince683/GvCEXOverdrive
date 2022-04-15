@@ -14,7 +14,10 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import javax.vecmath.Vector3d;
+
 import static handmadeguns.HandmadeGunsCore.HMG_proxy;
+import static handmadevehicle.Utils.getjavaxVecObj;
 import static java.lang.Math.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -271,8 +274,7 @@ public class HMGEntityParticles extends EntityFX
                 } else if (istrail) {
                     Vec3 toNextPos = Vec3.createVectorHelper(thisMotionX - posX,thisMotionY - posY,thisMotionZ - posZ);
                     Vec3 playerlook = FMLClientHandler.instance().getClientPlayerEntity().getLook(1.0f);
-                    Vec3 renderVec = toNextPos.crossProduct(playerlook);
-                    renderVec = renderVec.normalize();
+
                     HMG_proxy.getMCInstance().getTextureManager().bindTexture(resourceLocation[(int) (fuse/animationspeed)]);
                     GL11.glTranslatef(
                             (float) (this.posX - interpPosX),
@@ -281,6 +283,7 @@ public class HMGEntityParticles extends EntityFX
                     GL11.glEnable(GL12.GL_RESCALE_NORMAL);
                     GL11.glScalef(1, 1, 1);
                     GL11.glNormal3f(1.0F, 0.0F, 0.0F);
+                    GL11.glDisable(GL_CULL_FACE);
                     tessellator.setColorRGBA_F(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha);
                     double taildistStart = 1;
                     double taildistInter = partialTicks;
@@ -303,42 +306,116 @@ public class HMGEntityParticles extends EntityFX
                         taildistStart = taildistInter;
                     }
 
+                    Vector3d startPosVec = new Vector3d(getjavaxVecObj(toNextPos));
+                    startPosVec.scale(taildistStart);
+                    Vector3d interPosVec = new Vector3d(getjavaxVecObj(toNextPos));
+                    interPosVec.scale(taildistInter);
+                    Vector3d end__PosVec = new Vector3d(getjavaxVecObj(toNextPos));
+                    end__PosVec.scale(taildist__End);
+
+                    EntityLivingBase entityLivingBase = FMLClientHandler.instance().getClient().renderViewEntity;
+                    float f1 = entityLivingBase.yOffset - 1.62F;
+                    Vector3d playerHead = new Vector3d(
+                            entityLivingBase.prevPosX + (entityLivingBase.posX - entityLivingBase.prevPosX) * (double)partialTicks,
+                            entityLivingBase.prevPosY + (entityLivingBase.posY - entityLivingBase.prevPosY) * (double)partialTicks - (double)f1,
+                            entityLivingBase.prevPosZ + (entityLivingBase.posZ - entityLivingBase.prevPosZ) * (double)partialTicks);
+                    playerHead.y += FMLClientHandler.instance().getClient().renderViewEntity.getEyeHeight();
+
+                    Vector3d widthVecStart = new Vector3d();
+                    Vector3d widthVecInter = new Vector3d();
+                    Vector3d widthVecEnd__ = new Vector3d();
+
+
+                    Vector3d renderInitialPos = new Vector3d((this.posX),
+                    (this.posY),
+                    (this.posZ));
+                    {
+                        Vector3d playerLookVec = new Vector3d(getjavaxVecObj(playerlook));
+                        Vector3d renderingVec = new Vector3d(getjavaxVecObj(toNextPos));
+
+                        Vector3d toStart = new Vector3d(renderInitialPos);
+                        toStart.add(startPosVec);
+                        toStart.sub(playerHead);
+                        Vector3d toInter = new Vector3d(renderInitialPos);
+                        toInter.add(interPosVec);
+                        toInter.sub(playerHead);
+                        Vector3d toEnd__ = new Vector3d(renderInitialPos);
+                        toEnd__.add(end__PosVec);
+                        toEnd__.sub(playerHead);
+
+//                        if(toStart.angle(playerLookVec) < 0.1)
+//                            widthVecStart.cross(renderingVec,toStart);
+//                        else
+//                            widthVecStart.cross(playerLookVec,toStart);
+//                        widthVecStart.normalize();
+
+//                        widthVecInter.cross(playerLookVec,toStart);
+//                        widthVecInter.normalize();
+
+
+//                        if(toEnd__.angle(playerLookVec) < 0.1)
+//                            widthVecEnd__.cross(renderingVec,toEnd__);
+//                        else
+//                            widthVecEnd__.cross(playerLookVec,toEnd__);
+//
+//                        widthVecEnd__.normalize();
+//
+//                        if(widthVecEnd__.dot(widthVecStart) < 0){
+//                            widthVecEnd__.scale(-1);
+//                        }
+
+//                        widthVecInter.cross(playerLookVec,toEnd__);
+//                        widthVecInter.normalize();
+
+                        widthVecEnd__.cross(toStart,toEnd__);
+                        widthVecEnd__.normalize();
+                        widthVecStart.set(widthVecEnd__);
+                        widthVecInter.set(widthVecEnd__);
+
+//                        if(widthVecInter.dot(widthVecEnd__) < 0){
+//                            widthVecEnd__.scale(-1);
+//                        }
+//                        if(widthVecInter.dot(widthVecStart) < 0){
+//                            widthVecStart.scale(-1);
+//                        }
+                    }
+
                     tessellator.addVertexWithUV(
-                            renderVec.xCoord * trailwidth/2 + toNextPos.xCoord * taildistStart,
-                            renderVec.yCoord * trailwidth/2 + toNextPos.yCoord * taildistStart,
-                            renderVec.zCoord * trailwidth/2 + toNextPos.zCoord * taildistStart, (double) 0.5 * textureStart, (double) 0);
+                            widthVecStart.x * trailwidth/2 + startPosVec.x,
+                            widthVecStart.y * trailwidth/2 + startPosVec.y,
+                            widthVecStart.z * trailwidth/2 + startPosVec.z, (double) 0.5 * textureStart, (double) 0);
                     tessellator.addVertexWithUV(
-                            renderVec.xCoord * trailwidth/2 + toNextPos.xCoord * taildistInter,
-                            renderVec.yCoord * trailwidth/2 + toNextPos.yCoord * taildistInter,
-                            renderVec.zCoord * trailwidth/2 + toNextPos.zCoord * taildistInter, (double) 0.5 * textureInter, (double) 0);
+                             widthVecInter.x * trailwidth/2 + interPosVec.x,
+                             widthVecInter.y * trailwidth/2 + interPosVec.y,
+                             widthVecInter.z * trailwidth/2 + interPosVec.z, (double) 0.5 * textureInter, (double) 0);
                     tessellator.addVertexWithUV(
-                            -renderVec.xCoord * trailwidth/2 + toNextPos.xCoord * taildistInter,
-                            -renderVec.yCoord * trailwidth/2 + toNextPos.yCoord * taildistInter,
-                            -renderVec.zCoord * trailwidth/2 + toNextPos.zCoord * taildistInter, (double) 0.5 * textureInter, (double) 0.5);
+                            -widthVecInter.x * trailwidth/2 + interPosVec.x,
+                            -widthVecInter.y * trailwidth/2 + interPosVec.y,
+                            -widthVecInter.z * trailwidth/2 + interPosVec.z, (double) 0.5 * textureInter, (double) 0.5);
                     tessellator.addVertexWithUV(
-                            -renderVec.xCoord * trailwidth/2 + toNextPos.xCoord * taildistStart,
-                            -renderVec.yCoord * trailwidth/2 + toNextPos.yCoord * taildistStart,
-                            -renderVec.zCoord * trailwidth/2 + toNextPos.zCoord * taildistStart, (double) 0.5 * textureStart, (double) 0.5);
+                            -widthVecStart.x * trailwidth/2 + startPosVec.x,
+                            -widthVecStart.y * trailwidth/2 + startPosVec.y,
+                            -widthVecStart.z * trailwidth/2 + startPosVec.z, (double) 0.5 * textureStart, (double) 0.5);
                     tessellator.draw();
 
                     tessellator.startDrawingQuads();
 
                     tessellator.addVertexWithUV(
-                            renderVec.xCoord * trailwidth/2 + toNextPos.xCoord * taildistInter,
-                            renderVec.yCoord * trailwidth/2 + toNextPos.yCoord * taildistInter,
-                            renderVec.zCoord * trailwidth/2 + toNextPos.zCoord * taildistInter, (double) 0.5 * textureInter, (double) 0);
+                             widthVecInter.x * trailwidth/2 + interPosVec.x,
+                             widthVecInter.y * trailwidth/2 + interPosVec.y,
+                             widthVecInter.z * trailwidth/2 + interPosVec.z, (double) 0.5 * textureInter, (double) 0);
                     tessellator.addVertexWithUV(
-                            renderVec.xCoord * trailwidth/2 + toNextPos.xCoord * taildist__End,
-                            renderVec.yCoord * trailwidth/2 + toNextPos.yCoord * taildist__End,
-                            renderVec.zCoord * trailwidth/2 + toNextPos.zCoord * taildist__End, (double) 0.5 * texture__End, (double) 0);
+                             widthVecEnd__.x * trailwidth/2 + end__PosVec.x,
+                             widthVecEnd__.y * trailwidth/2 + end__PosVec.y,
+                             widthVecEnd__.z * trailwidth/2 + end__PosVec.z, (double) 0.5 * texture__End, (double) 0);
                     tessellator.addVertexWithUV(
-                            -renderVec.xCoord * trailwidth/2 + toNextPos.xCoord * taildist__End,
-                            -renderVec.yCoord * trailwidth/2 + toNextPos.yCoord * taildist__End,
-                            -renderVec.zCoord * trailwidth/2 + toNextPos.zCoord * taildist__End, (double) 0.5 * texture__End, (double) 0.5);
+                            -widthVecEnd__.x * trailwidth/2 + end__PosVec.x,
+                            -widthVecEnd__.y * trailwidth/2 + end__PosVec.y,
+                            -widthVecEnd__.z * trailwidth/2 + end__PosVec.z, (double) 0.5 * texture__End, (double) 0.5);
                     tessellator.addVertexWithUV(
-                            -renderVec.xCoord * trailwidth/2 + toNextPos.xCoord * taildistInter,
-                            -renderVec.yCoord * trailwidth/2 + toNextPos.yCoord * taildistInter,
-                            -renderVec.zCoord * trailwidth/2 + toNextPos.zCoord * taildistInter, (double) 0.5 * textureInter, (double) 0.5);
+                            -widthVecInter.x * trailwidth/2 + interPosVec.x,
+                            -widthVecInter.y * trailwidth/2 + interPosVec.y,
+                            -widthVecInter.z * trailwidth/2 + interPosVec.z, (double) 0.5 * textureInter, (double) 0.5);
                     tessellator.draw();
 
 //                    tessellator.addVertexWithUV(
@@ -380,6 +457,7 @@ public class HMGEntityParticles extends EntityFX
 
 
                     GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+                    GL11.glEnable(GL_CULL_FACE);
                 } else {
                     try {
                         HMG_proxy.getMCInstance().getTextureManager().bindTexture(resourceLocation[fuse]);

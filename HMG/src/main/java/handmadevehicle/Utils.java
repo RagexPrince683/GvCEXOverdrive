@@ -523,12 +523,7 @@ public class Utils {
             return false;
         }else {
             inVec.set(0,0,0,0);
-            try{
-                throw new NanMadeException("Nan Quaternion appeared!");
-            }catch (NanMadeException e){
-                e.printStackTrace();
-            }
-            return true;
+            throw new NanMadeException("Nan Quaternion appeared!");
         }
     }
     public static Matrix3d matrixfromQuat(Quat4d qua){
@@ -682,7 +677,7 @@ public class Utils {
         return min;
     }
     public static double angle_cos(Vector3d var1,Vector3d var2) {
-        double ret = var2.dot(var1) / (var2.length() * var1.length());
+        double ret = var1.dot(var2) / (var2.length() * var1.length());
         if (ret < -1.0D) {
             ret = -1.0D;
         }

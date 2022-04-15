@@ -16,11 +16,12 @@ import handmadevehicle.command.HMV_CommandReloadparm;
 import handmadevehicle.entity.EntityVehicle;
 import handmadevehicle.events.HMVRenderSomeEvent;
 import handmadevehicle.events.HMV_Event;
-import handmadevehicle.gui.HMVGuiHancler;
+import handmadevehicle.gui.HMVGuiHandler;
 import handmadevehicle.network.HMVPacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.client.model.ModelFormatException;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -67,7 +68,7 @@ public class HMVehicle {
 		lconf = new Configuration(configFile);
 		loadConfig();
 		HMVPacketHandler.init();
-		NetworkRegistry.INSTANCE.registerGuiHandler(this, new HMVGuiHancler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new HMVGuiHandler());
 		{
 			File packdir = new File(HMV_Proxy.ProxyFile(), "handmadeVehicles_Packs");
 			packdir.mkdirs();
@@ -169,6 +170,7 @@ public class HMVehicle {
 				}
 			}
 		}
+		ForgeChunkManager.setForcedChunkLoadingCallback(INSTANCE, HMVChunkLoaderManager.INSTANCE);
 	}
 
 	public static void loadConfig(){
@@ -188,6 +190,8 @@ public class HMVehicle {
 		HMV_Event hmv_event = new HMV_Event();
 		FMLCommonHandler.instance().bus().register(hmv_event);
 		MinecraftForge.EVENT_BUS.register(hmv_event);
+		FMLCommonHandler.instance().bus().register(HMVChunkLoaderManager.INSTANCE);
+		MinecraftForge.EVENT_BUS.register(HMVChunkLoaderManager.INSTANCE);
 	}
 	
 	

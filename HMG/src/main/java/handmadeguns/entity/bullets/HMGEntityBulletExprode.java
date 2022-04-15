@@ -40,6 +40,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 		super(worldIn, throwerIn, damege, bspeed, bure,"default");
 		this.canbounce = false;
 		this.bouncerate = 0.1f;
+		this.noex = false;
 	}
 	public HMGEntityBulletExprode(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, float exl, boolean canex) {
 		this(worldIn, throwerIn, damege, bspeed, bure);
@@ -47,6 +48,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 		this.canex = canex;
 		this.canbounce = false;
 		this.bouncerate = 0.1f;
+		this.noex = false;
 	}
 	public HMGEntityBulletExprode(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, float exl, boolean canex, String modelname) {
 		super(worldIn, throwerIn, damege, bspeed, bure, modelname);
@@ -54,6 +56,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 		this.canex = canex;
 		this.canbounce = false;
 		this.bouncerate = 0.1f;
+		this.noex = false;
 	}
 	public void onUpdate(){
 		super.onUpdate();

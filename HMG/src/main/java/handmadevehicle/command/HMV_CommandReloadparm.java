@@ -180,6 +180,7 @@ public class HMV_CommandReloadparm extends CommandBase implements ICommand{
                 }
             }
         }
+        HMG_proxy.setUpModels();
     }
 
 }

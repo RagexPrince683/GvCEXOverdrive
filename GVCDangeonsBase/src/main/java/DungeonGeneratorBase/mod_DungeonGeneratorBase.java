@@ -135,18 +135,22 @@ public class mod_DungeonGeneratorBase {
     }
     public static boolean getNextDungeon(MapGenStructure_forGVC mapGenStructure_forGVC,World world,int x, int z,final Random rand){
         for(DungeonData_withSettings dungeonDataWithSettings :dungeonDataList.values()){
-            if(dungeonDataWithSettings.onStrongHold && mapGenStructure_forGVC.canSpawnStructureAtCoords_astrongHold(x,z)){
+            if(dungeonDataWithSettings.onStrongHold && mapGenStructure_forGVC.canSpawnStructureAtCoords_asStrongHold(x,z)){
                 mapGenStructure_forGVC.currentDungeon = dungeonDataWithSettings;
                 return true;
             }
             boolean flag_biomeCheck = dungeonDataWithSettings.biomeRestrictionType;
-            int biomeID = world.getBiomeGenForCoords(x * 16,z * 16).biomeID;
-            for(int settedID: dungeonDataWithSettings.biomeSetting){
-                if(settedID == biomeID){
+            String biomeID = world.getBiomeGenForCoords(x * 16,z * 16).biomeName;
+//            System.out.println(world.getBiomeGenForCoords(x * 16,z * 16).biomeName);
+            for(String settedID: dungeonDataWithSettings.biomeSetting){
+                if(settedID.equals(biomeID)){
                     if(dungeonDataWithSettings.biomeRestrictionType){
-                        flag_biomeCheck &= false;
+                        //black list
+//                        System.out.println("" + settedID);
+                        flag_biomeCheck = false;
                     }else {
-                        flag_biomeCheck |= true;
+                        //white list
+                        flag_biomeCheck = true;
                     }
                 }
             }

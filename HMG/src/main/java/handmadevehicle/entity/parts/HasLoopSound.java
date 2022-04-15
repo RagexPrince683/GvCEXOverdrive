@@ -7,6 +7,9 @@ public interface HasLoopSound {
 	default float getsoundPitch(){
 		return ((HasBaseLogic)this).getBaseLogic().getsoundPitch();
 	}
+	default boolean getCanSeeFlag(){
+		return false;
+	}
 	default String getsound(){
 		return ((HasBaseLogic)this).getBaseLogic().getsound();
 	}

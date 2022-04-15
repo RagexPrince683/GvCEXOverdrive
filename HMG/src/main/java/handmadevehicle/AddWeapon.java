@@ -30,6 +30,15 @@ public class AddWeapon {
 				String str;
 				Prefab_Turret prefab_turret = new Prefab_Turret();
 				String name = null;
+				float   modelhigh = 0;
+				float   modelhighr = 0;
+				float   modelhighs = 0;
+				float   modelwidthx = 0;
+				float   modelwidthxr = 0;
+				float   modelwidthxs = 0;
+				float   modelwidthz = 0;
+				float   modelwidthzr = 0;
+				float   modelwidthzs = 0;
 				while((str = br.readLine()) != null) {
 					current = str;
 					line++;
@@ -90,6 +99,9 @@ public class AddWeapon {
 							break;
 						case "onlyAim":
 							prefab_turret.onlyAim = true;
+							break;
+						case "onlyRadar":
+							prefab_turret.onlyRadar = true;
 							break;
 						case "syncTurretAngle":
 							prefab_turret.syncTurretAngle = parseBoolean(type[1]);
@@ -169,6 +181,12 @@ public class AddWeapon {
 						case "syncMotherTarget":
 							prefab_turret.syncMotherTarget = parseBoolean(type[1]);
 							break;
+						case "canAutoPickUpStack":
+							prefab_turret.canAutoPickUpStack = parseBoolean(type[1]);
+							break;
+						case "replaceStackTime":
+							prefab_turret.replaceStackTime = parseInt(type[1]);
+							break;
 						case "gunStackwhitelist":
 							prefab_turret.gunStackwhitelist = new String[type.length-1];
 						    {
@@ -182,6 +200,45 @@ public class AddWeapon {
 							break;
 						case "End":
 							prefab_turretHashMap.put(name,prefab_turret);
+							break;
+						case "ModelHigh":
+						case "ADSOffsetY":
+							modelhigh = parseFloat(type[1]) - 1.8f;
+							modelhighr = parseFloat(type[2]) - 1.8f;
+							modelhighs = parseFloat(type[3]) - 1.8f;
+							break;
+						case "ModelWidthX":
+						case "ADSOffsetX":
+							modelwidthx = -0.693f + parseFloat(type[1]);
+							modelwidthxr = -0.693f + parseFloat(type[2]);
+							modelwidthxs = -0.693f + parseFloat(type[3]);
+							break;
+						case "ModelWidthZ":
+						case "ADSOffsetZ":
+							modelwidthz = parseFloat(type[1]) + 0.5f;
+							modelwidthzr = parseFloat(type[2]) + 0.5f;
+							modelwidthzs = parseFloat(type[3]) + 0.5f;
+							break;
+
+						case "SimpleADSOffsetX":
+							modelwidthx = -parseFloat(type[1]);
+							modelwidthxr = -parseFloat(type[2]);
+							modelwidthxs = -parseFloat(type[3]);
+							break;
+						case "SimpleADSOffsetY":
+							modelhigh = -parseFloat(type[1]);
+							modelhighr = -parseFloat(type[2]);
+							modelhighs = -parseFloat(type[3]);
+							break;
+						case "SimpleADSOffsetZ":
+							modelwidthz = parseFloat(type[1]);
+							modelwidthzr = parseFloat(type[2]);
+							modelwidthzs = parseFloat(type[3]);
+							break;
+						case "setADSPointToINFO":
+							prefab_turret.gunInfo.setmodelADSPosAndRotation_ForVehicle(modelwidthx,modelhigh,modelwidthz);
+							prefab_turret.gunInfo.setADSoffsetRed_ForVehicle(modelwidthxr,modelhighr,modelwidthzr);
+							prefab_turret.gunInfo.setADSoffsetScope_ForVehicle(modelwidthxs,modelhighs,modelwidthzs);
 							break;
 					}
 					readFireInfo(prefab_turret.gunInfo,type);

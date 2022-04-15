@@ -16,20 +16,28 @@ import handmadevehicle.entity.parts.IDriver;
 import handmadevehicle.entity.parts.Modes;
 import handmadevehicle.entity.parts.logics.BaseLogic;
 import handmadevehicle.entity.parts.turrets.TurretObj;
+import handmadevehicle.entity.parts.turrets.WeaponCategory;
 import handmadevehicle.entity.prefab.Prefab_Seat;
 import handmadevehicle.entity.prefab.Prefab_Vehicle_Base;
 import hmggvcmob.GVCMobPlus;
+import hmggvcmob.ai.newai.AIAttackEntityByGun;
+import hmggvcmob.ai.newai.AIAttackEntityByTank;
+import hmggvcmob.ai.newai.AIAttackManager;
 import hmggvcmob.entity.*;
 import handmadevehicle.SlowPathFinder.ModifiedPathNavigater;
 import hmggvcmob.ai.*;
 import hmggvcmob.entity.guerrilla.EntityGBase;
 import hmggvcmob.entity.guerrilla.EntityGBases;
+import hmggvcmob.entity.util.EntityAndPos;
+import hmggvcmob.entity.util.MoveToPositionMng;
+import hmggvcmob.entity.util.PlatoonOBJ;
 import littleMaidMobX.LMM_EntityLittleMaid;
 import net.minecraft.block.Block;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,20 +55,22 @@ import static handmadeguns.HandmadeGunsCore.islmmloaded;
 import static handmadeguns.Util.GunsUtils.getmovingobjectPosition_forBlock;
 import static handmadevehicle.entity.EntityVehicle.EntityVehicle_spawnByMob;
 import static hmggvcmob.GVCMobPlus.*;
-import static java.lang.Math.abs;
+import static java.lang.Math.*;
 
 public abstract class EntitySoBases extends EntityCreature implements INpc ,  IFF, IGVCmob, IDriver, IPlatoonable {
 	private EntityBodyHelper_modified bodyHelper;
 	public String summoningVehicle = null;
 
+	public MoveToPositionMng moveToPositionMng;
+
 	private ModifiedPathNavigater modifiedPathNavigater;
 	WorldForPathfind worldForPathfind;
 	
-	public float viewWide = 1.14f;
+	public float viewWide = 1.04f;
 	public double movespeed = 0.3d;
 	public float spread = 1;
 	public EntityAISwimming aiSwimming;
-	public AIAttackGun aiAttackGun;
+	public AIAttackEntityByGun aiAttackGun;
 	public AITargetFlag aiTargetFlag;
 	public boolean canDespawn = true;
 	public static int spawnedcount;
@@ -73,6 +83,7 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 		this.bodyHelper = new EntityBodyHelper_modified(this);
 		renderDistanceWeight = Double.MAX_VALUE;
 		this.worldForPathfind = new WorldForPathfind(worldObj);
+		this.moveToPositionMng = new MoveToPositionMng(this,worldForPathfind);
 		this.modifiedPathNavigater = new ModifiedPathNavigater(this, worldObj,worldForPathfind);
 
 		ObfuscationReflectionHelper.setPrivateValue(EntityLiving.class, this, moveHelper, "moveHelper", "field_70765_h");
@@ -80,10 +91,10 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 
 		this.getNavigator().setBreakDoors(true);
 		this.tasks.addTask(0, aiSwimming = new EntityAISwimming(this));
-		this.tasks.addTask(0, new AIAttackByTank(this, null, worldForPathfind, this));
 		this.tasks.addTask(3, new AIattackOnCollide(this, EntityLiving.class, 1.0D, true));
 		this.tasks.addTask(3, new AIattackOnCollide(this, EntityGBases.class, 1.0D, true));
-		this.tasks.addTask(3, new AIDriveTank(this, null, worldForPathfind));
+		this.tasks.addTask(1, new AIAttackManager(this));
+//		this.tasks.addTask(3, new AIDriveTank(this, null, worldForPathfind));
 		this.tasks.addTask(5, new EntityAIRestrictOpenDoor(this));
 		this.tasks.addTask(6, new EntityAIOpenDoor(this, true));
 		this.tasks.addTask(7, new EntityAIMoveTowardsRestriction(this, 1.0D));
@@ -116,6 +127,8 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
     public void readEntityFromNBT(NBTTagCompound p_70037_1_)
     {
         super.readEntityFromNBT(p_70037_1_);
+	    this.moveToPositionMng.getMoveToPos().set(this.posX,this.posY
+			    ,this.posZ);
 		seatID = p_70037_1_.getInteger("seatID");
 	    canDespawn = p_70037_1_.getBoolean("canDespawn");
 		if(p_70037_1_.hasKey("platoonTargetPos"))getEntityData().setIntArray("platoonTargetPos",p_70037_1_.getIntArray("platoonTargetPos"));
@@ -229,7 +242,6 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 	}
 	boolean platoon_check = false;
 	private int reArmCnt;
-	public int chunkCheckCNT = 20;
 	public void onUpdate() {
 		if(worldObj.isRemote && HMG_proxy.getEntityPlayerInstance() != null && HMG_proxy.getEntityPlayerInstance().isDead){
 			this.setDead();
@@ -237,37 +249,43 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 		if(getPlatoon() == null && !platoon_check){
 			platoon_check = true;
 			if(getEntityData().hasKey("platoonTargetPos")){
-				System.out.println("debug");
+//				System.out.println("debug");
 				makePlatoon_OnLoading();
 				platoonOBJ.setPlatoonTargetPos(getEntityData().getIntArray("platoonTargetPos"));
 			}
 		}
 
-		if(currentMainTurret != null && currentMainTurret.motherEntity != null){
+		if(currentMainWeapon != null && currentMainWeapon.linkedBaseLogic.mc_Entity != null){
 			if(getAttackTarget() == null){
 				aimPos = null;
-				reArmCnt--;
-				if(reArmCnt == 0) {
-					Prefab_Vehicle_Base prefab_vehicle = ((EntityVehicle) currentMainTurret.motherEntity).getBaseLogic().prefab_vehicle;
-					for (int slotID = 0; slotID < prefab_vehicle.weaponSlotNum; slotID++) {
-						if (prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID) != null) {
-							int randUsingSlot = rand.nextInt(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID).length);
-							String whiteList = prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID)[randUsingSlot];
-							System.out.println("" + whiteList);
-							Item check = GameRegistry.findItem("HandmadeGuns", whiteList);
-							if (check instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) check).gunInfo.guerrila_can_use) {
-								((EntityVehicle) currentMainTurret.motherEntity).getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(check));
-							}
-						} else {
-							int randUsingSlot = rand.nextInt(GVCMobPlus.Guns_CanUse.size());
-							Item choosenGun = GVCMobPlus.Guns_CanUse.get(randUsingSlot);
-							((EntityVehicle) currentMainTurret.motherEntity).getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(choosenGun));
-						}
-					}
-				}
+				if(reArmCnt > 0)reArmCnt--;
 			}else {
 				reArmCnt = 20;
 			}
+
+			if(reArmCnt <= 0) {
+				Prefab_Vehicle_Base prefab_vehicle = ((EntityVehicle) currentMainWeapon.linkedBaseLogic.mc_Entity).getBaseLogic().prefab_vehicle;
+				for (int slotID = 0; slotID < prefab_vehicle.weaponSlotNum; slotID++) {
+					if (prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID) != null) {
+						int randUsingSlot = rand.nextInt(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID).length);
+						String whiteList = prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID)[randUsingSlot];
+//							System.out.println("" + whiteList);
+						Item check = GameRegistry.findItem("HandmadeGuns", whiteList);
+						if (check instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) check).gunInfo.guerrila_can_use) {
+							((EntityVehicle) currentMainWeapon.linkedBaseLogic.mc_Entity).getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(check));
+						}
+					} else {
+						int randUsingSlot = rand.nextInt(GVCMobPlus.Guns_CanUse.size());
+						Item choosenGun = GVCMobPlus.Guns_CanUse.get(randUsingSlot);
+						((EntityVehicle) currentMainWeapon.linkedBaseLogic.mc_Entity).getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(choosenGun));
+					}
+				}
+				reArmCnt = 20;
+			}
+		}
+
+		if(aimPos != null){
+			getLookHelper().setLookPosition(aimPos.x,aimPos.y,aimPos.z,90,90);
 		}
 
 		if(!worldObj.isRemote && getPlatoon() != null){
@@ -278,7 +296,7 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 
 			if(isPlatoonLeader()){
 				if(platoonOBJ.platoonMode == Modes.Follow){
-					if(platoonOBJ.platoonTargetEntity == null){//やっぱり飛んでる…
+					if(platoonOBJ.platoonTargetEntity == null){
 						platoonOBJ.platoonMode = Modes.Wait;
 					}else {
 						platoonOBJ.setPlatoonTargetPos(platoonOBJ.platoonTargetEntity);
@@ -290,23 +308,22 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 		super.onUpdate();
 		if(summoningVehicle != null) {
 
-			int var12 = MathHelper.floor_double((double) (this.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
-			System.out.println(summoningVehicle);
+			int var12 = MathHelper.floor_double((rotationYaw - 22.5)*8 / 360.0F)*45 + 45;
+//			System.out.println(summoningVehicle);
 			EntityVehicle bespawningEntity = EntityVehicle_spawnByMob(worldObj,summoningVehicle);
 			bespawningEntity.noDrop = true;
-			bespawningEntity.setLocationAndAngles(this.posX, this.posY, this.posZ, var12 , 0.0F);
-			if((!bespawningEntity.getBaseLogic().prefab_vehicle.T_Land_F_Plane && this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ))) || bespawningEntity.checkObstacle()) {
+			bespawningEntity.setLocationAndAngles(this.posX, this.posY, this.posZ, var12 , 0.0F);if((this.worldObj.canBlockSeeTheSky(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)))) {
 				if(bespawningEntity.pickupEntity(this,0)){
 					this.setCurrentItemOrArmor(0,null);
 				}
 				bespawningEntity.canUseByMob = true;
-				bespawningEntity.canDespawn = true;
+				bespawningEntity.canDespawn = canDespawn;
 				Prefab_Vehicle_Base prefab_vehicle = bespawningEntity.getBaseLogic().prefab_vehicle;
 				for(int slotID = 0 ;slotID < prefab_vehicle.weaponSlotNum;slotID++) {
 					if(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID) != null) {
 						int randUsingSlot = rand.nextInt(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID).length);
 						String whiteList = prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID)[randUsingSlot];
-						System.out.println("" + whiteList);
+//						System.out.println("" + whiteList);
 						Item check = GameRegistry.findItem("HandmadeGuns", whiteList);
 						if (check instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) check).gunInfo.guerrila_can_use) {
 							bespawningEntity.getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(check));
@@ -318,15 +335,17 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 					}
 				}
 				if(!prefab_vehicle.T_Land_F_Plane) {
-					bespawningEntity.setLocationAndAngles(this.posX, 128, this.posZ, var12, 0.0F);
+					bespawningEntity.setLocationAndAngles(this.posX, this.posY + 128, this.posZ, var12, 0.0F);
 					bespawningEntity.getBaseLogic().throttle = prefab_vehicle.throttle_Max;
 				}
+				if(!bespawningEntity.checkObstacle())bespawningEntity.setDead();
 				for (int cnt = 0;cnt < bespawningEntity.getBaseLogic().riddenByEntities.length;cnt++) {
-					EntityLiving entity = new GVCEntitySoldier(worldObj);
+					GVCEntitySoldier entity = new GVCEntitySoldier(worldObj);
+					entity.setCanDespawn(canDespawn);
 					entity.copyLocationAndAnglesFrom(this);
 					entity.onSpawnWithEgg(null);
 					if(bespawningEntity.pickupEntity(entity,cnt)) {
-						Prefab_Seat sittingSeat = bespawningEntity.getBaseLogic().seatInfos[((EntityDummy_rider)entity.ridingEntity).linkedSeatID].prefab_seat;
+						Prefab_Seat sittingSeat = bespawningEntity.getBaseLogic().seatObjects[((EntityDummy_rider)entity.ridingEntity).linkedSeatID].prefab_seat;
 						if(sittingSeat.isBlindedSeat || sittingSeat.hasGun){
 							this.setCurrentItemOrArmor(0,null);
 						}
@@ -379,6 +398,7 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 		this.getEntityData().setBoolean("HMGisUsingItem",false);
 		if(modifiedPathNavigater.getSpeed() < 0 && rand.nextInt(10)==0 && this.getAttackTarget() == null)modifiedPathNavigater.setSpeed(1);
 
+		moveToPositionMng.update();
 
 	}
 
@@ -497,7 +517,8 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 			Vec3 lookVec = getLookVec();
 			Vec3 toTGTvec = Vec3.createVectorHelper(target.posX - posX, target.posY + target.getEyeHeight() - (posY + getEyeHeight()), target.posZ - posZ);
 			toTGTvec = toTGTvec.normalize();
-			return lookVec.squareDistanceTo(toTGTvec) < getviewWide() * 1.2f;
+			double angle = acos(lookVec.dotProduct(toTGTvec));
+		return angle < getviewWide();
 		}else
 			return true;
 	}
@@ -508,13 +529,13 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 
 		if(ridingEntity instanceof EntityDummy_rider){
 			BaseLogic connected = ((EntityDummy_rider) ridingEntity).linkedBaseLogic;
-			if(connected.seatInfos[((EntityDummy_rider) ridingEntity).linkedSeatID].prefab_seat.isBlindedSeat)return false;
+			if(connected.seatObjects[((EntityDummy_rider) ridingEntity).linkedSeatID].prefab_seat.isBlindedSeat)return false;
 		}
 
 		Vec3 vec3 = Vec3.createVectorHelper(this.posX, this.posY + this.getEyeHeight(), this.posZ);
 		Vec3 vec31 = Vec3.createVectorHelper(p_70685_1_.posX, p_70685_1_.posY + p_70685_1_.getEyeHeight(), p_70685_1_.posZ);
 
-		return GunsUtils.getMovingObjectPosition_forBlock_CheckEmpty(worldObj,vec3, vec31,10) && canSeeTarget(p_70685_1_);
+		return GunsUtils.getMovingObjectPosition_forBlock_CheckEmpty(worldObj,vec3, vec31,10,new Block[] {Blocks.glass,Blocks.glass_pane,Blocks.stained_glass,Blocks.stained_glass_pane}) && canSeeTarget(p_70685_1_);
 	}
 
 	@Override
@@ -523,11 +544,6 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 		double dist = getDistanceToEntity(target);
 		flag = dist < target.getEntityData().getFloat("GunshotLevel") * 14;
 		return flag;
-	}
-
-	@Override
-	public AIAttackGun getAttackGun() {
-		return aiAttackGun;
 	}
 
 	@Override
@@ -583,21 +599,21 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 	}
 
 	public int seatID = 0;
-	public TurretObj currentMainTurret;
-	public TurretObj currentSubTurret;
+	public WeaponCategory currentMainWeapon;
+	public WeaponCategory currentSubWeapon;
     @Override
     public void setSeatID(int id) {
         seatID = id;
     }
 
     @Override
-    public void setTurretMain(TurretObj turret) {
-        currentMainTurret = turret;
+    public void setWeaponMain(WeaponCategory turret) {
+        currentMainWeapon = turret;
     }
 
     @Override
-    public void setTurretSub(TurretObj turret) {
-        currentSubTurret = turret;
+    public void setWeaponSub(WeaponCategory turret) {
+        currentSubWeapon = turret;
     }
 
     @Override
@@ -606,13 +622,13 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
     }
 
     @Override
-    public TurretObj getTurretMain() {
-        return currentMainTurret;
+    public WeaponCategory getWeaponMain() {
+        return currentMainWeapon;
     }
 
     @Override
-    public TurretObj getTurretSub() {
-        return currentSubTurret;
+    public WeaponCategory getWeaponSub() {
+        return currentSubWeapon;
     }
 
 
@@ -643,7 +659,7 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 				double d0 = entityplayer.posX - this.posX;
 				double d1 = entityplayer.posY - this.posY;
 				double d2 = entityplayer.posZ - this.posZ;
-				double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+				double d3 = d0 * d0 + d2 * d2;
 
 				if (this.canDespawn() && d3 > 16384.0D)
 				{
@@ -666,7 +682,7 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 		if(!this.isDead) {
 			if(platoonOBJ != entities) {
 				this.platoonOBJ = entities;
-				this.platoonOBJ.addMember(this);
+				if(this.platoonOBJ != null)this.platoonOBJ.addMember(this);
 			}
 		}
 	}
@@ -707,5 +723,26 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 	@Override
 	public BaseLogic getLinkedVehicle() {
 		return linkedLogic;
+	}
+
+	@Override
+	public void extraprocessInMGFire(){
+		if(ridingEntity instanceof PlacedGunEntity && getAimPos() != null){
+			double[] yp = ((PlacedGunEntity) ridingEntity).getAngleToTarget(getAimPos());
+			this.rotationPitch = (float) yp[1];
+			this.rotationYaw = (float) yp[0];
+			this.rotationYawHead = (float) yp[0];
+		}
+	}
+
+
+	@Override
+	public MoveToPositionMng getMoveToPositionMng() {
+		return moveToPositionMng;
+	}
+
+	public void setLocationAndAngles(double posX,double posY,double posZ,float yaw,float pitch){
+		super.setLocationAndAngles(posX,posY,posZ,yaw,pitch);
+		moveToPositionMng.getMoveToPos().set(posX,posY,posZ);
 	}
 }

@@ -2,9 +2,7 @@ package hmggvcmob.entity.guerrilla;
 
 
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
-import handmadevehicle.SlowPathFinder.WorldForPathfind;
 import hmggvcutil.GVCUtils;
-import hmggvcmob.ai.AIAttackGun;
 import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.init.Items;
@@ -21,8 +19,6 @@ public class GVCEntityGuerrillaP extends EntityGBase
     {
         super(par1World);
         this.setSize(0.6F, 1.8F);
-        this.tasks.addTask(1,aiAttackGun = new AIAttackGun(this,60,5,15,5,true,true,new WorldForPathfind(worldObj)));
-        spread = 8;
     }
     protected void applyEntityAttributes()
     {

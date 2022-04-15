@@ -1,6 +1,7 @@
 package hmggvcmob.ai;
 
 import handmadevehicle.SlowPathFinder.WorldForPathfind;
+import hmggvcmob.entity.IGVCmob;
 import hmggvcmob.entity.IIRVING;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -50,7 +51,7 @@ public class AIGKkick extends EntityAIBase {
     @Override
     public void updateTask() {
         IRVING_body.getLookHelper().setLookPositionWithEntity(target,90,90);
-        IRVING_body.getNavigator().clearPathEntity();
+        ((IGVCmob)IRVING_body).getMoveToPositionMng().stop();
         if(kickprogeress == 0){
             kicktype = rnd.nextBoolean();
         }

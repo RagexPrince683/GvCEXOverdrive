@@ -215,7 +215,7 @@ public class GVCUtils {
 		configFile = pEvent.getSuggestedConfigurationFile();
 		Configuration lconf = new Configuration(configFile);
 		lconf.load();
-		cfg_SpwanMob	= lconf.get("Entity", "cfg_exprotion", true).getBoolean(true);
+		cfg_SpwanMob	= lconf.get("Entity", "cfg_spawnBox", false).getBoolean(false);
 		lconf.save();
 
 
@@ -693,10 +693,6 @@ public class GVCUtils {
 
 
 	public static boolean platoonMatched(String platoonName, EntityPMCBase PMC){
-		return (
-				(platoonName == null&&PMC.platoonName == null)
-						||
-						(PMC.platoonName != null && PMC.platoonName.equals(platoonName))
-		);
+		return platoonName == null || PMC.platoonName == null || PMC.platoonName.equals(platoonName);
 	}
 }

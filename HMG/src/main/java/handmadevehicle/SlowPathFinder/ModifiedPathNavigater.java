@@ -146,7 +146,7 @@ public class ModifiedPathNavigater extends PathNavigate{
 	 */
 	public float getPathSearchRange()
 	{
-		return 120;
+		return 40;
 	}
 	
 	/**
@@ -261,6 +261,7 @@ public class ModifiedPathNavigater extends PathNavigate{
 			if (!this.noPath())
 			{
 				Vec3 vec3 = this.currentPath.getPosition(this.theEntity);
+//				System.out.println("" + vec3);
 				if (vec3 != null)
 				{
 					if(this.theEntity instanceof EntityLiving){
@@ -301,6 +302,24 @@ public class ModifiedPathNavigater extends PathNavigate{
 			{
 				this.currentPath.setCurrentPathIndex(k + 1);
 			}
+		}
+
+		{
+			int current = this.currentPath.getCurrentPathIndex();
+			int target = -1;
+			double distToNearest = -1;
+			for(int id = current;id < this.currentPath.getCurrentPathLength();id++){
+				Vec3 currentTestingPos = this.currentPath.getVectorFromIndex(this.theEntity, id);
+				if(currentTestingPos.yCoord > theEntity.posY + 1.5){
+					break;
+				}
+				double dist = currentTestingPos.squareDistanceTo(vec3);
+				if(distToNearest == -1 || dist < distToNearest){
+					distToNearest = dist;
+					target = id;
+				}
+			}
+			if(target != -1)this.currentPath.setCurrentPathIndex(target);
 		}
 		
 		k = MathHelper.ceiling_float_int(this.theEntity.width);
@@ -343,6 +362,12 @@ public class ModifiedPathNavigater extends PathNavigate{
 	 */
 	public void clearPathEntity()
 	{
+//		try{
+//			String test = null;
+//			System.out.println("debug" + test.equals("a"));
+//		}catch (Exception e){
+//			e.printStackTrace();
+//		}
 		this.currentPath = null;
 		if(this.theEntity instanceof EntityLiving){
 			((EntityLiving) this.theEntity).getMoveHelper().setMoveTo(theEntity.posX, theEntity.posY, theEntity.posZ, 0);

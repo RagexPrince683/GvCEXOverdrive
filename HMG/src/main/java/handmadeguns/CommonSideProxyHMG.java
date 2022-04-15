@@ -40,7 +40,7 @@ public class CommonSideProxyHMG {
 	
 	public void IGuiHandler(){}
 	
-    public void reisterSomething(){}
+    public void registerSomething(){}
 	
 	public World getCilentWorld(){
 		return null;}
@@ -51,7 +51,7 @@ public class CommonSideProxyHMG {
 
 	}
 
-	public void setRightclicktimer(){
+	public void setRightClickTimer(){
 	}
 
 	public void InitRendering() {
@@ -86,6 +86,7 @@ public class CommonSideProxyHMG {
 	public boolean fixkeydown(){
 		return false;
 	}
+
 	public boolean upElevationKeyDown(){
 		return false;
 	}
@@ -95,38 +96,36 @@ public class CommonSideProxyHMG {
 	public boolean resetElevationKeyDown(){
 		return false;
 	}
-	public boolean Fclick(){
+
+	public boolean ChangeMagazineTypeClick(){
 		return false;
 	}
-	public boolean ChangeMagazineTypeclick(){
+	public boolean ModeKey_isPressed(){
 		return false;
 	}
-	public boolean Fclick_no_stopper(){
+
+	public boolean FClick(){
 		return false;
 	}
-	public boolean ADSclick(){
+	public boolean FClick_no_stopper(){
 		return false;
 	}
-	public boolean Reloadkeyispressed(){
+	public boolean ADSClick(){
 		return false;
 	}
-	public boolean Attachmentkeyispressed(){
+	public boolean ReloadKey_isPressed(){
 		return false;
 	}
-	public boolean Modekeyispressed(){
-		return false;
-	}
-	public boolean keyDown(int keyCode)
-	{
+	public boolean AttachmentKey_isPressed(){
 		return false;
 	}
 	public void force_render_item_position(ItemStack itemStack,int i){
 	}
-	public void resetRightclicktimer(){
+	public void resetRightClickTimer(){
 	}
 	public void spawnParticles(PacketSpawnParticle message) {
 	}
-	public boolean rightclick(){
+	public boolean rightClick(){
 		return false;
 	}
 
@@ -149,46 +148,5 @@ public class CommonSideProxyHMG {
 
 	}
 	public void AddModel(Object o){
-	}
-	static Field genericAttribute_field;
-	public double computeMoveSpeed_WithoutGunModifier(ModifiableAttributeInstance iattributeinstance){
-		double d0 = iattributeinstance.getBaseValue();
-		AttributeModifier attributemodifier;
-
-		for (Iterator iterator = iattributeinstance.getModifiersByOperation(0).iterator(); iterator.hasNext(); d0 += attributemodifier.getAmount())
-		{
-			attributemodifier = (AttributeModifier)iterator.next();
-		}
-
-		double d1 = d0;
-		Iterator iterator1;
-		AttributeModifier attributemodifier1;
-
-		for (iterator1 = iattributeinstance.getModifiersByOperation(1).iterator(); iterator1.hasNext(); d1 += d0 * attributemodifier1.getAmount())
-		{
-			attributemodifier1 = (AttributeModifier)iterator1.next();
-			if(attributemodifier1.getID() == GunInfo.field_110179_h){
-				if(iterator1.hasNext())attributemodifier1 = (AttributeModifier)iterator1.next();//スキップ
-				else break;
-			}
-		}
-
-		for (iterator1 = iattributeinstance.getModifiersByOperation(2).iterator(); iterator1.hasNext(); d1 *= 1.0D + attributemodifier1.getAmount())
-		{
-			attributemodifier1 = (AttributeModifier)iterator1.next();
-		}
-
-		if(genericAttribute_field == null){
-			genericAttribute_field = ReflectionHelper.findField(ModifiableAttributeInstance.class, "field_111136_b","genericAttribute");
-		}
-
-		try {
-			IAttribute genericAttribute = (IAttribute) genericAttribute_field.get(iattributeinstance);
-
-			return genericAttribute.clampValue(d1);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return 1;
 	}
 }

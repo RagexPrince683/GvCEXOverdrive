@@ -47,6 +47,8 @@ public class HMGPacketHandler {
                 Side.SERVER);
         INSTANCE.registerMessage(MessageCatcher_PlacedGunFire.class, PacketPlacedGunShot.class, ++id,
                 Side.SERVER);
+        INSTANCE.registerMessage(MessageCatcher_PlacedGunStack.class, PacketSendPlacedGunStack.class, ++id,
+                Side.CLIENT);
         INSTANCE.registerMessage(MessageCatcher_Playsound.class, PacketPlaysound.class, ++id,
                 Side.CLIENT);
         INSTANCE.registerMessage(MessageCatcher_ChangeMagazineType.class, PacketChangeMagazineType.class, ++id,

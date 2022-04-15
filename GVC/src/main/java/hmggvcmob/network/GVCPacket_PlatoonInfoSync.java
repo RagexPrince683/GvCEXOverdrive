@@ -5,7 +5,7 @@ import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import handmadevehicle.entity.parts.Modes;
 import hmggvcmob.entity.IPlatoonable;
-import hmggvcmob.entity.PlatoonInfoData;
+import hmggvcmob.entity.util.PlatoonInfoData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;

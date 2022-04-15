@@ -106,8 +106,8 @@ public class GVCEntityMobSpawner extends EntityThrowable
             		if ((entity1 instanceof EntityPlayer) && entity1 != null)
                     {
             			if (!this.worldObj.isRemote){
-            				this.SpwanGuerrilla(-10+i1, 0, -10+i2, 300);
-            				}
+				            this.SpwanGuerrilla(-10+i1, 0, -10+i2, 300);
+			            }
                     }
                 }
             }

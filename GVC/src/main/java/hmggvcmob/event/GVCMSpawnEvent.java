@@ -5,7 +5,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import hmggvcmob.entity.IflagBattler;
 import hmggvcmob.camp.CampObjAndPos;
 import hmggvcmob.entity.IHasVehicleGacha;
-import hmggvcmob.entity.VehicleSpawnGachaOBJ;
+import handmadevehicle.VehicleSpawnGachaOBJ;
 import hmggvcmob.entity.friend.EntitySoBase;
 import hmggvcmob.world.WorldSavedData_Flag;
 import net.minecraft.util.MathHelper;
@@ -41,7 +41,7 @@ public class GVCMSpawnEvent {
 //
 //	}
 
-    //	@Event.HasResult
+	//	@Event.HasResult
 //	public static class CheckSpawn extends LivingSpawnEvent
 //	{
 //		public CheckSpawn(EntityLiving entity, World world, float x, float y, float z)
@@ -50,49 +50,69 @@ public class GVCMSpawnEvent {
 //		}
 //	}
 
-    @SubscribeEvent
-    public void SpawnEvent(EntityJoinWorldEvent event) {
-        if(event.entity instanceof EntitySoBase && !event.entity.worldObj.isRemote){
-            EntitySoBase.spawnedcount = 0;
-            for(Object te : event.entity.worldObj.loadedEntityList){
-                if(te instanceof EntitySoBase)
-                    EntitySoBase.spawnedcount++;
-            }
-        }
-    }
-    @SubscribeEvent
-    public void checkspawnSpawnevent(LivingSpawnEvent.CheckSpawn event) {
-        event.setResult(Event.Result.DEFAULT);
-        Chunk spawningChunk = event.world.getChunkFromBlockCoords(
-                MathHelper.floor_double(event.x),
-                MathHelper.floor_double(event.z));
-        WorldSavedData_Flag worldSavedData_flag = WorldSavedData_Flag.get(event.world);
-        CampObjAndPos campObj = worldSavedData_flag.campObjHashMap.get(spawningChunk.getChunkCoordIntPair());
-        if (campObj != null) {
-            if (event.entityLiving instanceof IflagBattler) {
-                if (((IflagBattler) event.entityLiving).isThisIgnoreSpawnCamp(campObj.campObj)) {
-                    event.setResult(Event.Result.DENY);
-                }
-            } else {
-                event.setResult(Event.Result.DENY);
-            }
-        }
-    }
-    @SubscribeEvent
-    public void specialSpawnevent(LivingSpawnEvent.SpecialSpawn event) {
-        if(event.entityLiving instanceof IHasVehicleGacha){//�ԗ��K�`���̂�����
-            Random rand = new Random();
-            if(((IHasVehicleGacha) event.entityLiving).getVehicleGacha_rate_sum() >0) {
-                int currentRate = rand.nextInt(((IHasVehicleGacha) event.entityLiving).getVehicleGacha_rate_sum());
-                for (VehicleSpawnGachaOBJ gachaOBJ : ((IHasVehicleGacha) event.entityLiving).getVehicleGacha()) {
-                    System.out.println(currentRate);
-                    if (currentRate < gachaOBJ.rate) {
-                        if(gachaOBJ.vehicleName != null)((IHasVehicleGacha) event.entityLiving).setVehicleName(gachaOBJ.vehicleName);
-                        break;
-                    }
-                    currentRate -= gachaOBJ.rate;
-                }
-            }
-        }
-    }
+	@SubscribeEvent
+	public void SpawnEvent(EntityJoinWorldEvent event) {
+		if(event.entity instanceof EntitySoBase && !event.entity.worldObj.isRemote){
+			EntitySoBase.spawnedcount = 0;
+			for(Object te : event.entity.worldObj.loadedEntityList){
+				if(te instanceof EntitySoBase)
+					EntitySoBase.spawnedcount++;
+			}
+		}
+	}
+	@SubscribeEvent
+	public void checkspawnSpawnevent(LivingSpawnEvent.CheckSpawn event) {
+		event.setResult(Event.Result.DEFAULT);
+		Chunk spawningChunk = event.world.getChunkFromBlockCoords(
+				MathHelper.floor_double(event.x),
+				MathHelper.floor_double(event.z));
+		WorldSavedData_Flag worldSavedData_flag = WorldSavedData_Flag.get(event.world);
+		CampObjAndPos campObj = worldSavedData_flag.campObjHashMap.get(spawningChunk.getChunkCoordIntPair());
+		if (campObj != null) {
+			if (event.entityLiving instanceof IflagBattler) {
+				if (((IflagBattler) event.entityLiving).isThisIgnoreSpawnCamp(campObj.campObj)) {
+					event.setResult(Event.Result.DENY);
+				}
+			} else {
+				event.setResult(Event.Result.DENY);
+			}
+		}
+		if(event.entityLiving instanceof IHasVehicleGacha){
+			Random rand = new Random();
+			if(((IHasVehicleGacha) event.entityLiving).getVehicleGacha_rate_sum() >0) {
+				int currentRate = rand.nextInt(((IHasVehicleGacha) event.entityLiving).getVehicleGacha_rate_sum());
+//                System.out.println("" + currentRate);
+				for (VehicleSpawnGachaOBJ gachaOBJ : ((IHasVehicleGacha) event.entityLiving).getVehicleGacha()) {
+//                    System.out.println(currentRate);
+					if (currentRate < gachaOBJ.rate) {
+						if(gachaOBJ.vehicleName != null)((IHasVehicleGacha) event.entityLiving).setVehicleName(gachaOBJ.vehicleName);
+//						System.out.println("" + gachaOBJ.vehicleName);
+						break;
+					}
+					currentRate -= gachaOBJ.rate;
+				}
+			}
+		}
+	}
+//	@SubscribeEvent
+//	public void specialSpawnevent(LivingSpawnEvent.SpecialSpawn event) {
+//		System.out.println("debug");
+//		if(event.entityLiving instanceof IHasVehicleGacha){
+//			System.out.println("debug");
+//			Random rand = new Random();
+//			if(((IHasVehicleGacha) event.entityLiving).getVehicleGacha_rate_sum() >0) {
+//				int currentRate = rand.nextInt(((IHasVehicleGacha) event.entityLiving).getVehicleGacha_rate_sum());
+////                System.out.println("" + currentRate);
+//				for (VehicleSpawnGachaOBJ gachaOBJ : ((IHasVehicleGacha) event.entityLiving).getVehicleGacha()) {
+////                    System.out.println(currentRate);
+//					if (currentRate < gachaOBJ.rate) {
+//						if(gachaOBJ.vehicleName != null)((IHasVehicleGacha) event.entityLiving).setVehicleName(gachaOBJ.vehicleName);
+//						System.out.println("" + gachaOBJ.vehicleName);
+//						break;
+//					}
+//					currentRate -= gachaOBJ.rate;
+//				}
+//			}
+//		}
+//	}
 }

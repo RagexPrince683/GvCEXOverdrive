@@ -30,7 +30,7 @@ public class HMVHandleChangeSeat implements IMessageHandler<HMVPacketChangeSeat,
 					Entity[] entities = ((MultiRiderLogics) ibaseLogic).getRiddenEntityList();
 					Entity targetRider = entities[message.currentSeatID];
 					entities[message.currentSeatID] = null;
-					((MultiRiderLogics) ibaseLogic).pickupEntity(targetRider,message.dir ? message.currentSeatID-1:message.currentSeatID+1);
+					((MultiRiderLogics) ibaseLogic).pickupEntity(targetRider,message.dir ? message.currentSeatID-1:message.currentSeatID+1, message.dir);
 				}
 			}
 		}catch (Exception e){

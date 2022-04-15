@@ -38,14 +38,14 @@ public class TurretSound extends MovingSound
 	 */
 	public void update()
 	{
-		if (killer || attachedturret.motherEntity == null || this.attachedturret.motherEntity.isDead || attachedturret.turretMoving == 0 ||!(this.attachedturret.gunItem != null && this.attachedturret.gunItem.gunInfo.turretspeedY > 0 && this.attachedturret.gunItem.gunInfo.turretspeedP > 0))
+		if (killer || attachedturret.motherEntity == null || this.attachedturret.motherEntity.isDead || attachedturret.turretMoving < 0.01)
 		{
 			this.donePlaying = true;
 		}
 		else
 		{
 			attachedturret.yourSoundIsremain(sound);
-			if(sound == attachedturret.getsound()) {//参照渡しだから問題ないはず
+			if(sound.equals(attachedturret.getsound())) {//参照渡しだから問題ないはず
 
 				Entity renderViewEntity = HMG_proxy.getMCInstance().renderViewEntity;
 				double prevdisttoPlayer = disttoPlayer;
@@ -59,9 +59,8 @@ public class TurretSound extends MovingSound
 					this.yPosF = (float) (attachedturret.pos.y);
 					this.zPosF = (float) (-attachedturret.pos.z);
 				}
-				float soundpitch = attachedturret.getsoundPitch();
-				this.field_147663_c = soundpitch;
-				volume = 4;
+				this.field_147663_c = attachedturret.getsoundPitch();
+				volume = 1 * attachedturret.getsoundPitch() / attachedturret.prefab_turret.traversesoundPitch;
 
 				if (disttoPlayer < maxdist * maxdist) {
 
@@ -69,12 +68,8 @@ public class TurretSound extends MovingSound
 						volume /=disttoPlayer/256;
 					}
 					if(!HMG_proxy.getMCInstance().renderViewEntity.canEntityBeSeen(attachedturret.motherEntity))volume /=32;
-					if (prevdisttoPlayer != -1) {
-						float doppler = (float) (sqrt(prevdisttoPlayer) - sqrt(disttoPlayer));
-						float tempsp = (318.8f / (318.8f - doppler * 20f));
-						field_147663_c = soundpitch * tempsp;
-					}
-					if (field_147663_c < 0.01) {
+
+					if (field_147663_c < 0.001) {
 						this.field_147663_c = 0.0F;
 						this.volume = 0.0F;
 					}

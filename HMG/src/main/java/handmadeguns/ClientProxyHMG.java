@@ -3,7 +3,6 @@ package handmadeguns;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import cpw.mods.fml.relauncher.ReflectionHelper;
@@ -11,14 +10,14 @@ import handmadeguns.client.audio.BulletSoundHMG;
 import handmadeguns.client.audio.GunSoundHMG;
 import handmadeguns.client.audio.MovingSoundHMG;
 import handmadeguns.client.audio.ReloadSoundHMG;
-import handmadeguns.emb_modelloader.MQO_ModelLoader;
+import handmadeguns.client.modelLoader.emb_modelloader.MQO_ModelLoader;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadeguns.network.PacketSpawnParticle;
 import handmadeguns.client.render.*;
-import handmadeguns.obj_modelloaderMod.obj.HMGObjModelLoader;
-import handmadeguns.tcn_modelloaderMod.TechneModelLoader;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
+import handmadeguns.client.modelLoader.tcn_modelloaderMod.TechneModelLoader;
 import handmadeguns.tile.TileMounter;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -28,53 +27,44 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
-import org.lwjgl.input.Mouse;
+import paulscode.sound.SoundSystemConfig;
 
 import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 import static handmadeguns.HandmadeGunsCore.cfg_ADS_Toggle;
 
 public class ClientProxyHMG extends CommonSideProxyHMG {
-	public static final KeyBinding				Reload				= new KeyBinding("Reload Magazine", Keyboard.KEY_R, "HandmadeGuns");
-	public static final KeyBinding_withStopper	Fire_AttachedGun	= new KeyBinding_withStopper("Fire AttachedGun", Keyboard.KEY_F, "HandmadeGuns");
-	public static final KeyBinding_withStopper	ADS					= new KeyBinding_withStopper("ADS_Key", Keyboard.KEY_V, "HandmadeGuns");
+	public static final KeyBinding_mod Reload					= new KeyBinding_mod("Reload Magazine", Keyboard.KEY_R, "HandmadeGuns");
+	public static final KeyBinding_mod Fire_AttachedGun		= new KeyBinding_mod("Fire AttachedGun", Keyboard.KEY_F, "HandmadeGuns");
+	public static final KeyBinding_mod ADS						= new KeyBinding_mod("ADS_Key", Keyboard.KEY_V, "HandmadeGuns");
 
-	public static final KeyBinding				gunPrepare_modification = new KeyBinding("Gun Prepare Modification Key", Keyboard.KEY_LMENU, "HandmadeGuns");
-	public static final KeyBinding				Attachment			= new KeyBinding("[Gun Prepare]Attachment GUI", Keyboard.KEY_X, "HandmadeGuns");
-	public static final KeyBinding_withStopper	ChangeMagazineType	= new KeyBinding_withStopper("[Gun Prepare]Change Magazine Type", Keyboard.KEY_B, "HandmadeGuns");
-	public static final KeyBinding_withStopper	Fix					= new KeyBinding_withStopper("[Gun Prepare]Fix Gun", Keyboard.KEY_H, "HandmadeGuns");
+	public static final KeyBinding_mod gunPrepare_modification = new KeyBinding_mod("Gun Prepare Modification Key", Keyboard.KEY_LMENU, "HandmadeGuns");
+	public static final KeyBinding_mod Attachment				= new KeyBinding_mod("[Gun Prepare]Attachment GUI", Keyboard.KEY_X, "HandmadeGuns");
+	public static final KeyBinding_mod ChangeMagazineType		= new KeyBinding_mod("[Gun Prepare]Change Magazine Type", Keyboard.KEY_B, "HandmadeGuns");
+	public static final KeyBinding_mod Fix						= new KeyBinding_mod("[Gun Prepare]Fix Gun", Keyboard.KEY_H, "HandmadeGuns");
 
-	public static final KeyBinding				gunSetting_modification = new KeyBinding("Gun Setting Modification", Keyboard.KEY_NONE, "HandmadeGuns");
-	public static final KeyBinding_withStopper	El_Up				= new KeyBinding_withStopper("[Gun Setting]Zero in : increase", Keyboard.KEY_Y, "HandmadeGuns");
-	public static final KeyBinding_withStopper	El_Reset			= new KeyBinding_withStopper("[Gun Setting]Zero in : reset", Keyboard.KEY_H, "HandmadeGuns");
-	public static final KeyBinding_withStopper	El_Down				= new KeyBinding_withStopper("[Gun Setting]Zero in : decrease", Keyboard.KEY_N, "HandmadeGuns");
-	public static final KeyBinding_withStopper	SeekerOpen_Close	= new KeyBinding_withStopper("[Gun Setting]Seeker Open/Close", Keyboard.KEY_C, "HandmadeGuns");
-	public static final KeyBinding_withStopper	Mode				=  new KeyBinding_withStopper("[Gun Setting]Cycle Selector", Keyboard.KEY_GRAVE, "HandmadeGuns");
+	public static final KeyBinding_mod gunSetting_modification = new KeyBinding_mod("Gun Setting Modification", Keyboard.KEY_NONE, "HandmadeGuns");
+	public static final KeyBinding_mod El_Up					= new KeyBinding_mod("[Gun Setting]Zero in : increase", Keyboard.KEY_Y, "HandmadeGuns");
+	public static final KeyBinding_mod El_Reset				= new KeyBinding_mod("[Gun Setting]Zero in : reset", Keyboard.KEY_H, "HandmadeGuns");
+	public static final KeyBinding_mod El_Down					= new KeyBinding_mod("[Gun Setting]Zero in : decrease", Keyboard.KEY_N, "HandmadeGuns");
+	public static final KeyBinding_mod SeekerOpen_Close		= new KeyBinding_mod("[Gun Setting]Seeker Open/Close", Keyboard.KEY_C, "HandmadeGuns");
+	public static final KeyBinding_mod Mode					= new KeyBinding_mod("[Gun Setting]Cycle Selector", Keyboard.KEY_GRAVE, "HandmadeGuns");
 
 
 	private static final String trailtexture = ("handmadeguns:textures/entity/trail");
 	private static final String lockonmarker = ("handmadeguns:textures/items/lockonmarker");
-	static boolean stopper_modekey = false;
-	static boolean stopper_Fkey = false;
-	static boolean stopper_ChangeMagazineTypekey = false;
-	static boolean stopper_Lightkey = false;
-	static boolean stopper_Fixkey = false;
 	static Field equippedProgress;
 	static Field prevEquippedProgress;
 	static Field itemToRender;
@@ -103,14 +93,14 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 	public void setuprender(){
 
 		try {
-			System.setProperty("forge.forceDisplayStencil", "true");
-			Field stencilBits_F = ReflectionHelper.findField(ForgeHooksClient.class, "stencilBits");
-			Field modifiersField = Field.class.getDeclaredField("modifiers");
-			modifiersField.setAccessible(true);
-			modifiersField.setInt(stencilBits_F,
-					stencilBits_F.getModifiers() & ~Modifier.PRIVATE); // 更新対象アクセス用のFieldオブジェクトのmodifiersからprivateとfinalを外す。
-			stencilBits_F.set(null, 8);
-			System.out.println("Debug stencil is    " + MinecraftForgeClient.getStencilBits());
+//			System.setProperty("forge.forceDisplayStencil", "true");
+//			Field stencilBits_F = ReflectionHelper.findField(ForgeHooksClient.class, "stencilBits");
+//			Field modifiersField = Field.class.getDeclaredField("modifiers");
+//			modifiersField.setAccessible(true);
+//			modifiersField.setInt(stencilBits_F,
+//					stencilBits_F.getModifiers() & ~Modifier.PRIVATE); // 更新対象アクセス用のFieldオブジェクトのmodifiersからprivateとfinalを外す。
+//			stencilBits_F.set(null, 8);
+			System.out.println("Debug stencil is	" + MinecraftForgeClient.getStencilBits());
 			System.out.println("Debug stencil state " + Boolean.parseBoolean(System.getProperty("forge.forceDisplayStencil", "false")));
 //			net.minecraftforge.client.ForgeHooksClient.createDisplay();
 
@@ -124,6 +114,8 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		}
 
 
+		SoundSystemConfig.setNumberNormalChannels(128);
+		SoundSystemConfig.setNumberStreamingChannels(32);
 		AdvancedModelLoader.registerModelHandler(new MQO_ModelLoader());
 		AdvancedModelLoader.registerModelHandler(new TechneModelLoader());
 		AdvancedModelLoader.registerModelHandler(new HMGObjModelLoader());//怒りのオーバーライド
@@ -134,9 +126,9 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 	}
 	@Override
 	public void playsound_Gun(String sound, float soundLV, float soundSP,float maxdist,Entity attached,
-	                          double posX,
-	                          double posY,
-	                          double posZ){
+							  double posX,
+							  double posY,
+							  double posZ){
 		Minecraft.getMinecraft().getSoundHandler().playSound(new GunSoundHMG(attached,sound,soundLV,soundSP,maxdist,
 				posX,
 				posY,
@@ -156,8 +148,8 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 	}
 	@Override
 	public EntityPlayer getEntityPlayerInstance() {
-	        return Minecraft.getMinecraft().thePlayer;
-	    }
+			return Minecraft.getMinecraft().thePlayer;
+		}
 	@Override
 	public Minecraft getMCInstance() {
 		return Minecraft.getMinecraft();
@@ -166,38 +158,39 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 	public void playGUISound(String sound,float speed){
 		getMCInstance().getSoundHandler().playSound(PositionedSoundRecord.func_147673_a(new ResourceLocation(sound)));
 	}
-    @Override
+	@Override
 	public World getCilentWorld(){
 		return FMLClientHandler.instance().getClient().theWorld;
 		}
 
-    @Override
-    public void registerClientInfo() {
-        //ClientRegistry.registerKeyBinding(Speedreload);
-    }
+	@Override
+	public void registerClientInfo() {
+		//ClientRegistry.registerKeyBinding(Speedreload);
+	}
 
-    @Override
-	public void reisterSomething(){
-    	Minecraft mc = FMLClientHandler.instance().getClient();
-    	//RenderManager rendermanager = new RenderManager(mc.renderEngine, mc.getRenderItem());
-    	//RenderItem renderitem = mc.getRenderItem();
+	@Override
+	public void registerSomething(){
+		//RenderManager rendermanager = new RenderManager(mc.renderEngine, mc.getRenderItem());
+		//RenderItem renderitem = mc.getRenderItem();
 
-    	ClientRegistry.registerKeyBinding(Reload);
-	    ClientRegistry.registerKeyBinding(Fire_AttachedGun.keyBinding);
-    	ClientRegistry.registerKeyBinding(ADS.keyBinding);
-    	ClientRegistry.registerKeyBinding(gunPrepare_modification);
-    	ClientRegistry.registerKeyBinding(Attachment);
-    	ClientRegistry.registerKeyBinding(ChangeMagazineType.keyBinding);
+		ClientRegistry.registerKeyBinding(Reload.keyBinding);
+		ClientRegistry.registerKeyBinding(Fire_AttachedGun.keyBinding);
+		ClientRegistry.registerKeyBinding(ADS.keyBinding);
+		ClientRegistry.registerKeyBinding(gunPrepare_modification.keyBinding);
+		gunPrepare_modification.includeNull = true;
+		ClientRegistry.registerKeyBinding(Attachment.keyBinding);
+		ClientRegistry.registerKeyBinding(ChangeMagazineType.keyBinding);
 		ClientRegistry.registerKeyBinding(Fix.keyBinding);
-		ClientRegistry.registerKeyBinding(gunSetting_modification);
+		ClientRegistry.registerKeyBinding(gunSetting_modification.keyBinding);
+		gunSetting_modification.includeNull = true;
 		ClientRegistry.registerKeyBinding(El_Up.keyBinding);
 		ClientRegistry.registerKeyBinding(El_Reset.keyBinding);
 		ClientRegistry.registerKeyBinding(El_Down.keyBinding);
 		ClientRegistry.registerKeyBinding(SeekerOpen_Close.keyBinding);
 		ClientRegistry.registerKeyBinding(Mode.keyBinding);
-    	MinecraftForge.EVENT_BUS.register(new HMGParticles());
+		MinecraftForge.EVENT_BUS.register(new HMGParticles());
 
-    	try {
+		try {
 			RenderingRegistry.registerEntityRenderingHandler(HMGEntityItemMount.class, new HMGRenderItemMount());
 			RenderingRegistry.registerEntityRenderingHandler(HMGEntityItemMount2.class, new HMGRenderItemMount2());
 
@@ -222,9 +215,6 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 			RenderingRegistry.registerEntityRenderingHandler(HMGEntityBulletCartridge.class, new HMGRenderBulletCartridge());
 			RenderingRegistry.registerEntityRenderingHandler(PlacedGunEntity.class, new PlacedGun_Render());
 
-			if (HandmadeGunsCore.cfg_RenderPlayer) {
-				//RenderingRegistry.registerEntityRenderingHandler(EntityPlayer.class, new HMGRenderPlayer());
-			}
 
 			try {
 				equippedProgress = ReflectionHelper.findField(HMG_proxy.getMCInstance().entityRenderer.itemRenderer.getClass(), "field_78454_c","equippedProgress");
@@ -278,26 +268,24 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-//    	RenderingRegistry.registerEntityRenderingHandler(HMGEntityParticles.class, new HMGRenderParticles());
-			//RenderingRegistry.registerEntityRenderingHandler(HMGEntityParticles.class, new HMGRenderParticles2());
-			//RenderingRegistry.registerEntityRenderingHandler(HMGEntityHand.class, new HMGRenderHand());
+
 		}catch (Exception e){
-    		e.printStackTrace();
+			e.printStackTrace();
 		}
 
-    }
+	}
 
-    @Override
-    public void registerTileEntity() {
+	@Override
+	public void registerTileEntity() {
 		RenderTileMounter renderTileMounter = new RenderTileMounter();
 		ClientRegistry.registerTileEntity(TileMounter.class, "TileItemMounter", renderTileMounter);//������
-    	//GameRegistry.registerTileEntity(GVCTileEntityItemG36.class, "GVCTileEntitysample");
-    }
-    @Override
+		//GameRegistry.registerTileEntity(GVCTileEntityItemG36.class, "GVCTileEntitysample");
+	}
+	@Override
 	public void force_render_item_position(ItemStack itemStack,int i){
 		try {
 			Object obj = itemToRender.get(HMG_proxy.getMCInstance().entityRenderer.itemRenderer);
-			if(beforeSlot == i && obj != null && obj instanceof ItemStack && ((ItemStack)obj).getItem() instanceof HMGItem_Unified_Guns) {
+			if(beforeSlot == i && obj instanceof ItemStack && ((ItemStack)obj).getItem() instanceof HMGItem_Unified_Guns) {
 				equippedProgress.set(HMG_proxy.getMCInstance().entityRenderer.itemRenderer, 1);
 				prevEquippedProgress.set(HMG_proxy.getMCInstance().entityRenderer.itemRenderer, 1);
 				if (itemToRender.get(HMG_proxy.getMCInstance().entityRenderer.itemRenderer) != itemStack) {
@@ -307,14 +295,12 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 				beforeSlot = i;
 			}
 
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (NullPointerException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
 	}
 	@Override
-	public void resetRightclicktimer(){
+	public void resetRightClickTimer(){
 		try {
 			rightClickDelayTimer.set(HMG_proxy.getMCInstance(), 0);
 		} catch (IllegalAccessException e) {
@@ -322,7 +308,7 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		}
 	}
 	@Override
-	public void setRightclicktimer(){
+	public void setRightClickTimer(){
 		try {
 			ClientProxyHMG.rightClickDelayTimer.set(HMG_proxy.getMCInstance(), 10);
 		} catch (IllegalAccessException e) {
@@ -331,93 +317,106 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 	}
 
 	@Override
-    public void InitRendering()
-    {
-    	super.InitRendering();
+	public void InitRendering()
+	{
+		super.InitRendering();
 		MinecraftForge.EVENT_BUS.register(new HMGParticles());
-    	//ClientRegistry.bindTileEntitySpecialRenderer(GVCTileEntityItemG36.class, new GVCRenderItemG36());
-    }
+		//ClientRegistry.bindTileEntitySpecialRenderer(GVCTileEntityItemG36.class, new GVCRenderItemG36());
+	}
 	@Override
 	public boolean seekerOpenClose(){
-		return SeekerOpen_Close.isKeyDown() && keyDown_except_null(gunSetting_modification.getKeyCode());
+		return SeekerOpen_Close.isKeyDown_withStopper() && (gunSetting_modification).isKeyDown_noStop();
 		//return false;
 	}
 	@Override
 	public boolean seekerOpenClose_NonStop(){
-		return SeekerOpen_Close.isKeyDown_noStop() && keyDown_except_null(gunSetting_modification.getKeyCode());
+		return SeekerOpen_Close.isKeyDown_noStop() && (gunSetting_modification).isKeyDown_noStop();
 		//return false;
 	}
 	@Override
 	public boolean fixkeydown(){
-		return Fix.isKeyDown() && keyDown_except_null(gunPrepare_modification.getKeyCode());
+		return Fix.isKeyDown_withStopper() && (gunPrepare_modification).isKeyDown_noStop();
 		//return false;
 	}
 
 	@Override
 	public boolean upElevationKeyDown(){
-		return El_Up.isKeyDown() && keyDown_except_null(gunSetting_modification.getKeyCode());
+		return El_Up.isKeyDown_withStopper() && (gunSetting_modification).isKeyDown_noStop();
 	}
 	@Override
 	public boolean downElevationKeyDown(){
-		return El_Down.isKeyDown() && keyDown_except_null(gunSetting_modification.getKeyCode());
+		return El_Down.isKeyDown_withStopper() && (gunSetting_modification).isKeyDown_noStop();
 	}
 	@Override
 	public boolean resetElevationKeyDown(){
-		return El_Reset.isKeyDown() && keyDown_except_null(gunSetting_modification.getKeyCode());
-	}
-    @Override
-    public boolean Fclick(){
-		return Fire_AttachedGun.isKeyDown();
-	}
-    @Override
-    public boolean ChangeMagazineTypeclick(){
-		return ChangeMagazineType.isKeyDown() && keyDown_except_null(gunPrepare_modification.getKeyCode());
+		return El_Reset.isKeyDown_withStopper() && (gunSetting_modification).isKeyDown_noStop();
 	}
 	@Override
-	public boolean Fclick_no_stopper(){
-		boolean flag = keyDown(Fire_AttachedGun.keyBinding.getKeyCode());
-		return flag;
-	}
-    @Override
-    public boolean ADSclick(){
-		return cfg_ADS_Toggle ? ADS.isKeyDown() : ADS.isKeyDown_noStop();
+	public boolean FClick(){
+		return Fire_AttachedGun.isKeyDown_withStopper();
 	}
 	@Override
-	public boolean Reloadkeyispressed(){
-		return keyDown(Reload.getKeyCode());
+	public boolean ChangeMagazineTypeClick(){
+		return ChangeMagazineType.isKeyDown_withStopper() && (gunPrepare_modification).isKeyDown_noStop();
+	}
+	@Override
+	public boolean FClick_no_stopper(){
+		return (Fire_AttachedGun).isKeyDown_noStop();
+	}
+	@Override
+	public boolean ADSClick(){
+//		System.out.println("debug");
+		return cfg_ADS_Toggle ? ADS.isKeyDown_toggle() : ADS.isKeyDown_noStop();
+	}
+	@Override
+	public boolean ReloadKey_isPressed(){
+		return (Reload).isKeyDown_noStop();
 	}
 
 	@Override
-	public boolean Attachmentkeyispressed(){
-		return keyDown(Attachment.getKeyCode()) && keyDown_except_null(gunPrepare_modification.getKeyCode());
+	public boolean AttachmentKey_isPressed(){
+		return (Attachment).isKeyDown_noStop() && (gunPrepare_modification).isKeyDown_noStop();
 	}
 	@Override
-	public boolean Modekeyispressed(){
-		return Mode.isKeyDown() && keyDown_except_null(gunSetting_modification.getKeyCode());
+	public boolean ModeKey_isPressed(){
+		return Mode.isKeyDown_withStopper() && gunSetting_modification.isKeyDown_noStop();
 	}
 //	@Override
 //	public boolean Secondarykeyispressed(){
 //		return keyDown(Fire2.getKeyCode());
 //	}
 
-	public boolean keyDown(int keyCode)
-	{
-		boolean state = false;
-		if (getMCInstance().currentScreen == null || getMCInstance().currentScreen.allowUserInput) {
-			state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
-		}
-		return state;
-	}
 
-	public boolean keyDown_except_null(int keyCode)
-	{
-		if(keyCode == Keyboard.KEY_NONE)return true;
-		boolean state = false;
-		if (getMCInstance().currentScreen == null || getMCInstance().currentScreen.allowUserInput) {
-			state = (keyCode < 0 ? Mouse.isButtonDown(keyCode + 100) : Keyboard.isKeyDown(keyCode));
-		}
-		return state;
-	}
+//	public static boolean keyDown_except_null(KeyBinding_withStopper key)
+//	{
+//		return keyDown_except_null(key.keyBinding);
+//	}
+//
+//	public static boolean keyDown_except_null(KeyBinding key)
+//	{
+//		boolean state = key.getKeyCode() != Keyboard.KEY_NONE;
+//		if (HMG_proxy.getMCInstance().currentScreen == null || HMG_proxy.getMCInstance().currentScreen.allowUserInput) {
+//			state = key.getIsKeyPressed();
+//		}
+//		return state;
+//	}
+//
+//	public static boolean keyDown_include_null(KeyBinding_withStopper key)
+//	{
+//		return keyDown_include_null(key.keyBinding);
+//	}
+//
+//	public static boolean keyDown_include_null(KeyBinding key)
+//	{
+//		boolean state = key.getKeyCode() == Keyboard.KEY_NONE;
+//		if (HMG_proxy.getMCInstance().currentScreen == null || HMG_proxy.getMCInstance().currentScreen.allowUserInput) {
+//			state = key.getIsKeyPressed();
+//		}
+//		return state;
+//	}
+
+
+
 	public void spawnParticles(PacketSpawnParticle message){
 		try {
 			HMGEntityParticles var10 = new HMGEntityParticles(getCilentWorld(),
@@ -427,7 +426,7 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 					case 0:
 						var10.setParticleIcon(HMGParticles.getInstance().getIcon("handmadeguns:fire"));
 						var10.setIcon("handmadeguns:textures/items/fire");
-						var10.isglow = message.id/100 ==1;;
+						var10.isglow = message.id/100 ==1;
 						var10.fuse = 1;
 						break;
 					case 1:
@@ -488,8 +487,8 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 						var10.prevPosZ = message.posz;
 						break;
 //
-//        bullet = message.bullet.setdata(bullet);
-//        System.out.println("bullet "+ bullet);
+//		bullet = message.bullet.setdata(bullet);
+//		System.out.println("bullet "+ bullet);
 				}
 			}else {
 				if(message.id % 100== 3 || message.id == 3){
@@ -540,13 +539,13 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		getMCInstance().entityRenderer.itemRenderer.updateEquippedItem();
 	}
 	@Override
-	public boolean rightclick(){
+	public boolean rightClick(){
 		return Minecraft.getMinecraft().gameSettings.keyBindUseItem.getIsKeyPressed();
 		//return false;
 	}
 
 	public String getFixkey(){
-		return GameSettings.getKeyDisplayString(Fix.keyBinding.getKeyCode()) + " + " + GameSettings.getKeyDisplayString(gunPrepare_modification.getKeyCode());
+		return GameSettings.getKeyDisplayString(Fix.keyBinding.getKeyCode()) + " + " + GameSettings.getKeyDisplayString(gunPrepare_modification.keyBinding.getKeyCode());
 	}
 
 	public float getFOVModifier(Minecraft mc,float p_78481_1_, boolean p_78481_2_)
@@ -559,7 +558,7 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 			}
 			else
 			{
-				EntityLivingBase entityplayer = (EntityLivingBase)mc.renderViewEntity;
+				EntityLivingBase entityplayer = mc.renderViewEntity;
 				float f1 = 70.0F;
 
 				if (p_78481_2_)
@@ -602,7 +601,6 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 
 	public void setUpModels(){
 		for(IModelCustom_HMG modelCustom_hmg : modelList){
-//			System.out.println("debug" + modelCustom_hmg.toString());
 			while(!modelCustom_hmg.getLoadThread().isTerminated()){
 				if(modelCustom_hmg.getLoadThread().isTerminated())break;
 			}

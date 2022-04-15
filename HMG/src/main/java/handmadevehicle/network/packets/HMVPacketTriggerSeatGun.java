@@ -7,6 +7,7 @@ public class HMVPacketTriggerSeatGun implements IMessage {
 	public boolean trigger1 = false;
 	public boolean trigger2 = false;
 	public boolean seekerKey = false;
+	public boolean bulletTypeKey = false;
 	public boolean syncToPlayerAngle;
 	public int currentMode;
 	public int targetID;
@@ -14,10 +15,11 @@ public class HMVPacketTriggerSeatGun implements IMessage {
 	public HMVPacketTriggerSeatGun(){
 	
 	}
-	public HMVPacketTriggerSeatGun(boolean trigger1,boolean trigger2,boolean seekerKey,boolean syncToPlayerAngle,int currentMode,int entityID,int seatID){
+	public HMVPacketTriggerSeatGun(boolean trigger1,boolean trigger2,boolean seekerKey,boolean bulletTypeKey,boolean syncToPlayerAngle,int currentMode,int entityID,int seatID){
 		this.trigger1 = trigger1;
 		this.trigger2 = trigger2;
 		this.seekerKey = seekerKey;
+		this.bulletTypeKey = bulletTypeKey;
 		this.syncToPlayerAngle = syncToPlayerAngle;
 		this.currentMode = currentMode;
 		this.targetID = entityID;
@@ -28,6 +30,7 @@ public class HMVPacketTriggerSeatGun implements IMessage {
 		trigger1 = buf.readBoolean();
 		trigger2 = buf.readBoolean();
 		seekerKey = buf.readBoolean();
+		bulletTypeKey = buf.readBoolean();
 		syncToPlayerAngle = buf.readBoolean();
 		currentMode = buf.readInt();
 		targetID = buf.readInt();
@@ -39,6 +42,7 @@ public class HMVPacketTriggerSeatGun implements IMessage {
 		buf.writeBoolean(trigger1);
 		buf.writeBoolean(trigger2);
 		buf.writeBoolean(seekerKey);
+		buf.writeBoolean(bulletTypeKey);
 		buf.writeBoolean(syncToPlayerAngle);
 		buf.writeInt(currentMode);
 		buf.writeInt(targetID);

@@ -60,7 +60,7 @@ public class MapGenStructure_forGVC extends MapGenStructure {
 		return getNextDungeon(this,worldObj,x,z,rand);
 	}
 	
-	public boolean canSpawnStructureAtCoords_astrongHold(int p_75047_1_, int p_75047_2_) {
+	public boolean canSpawnStructureAtCoords_asStrongHold(int p_75047_1_, int p_75047_2_) {
 		if (!this.ranBiomeCheck)
 		{
 			Random random = new Random();

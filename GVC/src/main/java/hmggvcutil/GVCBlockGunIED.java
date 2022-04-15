@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -40,7 +41,8 @@ public class GVCBlockGunIED extends Block
     {
     	if (!par1World.isRemote && !par5Entity.isSneaking())
         {
-            par1World.createExplosion(null, par2, par3+1, par4, 3.0F, false);
+            (par5Entity).attackEntityFrom(new DamageSource("explosion"),20);
+            par1World.createExplosion(null, par2, par3+1, par4, 2.0F, false);
             par1World.setBlockToAir(par2, par3, par4);
         }
     	

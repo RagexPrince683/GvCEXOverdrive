@@ -1,6 +1,5 @@
 package DungeonGeneratorBase;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
@@ -9,8 +8,6 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 
 import java.io.*;
@@ -41,12 +38,14 @@ public class DungeonData {
     public boolean fillStone_to_Ground = false;
     public boolean fillDirt_to_Ground = false;
     public boolean overWrite_Ocean = false;
-    public int minx = -1;
-    public int miny = -1;
-    public int minz = -1;
+    public int minx = 0;
+    public int miny = 0;
+    public int minz = 0;
     public int maxx = -1;
     public int maxy = -1;
     public int maxz = -1;
+
+    public int heightPrecision = 1;
 
     public int minHeight = 0;
     public int MaxHeight = 256;
@@ -324,12 +323,12 @@ public class DungeonData {
                         }
                     }
                 }
-                temp.minx = minx - 1;
-                temp.miny = miny - 1;
-                temp.minz = minz - 1;
-                temp.maxx = maxx + 1;
-                temp.maxy = maxy + 1;
-                temp.maxz = maxz + 1;
+                temp.minx = minx;
+                temp.miny = miny;
+                temp.minz = minz;
+                temp.maxx = maxx;
+                temp.maxy = maxy;
+                temp.maxz = maxz;
                 return temp;
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -366,6 +365,7 @@ public class DungeonData {
                 short width =  tagCompound.getShort("Width");
                 short length = tagCompound.getShort("Length");
                 short height = tagCompound.getShort("Height");
+                temp.heightPrecision = tagCompound.getByte("HeightPrecision");
                 temp.maxx = width;
                 temp.maxz = length;
                 temp.maxy = height;

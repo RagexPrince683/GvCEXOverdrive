@@ -4,28 +4,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import handmadeguns.entity.HMGExplosion;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
-import handmadevehicle.SlowPathFinder.WorldForPathfind;
 import hmggvcmob.GVCMobPlus;
-import hmggvcmob.ai.AIAttackGun;
 import hmggvcmob.ai.KAMIKAZEBommerAI;
 import hmggvcutil.GVCUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIAvoidEntity;
-import net.minecraft.entity.ai.EntityAICreeperSwell;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityGolem;
-import net.minecraft.entity.passive.EntityOcelot;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -36,7 +21,6 @@ import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -61,8 +45,6 @@ public class GVCEntityGuerrillaBM extends EntityGBase
     {
         super(p_i1733_1_);
         this.tasks.addTask(1, new KAMIKAZEBommerAI(this));
-        this.tasks.addTask(2,aiAttackGun = new AIAttackGun(this,30,3,10,5,true,true,new WorldForPathfind(worldObj)));
-        spread = 5;
         canuseAlreadyPlacedGun = false;
         canusePlacedGun = false;
     }

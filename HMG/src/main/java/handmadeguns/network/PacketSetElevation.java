@@ -15,7 +15,6 @@ public class PacketSetElevation implements IMessage {
 		this.elevationID = elevationID;
 	}
 
-	//TODO クライアント側が選択した仰角設定番号を鯖に送信
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		this.targetEntityID = buf.readInt();

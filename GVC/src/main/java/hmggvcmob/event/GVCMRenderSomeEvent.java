@@ -1,9 +1,12 @@
 package hmggvcmob.event;
 
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import hmggvcmob.entity.*;
 import handmadevehicle.CLProxy;
+import hmggvcmob.tile.TileEntityFlag;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
@@ -18,19 +21,17 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static handmadevehicle.HMVehicle.HMV_Proxy;
+import static hmggvcmob.GVCMobPlus.forPlayer;
+import static java.lang.Math.sqrt;
 
 public class GVCMRenderSomeEvent {
-
-	public boolean zoomtype;
-	public static float mouseSensO = -1;
-	static boolean needrest = true;
-	private double zLevel = 0;
-	private static final IModelCustom attitude_indicator = AdvancedModelLoader.loadModel(new ResourceLocation("gvcmob:textures/model/Attitude indicator.mqo"));
-	private static final ResourceLocation attitude_indicator_texture = new ResourceLocation("gvcmob:textures/model/Attitude indicator.png");
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -59,6 +60,47 @@ public class GVCMRenderSomeEvent {
 		}
 		GVCMXEntityEvent.soundedentity.add(event.entity);
 	}
+	public static World clientWorld;
+	public static TileEntityFlag nearestCamp;
+	public static double nearestCampDist;
+
+	public static ExecutorService nearestCampFindEvent;
+	public GVCMRenderSomeEvent(){
+		nearestCampFindEvent = Executors.newCachedThreadPool();
+		nearestCampFindEvent.execute(() -> {
+			while(true) {
+				try
+				{
+					Minecraft minecraft = FMLClientHandler.instance().getClient();
+					EntityPlayer entityplayer = minecraft.thePlayer;
+					if(clientWorld != null && entityplayer != null) {
+						double dist = 16384;//
+
+						TileEntityFlag closestFlag = null;
+						for (Object obj : clientWorld.loadedTileEntityList) {
+							if (obj instanceof TileEntityFlag) {
+								TileEntityFlag tileEntity = (TileEntityFlag) obj;
+								if (!tileEntity.isInvalid() && tileEntity.flagHeight >= tileEntity.campObj.maxFlagHeight / 2) {
+									double tempDist = tileEntity.getDistanceFrom(entityplayer.posX, entityplayer.posY, entityplayer.posZ);
+									if (tempDist < dist || dist == -1) {
+										dist = tempDist;
+										closestFlag = tileEntity;
+									}
+								}
+							}
+						}
+						nearestCampDist = sqrt(dist);
+						nearestCamp = closestFlag;
+					}
+					Thread.sleep(1000);
+				}
+				catch (Throwable e)
+				{
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -70,9 +112,28 @@ public class GVCMRenderSomeEvent {
 				                                                        minecraft.displayHeight);
 		int i = scaledresolution.getScaledWidth();
 		int j = scaledresolution.getScaledHeight();
+		clientWorld = entityplayer.worldObj;
+		FontRenderer fontrenderer = minecraft.fontRenderer;
+		{
+			String beaconStateMessage = "lost connection";
+			int color = 0x808080;
+			if (nearestCamp != null) {
+
+				if (nearestCamp.campObj.playerIsFriend) {
+					color = 0x80FF80;
+					beaconStateMessage = "connected to Respawn-Beacon";
+				} else {
+					color = 0xFF8080;
+					beaconStateMessage = "detected an Enemy beacon";
+				}
+				beaconStateMessage = beaconStateMessage + "  " + (int)nearestCampDist + "m";
+			}
+
+			fontrenderer.drawStringWithShadow(beaconStateMessage, 0, 0, color);
+		}
+
 		if (entityplayer.ridingEntity instanceof EntityMGAX55) {
 			EntityMGAX55 gear = (EntityMGAX55)entityplayer.ridingEntity;
-			FontRenderer fontrenderer = minecraft.fontRenderer;
 			String weaponmode;
 			int color = 0xFFFFFF;
 			switch (gear.weaponMode) {
@@ -110,8 +171,8 @@ public class GVCMRenderSomeEvent {
 			}
 			fontrenderer.drawStringWithShadow("Armor : " + gear.health, i - 300, j - 40 - 10, color);
 		}
+
+		GL11.glColor4f(1, 1, 1, 1);
 		minecraft.getTextureManager().bindTexture(Gui.icons);
-		boolean rc = HMV_Proxy.zoomclick();
-		if(rc) CLProxy.zooming = !CLProxy.zooming;
 	}
 }

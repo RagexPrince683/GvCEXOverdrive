@@ -10,9 +10,10 @@ import static java.lang.Integer.parseInt;
 
 public class DungeonData_withSettings {
 	boolean biomeRestrictionType = false;//true:black false:white
-	int[] biomeSetting = new int[0];
+	String[] biomeSetting = new String[0];
 	float frequency = 0.5f;
 	boolean hasFixedPosition;
+	boolean enableRotate;
 	boolean onStrongHold;
 	int x;
 	int z;
@@ -37,9 +38,9 @@ public class DungeonData_withSettings {
 						}
 						case "BiomeRestriction":{
 							biomeRestrictionType = parseBoolean(type[1]);
-							biomeSetting = new int[type.length-2];
+							biomeSetting = new String[type.length-2];
 							for(int id = 0;id < type.length-2;id++){
-								biomeSetting[id] = parseInt(type[id+2]);
+								biomeSetting[id] = type[id+2];
 							}
 							break;
 						}
@@ -55,6 +56,10 @@ public class DungeonData_withSettings {
 						}
 						case "ONStrongHold":{
 							onStrongHold = true;
+							break;
+						}
+						case "disableRotate":{
+							enableRotate = false;
 							break;
 						}
 						case "Interval":{

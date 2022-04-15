@@ -1,7 +1,8 @@
 package handmadeguns.client.render;
 
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGGroupObject;
+
 import javax.script.ScriptEngine;
-import java.io.FileReader;
 import java.util.ArrayList;
 
 import static handmadeguns.HMGGunMaker.readerCnt;
@@ -12,9 +13,14 @@ public class HMGGunParts {
     public ScriptEngine script_global;
     public boolean rotateTypeIsVector = false;
     public String partsname;
+    public HMGGroupObject currentGroup_parts;
     public String partsname_reticlePlate;
+    public HMGGroupObject currentGroup_reticlePlate;
     public String partsname_reticle;
+    public HMGGroupObject currentGroup_reticle;
     public String partsname_light;
+    public HMGGroupObject currentGroup_light;
+    public boolean initialized = false;
     public boolean isLarm;
     public boolean isRarm;
     public ArrayList<HMGGunParts> childs = new ArrayList<HMGGunParts>();

@@ -54,7 +54,6 @@ public class CommonSideProxyGVCWW2 {
 	}
 
 	public EntityPlayer getEntityPlayerInstance() {
-		// TODO 自動生成されたメソッド・スタブ
 		return null;
 	}
 

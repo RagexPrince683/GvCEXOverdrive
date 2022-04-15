@@ -1,6 +1,7 @@
 package hmgx_lmmrinker.AI;
 
 import handmadevehicle.SlowPathFinder.WorldForPathfind;
+import littleMaidMobX.LMM_EntityAIFollowOwner;
 import littleMaidMobX.LMM_EntityLittleMaid;
 import littleMaidMobX.LMM_IEntityAI;
 import net.minecraft.entity.Entity;
@@ -80,7 +81,7 @@ public class EntityAIFollow_with_Gun extends EntityAIBase implements LMM_IEntity
         }
         theMaid.getSwingStatusDominant().clearItemInUse(theMaid);
         field_48310_h = 10;
-        PathEntity setval = worldForPathfind.getEntityPathToXYZ(theMaid,(int)theOwner.posX,(int)theOwner.posY,(int)theOwner.posZ,120.0f,true,true,true,true);
+        PathEntity setval = worldForPathfind.getEntityPathToXYZ(theMaid,(int)theOwner.posX,(int)theOwner.posY,(int)theOwner.posZ,80.0f,true,true,true,true);
         if(setval!=null)
             petPathfinder.setPath(setval,1.0);
 //        petPathfinder.onUpdateNavigation();

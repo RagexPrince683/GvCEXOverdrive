@@ -8,6 +8,7 @@ import hmggvcmob.render.*;
 import hmggvcmob.tile.TileEntityFlag;
 import hmggvcmob.tile.TileEntityMobSpawner_Extend;
 
+import hmggvcmob.tile.TileEntityMobSpawner_OneTime;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 //import net.java.games.input.Keyboard;
 import net.minecraft.init.Items;
@@ -44,7 +45,7 @@ public class ClientProxyGVCM extends CommonSideProxyGVCM {
 		RenderingRegistry.registerEntityRenderingHandler(GVCEntityGK.class, new GVCRenderGK());
 
 //		RenderingRegistry.registerEntityRenderingHandler(GVCEntityTank.class, new GVCRenderTankobj());
-		RenderingRegistry.registerEntityRenderingHandler(TU95.class, new GVCRenderTU95());
+//		RenderingRegistry.registerEntityRenderingHandler(TU95.class, new GVCRenderTU95());
 //		RenderingRegistry.registerEntityRenderingHandler(GVCEntityTankT90.class, new GVCRenderTankT90());
 		/*if(GVCMobPlus.cfg_modelobj){
 			RenderingRegistry.registerEntityRenderingHandler(GVCEntityAPC.class, new GVCRenderAPCobj());
@@ -63,10 +64,10 @@ public class ClientProxyGVCM extends CommonSideProxyGVCM {
 		
 		
 //		RenderingRegistry.registerEntityRenderingHandler(GVCEntityJeep.class, new GVCRenderJeep());
-		RenderingRegistry.registerEntityRenderingHandler(GVCEntityAAG.class, new GVCRenderAAG());
+//		RenderingRegistry.registerEntityRenderingHandler(GVCEntityAAG.class, new GVCRenderAAG());
 		RenderingRegistry.registerEntityRenderingHandler(EntityParachute.class, new GVCRenderParachute());
 
-		RenderingRegistry.registerEntityRenderingHandler(GVCEntityAA.class, new GVCRenderAA());
+//		RenderingRegistry.registerEntityRenderingHandler(GVCEntityAA.class, new GVCRenderAA());
 		
 		//RenderingRegistry.registerEntityRenderingHandler(GVCEntityMobSpawner.class, new GVCRenderMobSpawner());
 		RenderingRegistry.registerEntityRenderingHandler(GVCEntityMobSpawner.class, new RenderSnowball(Items.apple));
@@ -111,5 +112,6 @@ public class ClientProxyGVCM extends CommonSideProxyGVCM {
     public void registerTileEntity() {
 		ClientRegistry.registerTileEntity(TileEntityFlag.class, "FlagTile", new RenderTileFlag());//※ついで
 		GameRegistry.registerTileEntity(TileEntityMobSpawner_Extend.class, "MobspawnerEX");//※ついで
+		GameRegistry.registerTileEntity(TileEntityMobSpawner_OneTime.class, "MobspawnerOneTime");//※ついで
     }
 }

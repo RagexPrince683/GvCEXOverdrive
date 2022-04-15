@@ -34,6 +34,7 @@ public class HMGEntityBullet_TE extends HMGEntityBulletBase
 		super(worldIn, throwerIn, damege, bspeed, bure,modelname);
 		this.ex = e;
 		this.canex = cane;
+		this.noex = false;
 	}
 	/**
 	 * Called when this EntityThrowable hits a block or entity.

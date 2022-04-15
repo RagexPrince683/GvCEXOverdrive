@@ -139,7 +139,7 @@ public class GVCEntityFriendGK extends EntityPMCBase implements IIRVING
                 Accumulationdamage_leg--;
                 combattask_2 = false;
                 combattask_4 = false;
-                getNavigator().clearPathEntity();
+                getNavigator().clearPathEntity();//強制介入する
                 kickprogeress = 0;
             }
             if(Accumulationdamage_leg<0){
