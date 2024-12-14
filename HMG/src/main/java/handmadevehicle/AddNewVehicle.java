@@ -26,7 +26,7 @@ import static java.lang.Math.*;
 import static net.minecraft.util.MathHelper.wrapAngleTo180_float;
 
 public class AddNewVehicle extends HMGGunMaker {
-	private static final HashMap<String,Prefab_Vehicle_Base> prefabBaseHashMap = new HashMap<>();
+	private static final HashMap<String,Prefab_Vehicle_Base> prefabBaseHashMap = new HashMap<String, Prefab_Vehicle_Base>();
 	private static Prefab_Vehicle_Base currentVehicleData;
 
 	public static ArrayList<VehicleSpawnGachaOBJ> vehicleSpawnGachaOBJs_Guerrilla = new ArrayList<VehicleSpawnGachaOBJ>(){

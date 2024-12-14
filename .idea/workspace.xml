@@ -21,6 +21,12 @@
         <task path="$PROJECT_DIR$">
           <activation />
         </task>
+        <task path="$PROJECT_DIR$/HMG">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/Linker">
+          <activation />
+        </task>
         <projects_view>
           <tree_state>
             <expand>
