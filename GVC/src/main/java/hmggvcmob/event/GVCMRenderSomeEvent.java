@@ -107,72 +107,83 @@ public class GVCMRenderSomeEvent {
 	public void renderover(RenderGameOverlayEvent.Pre event) {
 		Minecraft minecraft = FMLClientHandler.instance().getClient();
 		EntityPlayer entityplayer = minecraft.thePlayer;
-		
-		ScaledResolution scaledresolution = new ScaledResolution(minecraft, minecraft.displayWidth,
-				                                                        minecraft.displayHeight);
-		int i = scaledresolution.getScaledWidth();
-		int j = scaledresolution.getScaledHeight();
-		clientWorld = entityplayer.worldObj;
-		FontRenderer fontrenderer = minecraft.fontRenderer;
-		{
-			String beaconStateMessage = "lost connection";
-			int color = 0x808080;
-			if (nearestCamp != null) {
 
-				if (nearestCamp.campObj.playerIsFriend) {
-					color = 0x80FF80;
-					beaconStateMessage = "connected to Respawn-Beacon";
-				} else {
-					color = 0xFF8080;
-					beaconStateMessage = "detected an Enemy beacon";
-				}
-				beaconStateMessage = beaconStateMessage + "  " + (int)nearestCampDist + "m";
+		ScaledResolution scaledresolution = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
+		int screenWidth = scaledresolution.getScaledWidth();
+		int screenHeight = scaledresolution.getScaledHeight();
+
+		FontRenderer fontRenderer = minecraft.fontRenderer;
+
+		// Save the current OpenGL state to avoid affecting other render calls
+		GL11.glPushMatrix();
+
+		// Apply transformations to ensure correct orientation
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glTranslated(0, 0, 0); // No translations in this case, but can be modified if needed
+		GL11.glScalef(1.0F, 1.0F, 1.0F); // Ensure uniform scaling
+
+		// Render beacon state message
+		String beaconStateMessage = "lost connection";
+		int beaconColor = 0x808080;
+		if (nearestCamp != null) {
+			if (nearestCamp.campObj.playerIsFriend) {
+				beaconColor = 0x80FF80;
+				beaconStateMessage = "connected to Respawn-Beacon";
+			} else {
+				beaconColor = 0xFF8080;
+				beaconStateMessage = "detected an Enemy beacon";
 			}
-
-			fontrenderer.drawStringWithShadow(beaconStateMessage, 0, 0, color);
+			beaconStateMessage = beaconStateMessage + "  " + (int) nearestCampDist + "m";
 		}
+		fontRenderer.drawStringWithShadow(beaconStateMessage, 5, 5, beaconColor);
 
+		// Render details for EntityMGAX55
 		if (entityplayer.ridingEntity instanceof EntityMGAX55) {
-			EntityMGAX55 gear = (EntityMGAX55)entityplayer.ridingEntity;
-			String weaponmode;
-			int color = 0xFFFFFF;
+			EntityMGAX55 gear = (EntityMGAX55) entityplayer.ridingEntity;
+			String weaponModeText;
+			int weaponModeColor = 0xFFFFFF;
+
+			// Handle weapon mode text and color
 			switch (gear.weaponMode) {
 				case 0:
 					if (gear.railGunChargecnt > 0) {
-						color = 0xFF0000;
-						weaponmode = "Rail Gun : CHRG..." + gear.railGunChargecnt;
-						
+						weaponModeColor = 0xFF0000;
+						weaponModeText = "Rail Gun : CHRG..." + gear.railGunChargecnt;
 					} else if (gear.railGunCoolcnt > 0) {
-						color = 0xFFFF00;
-						weaponmode = "Rail Gun : LD..." + gear.railGunCoolcnt;
+						weaponModeColor = 0xFFFF00;
+						weaponModeText = "Rail Gun : LD..." + gear.railGunCoolcnt;
 					} else {
-						weaponmode = "Rail Gun : RDY :EN " + gear.railGunMagazine;
+						weaponModeText = "Rail Gun : RDY :EN " + gear.railGunMagazine;
 					}
 					break;
 				case 1:
-					if (gear.rocketMagazine <= 0) color = 0xFF0000;
-					weaponmode = "AT Missile : NUM " + gear.rocketMagazine;
+					if (gear.rocketMagazine <= 0) weaponModeColor = 0xFF0000;
+					weaponModeText = "AT Missile : NUM " + gear.rocketMagazine;
 					break;
 				case 2:
-					if (gear.normalGunHeat < EntityMGAX55.normalGunHeat_Max)
-						weaponmode = "Machine Gun : RDY :HEAT" + gear.normalGunHeat;
-					else {
-						color = 0xFF0000;
-						weaponmode = "Machine Gun : OH COOLING... HEAT" + gear.normalGunHeat;
+					if (gear.normalGunHeat < EntityMGAX55.normalGunHeat_Max) {
+						weaponModeText = "Machine Gun : RDY :HEAT " + gear.normalGunHeat;
+					} else {
+						weaponModeColor = 0xFF0000;
+						weaponModeText = "Machine Gun : OH COOLING... HEAT " + gear.normalGunHeat;
 					}
 					break;
 				default:
-					weaponmode = "Error";
+					weaponModeText = "Error";
 			}
-			fontrenderer.drawStringWithShadow("Weapon Mode : " + weaponmode, i - 300, j - 20 - 10, color);
-			color = 0x00FF00;
-			if (gear.health < 100) {
-				color = 0xFF0000;
-			}
-			fontrenderer.drawStringWithShadow("Armor : " + gear.health, i - 300, j - 40 - 10, color);
+
+			fontRenderer.drawStringWithShadow("Weapon Mode : " + weaponModeText, screenWidth - 300, screenHeight - 30, weaponModeColor);
+
+			int armorColor = gear.health < 100 ? 0xFF0000 : 0x00FF00;
+			fontRenderer.drawStringWithShadow("Armor : " + gear.health, screenWidth - 300, screenHeight - 50, armorColor);
 		}
 
+		// Restore OpenGL state
 		GL11.glColor4f(1, 1, 1, 1);
+		GL11.glPopMatrix();
+
+		// Bind the default GUI icons texture back
 		minecraft.getTextureManager().bindTexture(Gui.icons);
 	}
 }
