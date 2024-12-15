@@ -2,7 +2,7 @@ package handmadevehicle.entity.parts.logics;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import handmadeguns.HMGPacketHandler;
-import handmadeguns.Util.EntityLinkedPos_Motion;
+//PAIN import handmadeguns.Util.EntityLinkedPos_Motion;
 import handmadeguns.Util.GunsUtils;
 import handmadeguns.entity.PlacedGunEntity;
 import handmadeguns.entity.bullets.HMGEntityBullet_TE;
@@ -21,7 +21,7 @@ import handmadevehicle.network.HMVPacketHandler;
 import handmadevehicle.entity.EntityCameraDummy;
 import handmadevehicle.entity.parts.*;
 import handmadevehicle.entity.parts.turrets.TurretObj;
-import handmadevehicle.entity.prefab.Prefab_Vehicle_Base;
+//PAIN import handmadevehicle.entity.prefab.Prefab_Vehicle_Base;
 import handmadevehicle.inventory.InventoryVehicle;
 import handmadevehicle.network.packets.*;
 import net.minecraft.block.*;
@@ -58,14 +58,14 @@ import static handmadeguns.HandmadeGunsCore.cfg_blockdestroy;
 import static handmadeguns.Util.GunsUtils.isCollidableBlock;
 import static handmadevehicle.HMVehicle.*;
 import static handmadevehicle.Utils.*;
-import static handmadevehicle.entity.prefab.Prefab_Vehicle_Base.doScript;
+//PAIN import static handmadevehicle.entity.prefab.Prefab_Vehicle_Base.doScript;
 import static java.lang.Math.*;
 import static java.lang.Math.toRadians;
 import static net.minecraft.util.MathHelper.wrapAngleTo180_double;
 import static net.minecraft.util.MathHelper.wrapAngleTo180_float;
 import static net.minecraft.util.MathHelper.floor_double;
 
-public class BaseLogic implements IbaseLogic,IneedMouseTrack,MultiRiderLogics {
+public class BaseLogic implements ibaseLogic,IneedMouseTrack,MultiRiderLogics {
 
 	public float bodyrotationYaw;
 	public float bodyrotationPitch;

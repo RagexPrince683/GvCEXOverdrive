@@ -26,8 +26,8 @@ import static java.lang.Math.*;
 import static net.minecraft.util.MathHelper.wrapAngleTo180_float;
 
 public class AddNewVehicle extends HMGGunMaker {
-	private static final HashMap<String,Prefab_Vehicle_Base> prefabBaseHashMap = new HashMap<String, Prefab_Vehicle_Base>();
-	private static Prefab_Vehicle_Base currentVehicleData;
+	//PAIN private static final HashMap<String,Prefab_Vehicle_Base> prefabBaseHashMap = new HashMap<String, Prefab_Vehicle_Base>();
+	//PAIN private static Prefab_Vehicle_Base currentVehicleData;
 
 	public static ArrayList<VehicleSpawnGachaOBJ> vehicleSpawnGachaOBJs_Guerrilla = new ArrayList<VehicleSpawnGachaOBJ>(){
 		{
@@ -46,7 +46,7 @@ public class AddNewVehicle extends HMGGunMaker {
 		int l = 0;
 		try {
 			String dataName = null;
-			currentVehicleData = new Prefab_Vehicle_Base();
+			//PAIN 		currentVehicleData = new Prefab_Vehicle_Base();
 			VehicleType vehicleType = null;
 			Prefab_AttachedWeapon current = null;
 			int turretId_current = 0;
@@ -77,72 +77,72 @@ public class AddNewVehicle extends HMGGunMaker {
 							switch (type[0]) {
 								case "Name":
 									dataName = type[1];
-									if (prefabBaseHashMap.containsKey(dataName)) currentVehicleData = prefabBaseHashMap.get(dataName);
-									currentVehicleData.weaponSlotNum = 0;
-									currentVehicleData.cargoSlotNum = 0;
+					//PAIN 				if (prefabBaseHashMap.containsKey(dataName)) currentVehicleData = prefabBaseHashMap.get(dataName);
+					//PAIN 				currentVehicleData.weaponSlotNum = 0;
+					//PAIN 				currentVehicleData.cargoSlotNum = 0;
 									break;
 								case "modelName":
 									System.out.println(type[1]);
-									currentVehicleData.modelName = type[1];
+									//PAIN 					currentVehicleData.modelName = type[1];
 									break;
 								case "modelName_texture":
-									currentVehicleData.modelName_texture = type[1];
+									//PAIN 				currentVehicleData.modelName_texture = type[1];
 									break;
 								case "scale":
-									currentVehicleData.scale = parseFloat(type[1]);
+									//PAIN 				currentVehicleData.scale = parseFloat(type[1]);
 									break;
 								case "health":
-									currentVehicleData.maxhealth = parseFloat(type[1]);
+									//PAIN 						currentVehicleData.maxhealth = parseFloat(type[1]);
 									break;
 								case "soundname":
-									currentVehicleData.SoundName = type[1];
-									currentVehicleData.AFSoundName = type[1] + "AF";
+					//PAIN 				currentVehicleData.SoundName = type[1];
+					//PAIN 				currentVehicleData.AFSoundName = type[1] + "AF";
 									break;
 								case "IdleSoundName":
-									currentVehicleData.IdleSoundName = type[1];
+									//PAIN 				currentVehicleData.IdleSoundName = type[1];
 									break;
 								case "soundpitch":
-									currentVehicleData.soundpitch = parseFloat(type[1]);
+									//PAIN 				currentVehicleData.soundpitch = parseFloat(type[1]);
 									break;
 								case "throttle_Max":
-									currentVehicleData.throttle_Max = parseFloat(type[1]);
+									//PAIN 				currentVehicleData.throttle_Max = parseFloat(type[1]);
 									break;
 								case "throttle_min":
-									currentVehicleData.throttle_min = parseFloat(type[1]);
+									//PAIN 				currentVehicleData.throttle_min = parseFloat(type[1]);
 									break;
 								case "throttle_speed":
-									currentVehicleData.throttle_speed = parseFloat(type[1]);
+									//PAIN 				currentVehicleData.throttle_speed = parseFloat(type[1]);
 									break;
 								case "rudderSpeed":
-									currentVehicleData.rudderSpeed = parseFloat(type[1]);
+									//PAIN 				currentVehicleData.rudderSpeed = parseFloat(type[1]);
 									break;
 								case "draft":
-									currentVehicleData.draft = parseFloat(type[1]);
+									//PAIN 				currentVehicleData.draft = parseFloat(type[1]);
 									break;
 								case "molded_depth":
-									currentVehicleData.molded_depth = parseFloat(type[1]);
+									//PAIN 				currentVehicleData.molded_depth = parseFloat(type[1]);
 									break;
 								case "floatOnWater":
-									currentVehicleData.floatOnWater = parseBoolean(type[1]);
+									//PAIN 				currentVehicleData.floatOnWater = parseBoolean(type[1]);
 									break;
 								case "splashsound":
-									currentVehicleData.splashsound = type[1];
+									//PAIN 				currentVehicleData.splashsound = type[1];
 									break;
 								case "sightTex":
-									currentVehicleData.sightTex[0] = type[1];
+									//PAIN 				currentVehicleData.sightTex[0] = type[1];
 									break;
 								case "sightTex_toSeat":
-									currentVehicleData.sightTex[parseInt(type[1])] = type[2];
+									//PAIN 				currentVehicleData.sightTex[parseInt(type[1])] = type[2];
 									break;
 								case "ParentWeapons_NUM":
-									currentVehicleData.prefab_attachedWeapons = new Prefab_AttachedWeapon[parseInt(type[1])];
+									//PAIN 				currentVehicleData.prefab_attachedWeapons = new Prefab_AttachedWeapon[parseInt(type[1])];
 									break;
 								case "AllWeapons_NUM":
-									currentVehicleData.prefab_attachedWeapons_all = new Prefab_AttachedWeapon[parseInt(type[1])];
+									//PAIN 				currentVehicleData.prefab_attachedWeapons_all = new Prefab_AttachedWeapon[parseInt(type[1])];
 									break;
 								case "addParentWeapon":
-									currentVehicleData.prefab_attachedWeapons_all[turretId_current] = currentVehicleData.prefab_attachedWeapons[parseInt(type[1])] = new Prefab_AttachedWeapon();
-									current = currentVehicleData.prefab_attachedWeapons[parseInt(type[1])];
+					//PAIN 				currentVehicleData.prefab_attachedWeapons_all[turretId_current] = currentVehicleData.prefab_attachedWeapons[parseInt(type[1])] = new Prefab_AttachedWeapon();
+					//PAIN 				current = currentVehicleData.prefab_attachedWeapons[parseInt(type[1])];
 									turretId_current++;
 									rootTurretID_current++;
 									if(prefab_turretHashMap.containsKey(type[2]))current.prefab_turret = prefab_turretHashMap.get(type[2]);
@@ -153,9 +153,9 @@ public class AddNewVehicle extends HMGGunMaker {
 										}
 									}
 									if(current.prefab_turret.needGunStack){
-										current.linkedGunStackID = currentVehicleData.weaponSlotNum++;
-										currentVehicleData.weaponSlot_linkedTurret_StackWhiteList.add(current.prefab_turret.gunStackwhitelist);
-										currentVehicleData.weaponSlot_linkedTurretID.add(turretId_current-1);
+				//PAIN 						current.linkedGunStackID = currentVehicleData.weaponSlotNum++;
+				//PAIN 						currentVehicleData.weaponSlot_linkedTurret_StackWhiteList.add(current.prefab_turret.gunStackwhitelist);
+				//PAIN 						currentVehicleData.weaponSlot_linkedTurretID.add(turretId_current-1);
 									}
 
 
@@ -168,7 +168,7 @@ public class AddNewVehicle extends HMGGunMaker {
 									current.initialRotationPitch = parseFloat(type[2]);
 									break;
 								case "addChildWeapon":
-									currentVehicleData.prefab_attachedWeapons_all[turretId_current] = current.prefab_Childturrets[parseInt(type[1])] = new Prefab_AttachedWeapon();
+									//PAIN 						currentVehicleData.prefab_attachedWeapons_all[turretId_current] = current.prefab_Childturrets[parseInt(type[1])] = new Prefab_AttachedWeapon();
 									current.prefab_Childturrets[parseInt(type[1])].motherTurret = current;
 									current.prefab_Childturrets[parseInt(type[1])].motherTurretID = rootTurretID_current;
 									current = current.prefab_Childturrets[parseInt(type[1])];
@@ -185,9 +185,9 @@ public class AddNewVehicle extends HMGGunMaker {
 										}
 									}
 									if(current.prefab_turret.needGunStack){
-										current.linkedGunStackID = currentVehicleData.weaponSlotNum++;
-										currentVehicleData.weaponSlot_linkedTurret_StackWhiteList.add(current.prefab_turret.gunStackwhitelist);
-										currentVehicleData.weaponSlot_linkedTurretID.add(turretId_current-1);
+							//PAIN 			current.linkedGunStackID = currentVehicleData.weaponSlotNum++;
+							//PAIN 			currentVehicleData.weaponSlot_linkedTurret_StackWhiteList.add(current.prefab_turret.gunStackwhitelist);
+							//PAIN 			currentVehicleData.weaponSlot_linkedTurretID.add(turretId_current-1);
 									}
 
 									current.turretsPos = new Vector3d(parseDouble(type[3]), parseDouble(type[4]), parseDouble(type[5]));
@@ -197,7 +197,7 @@ public class AddNewVehicle extends HMGGunMaker {
 								case "addBarrelChildWeapon":
 //									System.out.println("" + current.prefab_turret.turretName);
 //									System.out.println("" + rootTurretID_current);
-									currentVehicleData.prefab_attachedWeapons_all[turretId_current] = current.prefab_ChildOnBarrel[parseInt(type[1])] = new Prefab_AttachedWeapon();
+									//PAIN 			currentVehicleData.prefab_attachedWeapons_all[turretId_current] = current.prefab_ChildOnBarrel[parseInt(type[1])] = new Prefab_AttachedWeapon();
 									current.prefab_ChildOnBarrel[parseInt(type[1])].motherTurret = current;
 									current.prefab_ChildOnBarrel[parseInt(type[1])].motherTurretID = rootTurretID_current;
 									current = current.prefab_ChildOnBarrel[parseInt(type[1])];
@@ -215,9 +215,9 @@ public class AddNewVehicle extends HMGGunMaker {
 										}
 									}
 									if(current.prefab_turret.needGunStack){
-										current.linkedGunStackID = currentVehicleData.weaponSlotNum++;
-										currentVehicleData.weaponSlot_linkedTurret_StackWhiteList.add(current.prefab_turret.gunStackwhitelist);
-										currentVehicleData.weaponSlot_linkedTurretID.add(turretId_current-1);
+								//PAIN 		current.linkedGunStackID = currentVehicleData.weaponSlotNum++;
+								//PAIN 		currentVehicleData.weaponSlot_linkedTurret_StackWhiteList.add(current.prefab_turret.gunStackwhitelist);
+								//PAIN 		currentVehicleData.weaponSlot_linkedTurretID.add(turretId_current-1);
 									}
 
 									current.turretsPos = new Vector3d(parseDouble(type[3]), parseDouble(type[4]), parseDouble(type[5]));
@@ -230,37 +230,37 @@ public class AddNewVehicle extends HMGGunMaker {
 									break;
 
 								case "SetUpSeat1_NUM":
-									currentVehicleData.prefab_seats = new Prefab_Seat[parseInt(type[1])];
-									currentVehicleData.prefab_seats_zoom = new Prefab_Seat[parseInt(type[1])];
-									currentVehicleData.sightTex = new String[parseInt(type[1])];
+			//PAIN 						currentVehicleData.prefab_seats = new Prefab_Seat[parseInt(type[1])];
+			//PAIN 						currentVehicleData.prefab_seats_zoom = new Prefab_Seat[parseInt(type[1])];
+			//PAIN 						currentVehicleData.sightTex = new String[parseInt(type[1])];
 									break;
 								case "SetUpSeat2_AddSeat_Normal":
-									if(type.length == 10)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] = currentVehicleData.prefab_seats[parseInt(type[1])] =
-											new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]),parseInt(type[8]), parseInt(type[9]));
-									else if(type.length == 11)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] = currentVehicleData.prefab_seats[parseInt(type[1])] =
-											new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]), parseInt(type[9]), parseInt(type[10]));
-									else if(type.length == 8)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] = currentVehicleData.prefab_seats[parseInt(type[1])] =
-											new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]), parseInt(type[6]), parseInt(type[7]));
+				//PAIN 					if(type.length == 10)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] = currentVehicleData.prefab_seats[parseInt(type[1])] =
+				//PAIN 							new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]),parseInt(type[8]), parseInt(type[9]));
+				//PAIN 					else if(type.length == 11)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] = currentVehicleData.prefab_seats[parseInt(type[1])] =
+				//PAIN 							new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]), parseInt(type[9]), parseInt(type[10]));
+				//PAIN 					else if(type.length == 8)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] = currentVehicleData.prefab_seats[parseInt(type[1])] =
+				//PAIN 							new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]), parseInt(type[6]), parseInt(type[7]));
 									break;
 								case "SetUpSeat3_AddSeat_Zoom":
-									if(type.length == 10)
-										currentVehicleData.prefab_seats_zoom[parseInt(type[1])] =
-												new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]), parseInt(type[8]), parseInt(type[9]));
-									else if(type.length == 11)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] =
-											new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]),parseInt(type[9]), parseInt(type[10]));
-									else if(type.length == 8)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] =
-											new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]), parseInt(type[6]), parseInt(type[7]));
+									//PAIN if(type.length == 10)
+			//PAIN 							currentVehicleData.prefab_seats_zoom[parseInt(type[1])] =
+			//PAIN 									new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]), parseInt(type[8]), parseInt(type[9]));
+			//PAIN 						else if(type.length == 11)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] =
+			//PAIN 								new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]),parseInt(type[9]), parseInt(type[10]));
+			//PAIN 						else if(type.length == 8)currentVehicleData.prefab_seats_zoom[parseInt(type[1])] =
+			//PAIN 								new Prefab_Seat(new double[]{parseDouble(type[2]), parseDouble(type[3]), parseDouble(type[4])}, parseBoolean(type[5]), parseInt(type[6]), parseInt(type[7]));
 
 									break;
 								case "SetUpSeat4_AddSeat_AdditionalTurret": {
-									currentVehicleData.prefab_seats[parseInt(type[1])].mainid = new int[type.length - 2];
+									//PAIN 	currentVehicleData.prefab_seats[parseInt(type[1])].mainid = new int[type.length - 2];
 									int cnt = -2;
 									for (String column : type) {
 										if (cnt < 0) {
 											cnt++;
 											continue;
 										}
-										currentVehicleData.prefab_seats[parseInt(type[1])].mainid[cnt] = parseInt(column);
+										//PAIN 			currentVehicleData.prefab_seats[parseInt(type[1])].mainid[cnt] = parseInt(column);
 										cnt++;
 									}
 								}
@@ -285,10 +285,10 @@ public class AddNewVehicle extends HMGGunMaker {
 									break;
 								case "End":
 									if (isClient) {
-										currentVehicleData.setModel();
-										if (!partslist.isEmpty()) currentVehicleData.partslist = partslist;
+										//PAIN 							currentVehicleData.setModel();
+										//PAIN 							if (!partslist.isEmpty()) currentVehicleData.partslist = partslist;
 									}
-									prefabBaseHashMap.put(dataName, currentVehicleData);
+									//PAIN 					prefabBaseHashMap.put(dataName, currentVehicleData);
 									Item check = GameRegistry.findItem("HMVehicle",dataName);
 									if(check == null){
 										Item itemVehicle;
@@ -301,7 +301,7 @@ public class AddNewVehicle extends HMGGunMaker {
 									}
 									break;
 							}
-							currentVehicleData.readSettings(type);
+							//PAIN 					currentVehicleData.readSettings(type);
 							if (isClient) readParts_vehicle(type, partslist);
 						}
 						if(str.startsWith("//")){
@@ -322,11 +322,11 @@ public class AddNewVehicle extends HMGGunMaker {
 		}
 	}
 
-	public static Prefab_Vehicle_Base seachInfo(String typeName){
-		if(prefabBaseHashMap.containsKey(typeName))
-			return prefabBaseHashMap.get(typeName);
-		return null;
-	}
+	//PAIN public static Prefab_Vehicle_Base seachInfo(String typeName){
+	//PAIN 	if(prefabBaseHashMap.containsKey(typeName))
+	//PAIN 		return prefabBaseHashMap.get(typeName);
+	//PAIN 	return null;
+	//PAIN }
 
 
 	public void readParts_vehicle(String[] type,ArrayList<HMGGunParts> partslist){
@@ -361,11 +361,11 @@ public class AddNewVehicle extends HMGGunMaker {
 			case "TurretParts":
 				((HMVVehicleParts)currentParts).isTurretParts = true;
 				((HMVVehicleParts)currentParts).linkedTurretID = parseInt(type[readerCnt++]);
-				Vector3d weaponPos = currentVehicleData.prefab_attachedWeapons_all[((HMVVehicleParts)currentParts).linkedTurretID].turretsPos;
-				currentParts.AddRenderinfDefoffset((float) weaponPos.x / currentVehicleData.scale,
-						(float) weaponPos.y / currentVehicleData.scale,
-						(float) -weaponPos.z / currentVehicleData.scale,
-						0, 0, 0);
+		//PAIN 		Vector3d weaponPos = currentVehicleData.prefab_attachedWeapons_all[((HMVVehicleParts)currentParts).linkedTurretID].turretsPos;
+		//PAIN 		currentParts.AddRenderinfDefoffset((float) weaponPos.x / currentVehicleData.scale,
+		//PAIN 				(float) weaponPos.y / currentVehicleData.scale,
+		//PAIN 				(float) -weaponPos.z / currentVehicleData.scale,
+		//PAIN 				0, 0, 0);
 				break;
 			case "AddCrawlerTrack_noLoop":
 				noLoop = true;
