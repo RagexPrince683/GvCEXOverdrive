@@ -30,26 +30,26 @@ public class Prefab_Seat {
 		this.subid = subid;
 	}
 	
-	public SeatObject getSeatOBJ(TurretObj[] turrets, Prefab_Vehicle_Base prefab_vehicle_base , BaseLogic baseLogic){
-		WeaponCategory[] mainGun = null;
-		WeaponCategory subGun = null;
-		if(mainid != null && mainid.length > 0) {
-			mainGun = new WeaponCategory[mainid.length];
-			int cnt = 0;
-			for (int groupID : mainid) {
-				if(groupID >= 0){
-					mainGun[cnt] = baseLogic.weaponCategories[groupID];
-//					System.out.println("" + mainGun[cnt].prefab_weaponCategory.name);
-				}
-				cnt++;
-			}
-		}
-
-		if(subid >= 0){
-			subGun = prefab_vehicle_base.weaponCategory[subid].getWeaponGroup(turrets,prefab_vehicle_base,baseLogic);
-//			if(subGun != null)System.out.println("" + subGun.prefab_weaponCategory.name);
-		}
-
-		return new SeatObject(pos,this,mainGun, subGun);
-	}
+	//public SeatObject getSeatOBJ(TurretObj[] turrets, Prefab_Vehicle_Base prefab_vehicle_base , BaseLogic baseLogic){
+	//	WeaponCategory[] mainGun = null;
+	//	WeaponCategory subGun = null;
+	//	if(mainid != null && mainid.length > 0) {
+	//		mainGun = new WeaponCategory[mainid.length];
+	//		int cnt = 0;
+	//		for (int groupID : mainid) {
+	//			if(groupID >= 0){
+	//				mainGun[cnt] = baseLogic.weaponCategories[groupID];
+//	//				System.out.println("" + mainGun[cnt].prefab_weaponCategory.name);
+	//			}
+	//			cnt++;
+	//		}
+	//	}
+//
+	//	if(subid >= 0){
+	//		subGun = prefab_vehicle_base.weaponCategory[subid].getWeaponGroup(turrets,prefab_vehicle_base,baseLogic);
+//	//		if(subGun != null)System.out.println("" + subGun.prefab_weaponCategory.name);
+	//	}
+//
+	//	return new SeatObject(pos,this,mainGun, subGun);
+	//}
 }

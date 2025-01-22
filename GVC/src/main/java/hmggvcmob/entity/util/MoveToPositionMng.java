@@ -63,24 +63,7 @@ public class MoveToPositionMng {
 			moveToPos.add(standingPos);
 		}
 
-		if (driving != null && driving.prefab_vehicle.T_Land_F_Plane) {
-			if(resetPathCool < 0 || driving.mc_Entity.getNavigator().noPath()) {
-				PathEntity current = driving.mc_Entity.getNavigator().getPathToXYZ(
-						MathHelper.floor_double(moveToPos.x),
-						MathHelper.floor_double(moveToPos.y),
-						MathHelper.floor_double(moveToPos.z));
-				boolean flag = false;
-				if (current != null) {
-					driving.mc_Entity.getNavigator().setPath(current, movingSpeed);
-					flag = true;
-				}
-				if (movingSpeed == 0) {
-					driving.mc_Entity.getNavigator().clearPathEntity();
-					flag = true;
-				}
-				if (flag) resetPathCool = 5 + random.nextInt(10);//平均10tick、一時に大量のmobが位置更新すると負荷がヤバい
-			}
-		}else if(riding == null){//単独mob
+		if(riding == null){//単独mob
 			if(resetPathCool < 0 || movingEntity.getNavigator().noPath()) {
 				PathEntity current = worldForPathfind.getEntityPathToXYZ(
 						movingEntity,

@@ -73,7 +73,7 @@ public class EntitySoBase extends EntitySoBases implements IflagBattler {
 
 	protected boolean canDespawn()
 	{
-		return canDespawn && getAttackTarget() == null && !isPlatoonLeader() && (getLinkedVehicle() == null || !getLinkedVehicle().mc_Entity.canDespawn);
+		return canDespawn && getAttackTarget() == null && !isPlatoonLeader();
 	}
 	protected boolean func_146066_aG()
 	{

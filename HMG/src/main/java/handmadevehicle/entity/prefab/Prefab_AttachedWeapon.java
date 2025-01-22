@@ -42,7 +42,7 @@ public class Prefab_AttachedWeapon {
 	public TurretObj getTurretOBJ(World world, IVehicle motherEntity, TurretObj[] turretObjs_all){
 		TurretObj current = prefab_turret.getnewTurret(world);
 		current.linkedGunStackID = linkedGunStackID;
-		current.motherRotCenter = motherEntity.getBaseLogic().prefab_vehicle.rotcenterVec;
+		//current.motherRotCenter = motherEntity.getBaseLogic().prefab_vehicle.rotcenterVec;
 		current.onMotherPos = turretsPos;
 		current.turretrotationYaw = initialRotationYaw;
 		current.turretrotationPitch = initialRotationPitch;

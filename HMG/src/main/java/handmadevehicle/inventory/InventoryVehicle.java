@@ -22,7 +22,7 @@ public class InventoryVehicle implements IInventory {
 		//currentItem = stack;
 		
 		//InventorySize
-		items = new ItemStack[baseLogic.prefab_vehicle.weaponSlotNum+baseLogic.prefab_vehicle.cargoSlotNum];
+		//items = new ItemStack[baseLogic.prefab_vehicle.weaponSlotNum+baseLogic.prefab_vehicle.cargoSlotNum];
 	}
 	
 	@Override
@@ -110,9 +110,9 @@ public class InventoryVehicle implements IInventory {
 
 	public int getInventoryStackLimit(int slotID)
 	{
-		if(slotID<baseLogic.prefab_vehicle.weaponSlotNum){
-			return 1;
-		}
+		//if(slotID<baseLogic.prefab_vehicle.weaponSlotNum){
+		//	return 1;
+		//}
 		return 64;
 	}
 	
@@ -143,21 +143,21 @@ public class InventoryVehicle implements IInventory {
 	@Override
 	public boolean isItemValidForSlot(int slotID, ItemStack checkingStack)
 	{
-		if(slotID<baseLogic.prefab_vehicle.weaponSlotNum && checkingStack != null){
-			TurretObj turretObj = baseLogic.allturrets[baseLogic.prefab_vehicle.weaponSlot_linkedTurretID.get(slotID)];
-			if(!turretObj.prefab_turret.canReloadAirBone && !baseLogic.mc_Entity.onGround)
-				return false;
-			String itemName = checkingStack.getUnlocalizedName();
-			if(baseLogic.prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID) == null)return true;
-//			System.out.println("itemName " + itemName);
-			for(String whiteList: baseLogic.prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID)) {
-//				System.out.println("whiteList " + whiteList);
-				if("item.".concat(whiteList).equals(itemName)){
-					return true;
-				}
-			}
-			return false;
-		}
+		//if(slotID<baseLogic.prefab_vehicle.weaponSlotNum && checkingStack != null){
+		//	TurretObj turretObj = baseLogic.allturrets[baseLogic.prefab_vehicle.weaponSlot_linkedTurretID.get(slotID)];
+		//	if(!turretObj.prefab_turret.canReloadAirBone && !baseLogic.mc_Entity.onGround)
+		//		return false;
+		//	String itemName = checkingStack.getUnlocalizedName();
+		//	if(baseLogic.prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID) == null)return true;
+//		//	System.out.println("itemName " + itemName);
+		//	for(String whiteList: baseLogic.prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID)) {
+//		//		System.out.println("whiteList " + whiteList);
+		//		if("item.".concat(whiteList).equals(itemName)){
+		//			return true;
+		//		}
+		//	}
+		//	return false;
+		//}
 		return true;
 	}
 }

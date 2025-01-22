@@ -4,7 +4,7 @@ import handmadeguns.entity.SpHitCheckEntity;
 import handmadevehicle.entity.parts.logics.MultiRiderLogics;
 import net.minecraft.entity.Entity;
 
-public interface IVehicle extends HasBaseLogic,HasLoopSound,SpHitCheckEntity {
+public interface IVehicle extends HasBaseLogic,SpHitCheckEntity {
 	boolean getinWater();
 	void setinWater(boolean value);
 	void public_collideWithEntity(Entity entity);

@@ -3,26 +3,26 @@ package GuerrillaBigTrench;
 
 
 
-import DungeonGeneratorBase.ComponentDungeonBase;
-import DungeonGeneratorBase.DungeonData;
+//import DungeonGeneratorBase.ComponentDungeonBase;
+//import DungeonGeneratorBase.DungeonData;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-import static GuerrillaBigTrench.mod_BigTrenchGenerator.dungeonData;
+//import static GuerrillaBigTrench.mod_BigTrenchGenerator.dungeonData;
 
-public class ComponentBigTrench extends ComponentDungeonBase {
+public class ComponentBigTrench {
 
     public ComponentBigTrench() {
         super();
     }
-    public ComponentBigTrench(Random par2Random, int par3, int par4) {
-        super(par2Random,par3,par4);
-    }
+   // public ComponentBigTrench(Random par2Random, int par3, int par4) {
+  //      super(par2Random,par3,par4);
+  //  }
     public ComponentBigTrench(Random par2Random, int par3, int par4, int id, int dir) {
-        super(par2Random,par3,par4,id,0);
+        //super(par2Random,par3,par4,id,0);
     }
-    public ArrayList<DungeonData> getDangeonDatas(){
-        return dungeonData;
-    }
+   // public ArrayList<DungeonData> getDangeonDatas(){
+       // return dungeonData;
+   // }
 }

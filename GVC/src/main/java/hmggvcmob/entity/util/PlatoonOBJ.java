@@ -3,7 +3,7 @@ package hmggvcmob.entity.util;
 import cpw.mods.fml.common.FMLCommonHandler;
 import handmadevehicle.entity.EntityDummy_rider;
 import handmadevehicle.entity.EntityVehicle;
-import handmadevehicle.entity.parts.IDriver;
+//import handmadevehicle.entity.parts.IDriver;
 import handmadevehicle.entity.parts.Modes;
 import handmadevehicle.entity.parts.Type;
 import handmadevehicle.entity.parts.logics.BaseLogic;
@@ -356,13 +356,13 @@ public class PlatoonOBJ implements IUpdatePlayerListBox {
 			if(entity.ridingEntity instanceof EntityDummy_rider) {
 				BaseLogic baseLogic_Leader = ((EntityDummy_rider) leader.entity.ridingEntity).linkedBaseLogic;
 				BaseLogic baseLogic = ((EntityDummy_rider) entity.ridingEntity).linkedBaseLogic;
-				if (baseLogic_Leader.prefab_vehicle.T_Land_F_Plane && baseLogic.prefab_vehicle.T_Land_F_Plane) {
-					platoonType = Tank;
-					//戦車分隊
-				} else if(!baseLogic.prefab_vehicle.T_Land_F_Plane){
-					platoonType = Plane;
-					//航空小隊
-				}
+				//if (baseLogic_Leader.prefab_vehicle.T_Land_F_Plane && baseLogic.prefab_vehicle.T_Land_F_Plane) {
+				//	platoonType = Tank;
+				//	//戦車分隊
+				//} else if(!baseLogic.prefab_vehicle.T_Land_F_Plane){
+				//	platoonType = Plane;
+				//	//航空小隊
+				//}
 			}else return false;
 		}
 		platoonMembers.add(entityAndPos);
@@ -380,51 +380,36 @@ public class PlatoonOBJ implements IUpdatePlayerListBox {
 			removeQue.add(entityAndPos);
 			return;
 		}
-		if(!entity.isDead && canMoveEntity(entity) && entity instanceof IDriver){
+		if(!entity.isDead && canMoveEntity(entity)){
 			if(entityAndPos == leader) {
 				platoonType = Infantry;
-				if (((IDriver) entity).getLinkedVehicle() != null) {
-					if(((IDriver) entity).getLinkedVehicle().prefab_vehicle.T_Land_F_Plane) {
-						platoonType = Tank;
-					}else {
-						platoonType = Plane;
-					}
-				}
+				//if (((IDriver) entity).getLinkedVehicle() != null) {
+				//	if(((IDriver) entity).getLinkedVehicle().prefab_vehicle.T_Land_F_Plane) {
+				//		platoonType = Tank;
+				//	}else {
+				//		platoonType = Plane;
+				//	}
+				//}
 				noPlatoonLeader = false;
 			}else if(noPlatoonLeader){
 				leader = entityAndPos;
 				platoonType = Infantry;
-				if (((IDriver) entity).getLinkedVehicle() != null) {
-					if(((IDriver) entity).getLinkedVehicle().prefab_vehicle.T_Land_F_Plane) {
-						platoonType = Tank;
-					}else {
-						platoonType = Plane;
-					}
-				}
+				//if (((IDriver) entity).getLinkedVehicle() != null) {
+				//	if(((IDriver) entity).getLinkedVehicle().prefab_vehicle.T_Land_F_Plane) {
+				//		platoonType = Tank;
+				//	}else {
+				//		platoonType = Plane;
+				//	}
+				//}
 				noPlatoonLeader = false;
 			}
 			{
-				if (((IDriver) entity).getLinkedVehicle() != null) {
-					if (((IDriver) entity).getLinkedVehicle().prefab_vehicle.T_Land_F_Plane) {
-						if (platoonType == Tank) {
-							normalSoldier.add(entityAndPos);
-						} else {
-							removeQue.add(entityAndPos);
-						}
-					} else {
-						if (platoonType == Plane) {
-							normalSoldier.add(entityAndPos);
-						} else {
-							removeQue.add(entityAndPos);
-						}
-					}
-				} else {
 					if (platoonType == Infantry) {
 						normalSoldier.add(entityAndPos);
 					} else {
 						removeQue.add(entityAndPos);
 					}
-				}
+
 			}
 		}else{
 			removeQue.add(entityAndPos);

@@ -3,7 +3,7 @@ package handmadevehicle;
 import cpw.mods.fml.common.FMLCommonHandler;
 import handmadeguns.client.render.ModelSetAndData;
 import handmadevehicle.command.HMV_CommandReloadparm;
-import handmadevehicle.entity.parts.HasLoopSound;
+//import handmadevehicle.entity.parts.HasLoopSound;
 import handmadevehicle.entity.parts.turrets.TurretObj;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.entity.Entity;
@@ -32,9 +32,9 @@ public class CMProxy {
 	public void playsoundasTurret(float maxdist, TurretObj attached){
 	
 	}
-	public void playsoundasVehicle_noRepeat(String name, float maxdist, Entity attached, HasLoopSound hasLoopSound,int time){
-	
-	}
+	//public void playsoundasVehicle_noRepeat(String name, float maxdist, Entity attached, HasLoopSound hasLoopSound,int time){
+	//
+	//}
 	public boolean hasStick(){
 		return false;
 	}

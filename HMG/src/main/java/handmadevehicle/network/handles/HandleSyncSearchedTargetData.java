@@ -22,10 +22,10 @@ public class HandleSyncSearchedTargetData implements IMessageHandler<PacketSyncS
 		}
 
 		Entity target = world.getEntityByID(message.syncTargetID);
-		if(target instanceof IVehicle){
-			((IVehicle) target).getBaseLogic().detectedList.clear();
-			((IVehicle) target).getBaseLogic().detectedList.addAll(message.targets);
-		}
+		//if(target instanceof IVehicle){
+		//	((IVehicle) target).getBaseLogic().detectedList.clear();
+		//	((IVehicle) target).getBaseLogic().detectedList.addAll(message.targets);
+		//}
 		return null;
 	}
 }

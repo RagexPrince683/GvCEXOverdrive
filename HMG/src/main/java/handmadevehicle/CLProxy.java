@@ -8,7 +8,7 @@ import handmadevehicle.audio.TurretSound;
 import handmadevehicle.audio.VehicleEngineSound;
 import handmadevehicle.audio.VehicleNoRepeatSound;
 import handmadevehicle.entity.EntityVehicle;
-import handmadevehicle.entity.parts.HasLoopSound;
+//import handmadevehicle.entity.parts.HasLoopSound;
 import handmadevehicle.entity.parts.ModifiedBoundingBox;
 import handmadevehicle.entity.parts.OBB;
 import handmadevehicle.entity.parts.turrets.TurretObj;
@@ -113,18 +113,18 @@ public class CLProxy extends CMProxy {
 		return new ModelSetAndData(AdvancedModelLoader.loadModel(new ResourceLocation("handmadevehicle:textures/model/" + resourceName_model)),new ResourceLocation("handmadevehicle:textures/model/" + resourceName_Texture),scale);
 	}
 	
-	@Override
-	public void playsoundasVehicle(float maxdist, Entity attached){
-		Minecraft.getMinecraft().getSoundHandler().playSound(new VehicleEngineSound(attached,maxdist));
-	}
+	//@Override
+	//public void playsoundasVehicle(float maxdist, Entity attached){
+	//	Minecraft.getMinecraft().getSoundHandler().playSound(new VehicleEngineSound(attached,maxdist));
+	//}
 	@Override
 	public void playsoundasTurret(float maxdist, TurretObj attached){
 		Minecraft.getMinecraft().getSoundHandler().playSound(new TurretSound(attached,maxdist));
 	}
-	@Override
-	public void playsoundasVehicle_noRepeat(String name , float maxdist, Entity attached, HasLoopSound hasLoopSound,int time){
-		Minecraft.getMinecraft().getSoundHandler().playSound(new VehicleNoRepeatSound(name,attached,hasLoopSound,maxdist,time));
-	}
+	//@Override
+	//public void playsoundasVehicle_noRepeat(String name , float maxdist, Entity attached, HasLoopSound hasLoopSound,int time){
+	//	Minecraft.getMinecraft().getSoundHandler().playSound(new VehicleNoRepeatSound(name,attached,hasLoopSound,maxdist,time));
+	//}
 	public boolean hasStick(){
 		return Controllers.getControllerCount() > 0;
 	}

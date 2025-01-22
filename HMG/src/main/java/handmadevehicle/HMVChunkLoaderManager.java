@@ -5,7 +5,7 @@ import com.google.common.collect.ListMultimap;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import handmadeguns.entity.bullets.HMGEntityBulletBase;
 import handmadevehicle.entity.parts.Hasmode;
-import handmadevehicle.entity.parts.IDriver;
+//import handmadevehicle.entity.parts.IDriver;
 import handmadevehicle.entity.parts.IVehicle;
 import handmadevehicle.entity.parts.Modes;
 import handmadevehicle.entity.parts.logics.BaseLogic;
@@ -33,23 +33,23 @@ public class HMVChunkLoaderManager  implements ForgeChunkManager.LoadingCallback
 	public void entityEnteredChunk(EntityEvent.EnteringChunk event)
 	{
 
-		if(event.entity instanceof IDriver && event.entity instanceof EntityLiving && event.entity.worldObj.difficultySetting != EnumDifficulty.PEACEFUL){
-			if(((EntityLiving) event.entity).getAttackTarget() != null && ((IDriver) event.entity).getLinkedVehicle() != null)
-			{
-//			System.out.println("debug" + event.newChunkX + " , " + event.newChunkZ);
-				BaseLogic loader = ((IDriver) event.entity).getLinkedVehicle();
-
-				if(loader != null)loader.forceChunkLoading(event.newChunkX, event.newChunkZ);
-			}
-			if(event.entity instanceof Hasmode && ((Hasmode) event.entity).getMobMode() != Modes.Wait &&
-					((Hasmode) event.entity).getMoveToPos() != null && event.entity.getDistanceSq(
-					((Hasmode) event.entity).getMoveToPos().x,((Hasmode) event.entity).getMoveToPos().y,((Hasmode) event.entity).getMoveToPos().z) > 2500)
-			{
-				BaseLogic loader = ((IDriver) event.entity).getLinkedVehicle();
-
-				if(loader != null)loader.forceChunkLoading(event.newChunkX, event.newChunkZ);
-			}
-		}
+		//if(event.entity instanceof IDriver && event.entity instanceof EntityLiving && event.entity.worldObj.difficultySetting != EnumDifficulty.PEACEFUL){
+		//	if(((EntityLiving) event.entity).getAttackTarget() != null && ((IDriver) event.entity).getLinkedVehicle() != null)
+		//	{
+//		//	System.out.println("debug" + event.newChunkX + " , " + event.newChunkZ);
+		//		BaseLogic loader = ((IDriver) event.entity).getLinkedVehicle();
+//
+		//		if(loader != null)loader.forceChunkLoading(event.newChunkX, event.newChunkZ);
+		//	}
+		//	if(event.entity instanceof Hasmode && ((Hasmode) event.entity).getMobMode() != Modes.Wait &&
+		//			((Hasmode) event.entity).getMoveToPos() != null && event.entity.getDistanceSq(
+		//			((Hasmode) event.entity).getMoveToPos().x,((Hasmode) event.entity).getMoveToPos().y,((Hasmode) event.entity).getMoveToPos().z) > 2500)
+		//	{
+		//		BaseLogic loader = ((IDriver) event.entity).getLinkedVehicle();
+//
+		//		if(loader != null)loader.forceChunkLoading(event.newChunkX, event.newChunkZ);
+		//	}
+		//}
 		if(event.entity instanceof HMGEntityBulletBase && ((HMGEntityBulletBase) event.entity).chunkLoaderBullet){
 //			System.out.println("debug" + event.newChunkX + " , " + event.newChunkZ);
 

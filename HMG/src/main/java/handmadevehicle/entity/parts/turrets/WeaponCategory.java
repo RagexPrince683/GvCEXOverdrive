@@ -1,9 +1,9 @@
 package handmadevehicle.entity.parts.turrets;
 
 import handmadeguns.HMGPacketHandler;
-import handmadeguns.Util.EntityLinkedPos_Motion;
+//import handmadeguns.Util.EntityLinkedPos_Motion;
 import handmadeguns.network.PacketChangeMagazineType;
-import handmadevehicle.entity.parts.IDriver;
+//import handmadevehicle.entity.parts.IDriver;
 import handmadevehicle.entity.parts.SeatObject;
 import handmadevehicle.entity.parts.logics.BaseLogic;
 import handmadevehicle.entity.prefab.Prefab_WeaponCategory;
@@ -39,7 +39,7 @@ public class WeaponCategory {
 
 
 	public Entity target = null;
-	public EntityLinkedPos_Motion targetPos = null;
+	//public EntityLinkedPos_Motion targetPos = null;
 	public Vec3 lockedBlockPos = null;
 
 
@@ -85,13 +85,13 @@ public class WeaponCategory {
 
 		{//SyncTarget
 			target = null;
-			targetPos = null;
+			//targetPos = null;
 			lockedBlockPos = null;
 			for(TurretObj[] turretObjs: _targeting__TurretGroups){
 				for(TurretObj turretObj:turretObjs){
 					if(turretObj.target != null) {
 						target = turretObj.target;
-						targetPos = turretObj.targetPos;
+						//targetPos = turretObj.targetPos;
 					}
 					if(turretObj.lockedBlockPos != null)
 						lockedBlockPos = turretObj.lockedBlockPos;
@@ -105,7 +105,7 @@ public class WeaponCategory {
 //				System.out.println("" + target);
 				turretObj.lockedBlockPos = lockedBlockPos;
 				turretObj.target = target;
-				turretObj.targetPos = targetPos;
+				//turretObj.targetPos = targetPos;
 			}
 		}
 
@@ -130,18 +130,18 @@ public class WeaponCategory {
 								aAimTurret.aimtoAngle(((EntityPlayer) currentUser).rotationYaw, currentUser.rotationPitch);
 						}
 						else ;
-					else if(currentUser instanceof EntityLiving && currentUser instanceof IDriver && ((IDriver) currentUser).getAimPos() != null){
-						try {
-							if(!NaNCheck(((IDriver) currentUser).getAimPos()))
-								aAimTurret.aimToPos(
-										((IDriver) currentUser).getAimPos().x,
-										((IDriver) currentUser).getAimPos().y,
-										((IDriver) currentUser).getAimPos().z);
-						}catch (Exception e){
-							((EntityLiving) currentUser).setAttackTarget(null);
-							e.printStackTrace();
-						}
-					}
+					//else if(currentUser instanceof EntityLiving && currentUser instanceof IDriver && ((IDriver) currentUser).getAimPos() != null){
+					//	try {
+					//		if(!NaNCheck(((IDriver) currentUser).getAimPos()))
+					//			aAimTurret.aimToPos(
+					//					((IDriver) currentUser).getAimPos().x,
+					//					((IDriver) currentUser).getAimPos().y,
+					//					((IDriver) currentUser).getAimPos().z);
+					//	}catch (Exception e){
+					//		((EntityLiving) currentUser).setAttackTarget(null);
+					//		e.printStackTrace();
+					//	}
+					//}
 				}
 
 			}
@@ -154,12 +154,12 @@ public class WeaponCategory {
 //		System.out.println("debug" + seatObject.gunTrigger[triggerType]);
 		this.currentUser = currentUser;
 
-		if(currentUser instanceof IDriver){
-			if(triggerType == 0)
-				((IDriver) currentUser).setWeaponMain(this);
-			else if(triggerType == 1)
-				((IDriver) currentUser).setWeaponSub(this);
-		}
+		//if(currentUser instanceof IDriver){
+		//	if(triggerType == 0)
+		//		((IDriver) currentUser).setWeaponMain(this);
+		//	else if(triggerType == 1)
+		//		((IDriver) currentUser).setWeaponSub(this);
+		//}
 		if(seatObject.seekerKey || currentUser instanceof EntityLiving){//LockOn
 			for(TurretObj[] turretObjs: _targeting__TurretGroups){
 				for(TurretObj turretObj:turretObjs){

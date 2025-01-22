@@ -57,125 +57,125 @@ public class RenderVehicle extends Render {
 	public void doRender(Entity entity, double p_76986_2_, double p_76986_4_, double p_76986_6_,
 	                     float entityYaw, float in_partialTicks) {
 		FMLClientHandler.instance().getWorldClient().theProfiler.startSection("RenderVehicle");
-		if(entity instanceof IMultiTurretVehicle && entity instanceof IVehicle && ((IVehicle) entity).getBaseLogic().prefab_vehicle.modelSetAndData != null){
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-			skeletonTexturesz = ((IVehicle) entity).getBaseLogic().prefab_vehicle.modelSetAndData.texture;
-			vehicleModel = ((IVehicle) entity).getBaseLogic().prefab_vehicle.modelSetAndData.model;
-			pass = MinecraftForgeClient.getRenderPass();
-			currentBaseLogic = ((IVehicle) entity).getBaseLogic();
-			currentEntity = entity;
-			allTurrets = currentBaseLogic.allturrets;
-			partialTicks = in_partialTicks;
-			TurretObj[] turretObjs = currentBaseLogic.turrets;
-
-			GL11.glShadeModel(GL11.GL_SMOOTH);
-
-			this.bindEntityTexture(entity);
-			GL11.glPushMatrix();
-			GL11.glTranslatef((float) p_76986_2_, (float) p_76986_4_, (float) p_76986_6_);
-			GL11.glRotatef(180F, 0.0F, 1.0F, 0.0F);
-			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-			GL11.glTranslatef((float) currentBaseLogic.prefab_vehicle.rotcenterVec.x, (float) currentBaseLogic.prefab_vehicle.rotcenterVec.y, (float) currentBaseLogic.prefab_vehicle.rotcenterVec.z);
-
-			Quat4d currentquat = new Quat4d(0,0,0,1);
-			currentquat.interpolate(currentBaseLogic.prevbodyRot,currentBaseLogic.bodyRot, (double) partialTicks);
-			double[] xyz = eulerfromQuat((currentquat));
-			xyz[0] = toDegrees(xyz[0]);
-			xyz[1] = toDegrees(xyz[1]);
-			xyz[2] = toDegrees(xyz[2]);
-
-			GL11.glRotatef(180 - (float)xyz[1], 0.0F, 1.0F, 0.0F);
-			GL11.glRotatef((float) xyz[0], 1.0F, 0.0F, 0.0F);
-			GL11.glRotatef((float) xyz[2], 0.0F, 0.0F, 1.0F);
-			GL11.glTranslatef((float)-currentBaseLogic.prefab_vehicle.rotcenterVec.x, (float)-currentBaseLogic.prefab_vehicle.rotcenterVec.y, (float)-currentBaseLogic.prefab_vehicle.rotcenterVec.z);
-
-			Vector3d nowPos = new Vector3d();
-			nowPos.interpolate(new Vector3d(currentEntity.prevPosX ,
-					currentEntity.prevPosY,
-					currentEntity.prevPosZ),new Vector3d(currentEntity.posX,currentEntity.posY,currentEntity.posZ),in_partialTicks);
-			currentBaseLogic.riderPosUpdate_forRender_withoutPlayer(nowPos,currentquat,partialTicks);
-			GL11.glPushMatrix();
-			GL11.glScalef((float) currentBaseLogic.prefab_vehicle.scale, (float) currentBaseLogic.prefab_vehicle.scale, (float) currentBaseLogic.prefab_vehicle.scale);
-
-			if(currentBaseLogic.prefab_vehicle.script_global != null) {
-				try {
-					currentBaseLogic.prefab_vehicle.script_global.invokeFunction("Model_rendering", this);
-				} catch (NoSuchMethodException | ScriptException e) {
-					e.printStackTrace();
-				}
-			}
-
-			if(currentBaseLogic.prefab_vehicle.partslist != null){
-				partsRender_vehicle.pass = pass;
-				partsRender_vehicle.model = this.vehicleModel;
-				partsRender_vehicle.mother = this;
-				partsRender_vehicle.partSidentification(currentBaseLogic.prefab_vehicle.partslist,this);
-			}else {
-				if(pass == 1) {
-					glEnable(GL_BLEND);
-					glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-					GL11.glDepthMask(false);
-					glAlphaFunc(GL_LEQUAL, 1);
-				}else {
-					GL11.glDepthMask(true);
-					glAlphaFunc(GL_EQUAL, 1);
-				}
-				vehicleModel.renderPart("obj1");
-				vehicleModel.renderPart("body");
-				if (turretObjs != null)
-					for (int i = 0; i < turretObjs.length; i++) {
-						TurretObj aturretobj = turretObjs[i];
-						GL11.glPushMatrix();
-						GL11.glTranslatef((float) aturretobj.onMotherPos.x, (float) aturretobj.onMotherPos.y, (float) -aturretobj.onMotherPos.z);
-						GL11.glTranslatef((float) aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.x, (float) aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.y, (float) -aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.z);
-						GL11.glRotatef((float) -(aturretobj.prevturretrotationYaw + (aturretobj.turretrotationYaw - aturretobj.prevturretrotationYaw) * partialTicks), 0.0F, 1.0F, 0.0F);
-						GL11.glTranslatef((float) -aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.x, (float) -aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.y, (float) aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.z);
-						GL11.glTranslatef((float) -aturretobj.onMotherPos.x, (float) -aturretobj.onMotherPos.y, (float) aturretobj.onMotherPos.z);
-						vehicleModel.renderPart("Turret" + i);
-						renderchild(aturretobj.getChilds(), "Turret" + i);
-						GL11.glTranslatef((float) aturretobj.onMotherPos.x, (float) aturretobj.onMotherPos.y, (float) -aturretobj.onMotherPos.z);
-						GL11.glTranslatef((float) aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.x, (float) aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.y, (float) aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.z);
-						GL11.glRotatef((float) (aturretobj.prevturretrotationPitch + (aturretobj.turretrotationPitch - aturretobj.prevturretrotationPitch) * partialTicks), 1.0F, 0.0F, 0.0F);
-						GL11.glTranslatef((float) -aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.x, (float) -aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.y, (float) -aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.z);
-						GL11.glTranslatef((float) -aturretobj.onMotherPos.x, (float) -aturretobj.onMotherPos.y, (float) aturretobj.onMotherPos.z);
-						vehicleModel.renderPart("Turret" + i + "Cannon");
-						renderReticle(pass, aturretobj, "Turret" + i);
-						GL11.glPopMatrix();
-					}
-				//GL11.glRotatef(-(180.0F - entityYaw), 0.0F, 1.0F, 0.0F);
-			}
-			GL11.glPopMatrix();
-			GL11.glPushMatrix();
-			if (debugBoundingBox && entity.boundingBox instanceof ModifiedBoundingBox) {
-
-
-
-				GL11.glDepthMask(false);
-				GL11.glDisable(GL11.GL_TEXTURE_2D);
-				GL11.glDisable(GL11.GL_LIGHTING);
-				GL11.glDisable(GL11.GL_CULL_FACE);
-				GL11.glDisable(GL11.GL_BLEND);
-				ModifiedBoundingBox axisalignedbb = (ModifiedBoundingBox) entity.boundingBox;
-				drawOutlinedBoundingBox(axisalignedbb, 16777215);
-
-
-				Vector3d thisposVec = new Vector3d(currentBaseLogic.mc_Entity.posX,
-						currentBaseLogic.mc_Entity.posY,
-						currentBaseLogic.mc_Entity.posZ);
-				for(Prefab_AdditionalBoundingBox box : currentBaseLogic.prefab_vehicle.additionalBoundingBoxes) {
-					drawOutlinedOBB(box,16777215);
-				}
-				GL11.glEnable(GL11.GL_TEXTURE_2D);
-				GL11.glEnable(GL11.GL_LIGHTING);
-				GL11.glEnable(GL11.GL_CULL_FACE);
-				GL11.glDisable(GL11.GL_BLEND);
-				GL11.glDepthMask(true);
-			}
-			GL11.glPopMatrix();
-			GL11.glPopMatrix();
-			GL11.glShadeModel(GL_FLAT);
-			GL11.glPopAttrib();
-		}
+	//	if(entity instanceof IMultiTurretVehicle && entity instanceof IVehicle && ((IVehicle) entity).getBaseLogic().prefab_vehicle.modelSetAndData != null){
+	//		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+	//		skeletonTexturesz = ((IVehicle) entity).getBaseLogic().prefab_vehicle.modelSetAndData.texture;
+	//		vehicleModel = ((IVehicle) entity).getBaseLogic().prefab_vehicle.modelSetAndData.model;
+	//		pass = MinecraftForgeClient.getRenderPass();
+	//		currentBaseLogic = ((IVehicle) entity).getBaseLogic();
+	//		currentEntity = entity;
+	//		allTurrets = currentBaseLogic.allturrets;
+	//		partialTicks = in_partialTicks;
+	//		TurretObj[] turretObjs = currentBaseLogic.turrets;
+//
+	//		GL11.glShadeModel(GL11.GL_SMOOTH);
+//
+	//		this.bindEntityTexture(entity);
+	//		GL11.glPushMatrix();
+	//		GL11.glTranslatef((float) p_76986_2_, (float) p_76986_4_, (float) p_76986_6_);
+	//		GL11.glRotatef(180F, 0.0F, 1.0F, 0.0F);
+	//		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+	//		GL11.glTranslatef((float) currentBaseLogic.prefab_vehicle.rotcenterVec.x, (float) currentBaseLogic.prefab_vehicle.rotcenterVec.y, (float) currentBaseLogic.prefab_vehicle.rotcenterVec.z);
+//
+	//		Quat4d currentquat = new Quat4d(0,0,0,1);
+	//		currentquat.interpolate(currentBaseLogic.prevbodyRot,currentBaseLogic.bodyRot, (double) partialTicks);
+	//		double[] xyz = eulerfromQuat((currentquat));
+	//		xyz[0] = toDegrees(xyz[0]);
+	//		xyz[1] = toDegrees(xyz[1]);
+	//		xyz[2] = toDegrees(xyz[2]);
+//
+	//		GL11.glRotatef(180 - (float)xyz[1], 0.0F, 1.0F, 0.0F);
+	//		GL11.glRotatef((float) xyz[0], 1.0F, 0.0F, 0.0F);
+	//		GL11.glRotatef((float) xyz[2], 0.0F, 0.0F, 1.0F);
+	//		GL11.glTranslatef((float)-currentBaseLogic.prefab_vehicle.rotcenterVec.x, (float)-currentBaseLogic.prefab_vehicle.rotcenterVec.y, (float)-currentBaseLogic.prefab_vehicle.rotcenterVec.z);
+//
+	//		Vector3d nowPos = new Vector3d();
+	//		nowPos.interpolate(new Vector3d(currentEntity.prevPosX ,
+	//				currentEntity.prevPosY,
+	//				currentEntity.prevPosZ),new Vector3d(currentEntity.posX,currentEntity.posY,currentEntity.posZ),in_partialTicks);
+	//		currentBaseLogic.riderPosUpdate_forRender_withoutPlayer(nowPos,currentquat,partialTicks);
+	//		GL11.glPushMatrix();
+	//		GL11.glScalef((float) currentBaseLogic.prefab_vehicle.scale, (float) currentBaseLogic.prefab_vehicle.scale, (float) currentBaseLogic.prefab_vehicle.scale);
+//
+	//		if(currentBaseLogic.prefab_vehicle.script_global != null) {
+	//			try {
+	//				currentBaseLogic.prefab_vehicle.script_global.invokeFunction("Model_rendering", this);
+	//			} catch (NoSuchMethodException | ScriptException e) {
+	//				e.printStackTrace();
+	//			}
+	//		}
+//
+	//		if(currentBaseLogic.prefab_vehicle.partslist != null){
+	//			partsRender_vehicle.pass = pass;
+	//			partsRender_vehicle.model = this.vehicleModel;
+	//			partsRender_vehicle.mother = this;
+	//			partsRender_vehicle.partSidentification(currentBaseLogic.prefab_vehicle.partslist,this);
+	//		}else {
+	//			if(pass == 1) {
+	//				glEnable(GL_BLEND);
+	//				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	//				GL11.glDepthMask(false);
+	//				glAlphaFunc(GL_LEQUAL, 1);
+	//			}else {
+	//				GL11.glDepthMask(true);
+	//				glAlphaFunc(GL_EQUAL, 1);
+	//			}
+	//			vehicleModel.renderPart("obj1");
+	//			vehicleModel.renderPart("body");
+	//			if (turretObjs != null)
+	//				for (int i = 0; i < turretObjs.length; i++) {
+	//					TurretObj aturretobj = turretObjs[i];
+	//					GL11.glPushMatrix();
+	//					GL11.glTranslatef((float) aturretobj.onMotherPos.x, (float) aturretobj.onMotherPos.y, (float) -aturretobj.onMotherPos.z);
+	//					GL11.glTranslatef((float) aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.x, (float) aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.y, (float) -aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.z);
+	//					GL11.glRotatef((float) -(aturretobj.prevturretrotationYaw + (aturretobj.turretrotationYaw - aturretobj.prevturretrotationYaw) * partialTicks), 0.0F, 1.0F, 0.0F);
+	//					GL11.glTranslatef((float) -aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.x, (float) -aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.y, (float) aturretobj.gunItem.gunInfo.posGetter.turretYawCenterpos.z);
+	//					GL11.glTranslatef((float) -aturretobj.onMotherPos.x, (float) -aturretobj.onMotherPos.y, (float) aturretobj.onMotherPos.z);
+	//					vehicleModel.renderPart("Turret" + i);
+	//					renderchild(aturretobj.getChilds(), "Turret" + i);
+	//					GL11.glTranslatef((float) aturretobj.onMotherPos.x, (float) aturretobj.onMotherPos.y, (float) -aturretobj.onMotherPos.z);
+	//					GL11.glTranslatef((float) aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.x, (float) aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.y, (float) aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.z);
+	//					GL11.glRotatef((float) (aturretobj.prevturretrotationPitch + (aturretobj.turretrotationPitch - aturretobj.prevturretrotationPitch) * partialTicks), 1.0F, 0.0F, 0.0F);
+	//					GL11.glTranslatef((float) -aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.x, (float) -aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.y, (float) -aturretobj.gunItem.gunInfo.posGetter.turretPitchCenterpos.z);
+	//					GL11.glTranslatef((float) -aturretobj.onMotherPos.x, (float) -aturretobj.onMotherPos.y, (float) aturretobj.onMotherPos.z);
+	//					vehicleModel.renderPart("Turret" + i + "Cannon");
+	//					renderReticle(pass, aturretobj, "Turret" + i);
+	//					GL11.glPopMatrix();
+	//				}
+	//			//GL11.glRotatef(-(180.0F - entityYaw), 0.0F, 1.0F, 0.0F);
+	//		}
+	//		GL11.glPopMatrix();
+	//		GL11.glPushMatrix();
+	//		if (debugBoundingBox && entity.boundingBox instanceof ModifiedBoundingBox) {
+//
+//
+//
+	//			GL11.glDepthMask(false);
+	//			GL11.glDisable(GL11.GL_TEXTURE_2D);
+	//			GL11.glDisable(GL11.GL_LIGHTING);
+	//			GL11.glDisable(GL11.GL_CULL_FACE);
+	//			GL11.glDisable(GL11.GL_BLEND);
+	//			ModifiedBoundingBox axisalignedbb = (ModifiedBoundingBox) entity.boundingBox;
+	//			drawOutlinedBoundingBox(axisalignedbb, 16777215);
+//
+//
+	//			Vector3d thisposVec = new Vector3d(currentBaseLogic.mc_Entity.posX,
+	//					currentBaseLogic.mc_Entity.posY,
+	//					currentBaseLogic.mc_Entity.posZ);
+	//			for(Prefab_AdditionalBoundingBox box : currentBaseLogic.prefab_vehicle.additionalBoundingBoxes) {
+	//				drawOutlinedOBB(box,16777215);
+	//			}
+	//			GL11.glEnable(GL11.GL_TEXTURE_2D);
+	//			GL11.glEnable(GL11.GL_LIGHTING);
+	//			GL11.glEnable(GL11.GL_CULL_FACE);
+	//			GL11.glDisable(GL11.GL_BLEND);
+	//			GL11.glDepthMask(true);
+	//		}
+	//		GL11.glPopMatrix();
+	//		GL11.glPopMatrix();
+	//		GL11.glShadeModel(GL_FLAT);
+	//		GL11.glPopAttrib();
+	//	}
 		entity.worldObj.theProfiler.endSection();
 
 //		GL11.glDisable(GL12.GL_RESCALE_NORMAL);

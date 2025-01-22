@@ -7,7 +7,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import handmadeguns.HandmadeGunsCore;
-import handmadeguns.Util.EntityLinkedPos_Motion;
+//import handmadeguns.Util.EntityLinkedPos_Motion;
 import handmadeguns.event.RenderTickSmoothing;
 import handmadeguns.items.GunInfo;
 import handmadevehicle.entity.EntityCameraDummy;
@@ -64,8 +64,8 @@ import static org.lwjgl.opengl.GL11.*;
 public class HMVRenderSomeEvent {
 
 	public static int playerSeatID;
-	public static ArrayList<EntityLinkedPos_Motion> missile_Pos_Motion;
-	public static ArrayList<EntityLinkedPos_Motion>  target_Pos_Motion = new ArrayList<EntityLinkedPos_Motion>();
+	//public static ArrayList<EntityLinkedPos_Motion> missile_Pos_Motion;
+	//public static ArrayList<EntityLinkedPos_Motion>  target_Pos_Motion = new ArrayList<EntityLinkedPos_Motion>();
 	static boolean needrest = true;
 	static boolean needrest_zoom = true;
 	private double zLevel = 0;
@@ -202,16 +202,16 @@ public class HMVRenderSomeEvent {
 						xyz[2] = toDegrees(xyz[2]);
 
 						if(!logic.seatObjects[playerSeatID].prefab_seat.stabilizedView) {
-							if (!logic.ispilot(entityplayer) || (!logic.mouseStickMode) || logic.prefab_vehicle.T_Land_F_Plane) {
-								float f1 = HMG_proxy.getMCInstance().gameSettings.mouseSensitivity * 0.6F + 0.2F;
-								float f2 = f1 * f1 * f1 * 8.0F;
-								float f3 = (float) HMG_proxy.getMCInstance().mouseHelper.deltaX * f2;
-								float f4 = (float) HMG_proxy.getMCInstance().mouseHelper.deltaY * f2;
-								logic.cameraYaw += f3 * 0.15D;
-								logic.cameraPitch += f4 * 0.15D;
-								if (logic.cameraPitch > 90) logic.cameraPitch = 90;
-								if (logic.cameraPitch < -90) logic.cameraPitch = -90;
-							}
+							//if (!logic.ispilot(entityplayer) || (!logic.mouseStickMode) || logic.prefab_vehicle.T_Land_F_Plane) {
+							//	float f1 = HMG_proxy.getMCInstance().gameSettings.mouseSensitivity * 0.6F + 0.2F;
+							//	float f2 = f1 * f1 * f1 * 8.0F;
+							//	float f3 = (float) HMG_proxy.getMCInstance().mouseHelper.deltaX * f2;
+							//	float f4 = (float) HMG_proxy.getMCInstance().mouseHelper.deltaY * f2;
+							//	logic.cameraYaw += f3 * 0.15D;
+							//	logic.cameraPitch += f4 * 0.15D;
+							//	if (logic.cameraPitch > 90) logic.cameraPitch = 90;
+							//	if (logic.cameraPitch < -90) logic.cameraPitch = -90;
+							//}
 
 							Quat4d Headrot = new Quat4d(0,0,0,1);
 							Headrot = quatRotateAxis(Headrot, new AxisAngle4d(unitX, toRadians(logic.cameraPitch) / 2));
@@ -233,22 +233,22 @@ public class HMVRenderSomeEvent {
 //								bodyvector.scale(logic.getCamerapos()[2]-logic.prefab_vehicle.rotcenter[2]);
 							if (logic.camera != null) {
 								Quat4d currentcamRot = new Quat4d(currentVehicleQuat);
-								currentcamRot.mul(HMV_Proxy.iszooming() && logic.prefab_vehicle.camerarot_zoom != null ?logic.prefab_vehicle.camerarot_zoom: logic.camerarot_current);
+								//currentcamRot.mul(HMV_Proxy.iszooming() && logic.prefab_vehicle.camerarot_zoom != null ?logic.prefab_vehicle.camerarot_zoom: logic.camerarot_current);
 								double[] cameraxyz = eulerfromQuat((currentcamRot));
 								cameraxyz[0] = toDegrees(cameraxyz[0]);
 								cameraxyz[1] = toDegrees(cameraxyz[1]);
 								cameraxyz[2] = toDegrees(cameraxyz[2]);
 								if(logic.ispilot(entityplayer) && (logic.seatObjects[playerSeatID].mainWeapon == null || logic.seatObjects[playerSeatID].mainWeapon[logic.seatObjects[playerSeatID].currentWeaponMode].prefab_weaponCategory.userSittingTurretID == -1)) {
-									Vector3d cameraPos_Global = new Vector3d(logic.getCamerapos());
-									cameraPos_Global.sub(new Vector3d(logic.prefab_vehicle.rotcenter));
-									cameraPos_Global = transformVecByQuat(cameraPos_Global, currentVehicleQuat);
-									cameraPos_Global.add(new Vector3d(logic.prefab_vehicle.rotcenter));
-									transformVecforMinecraft(cameraPos_Global);
-									logic.camera.setLocationAndAngles(
-											vehicleBody.prevPosX + (vehicleBody.posX - vehicleBody.prevPosX) * renderTickTime + cameraPos_Global.x,
-											vehicleBody.prevPosY + (vehicleBody.posY - vehicleBody.prevPosY) * renderTickTime + cameraPos_Global.y - entityplayer.yOffset,
-											vehicleBody.prevPosZ + (vehicleBody.posZ - vehicleBody.prevPosZ) * renderTickTime + cameraPos_Global.z,
-											(float) cameraxyz[1], (float) cameraxyz[0]);
+									//Vector3d cameraPos_Global = new Vector3d(logic.getCamerapos());
+									//cameraPos_Global.sub(new Vector3d(logic.prefab_vehicle.rotcenter));
+									//cameraPos_Global = transformVecByQuat(cameraPos_Global, currentVehicleQuat);
+									//cameraPos_Global.add(new Vector3d(logic.prefab_vehicle.rotcenter));
+									//transformVecforMinecraft(cameraPos_Global);
+									//logic.camera.setLocationAndAngles(
+									//		vehicleBody.prevPosX + (vehicleBody.posX - vehicleBody.prevPosX) * renderTickTime + cameraPos_Global.x,
+									//		vehicleBody.prevPosY + (vehicleBody.posY - vehicleBody.prevPosY) * renderTickTime + cameraPos_Global.y - entityplayer.yOffset,
+									//		vehicleBody.prevPosZ + (vehicleBody.posZ - vehicleBody.prevPosZ) * renderTickTime + cameraPos_Global.z,
+									//		(float) cameraxyz[1], (float) cameraxyz[0]);
 								} else {
 									logic.riderPosUpdate_camera(nowPos, currentVehicleQuat,renderTickTime);
 //										logic.camera.setLocationAndAngles(
@@ -297,16 +297,16 @@ public class HMVRenderSomeEvent {
 
 								if(logic.ispilot(entityplayer) && (logic.seatObjects[playerSeatID].mainWeapon == null || logic.seatObjects[playerSeatID].mainWeapon[logic.seatObjects[playerSeatID].currentWeaponMode].prefab_weaponCategory.userSittingTurretID == -1)) {
 									{
-										Vector3d cameraPos_Global = new Vector3d(logic.getCamerapos());
-										cameraPos_Global.sub(new Vector3d(logic.prefab_vehicle.rotcenter));
-										cameraPos_Global = transformVecByQuat(cameraPos_Global, currentVehicleQuat);
-										cameraPos_Global.add(new Vector3d(logic.prefab_vehicle.rotcenter));
-										transformVecforMinecraft(cameraPos_Global);
-										logic.camera.setLocationAndAngles(
-												vehicleBody.prevPosX + (vehicleBody.posX - vehicleBody.prevPosX) * renderTickTime + cameraPos_Global.x,
-												vehicleBody.prevPosY + (vehicleBody.posY - vehicleBody.prevPosY) * renderTickTime + cameraPos_Global.y - entityplayer.yOffset,
-												vehicleBody.prevPosZ + (vehicleBody.posZ - vehicleBody.prevPosZ) * renderTickTime + cameraPos_Global.z,
-												(float) logic.camera.rotationYaw, (float) logic.camera.rotationPitch);
+										//Vector3d cameraPos_Global = new Vector3d(logic.getCamerapos());
+										//cameraPos_Global.sub(new Vector3d(logic.prefab_vehicle.rotcenter));
+										//cameraPos_Global = transformVecByQuat(cameraPos_Global, currentVehicleQuat);
+										//cameraPos_Global.add(new Vector3d(logic.prefab_vehicle.rotcenter));
+										//transformVecforMinecraft(cameraPos_Global);
+										//logic.camera.setLocationAndAngles(
+										//		vehicleBody.prevPosX + (vehicleBody.posX - vehicleBody.prevPosX) * renderTickTime + cameraPos_Global.x,
+										//		vehicleBody.prevPosY + (vehicleBody.posY - vehicleBody.prevPosY) * renderTickTime + cameraPos_Global.y - entityplayer.yOffset,
+										//		vehicleBody.prevPosZ + (vehicleBody.posZ - vehicleBody.prevPosZ) * renderTickTime + cameraPos_Global.z,
+										//		(float) logic.camera.rotationYaw, (float) logic.camera.rotationPitch);
 									}
 								}else {
 									logic.riderPosUpdate_camera(nowPos, currentVehicleQuat,renderTickTime);
@@ -519,30 +519,30 @@ public class HMVRenderSomeEvent {
 						vehicleBody.prevRotationPitch = (float) xyz[0];
 						logic.bodyrotationRoll = (float) xyz[2];
 						logic.prevbodyrotationRoll = (float) xyz[2];
-						ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer, logic.prefab_vehicle.thirdPersonDistance, "thirdPersonDistance", "E", "field_78490_B");
+						//ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer, logic.prefab_vehicle.thirdPersonDistance, "thirdPersonDistance", "E", "field_78490_B");
 						needrest = true;
 
-						if (logic.prefab_vehicle.sightTex[playerSeatID] != null) {
-							if(HMV_Proxy.iszooming()){
-								{
-									TurretObj turretObj = getPlayerControllingMainTurret(entityplayer);
-									if (((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats.length > playerSeatID &&
-											((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats[playerSeatID].zoomLevel > 0) {
-										ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-												((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats[playerSeatID].zoomLevel, "cameraZoom", "field_78503_V");
-									}else
-									if(turretObj != null) {
-										if (turretObj.getCurrentGuninfo() != null && turretObj.getCurrentGuninfo().scopezoombase != 1) {
-											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-													turretObj.getCurrentGuninfo().scopezoombase, "cameraZoom", "field_78503_V");
-										}
-									}
-								}
-							}else {
-								ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-										1.0d, "cameraZoom", "field_78503_V");
-							}
-						}
+						//if (logic.prefab_vehicle.sightTex[playerSeatID] != null) {
+						//	if(HMV_Proxy.iszooming()){
+						//		{
+						//			TurretObj turretObj = getPlayerControllingMainTurret(entityplayer);
+						//			if (((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats.length > playerSeatID &&
+						//					((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats[playerSeatID].zoomLevel > 0) {
+						//				ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+						//						((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats[playerSeatID].zoomLevel, "cameraZoom", "field_78503_V");
+						//			}else
+						//			if(turretObj != null) {
+						//				if (turretObj.getCurrentGuninfo() != null && turretObj.getCurrentGuninfo().scopezoombase != 1) {
+						//					ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+						//							turretObj.getCurrentGuninfo().scopezoombase, "cameraZoom", "field_78503_V");
+						//				}
+						//			}
+						//		}
+						//	}else {
+						//		ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+						//				1.0d, "cameraZoom", "field_78503_V");
+						//	}
+						//}
 						prevPlayerYaw = minecraft.thePlayer.rotationYaw;
 						prevPlayerPit = minecraft.thePlayer.rotationPitch;
 					}
@@ -615,100 +615,100 @@ public class HMVRenderSomeEvent {
 				int j = scaledresolution.getScaledHeight();
 
 				boolean skip_HUD = false;
-				if (logic.prefab_vehicle.script_global != null) {
-					try {
-						skip_HUD = (boolean) logic.prefab_vehicle.script_global.invokeFunction("GUI_rendering_HUD", this, vehicleBody, i, j);
-					} catch (NoSuchMethodException | ScriptException e) {
-						e.printStackTrace();
-					}
-				}
-				if (!skip_HUD && logic.ispilot(entityplayer)) {
-					if (!logic.prefab_vehicle.T_Land_F_Plane) {
-						Entity planebody = entityplayer.ridingEntity;
-						if (logic.prefab_vehicle.displayModernHud)
-							displayFlyersHUD_AftGen2(logic, logic.prevbodyRot, logic.bodyRot, planebody, logic.forVapour_PrevMotionVec, event);
-						else
-							displayFlyersHUD(logic, logic.prevbodyRot, logic.bodyRot, planebody, logic.forVapour_PrevMotionVec, event);
-//				Quat4d tempquat = new Quat4d(
-//						logic.prevbodyRot.x * (1-event.partialTicks) + logic.bodyRot.x * event.partialTicks ,
-//						logic.prevbodyRot.y * (1-event.partialTicks) + logic.bodyRot.y * event.partialTicks ,
-//						logic.prevbodyRot.z * (1-event.partialTicks) + logic.bodyRot.z * event.partialTicks ,
-//						logic.prevbodyRot.w * (1-event.partialTicks) + logic.bodyRot.w * event.partialTicks );
-////									if (abs(logic.pitchladder) > 0.001) {
-////										Vector3d axisx = transformVecByQuat(new Vector3d(1, 0, 0), tempquat);
-////										AxisAngle4d axisxangled = new AxisAngle4d(axisx, toRadians(-logic.pitchladder * renderTickTime / 4));
-////										tempquat = quatRotateAxis(tempquat, axisxangled);
-////									}
-////									if (abs(logic.yawladder) > 0.001) {
-////										Vector3d axisy = transformVecByQuat(new Vector3d(0, 1, 0), tempquat);
-////										AxisAngle4d axisyangled = new AxisAngle4d(axisy, toRadians(logic.yawladder * renderTickTime / 4));
-////										tempquat = quatRotateAxis(tempquat, axisyangled);
-////									}
-////									if (abs(logic.rollladder) > 0.001) {
-////										Vector3d axisz = transformVecByQuat(new Vector3d(0, 0, 1), tempquat);
-////										AxisAngle4d axiszangled = new AxisAngle4d(axisz, toRadians(logic.rollladder * renderTickTime / 4));
-////										tempquat = quatRotateAxis(tempquat, axiszangled);
-////									}
+				//if (logic.prefab_vehicle.script_global != null) {
+				//	try {
+				//		skip_HUD = (boolean) logic.prefab_vehicle.script_global.invokeFunction("GUI_rendering_HUD", this, vehicleBody, i, j);
+				//	} catch (NoSuchMethodException | ScriptException e) {
+				//		e.printStackTrace();
+				//	}
+				//}
+		//		if (!skip_HUD && logic.ispilot(entityplayer)) {
+		//			if (!logic.prefab_vehicle.T_Land_F_Plane) {
+		//				Entity planebody = entityplayer.ridingEntity;
+		//				if (logic.prefab_vehicle.displayModernHud)
+		//					displayFlyersHUD_AftGen2(logic, logic.prevbodyRot, logic.bodyRot, planebody, logic.forVapour_PrevMotionVec, event);
+		//				else
+		//					displayFlyersHUD(logic, logic.prevbodyRot, logic.bodyRot, planebody, logic.forVapour_PrevMotionVec, event);
+//		//		Quat4d tempquat = new Quat4d(
+//		//				logic.prevbodyRot.x * (1-event.partialTicks) + logic.bodyRot.x * event.partialTicks ,
+//		//				logic.prevbodyRot.y * (1-event.partialTicks) + logic.bodyRot.y * event.partialTicks ,
+//		//				logic.prevbodyRot.z * (1-event.partialTicks) + logic.bodyRot.z * event.partialTicks ,
+//		//				logic.prevbodyRot.w * (1-event.partialTicks) + logic.bodyRot.w * event.partialTicks );
+////	//								if (abs(logic.pitchladder) > 0.001) {
+////	//									Vector3d axisx = transformVecByQuat(new Vector3d(1, 0, 0), tempquat);
+////	//									AxisAngle4d axisxangled = new AxisAngle4d(axisx, toRadians(-logic.pitchladder * renderTickTime / 4));
+////	//									tempquat = quatRotateAxis(tempquat, axisxangled);
+////	//								}
+////	//								if (abs(logic.yawladder) > 0.001) {
+////	//									Vector3d axisy = transformVecByQuat(new Vector3d(0, 1, 0), tempquat);
+////	//									AxisAngle4d axisyangled = new AxisAngle4d(axisy, toRadians(logic.yawladder * renderTickTime / 4));
+////	//									tempquat = quatRotateAxis(tempquat, axisyangled);
+////	//								}
+////	//								if (abs(logic.rollladder) > 0.001) {
+////	//									Vector3d axisz = transformVecByQuat(new Vector3d(0, 0, 1), tempquat);
+////	//									AxisAngle4d axiszangled = new AxisAngle4d(axisz, toRadians(logic.rollladder * renderTickTime / 4));
+////	//									tempquat = quatRotateAxis(tempquat, axiszangled);
+////	//								}
+////
+//		//		GL11.glPushMatrix();
+//		//		double width = scaledresolution.getScaledWidth_double();
+//		//		double height = scaledresolution.getScaledHeight_double();
+//		//		//HUDは300×650
+//		//		//一度3.6px
+//		//		//横幅を合わせる
+//		//		double scale = width/300;
+//		//		double sizeW = width;
+//		//		double sizeH = sizeW * 650/300;
+//		//		double[] xyz = eulerfromQuat((tempquat));
+//		//		xyz[0] = toDegrees(xyz[0]);
+//		//		xyz[1] = toDegrees(xyz[1]);
+//		//		xyz[2] = toDegrees(xyz[2]);
+//		//		GL11.glEnable(GL11.GL_BLEND);
+//		//		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
+//		//		GL11.glTranslatef((float)width/2,(float) height/2,0);
+//		//		GL11.glRotatef((float) -xyz[2],0,0,1);
+//		//		GL11.glTranslatef(-(float)width/2,-(float) height/2,0);
+//		//		minecraft.renderEngine.bindTexture(new ResourceLocation("gvcmob:textures/items/HUD.png"));
+//		//		drawTexturedModalRect(0,height/2 - 325 * scale - xyz[0] * 3.6*scale,sizeW,sizeH);
+//		//		GL11.glPopMatrix();
+////
+//		//		GL11.glPushMatrix();
+//		//		scale = width/300;
+//		//		sizeW = width;
+//		//		sizeH = width;
+//		//		minecraft.renderEngine.bindTexture(new ResourceLocation("gvcmob:textures/items/HUD2.png"));
+////
+//		//		drawTexturedModalRect(0,height/2 - 150 * scale,sizeW,sizeH);
+//		//		GL11.glPopMatrix();
+////
+////
+//		//		GL11.glPushMatrix();
+//		//		Vector3d forDisplayPlaneMotion = new Vector3d(
+//		//				logic.posX - logic.prevPosX,
+//		//				logic.posY - logic.prevPosY,
+//		//				-(logic.posZ - logic.prevPosZ));
+////
+//		//		Quat4d quat4d = new Quat4d(0,0,0,1);
+//		//		quat4d.inverse(tempquat);
+//		//		forDisplayPlaneMotion = transformVecByQuat(forDisplayPlaneMotion,quat4d);
+//		//		forDisplayPlaneMotion.scale(-1);
+//		//		double angle = toDegrees(forDisplayPlaneMotion.angle(new Vector3d(0,0,1)));
+////
+//		//		forDisplayPlaneMotion.z = 0;
+//		//		forDisplayPlaneMotion.normalize();
+////
+//		//		GL11.glRotatef((float) xyz[2],0,0,1);
+//		//		GL11.glTranslatef((float)( forDisplayPlaneMotion.x * angle * 3.6 * scale), (float)( forDisplayPlaneMotion.y * angle * 3.6 * scale),0);
+//		//		GL11.glRotatef((float) -xyz[2],0,0,1);
+////
+//		//		minecraft.renderEngine.bindTexture(new ResourceLocation("gvcmob:textures/items/HUD3.png"));
+//		//		drawTexturedModalRect(0,height/2 - 150 * scale,sizeW,sizeH);
+////
+//		//		GL11.glPopMatrix();
 //
-//				GL11.glPushMatrix();
-//				double width = scaledresolution.getScaledWidth_double();
-//				double height = scaledresolution.getScaledHeight_double();
-//				//HUDは300×650
-//				//一度3.6px
-//				//横幅を合わせる
-//				double scale = width/300;
-//				double sizeW = width;
-//				double sizeH = sizeW * 650/300;
-//				double[] xyz = eulerfromQuat((tempquat));
-//				xyz[0] = toDegrees(xyz[0]);
-//				xyz[1] = toDegrees(xyz[1]);
-//				xyz[2] = toDegrees(xyz[2]);
-//				GL11.glEnable(GL11.GL_BLEND);
-//				GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.8F);
-//				GL11.glTranslatef((float)width/2,(float) height/2,0);
-//				GL11.glRotatef((float) -xyz[2],0,0,1);
-//				GL11.glTranslatef(-(float)width/2,-(float) height/2,0);
-//				minecraft.renderEngine.bindTexture(new ResourceLocation("gvcmob:textures/items/HUD.png"));
-//				drawTexturedModalRect(0,height/2 - 325 * scale - xyz[0] * 3.6*scale,sizeW,sizeH);
-//				GL11.glPopMatrix();
-//
-//				GL11.glPushMatrix();
-//				scale = width/300;
-//				sizeW = width;
-//				sizeH = width;
-//				minecraft.renderEngine.bindTexture(new ResourceLocation("gvcmob:textures/items/HUD2.png"));
-//
-//				drawTexturedModalRect(0,height/2 - 150 * scale,sizeW,sizeH);
-//				GL11.glPopMatrix();
-//
-//
-//				GL11.glPushMatrix();
-//				Vector3d forDisplayPlaneMotion = new Vector3d(
-//						logic.posX - logic.prevPosX,
-//						logic.posY - logic.prevPosY,
-//						-(logic.posZ - logic.prevPosZ));
-//
-//				Quat4d quat4d = new Quat4d(0,0,0,1);
-//				quat4d.inverse(tempquat);
-//				forDisplayPlaneMotion = transformVecByQuat(forDisplayPlaneMotion,quat4d);
-//				forDisplayPlaneMotion.scale(-1);
-//				double angle = toDegrees(forDisplayPlaneMotion.angle(new Vector3d(0,0,1)));
-//
-//				forDisplayPlaneMotion.z = 0;
-//				forDisplayPlaneMotion.normalize();
-//
-//				GL11.glRotatef((float) xyz[2],0,0,1);
-//				GL11.glTranslatef((float)( forDisplayPlaneMotion.x * angle * 3.6 * scale), (float)( forDisplayPlaneMotion.y * angle * 3.6 * scale),0);
-//				GL11.glRotatef((float) -xyz[2],0,0,1);
-//
-//				minecraft.renderEngine.bindTexture(new ResourceLocation("gvcmob:textures/items/HUD3.png"));
-//				drawTexturedModalRect(0,height/2 - 150 * scale,sizeW,sizeH);
-//
-//				GL11.glPopMatrix();
-
-//				fontrenderer.drawStringWithShadow("Missile : " + logic.rocket + " : " + (logic.missile != null ? "Continue radar irradiation" : logic.illuminated != null?"LOCK":""), i - 300, j - 20 - 10, color);
-					}
-				}
+//		//		fontrenderer.drawStringWithShadow("Missile : " + logic.rocket + " : " + (logic.missile != null ? "Continue radar irradiation" : logic.illuminated != null?"LOCK":""), i - 300, j - 20 - 10, color);
+		//			}
+		//		}
 				{
 					IVehicle vehicle = (IVehicle) entityplayer.ridingEntity;
 					FontRenderer fontrenderer = minecraft.fontRenderer;
@@ -716,20 +716,20 @@ public class HMVRenderSomeEvent {
 					{
 						GL11.glPushMatrix();
 						boolean skip = false;
-						if (vehicle.getBaseLogic().prefab_vehicle.script_global != null) {
-							try {
-								skip = (boolean) vehicle.getBaseLogic().prefab_vehicle.script_global.invokeFunction("GUI_rendering_2D", this, vehicle, i, j);
-							} catch (NoSuchMethodException | ScriptException e) {
-								e.printStackTrace();
-							}
-						}
+						//if (vehicle.getBaseLogic().prefab_vehicle.script_global != null) {
+						//	try {
+						//		skip = (boolean) vehicle.getBaseLogic().prefab_vehicle.script_global.invokeFunction("GUI_rendering_2D", this, vehicle, i, j);
+						//	} catch (NoSuchMethodException | ScriptException e) {
+						//		e.printStackTrace();
+						//	}
+						//}
 						if (!skip) {
 
 							{
 
 
 								String hp = String.format("%1$3d", (int) logic.health);
-								String mhp = String.format("%1$3d", (int) logic.prefab_vehicle.maxhealth);
+								//String mhp = String.format("%1$3d", (int) logic.prefab_vehicle.maxhealth);
 								String th = String.valueOf(((int) (vehicle.getBaseLogic().throttle * 10f)) / 10f);
 
 								SeatObject playerSeatObject = vehicle.getBaseLogic().seatObjects[playerSeatID];
@@ -760,7 +760,7 @@ public class HMVRenderSomeEvent {
 								}
 
 
-								fontrenderer.drawStringWithShadow("HP " + hp + "/" + mhp + " : throttle " + th, i - 240, j - 90, 0xFFFFFF);
+								//fontrenderer.drawStringWithShadow("HP " + hp + "/" + mhp + " : throttle " + th, i - 240, j - 90, 0xFFFFFF);
 								//fontrenderer.drawStringWithShadow("TH" + th, (i/2) - 80, j/2 + 0, 0xFFFFFF);
 								//fontrenderer.drawStringWithShadow("Speed"+ speed, (i/2) - 80, j/2 +20, 0xFFFFFF);
 								GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -811,31 +811,31 @@ public class HMVRenderSomeEvent {
 					GL11.glRotatef(0, 1.0F, 0.0F, 0.0F);
 					GL11.glRotatef(180, 0.0F, 1.0F, 0.0F);
 					boolean skip = false;
-					if (vehicle.getBaseLogic().prefab_vehicle.script_global != null) {
-						try {
-							skip = (boolean) vehicle.getBaseLogic().prefab_vehicle.script_global.invokeFunction("GUI_rendering_3D", this, vehicle);
-						} catch (NoSuchMethodException | ScriptException e) {
-							e.printStackTrace();
-						}
-					}
+					//if (vehicle.getBaseLogic().prefab_vehicle.script_global != null) {
+					//	try {
+					//		skip = (boolean) vehicle.getBaseLogic().prefab_vehicle.script_global.invokeFunction("GUI_rendering_3D", this, vehicle);
+					//	} catch (NoSuchMethodException | ScriptException e) {
+					//		e.printStackTrace();
+					//	}
+					//}
 					if (!skip) {
-						if (!vehicle.getBaseLogic().detectedList.isEmpty()) {
-							BaseLogic baseLogic = vehicle.getBaseLogic();
-							for (EntityLinkedPos_Motion a_pos_motion : baseLogic.detectedList) {
-								Vector3d vecToLockTargetPos = new Vector3d();
-								vecToLockTargetPos.add(entityCurrentPos(a_pos_motion));
-								vecToLockTargetPos.sub(entityCurrentPos(minecraft.renderViewEntity));
-								vecToLockTargetPos.normalize();
-								RotateVectorAroundY(vecToLockTargetPos, currentRotationYaw);
-								RotateVectorAroundX(vecToLockTargetPos, currentRotationPit);
-								renderLockOnMarker(minecraft, vehicle.getBaseLogic().prefab_vehicle.searchedMarker, vecToLockTargetPos);
-								GL11.glPushMatrix();
-								GL11.glTranslatef((float)vecToLockTargetPos.x,(float)vecToLockTargetPos.y,(float)vecToLockTargetPos.z);
-								fontrenderer.drawStringWithShadow(String.valueOf(vecToLockTargetPos.length()),
-										0, 10, 0xFFFFFF);
-								GL11.glPopMatrix();
-							}
-						}
+						//if (!vehicle.getBaseLogic().detectedList.isEmpty()) {
+						//	BaseLogic baseLogic = vehicle.getBaseLogic();
+						//	for (EntityLinkedPos_Motion a_pos_motion : baseLogic.detectedList) {
+						//		Vector3d vecToLockTargetPos = new Vector3d();
+						//		vecToLockTargetPos.add(entityCurrentPos(a_pos_motion));
+						//		vecToLockTargetPos.sub(entityCurrentPos(minecraft.renderViewEntity));
+						//		vecToLockTargetPos.normalize();
+						//		RotateVectorAroundY(vecToLockTargetPos, currentRotationYaw);
+						//		RotateVectorAroundX(vecToLockTargetPos, currentRotationPit);
+						//		renderLockOnMarker(minecraft, vehicle.getBaseLogic().prefab_vehicle.searchedMarker, vecToLockTargetPos);
+						//		GL11.glPushMatrix();
+						//		GL11.glTranslatef((float)vecToLockTargetPos.x,(float)vecToLockTargetPos.y,(float)vecToLockTargetPos.z);
+						//		fontrenderer.drawStringWithShadow(String.valueOf(vecToLockTargetPos.length()),
+						//				0, 10, 0xFFFFFF);
+						//		GL11.glPopMatrix();
+						//	}
+						//}
 
 						SeatObject playerSeatObject = vehicle.getBaseLogic().seatObjects[playerSeatID];
 						if(playerSeatObject.mainWeapon != null){
@@ -843,16 +843,16 @@ public class HMVRenderSomeEvent {
 							WeaponCategory mainWeapon = playerSeatObject.mainWeapon[playerSeatObject.currentWeaponMode];
 							if(mainWeapon.getDisplayCriterionTurret() != null) {
 								TurretObj displayCriterionTurret = mainWeapon.getDisplayCriterionTurret();
-								if(mainWeapon.targetPos != null)
-									try{
-										displayTurretLockTarget(mainWeapon,displayCriterionTurret,vehicle,logic,mainWeapon.targetPos);
-									}catch (Exception e){
-										e.printStackTrace();
-									}
+								//if(mainWeapon.targetPos != null)
+								//	try{
+								//		//displayTurretLockTarget(mainWeapon,displayCriterionTurret,vehicle,logic,mainWeapon.targetPos);
+								//	}catch (Exception e){
+								//		e.printStackTrace();
+								//	}
 //								System.out.println("" + mainWeapon.lockedBlockPos);
 								if(mainWeapon.lockedBlockPos != null)
 									try{
-										displayTurretLockTarget(mainWeapon,displayCriterionTurret,vehicle,logic,new EntityLinkedPos_Motion(mainWeapon.lockedBlockPos,-1));
+										//displayTurretLockTarget(mainWeapon,displayCriterionTurret,vehicle,logic,new EntityLinkedPos_Motion(mainWeapon.lockedBlockPos,-1));
 									}catch (Exception e){
 										e.printStackTrace();
 									}
@@ -861,30 +861,30 @@ public class HMVRenderSomeEvent {
 							}
 						}
 
-						if (vehicle.getBaseLogic().prefab_vehicle.sightTex[playerSeatID] != null) {
-							if(HMV_Proxy.iszooming()){
-								renderPumpkinBlur(minecraft, new ResourceLocation(vehicle.getBaseLogic().prefab_vehicle.sightTex[playerSeatID]));
-								GuiIngameForge.renderCrosshairs = false;
-								NeedReset = true;
-
-//								 {
-//									TurretObj turretObj = getPlayerUsingMainTurret(entityplayer);
-//									if(turretObj != null) {
-//										System.out.println("debug");
-//										if (((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats.length > playerSeatID &&
-//												((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats[playerSeatID].zoomLevel > 0) {
-//											System.out.println("debug");
-//											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-//													((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats[playerSeatID].zoomLevel, "cameraZoom", "field_78503_V");
-//										}else if (turretObj.gunItem != null && turretObj.gunItem.gunInfo.scopezoombase != 1) {
-//											System.out.println("debug");
-//											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-//													turretObj.gunItem.gunInfo.scopezoombase, "cameraZoom", "field_78503_V");
-//										}
-//									}
-//								}
-							}
-						}
+						//if (vehicle.getBaseLogic().prefab_vehicle.sightTex[playerSeatID] != null) {
+						//	if(HMV_Proxy.iszooming()){
+						//		renderPumpkinBlur(minecraft, new ResourceLocation(vehicle.getBaseLogic().prefab_vehicle.sightTex[playerSeatID]));
+						//		GuiIngameForge.renderCrosshairs = false;
+						//		NeedReset = true;
+//
+//						//		 {
+//						//			TurretObj turretObj = getPlayerUsingMainTurret(entityplayer);
+//						//			if(turretObj != null) {
+//						//				System.out.println("debug");
+//						//				if (((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats.length > playerSeatID &&
+//						//						((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats[playerSeatID].zoomLevel > 0) {
+//						//					System.out.println("debug");
+//						//					ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+//						//							((IVehicle) entityplayer.ridingEntity).getBaseLogic().prefab_vehicle.prefab_seats[playerSeatID].zoomLevel, "cameraZoom", "field_78503_V");
+//						//				}else if (turretObj.gunItem != null && turretObj.gunItem.gunInfo.scopezoombase != 1) {
+//						//					System.out.println("debug");
+//						//					ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+//						//							turretObj.gunItem.gunInfo.scopezoombase, "cameraZoom", "field_78503_V");
+//						//				}
+//						//			}
+//						//		}
+						//	}
+						//}
 
 					}
 					GL11.glPopMatrix();
@@ -918,113 +918,113 @@ public class HMVRenderSomeEvent {
 
 	}
 
-	public void displayTurretLockTarget(WeaponCategory mainWeapon, TurretObj displayCriterionTurret, IVehicle vehicle, BaseLogic logic
-	,EntityLinkedPos_Motion targetPos){
-		Minecraft minecraft = FMLClientHandler.instance().getClient();
-		FontRenderer fontrenderer = minecraft.fontRenderer;
-
-		float currentRotationYaw = (minecraft.renderViewEntity.prevRotationYawHead + (minecraft.renderViewEntity.rotationYawHead - minecraft.renderViewEntity.prevRotationYawHead) * partialTicks);
-
-		float currentRotationPit = (minecraft.renderViewEntity.prevRotationPitch + (minecraft.renderViewEntity.rotationPitch - minecraft.renderViewEntity.prevRotationPitch) * partialTicks);
-
-
-		Vector3d vecToLockTargetPos = new Vector3d();
-		vecToLockTargetPos.add(entityCurrentPos(targetPos));
-		vecToLockTargetPos.sub(entityCurrentPos(minecraft.renderViewEntity));
-		double range = vecToLockTargetPos.length();
-		vecToLockTargetPos.normalize();
-		RotateVectorAroundY(vecToLockTargetPos, currentRotationYaw);
-		RotateVectorAroundX(vecToLockTargetPos, currentRotationPit);
-		renderLockOnMarker(minecraft, displayCriterionTurret.getCurrentGuninfo().lockOnMarker, vecToLockTargetPos);
-		GL11.glPushMatrix();
-		{
-			GL11.glRotatef(-(float) ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, minecraft.entityRenderer, "camRoll", "R", "field_78495_O"), 0, 0, 1);
-			GL11.glTranslatef((float) vecToLockTargetPos.x, (float) vecToLockTargetPos.y, (float) vecToLockTargetPos.z);
-			GL11.glRotatef((float) ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, minecraft.entityRenderer, "camRoll", "R", "field_78495_O"), 0, 0, 1);
-			GL11.glScalef(-0.005f, -0.005f, 0.005f);
-			GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			fontrenderer.drawStringWithShadow(String.valueOf((int) range),
-					10, 5, 0xFFFFFF);
-
-			Vector3d motionVec = new Vector3d(
-					targetPos.motionX,
-					targetPos.motionY,
-					targetPos.motionZ);
-
-			if (motionVec.length() > 0.1)
-				fontrenderer.drawStringWithShadow(String.valueOf((int) (motionVec.length() * 72)),
-						10, -5, 0xFFFFFF);
-		}
-		GL11.glPopMatrix();
-
-//								System.out.println("debug" + turretObj.getName());
-		if (displayCriterionTurret.getCurrentGuninfo().displayPredict) {
-			if (displayCriterionTurret.getCurrentGuninfo().displayPredict_MoveSight) {
-				GL11.glPushMatrix();
-				rotationToVehicleNose(vehicle);
-
-				Quat4d turretLooking = new Quat4d(logic.bodyRot);
-				turretLooking.inverse();
-				turretLooking.mul(displayCriterionTurret.motherRot);
-				if (displayCriterionTurret.getCurrentGuninfo().displayPredict_ConsiderMyLooking)
-					turretLooking.mul(displayCriterionTurret.turretRot);
-
-				double[] xyz = eulerfromQuat((turretLooking));
-				xyz[0] = toDegrees(xyz[0]);
-				xyz[1] = toDegrees(xyz[1]);
-				xyz[2] = toDegrees(xyz[2]);
-				GL11.glRotated(-xyz[1], 0, 1, 0);
-				GL11.glRotated(xyz[0], 1, 0, 0);
-//										System.out.println("debug");
-				Vector3d toTGT = new Vector3d(
-						targetPos.posX - minecraft.renderViewEntity.posX,
-						targetPos.posY - minecraft.renderViewEntity.posY,
-						targetPos.posZ - minecraft.renderViewEntity.posZ);
-				Vector3d motionVec = new Vector3d(
-						minecraft.renderViewEntity.motionX - targetPos.motionX,
-						minecraft.renderViewEntity.motionY - targetPos.motionY,
-						minecraft.renderViewEntity.motionZ - targetPos.motionZ);
-//									RotateVectorAroundY(motionVec, minecraft.renderViewEntity.rotationYawHead);
-				RotateVectorAroundY(motionVec, -toDegrees(atan2(toTGT.x, toTGT.z)));
-//									System.out.println("" + motionVec);
-//									RotateVectorAroundX(motionVec, minecraft.renderViewEntity.rotationPitch);
-				RotateVectorAroundX(motionVec, -toDegrees(atan2(toTGT.y, sqrt(toTGT.x * toTGT.x + toTGT.z * toTGT.z))));
-//									System.out.println("" + motionVec);
-				Vector3d vecTo_Target = new Vector3d(0, 0, toTGT.length());
-				Vector3d PredictedTargetPos =
-						LinePrediction(new Vector3d(),
-								vecTo_Target,
-								motionVec,
-								displayCriterionTurret.getTerminalspeed());
-
-				PredictedTargetPos.normalize();
-				renderLockOnMarker(minecraft, displayCriterionTurret.getCurrentGuninfo().predictMarker, PredictedTargetPos);
-				GL11.glPopMatrix();
-			} else {
-//										System.out.println("debug");
-				Vector3d PredictedTargetPos =
-						LinePrediction(new Vector3d(minecraft.renderViewEntity.posX,
-										minecraft.renderViewEntity.posY,
-										minecraft.renderViewEntity.posZ),
-								new Vector3d(
-										targetPos.posX,
-										targetPos.posY,
-										targetPos.posZ),
-								new Vector3d(
-										targetPos.motionX - minecraft.renderViewEntity.motionX,
-										targetPos.motionY - minecraft.renderViewEntity.motionY,
-										targetPos.motionZ - minecraft.renderViewEntity.motionZ),
-								displayCriterionTurret.getTerminalspeed());
-				PredictedTargetPos.sub(new Vector3d(
-						minecraft.renderViewEntity.posX,
-						minecraft.renderViewEntity.posY,
-						minecraft.renderViewEntity.posZ));
-				RotateVectorAroundY(vecToLockTargetPos, currentRotationYaw);
-				RotateVectorAroundX(vecToLockTargetPos, currentRotationPit);
-				renderLockOnMarker(minecraft, displayCriterionTurret.getCurrentGuninfo().predictMarker, PredictedTargetPos);
-			}
-		}
-	}
+	//public void displayTurretLockTarget(WeaponCategory mainWeapon, TurretObj displayCriterionTurret, IVehicle vehicle, BaseLogic logic
+	//,EntityLinkedPos_Motion targetPos){
+	//	Minecraft minecraft = FMLClientHandler.instance().getClient();
+	//	FontRenderer fontrenderer = minecraft.fontRenderer;
+//
+	//	float currentRotationYaw = (minecraft.renderViewEntity.prevRotationYawHead + (minecraft.renderViewEntity.rotationYawHead - minecraft.renderViewEntity.prevRotationYawHead) * partialTicks);
+//
+	//	float currentRotationPit = (minecraft.renderViewEntity.prevRotationPitch + (minecraft.renderViewEntity.rotationPitch - minecraft.renderViewEntity.prevRotationPitch) * partialTicks);
+//
+//
+	//	Vector3d vecToLockTargetPos = new Vector3d();
+	//	vecToLockTargetPos.add(entityCurrentPos(targetPos));
+	//	vecToLockTargetPos.sub(entityCurrentPos(minecraft.renderViewEntity));
+	//	double range = vecToLockTargetPos.length();
+	//	vecToLockTargetPos.normalize();
+	//	RotateVectorAroundY(vecToLockTargetPos, currentRotationYaw);
+	//	RotateVectorAroundX(vecToLockTargetPos, currentRotationPit);
+	//	renderLockOnMarker(minecraft, displayCriterionTurret.getCurrentGuninfo().lockOnMarker, vecToLockTargetPos);
+	//	GL11.glPushMatrix();
+	//	{
+	//		GL11.glRotatef(-(float) ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, minecraft.entityRenderer, "camRoll", "R", "field_78495_O"), 0, 0, 1);
+	//		GL11.glTranslatef((float) vecToLockTargetPos.x, (float) vecToLockTargetPos.y, (float) vecToLockTargetPos.z);
+	//		GL11.glRotatef((float) ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, minecraft.entityRenderer, "camRoll", "R", "field_78495_O"), 0, 0, 1);
+	//		GL11.glScalef(-0.005f, -0.005f, 0.005f);
+	//		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//		fontrenderer.drawStringWithShadow(String.valueOf((int) range),
+	//				10, 5, 0xFFFFFF);
+//
+	//		Vector3d motionVec = new Vector3d(
+	//				targetPos.motionX,
+	//				targetPos.motionY,
+	//				targetPos.motionZ);
+//
+	//		if (motionVec.length() > 0.1)
+	//			fontrenderer.drawStringWithShadow(String.valueOf((int) (motionVec.length() * 72)),
+	//					10, -5, 0xFFFFFF);
+	//	}
+	//	GL11.glPopMatrix();
+//
+//	//							System.out.println("debug" + turretObj.getName());
+	//	if (displayCriterionTurret.getCurrentGuninfo().displayPredict) {
+	//		if (displayCriterionTurret.getCurrentGuninfo().displayPredict_MoveSight) {
+	//			GL11.glPushMatrix();
+	//			rotationToVehicleNose(vehicle);
+//
+	//			Quat4d turretLooking = new Quat4d(logic.bodyRot);
+	//			turretLooking.inverse();
+	//			turretLooking.mul(displayCriterionTurret.motherRot);
+	//			if (displayCriterionTurret.getCurrentGuninfo().displayPredict_ConsiderMyLooking)
+	//				turretLooking.mul(displayCriterionTurret.turretRot);
+//
+	//			double[] xyz = eulerfromQuat((turretLooking));
+	//			xyz[0] = toDegrees(xyz[0]);
+	//			xyz[1] = toDegrees(xyz[1]);
+	//			xyz[2] = toDegrees(xyz[2]);
+	//			GL11.glRotated(-xyz[1], 0, 1, 0);
+	//			GL11.glRotated(xyz[0], 1, 0, 0);
+//	//									System.out.println("debug");
+	//			Vector3d toTGT = new Vector3d(
+	//					targetPos.posX - minecraft.renderViewEntity.posX,
+	//					targetPos.posY - minecraft.renderViewEntity.posY,
+	//					targetPos.posZ - minecraft.renderViewEntity.posZ);
+	//			Vector3d motionVec = new Vector3d(
+	//					minecraft.renderViewEntity.motionX - targetPos.motionX,
+	//					minecraft.renderViewEntity.motionY - targetPos.motionY,
+	//					minecraft.renderViewEntity.motionZ - targetPos.motionZ);
+//	//								RotateVectorAroundY(motionVec, minecraft.renderViewEntity.rotationYawHead);
+	//			RotateVectorAroundY(motionVec, -toDegrees(atan2(toTGT.x, toTGT.z)));
+//	//								System.out.println("" + motionVec);
+//	//								RotateVectorAroundX(motionVec, minecraft.renderViewEntity.rotationPitch);
+	//			RotateVectorAroundX(motionVec, -toDegrees(atan2(toTGT.y, sqrt(toTGT.x * toTGT.x + toTGT.z * toTGT.z))));
+//	//								System.out.println("" + motionVec);
+	//			Vector3d vecTo_Target = new Vector3d(0, 0, toTGT.length());
+	//			Vector3d PredictedTargetPos =
+	//					LinePrediction(new Vector3d(),
+	//							vecTo_Target,
+	//							motionVec,
+	//							displayCriterionTurret.getTerminalspeed());
+//
+	//			PredictedTargetPos.normalize();
+	//			renderLockOnMarker(minecraft, displayCriterionTurret.getCurrentGuninfo().predictMarker, PredictedTargetPos);
+	//			GL11.glPopMatrix();
+	//		} else {
+//	//									System.out.println("debug");
+	//			Vector3d PredictedTargetPos =
+	//					LinePrediction(new Vector3d(minecraft.renderViewEntity.posX,
+	//									minecraft.renderViewEntity.posY,
+	//									minecraft.renderViewEntity.posZ),
+	//							new Vector3d(
+	//									targetPos.posX,
+	//									targetPos.posY,
+	//									targetPos.posZ),
+	//							new Vector3d(
+	//									targetPos.motionX - minecraft.renderViewEntity.motionX,
+	//									targetPos.motionY - minecraft.renderViewEntity.motionY,
+	//									targetPos.motionZ - minecraft.renderViewEntity.motionZ),
+	//							displayCriterionTurret.getTerminalspeed());
+	//			PredictedTargetPos.sub(new Vector3d(
+	//					minecraft.renderViewEntity.posX,
+	//					minecraft.renderViewEntity.posY,
+	//					minecraft.renderViewEntity.posZ));
+	//			RotateVectorAroundY(vecToLockTargetPos, currentRotationYaw);
+	//			RotateVectorAroundX(vecToLockTargetPos, currentRotationPit);
+	//			renderLockOnMarker(minecraft, displayCriterionTurret.getCurrentGuninfo().predictMarker, PredictedTargetPos);
+	//		}
+	//	}
+	//}
 
 	public void displayFlyersHUD(BaseLogic logic,Quat4d prevbodyRot, Quat4d bodyRot, Entity plane, Vector3d prevmotionVec, RenderGameOverlayEvent.Post event){
 		GL11.glColor4f(1,1,1,1);
@@ -1394,10 +1394,10 @@ public class HMVRenderSomeEvent {
 				entity.prevPosZ);
 	}
 
-	public static Vector3d entityCurrentPos(EntityLinkedPos_Motion entity){
-		return new Vector3d(
-				entity.posX + (entity.motionX) * partialTicks,
-				entity.posY + (entity.motionY) * partialTicks,
-				entity.posZ + (entity.motionZ) * partialTicks);
-	}
+	//public static Vector3d entityCurrentPos(EntityLinkedPos_Motion entity){
+	//	return new Vector3d(
+	//			entity.posX + (entity.motionX) * partialTicks,
+	//			entity.posY + (entity.motionY) * partialTicks,
+	//			entity.posZ + (entity.motionZ) * partialTicks);
+	//}
 }

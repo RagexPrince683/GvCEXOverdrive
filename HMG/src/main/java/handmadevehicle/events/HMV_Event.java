@@ -32,20 +32,20 @@ public class HMV_Event {
 				event.setCanceled(true);
 				return;
 			}
-			float userProtect = ((EntityDummy_rider) entity.ridingEntity).
-					linkedBaseLogic.prefab_vehicle.
-					prefab_seats[((EntityDummy_rider) entity.ridingEntity).linkedSeatID]
-					.userProtect_maxDamageLevel;
-			if (userProtect < 0) {
-				if (entity instanceof EntityPlayer) {
-					event.ammount = 0;
-					event.setCanceled(true);
-				} else {
-					event.ammount -= entity.getMaxHealth() / 2;
-				}
-			} else {
-				event.ammount -= userProtect;
-			}
+			//float userProtect = ((EntityDummy_rider) entity.ridingEntity).
+			//		linkedBaseLogic.prefab_vehicle.
+			//		prefab_seats[((EntityDummy_rider) entity.ridingEntity).linkedSeatID]
+			//		.userProtect_maxDamageLevel;
+			//if (userProtect < 0) {
+			//	if (entity instanceof EntityPlayer) {
+			//		event.ammount = 0;
+			//		event.setCanceled(true);
+			//	} else {
+			//		event.ammount -= entity.getMaxHealth() / 2;
+			//	}
+			//} else {
+			//	event.ammount -= userProtect;
+			//}
 		}
 	}
 	@SubscribeEvent

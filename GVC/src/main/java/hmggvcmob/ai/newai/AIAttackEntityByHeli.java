@@ -4,7 +4,7 @@ import handmadevehicle.entity.EntityDummy_rider;
 import handmadevehicle.entity.parts.SeatObject;
 import handmadevehicle.entity.parts.logics.BaseLogic;
 import handmadevehicle.entity.parts.turrets.WeaponCategory;
-import handmadevehicle.entity.prefab.Prefab_Vehicle_Base;
+//import handmadevehicle.entity.prefab.Prefab_Vehicle_Base;
 import net.minecraft.entity.EntityLiving;
 
 import javax.vecmath.Vector3d;
@@ -27,8 +27,8 @@ public class AIAttackEntityByHeli extends AIAttackToEntity{
 		//TODO 車両操縦を優先しつつ、乗っている座席に武装が無ければfalseを返す
 		if(super.shouldExecute()) {//ターゲットチェック
 			baseLogic = getDrivingVehicle(this.shooter);
-			if (baseLogic != null && !baseLogic.prefab_vehicle.T_Land_F_Plane)
-				return super.shouldExecute();
+			//if (baseLogic != null && !baseLogic.prefab_vehicle.T_Land_F_Plane)
+			//	return super.shouldExecute();
 		}
 		return false;
 	}
@@ -74,10 +74,10 @@ public class AIAttackEntityByHeli extends AIAttackToEntity{
 		if(!onAttackPos){
 			float cof = 0.5f;
 //			baseLogic.maxbank_fromOther = baseLogic.prefab_vehicle.maxbank/3;
-			separating = !(baseLogic.prefab_vehicle.startDive > divePitch && alt> baseLogic.prefab_vehicle.cruiseALT);
+			//separating = !(baseLogic.prefab_vehicle.startDive > divePitch && alt> baseLogic.prefab_vehicle.cruiseALT);
 			if(separating)cof = (float) (1 + 25/getDistanceSq(thisPos,targetStandingPos));
 			attackStartPos.interpolate(thisPos,cof);
-			attackStartPos.y = max(groundHeight + baseLogic.prefab_vehicle.cruiseALT + 30,target.posY + baseLogic.prefab_vehicle.cruiseALT + 30);
+			//attackStartPos.y = max(groundHeight + baseLogic.prefab_vehicle.cruiseALT + 30,target.posY + baseLogic.prefab_vehicle.cruiseALT + 30);
 //			PacketSpawnParticle packetSpawnParticle = new PacketSpawnParticle( baseLogic.mc_Entity.posX,
 //					baseLogic.mc_Entity.posY+2,
 //					baseLogic.mc_Entity.posZ,
@@ -94,9 +94,9 @@ public class AIAttackEntityByHeli extends AIAttackToEntity{
 			baseLogic.server_easyMode_yawTarget = wrapAngleTo180_float(-(float) toDegrees(atan2(planeToTarget.x, planeToTarget.z)));
 			float targetpitch = (float) -toDegrees(asin(planeToTarget.y/planeToTarget.length()));
 
-			if(targetpitch < baseLogic.prefab_vehicle.maxClimb){
-				targetpitch = baseLogic.prefab_vehicle.maxClimb;
-			}
+			//if(targetpitch < baseLogic.prefab_vehicle.maxClimb){
+			//	targetpitch = baseLogic.prefab_vehicle.maxClimb;
+			//}
 			baseLogic.server_easyMode_pitchTarget = targetpitch;
 			baseLogic.setControl_flap(true);
 			baseLogic.setControl_throttle_up(true);
@@ -112,7 +112,7 @@ public class AIAttackEntityByHeli extends AIAttackToEntity{
 
 	@Override
 	public void aimTarget() {
-		Prefab_Vehicle_Base prefab_vehicle = baseLogic.prefab_vehicle;
+		//Prefab_Vehicle_Base prefab_vehicle = baseLogic.prefab_vehicle;
 		baseLogic.setControl_throttle_up(true);
 
 		Vector3d targetPos = getSeeingPosition();
@@ -172,60 +172,60 @@ public class AIAttackEntityByHeli extends AIAttackToEntity{
 				baseLogic.server_easyMode_yawTarget = targetyaw;
 				baseLogic.server_easyMode_pitchTarget = targetpitch;
 
-				if(targetpitch > prefab_vehicle.maxDive || alt < prefab_vehicle.minALT){
-					onAttackPos = false;
-					separating = true;
-				}
+				//if(targetpitch > prefab_vehicle.maxDive || alt < prefab_vehicle.minALT){
+				//	onAttackPos = false;
+				//	separating = true;
+				//}
 			}
 		}else {
-			if ((alt + baseLogic.mc_Entity.motionY * 10 < prefab_vehicle.minALT)) {
-				if(!prefab_vehicle.type_F_Plane_T_Heli){
-					if (alt < prefab_vehicle.cruiseALT)
-						baseLogic.server_easyMode_pitchTarget = prefab_vehicle.maxClimb;
-					else
-						baseLogic.server_easyMode_pitchTarget = 0;
-				}else {
-					if (alt < prefab_vehicle.cruiseALT)
-						baseLogic.server_easyMode_pitchTarget = prefab_vehicle.maxClimb*baseLogic.localMotionVec.z;
-					else
-						baseLogic.server_easyMode_pitchTarget = prefab_vehicle.cruiseNoseDown;
-				}
-				baseLogic.server_easyMode_yawTarget = targetyaw;
-				if(alt < prefab_vehicle.minALT)baseLogic.setControl_flap(true);
-			} else {
-				if(reChaseCool>0){
-					reChaseCool--;
-					if(!prefab_vehicle.type_F_Plane_T_Heli){
-						baseLogic.server_easyMode_pitchTarget = prefab_vehicle.maxClimb;
-					}else {
-						baseLogic.server_easyMode_pitchTarget = prefab_vehicle.maxClimb*baseLogic.localMotionVec.z;
-					}
-				}else {
-					if(targetpitch>prefab_vehicle.maxDive && alt < prefab_vehicle.minALT){
-						reChaseCool=300;
-					}
-					baseLogic.server_easyMode_pitchTarget = !prefab_vehicle.type_F_Plane_T_Heli ? -20 : 0;
-
-					baseLogic.server_easyMode_yawTarget = targetyaw;
-					if(target.ridingEntity instanceof EntityDummy_rider) {
-						double enemyYawing = ((EntityDummy_rider) target.ridingEntity).linkedBaseLogic.bodyrotationYaw - ((EntityDummy_rider) target.ridingEntity).linkedBaseLogic.prevbodyrotationYaw;
-						baseLogic.rollTarget_fromOther = (float) toDegrees(enemyYawing);
-//								System.out.println("debug" + (toDegrees(enemyYawing)));
-					}
-					baseLogic.server_easyMode_pitchTarget = targetpitch;
-					double angularDifferenceYaw = wrapAngleTo180_double(targetyaw - baseLogic.bodyrotationYaw);
-					if (abs(angularDifferenceYaw) > 60) {
-						baseLogic.server_easyMode_pitchTarget *= 1 - (abs(angularDifferenceYaw) - 60) / 150;
-						baseLogic.server_easyMode_pitchTarget -= 5;
-					}
-				}
-			}
+			//if ((alt + baseLogic.mc_Entity.motionY * 10 < prefab_vehicle.minALT)) {
+			//	if(!prefab_vehicle.type_F_Plane_T_Heli){
+			//		if (alt < prefab_vehicle.cruiseALT)
+			//			baseLogic.server_easyMode_pitchTarget = prefab_vehicle.maxClimb;
+			//		else
+			//			baseLogic.server_easyMode_pitchTarget = 0;
+			//	}else {
+			//		if (alt < prefab_vehicle.cruiseALT)
+			//			baseLogic.server_easyMode_pitchTarget = prefab_vehicle.maxClimb*baseLogic.localMotionVec.z;
+			//		else
+			//			baseLogic.server_easyMode_pitchTarget = prefab_vehicle.cruiseNoseDown;
+			//	}
+			//	baseLogic.server_easyMode_yawTarget = targetyaw;
+			//	if(alt < prefab_vehicle.minALT)baseLogic.setControl_flap(true);
+			//} else {
+			//	if(reChaseCool>0){
+			//		reChaseCool--;
+			//		if(!prefab_vehicle.type_F_Plane_T_Heli){
+			//			baseLogic.server_easyMode_pitchTarget = prefab_vehicle.maxClimb;
+			//		}else {
+			//			baseLogic.server_easyMode_pitchTarget = prefab_vehicle.maxClimb*baseLogic.localMotionVec.z;
+			//		}
+			//	}else {
+			//		if(targetpitch>prefab_vehicle.maxDive && alt < prefab_vehicle.minALT){
+			//			reChaseCool=300;
+			//		}
+			//		baseLogic.server_easyMode_pitchTarget = !prefab_vehicle.type_F_Plane_T_Heli ? -20 : 0;
+//
+			//		baseLogic.server_easyMode_yawTarget = targetyaw;
+			//		if(target.ridingEntity instanceof EntityDummy_rider) {
+			//			double enemyYawing = ((EntityDummy_rider) target.ridingEntity).linkedBaseLogic.bodyrotationYaw - ((EntityDummy_rider) target.ridingEntity).linkedBaseLogic.prevbodyrotationYaw;
+			//			baseLogic.rollTarget_fromOther = (float) toDegrees(enemyYawing);
+//			//					System.out.println("debug" + (toDegrees(enemyYawing)));
+			//		}
+			//		baseLogic.server_easyMode_pitchTarget = targetpitch;
+			//		double angularDifferenceYaw = wrapAngleTo180_double(targetyaw - baseLogic.bodyrotationYaw);
+			//		if (abs(angularDifferenceYaw) > 60) {
+			//			baseLogic.server_easyMode_pitchTarget *= 1 - (abs(angularDifferenceYaw) - 60) / 150;
+			//			baseLogic.server_easyMode_pitchTarget -= 5;
+			//		}
+			//	}
+			//}
 			baseLogic.setControl_throttle_up(true);
 		}
-		if(baseLogic.bodyvector != null && -baseLogic.bodyvector.dot(planeToTarget)/planeToTarget.length() > cos(toRadians(prefab_vehicle.yawsightwidthmin)) && currentWeapon != null){
-			if(currentWeapon != null && currentWeapon == mainWeapon && (currentWeapon.isLockSuccess(target)))seatObject.gunTrigger[0] = true;
-			if(sub_Weapon != null && (currentWeapon == sub_Weapon || prefab_vehicle.useMain_withSub) && (sub_Weapon.target == null || sub_Weapon.isLockSuccess(target)))seatObject.gunTrigger[1] = true;
-		}
+		//if(baseLogic.bodyvector != null && -baseLogic.bodyvector.dot(planeToTarget)/planeToTarget.length() > cos(toRadians(prefab_vehicle.yawsightwidthmin)) && currentWeapon != null){
+		//	if(currentWeapon != null && currentWeapon == mainWeapon && (currentWeapon.isLockSuccess(target)))seatObject.gunTrigger[0] = true;
+		//	if(sub_Weapon != null && (currentWeapon == sub_Weapon || prefab_vehicle.useMain_withSub) && (sub_Weapon.target == null || sub_Weapon.isLockSuccess(target)))seatObject.gunTrigger[1] = true;
+		//}
 		if(baseLogic.server_easyMode_pitchTarget < 0){
 			baseLogic.server_easyMode_pitchTarget = 0;
 		}

@@ -12,13 +12,13 @@ import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadevehicle.SlowPathFinder.WorldForPathfind;
 import handmadevehicle.entity.EntityDummy_rider;
 import handmadevehicle.entity.EntityVehicle;
-import handmadevehicle.entity.parts.IDriver;
+//import handmadevehicle.entity.parts.IDriver;
 import handmadevehicle.entity.parts.Modes;
 import handmadevehicle.entity.parts.logics.BaseLogic;
 import handmadevehicle.entity.parts.turrets.TurretObj;
 import handmadevehicle.entity.parts.turrets.WeaponCategory;
 import handmadevehicle.entity.prefab.Prefab_Seat;
-import handmadevehicle.entity.prefab.Prefab_Vehicle_Base;
+//import handmadevehicle.entity.prefab.Prefab_Vehicle_Base;
 import hmggvcmob.GVCMobPlus;
 import hmggvcmob.ai.newai.AIAttackEntityByGun;
 import hmggvcmob.ai.newai.AIAttackEntityByTank;
@@ -57,7 +57,7 @@ import static handmadevehicle.entity.EntityVehicle.EntityVehicle_spawnByMob;
 import static hmggvcmob.GVCMobPlus.*;
 import static java.lang.Math.*;
 
-public abstract class EntitySoBases extends EntityCreature implements INpc ,  IFF, IGVCmob, IDriver, IPlatoonable {
+public abstract class EntitySoBases extends EntityCreature implements INpc ,  IFF, IGVCmob, IPlatoonable {
 	private EntityBodyHelper_modified bodyHelper;
 	public String summoningVehicle = null;
 
@@ -264,22 +264,22 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 			}
 
 			if(reArmCnt <= 0) {
-				Prefab_Vehicle_Base prefab_vehicle = ((EntityVehicle) currentMainWeapon.linkedBaseLogic.mc_Entity).getBaseLogic().prefab_vehicle;
-				for (int slotID = 0; slotID < prefab_vehicle.weaponSlotNum; slotID++) {
-					if (prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID) != null) {
-						int randUsingSlot = rand.nextInt(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID).length);
-						String whiteList = prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID)[randUsingSlot];
-//							System.out.println("" + whiteList);
-						Item check = GameRegistry.findItem("HandmadeGuns", whiteList);
-						if (check instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) check).gunInfo.guerrila_can_use) {
-							((EntityVehicle) currentMainWeapon.linkedBaseLogic.mc_Entity).getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(check));
-						}
-					} else {
-						int randUsingSlot = rand.nextInt(GVCMobPlus.Guns_CanUse.size());
-						Item choosenGun = GVCMobPlus.Guns_CanUse.get(randUsingSlot);
-						((EntityVehicle) currentMainWeapon.linkedBaseLogic.mc_Entity).getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(choosenGun));
-					}
-				}
+				//Prefab_Vehicle_Base prefab_vehicle = ((EntityVehicle) currentMainWeapon.linkedBaseLogic.mc_Entity).getBaseLogic().prefab_vehicle;
+				//for (int slotID = 0; slotID < prefab_vehicle.weaponSlotNum; slotID++) {
+				//	if (prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID) != null) {
+				//		int randUsingSlot = rand.nextInt(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID).length);
+				//		String whiteList = prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID)[randUsingSlot];
+//				//			System.out.println("" + whiteList);
+				//		Item check = GameRegistry.findItem("HandmadeGuns", whiteList);
+				//		if (check instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) check).gunInfo.guerrila_can_use) {
+				//			((EntityVehicle) currentMainWeapon.linkedBaseLogic.mc_Entity).getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(check));
+				//		}
+				//	} else {
+				//		int randUsingSlot = rand.nextInt(GVCMobPlus.Guns_CanUse.size());
+				//		Item choosenGun = GVCMobPlus.Guns_CanUse.get(randUsingSlot);
+				//		((EntityVehicle) currentMainWeapon.linkedBaseLogic.mc_Entity).getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(choosenGun));
+				//	}
+				//}
 				reArmCnt = 20;
 			}
 		}
@@ -318,26 +318,26 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 				}
 				bespawningEntity.canUseByMob = true;
 				bespawningEntity.canDespawn = canDespawn;
-				Prefab_Vehicle_Base prefab_vehicle = bespawningEntity.getBaseLogic().prefab_vehicle;
-				for(int slotID = 0 ;slotID < prefab_vehicle.weaponSlotNum;slotID++) {
-					if(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID) != null) {
-						int randUsingSlot = rand.nextInt(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID).length);
-						String whiteList = prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID)[randUsingSlot];
-//						System.out.println("" + whiteList);
-						Item check = GameRegistry.findItem("HandmadeGuns", whiteList);
-						if (check instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) check).gunInfo.guerrila_can_use) {
-							bespawningEntity.getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(check));
-						}
-					}else{
-						int randUsingSlot = rand.nextInt(GVCMobPlus.Guns_CanUse.size());
-						Item choosenGun = GVCMobPlus.Guns_CanUse.get(randUsingSlot);
-						bespawningEntity.getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(choosenGun));
-					}
-				}
-				if(!prefab_vehicle.T_Land_F_Plane) {
-					bespawningEntity.setLocationAndAngles(this.posX, this.posY + 128, this.posZ, var12, 0.0F);
-					bespawningEntity.getBaseLogic().throttle = prefab_vehicle.throttle_Max;
-				}
+				//Prefab_Vehicle_Base prefab_vehicle = bespawningEntity.getBaseLogic().prefab_vehicle;
+				//for(int slotID = 0 ;slotID < prefab_vehicle.weaponSlotNum;slotID++) {
+				//	if(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID) != null) {
+				//		int randUsingSlot = rand.nextInt(prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID).length);
+				//		String whiteList = prefab_vehicle.weaponSlot_linkedTurret_StackWhiteList.get(slotID)[randUsingSlot];
+//				//		System.out.println("" + whiteList);
+				//		Item check = GameRegistry.findItem("HandmadeGuns", whiteList);
+				//		if (check instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) check).gunInfo.guerrila_can_use) {
+				//			bespawningEntity.getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(check));
+				//		}
+				//	}else{
+				//		int randUsingSlot = rand.nextInt(GVCMobPlus.Guns_CanUse.size());
+				//		Item choosenGun = GVCMobPlus.Guns_CanUse.get(randUsingSlot);
+				//		bespawningEntity.getBaseLogic().inventoryVehicle.setInventorySlotContents(slotID, new ItemStack(choosenGun));
+				//	}
+				//}
+				//if(!prefab_vehicle.T_Land_F_Plane) {
+				//	bespawningEntity.setLocationAndAngles(this.posX, this.posY + 128, this.posZ, var12, 0.0F);
+				//	bespawningEntity.getBaseLogic().throttle = prefab_vehicle.throttle_Max;
+				//}
 				if(!bespawningEntity.checkObstacle())bespawningEntity.setDead();
 				for (int cnt = 0;cnt < bespawningEntity.getBaseLogic().riddenByEntities.length;cnt++) {
 					GVCEntitySoldier entity = new GVCEntitySoldier(worldObj);
@@ -509,7 +509,7 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 	@Override
 	public boolean canSeeTarget(Entity target) {
 		if(this.ridingEntity instanceof EntityDummy_rider){
-			if(!((EntityDummy_rider) this.ridingEntity).linkedBaseLogic.prefab_vehicle.T_Land_F_Plane)return true;
+			//if(!((EntityDummy_rider) this.ridingEntity).linkedBaseLogic.prefab_vehicle.T_Land_F_Plane)return true;
 		}
 		boolean flag;
 		flag = canhearsound(target);
@@ -601,32 +601,26 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 	public int seatID = 0;
 	public WeaponCategory currentMainWeapon;
 	public WeaponCategory currentSubWeapon;
-    @Override
     public void setSeatID(int id) {
         seatID = id;
     }
 
-    @Override
     public void setWeaponMain(WeaponCategory turret) {
         currentMainWeapon = turret;
     }
 
-    @Override
     public void setWeaponSub(WeaponCategory turret) {
         currentSubWeapon = turret;
     }
 
-    @Override
     public int getSeatID() {
         return seatID;
     }
 
-    @Override
     public WeaponCategory getWeaponMain() {
         return currentMainWeapon;
     }
 
-    @Override
     public WeaponCategory getWeaponSub() {
         return currentSubWeapon;
     }
@@ -715,12 +709,10 @@ public abstract class EntitySoBases extends EntityCreature implements INpc ,  IF
 	}
 
 	BaseLogic linkedLogic;
-	@Override
 	public void setLinkedVehicle(BaseLogic baseLogic) {
 		linkedLogic = baseLogic;
 	}
 
-	@Override
 	public BaseLogic getLinkedVehicle() {
 		return linkedLogic;
 	}

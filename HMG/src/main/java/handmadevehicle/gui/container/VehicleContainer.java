@@ -30,56 +30,56 @@ public class VehicleContainer extends Container {
 		}
 		if(userInventory != null && inventoryVehicle != null){
 
-			numRowsWeapon = inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum / 9;
+			//numRowsWeapon = inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum / 9;
 			int raw;
 			int line;
 			for (raw = 0; raw < numRowsWeapon; ++raw)
 			{
-				for (line = 0; line < 9; ++line)
-				{
-					this.addSlotToContainer(new SlotModded(inventoryVehicle, line + raw * 9,
-							8 + line * 18, 18 + raw * 18));
-				}
+				//for (line = 0; line < 9; ++line)
+				//{
+				//	this.addSlotToContainer(new SlotModded(inventoryVehicle, line + raw * 9,
+				//			8 + line * 18, 18 + raw * 18));
+				//}
 			}
-			for (line = 0; line < inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum%9; ++line)
-			{
-				this.addSlotToContainer(new SlotModded(inventoryVehicle, line + (numRowsWeapon) * 9, 8 + line * 18, 18 + (numRowsWeapon) * 18));
-			}
+			//for (line = 0; line < inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum%9; ++line)
+			//{
+			//	this.addSlotToContainer(new SlotModded(inventoryVehicle, line + (numRowsWeapon) * 9, 8 + line * 18, 18 + (numRowsWeapon) * 18));
+			//}
 
-			yoffset_Cargo = (numRowsWeapon +
-					(numLinesWeapon = (inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum%9) > 0 ? 1:0)) * 18;
+			//yoffset_Cargo = (numRowsWeapon +
+			//		(numLinesWeapon = (inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum%9) > 0 ? 1:0)) * 18;
 
-			numRowsCargo = inventoryVehicle.baseLogic.prefab_vehicle.cargoSlotNum / 9;
-			for (raw = 0; raw < numRowsCargo; ++raw)
-			{
-				for (line = 0; line < 9; ++line)
-				{
-					this.addSlotToContainer(new SlotModded(inventoryVehicle, inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum + line + raw * 9, 8 + line * 18, 18 + raw * 18 + yoffset_Cargo));
-				}
-			}
-			for (line = 0; line < inventoryVehicle.baseLogic.prefab_vehicle.cargoSlotNum%9; ++line)
-			{
-				this.addSlotToContainer(new SlotModded(inventoryVehicle, inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum + line + (numRowsCargo) * 9, 8 + line * 18, 18 + (numRowsCargo) * 18 + yoffset_Cargo));
-			}
+			//numRowsCargo = inventoryVehicle.baseLogic.prefab_vehicle.cargoSlotNum / 9;
+			//for (raw = 0; raw < numRowsCargo; ++raw)
+			//{
+			//	for (line = 0; line < 9; ++line)
+			//	{
+			//		this.addSlotToContainer(new SlotModded(inventoryVehicle, inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum + line + raw * 9, 8 + line * 18, 18 + raw * 18 + yoffset_Cargo));
+			//	}
+			//}
+			//for (line = 0; line < inventoryVehicle.baseLogic.prefab_vehicle.cargoSlotNum%9; ++line)
+			//{
+			//	this.addSlotToContainer(new SlotModded(inventoryVehicle, inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum + line + (numRowsCargo) * 9, 8 + line * 18, 18 + (numRowsCargo) * 18 + yoffset_Cargo));
+			//}
 
-			numRows = numRowsCargo + numRowsWeapon +
-					(inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum%9 > 0 ? 1:0)+
-					(inventoryVehicle.baseLogic.prefab_vehicle.cargoSlotNum%9 > 0 ? 1:0);
+			//numRows = numRowsCargo + numRowsWeapon +
+			//		(inventoryVehicle.baseLogic.prefab_vehicle.weaponSlotNum%9 > 0 ? 1:0)+
+			//		(inventoryVehicle.baseLogic.prefab_vehicle.cargoSlotNum%9 > 0 ? 1:0);
 
 
 			yoffset_playerInventory = (numRows - 4) * 18;
 			for (raw = 0; raw < 3; ++raw)
 			{
-				for (line = 0; line < 9; ++line)
-				{
-					this.addSlotToContainer(new SlotModded(userInventory, line + raw * 9 + 9, 8 + line * 18, 103 + raw * 18 + yoffset_playerInventory));
-				}
+				//for (line = 0; line < 9; ++line)
+				//{
+				//	this.addSlotToContainer(new SlotModded(userInventory, line + raw * 9 + 9, 8 + line * 18, 103 + raw * 18 + yoffset_playerInventory));
+				//}
 			}
 
-			for (line = 0; line < 9; ++line)
-			{
-				this.addSlotToContainer(new SlotModded(userInventory, line, 8 + line * 18, 161 + yoffset_playerInventory));
-			}
+			//for (line = 0; line < 9; ++line)
+			//{
+			//	this.addSlotToContainer(new SlotModded(userInventory, line, 8 + line * 18, 161 + yoffset_playerInventory));
+			//}
 		}
 	}
 	@Override

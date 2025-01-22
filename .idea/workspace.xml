@@ -95,7 +95,7 @@
       <command value="gradle build" />
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.GvCEXOverdrive:HMG [build]">
+  <component name="RunManager" selected="Gradle.GvCEXOverdrive [build]">
     <configuration name="GvCEXOverdrive [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -163,8 +163,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.GvCEXOverdrive:HMG [build]" />
         <item itemvalue="Gradle.GvCEXOverdrive [build]" />
+        <item itemvalue="Gradle.GvCEXOverdrive:HMG [build]" />
         <item itemvalue="Gradle.GvCEXOverdrive [wrapper --gradle-version 4.5]" />
       </list>
     </recent_temporary>

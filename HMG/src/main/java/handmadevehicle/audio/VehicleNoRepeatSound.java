@@ -2,7 +2,7 @@ package handmadevehicle.audio;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import handmadevehicle.entity.parts.HasLoopSound;
+//import handmadevehicle.entity.parts.HasLoopSound;
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -16,14 +16,14 @@ import static java.lang.Math.sqrt;
 public class VehicleNoRepeatSound extends MovingSound
 {
 	private final Entity attachedEntity;
-	private final HasLoopSound hasLoopSound;
+	//private final HasLoopSound hasLoopSound;
 	private final String sound;
 	private float maxdist;
 	private double disttoPlayer = -1;
 	private int tick = 0;
 	private int tickMax = 0;
 	
-	public VehicleNoRepeatSound(String soundname , Entity p_i45105_1_, HasLoopSound hasLoopSound, float maxdist, int time)
+	public VehicleNoRepeatSound(String soundname , Entity p_i45105_1_, float maxdist, int time)
 	{
 		super(new ResourceLocation(soundname));
 		this.sound = soundname;
@@ -31,7 +31,7 @@ public class VehicleNoRepeatSound extends MovingSound
 		this.repeat = false;
 		this.field_147665_h = 0;
 		this.maxdist = maxdist;
-		this.hasLoopSound = hasLoopSound;
+		//this.hasLoopSound = hasLoopSound;
 		volume = 4;
 		tickMax = time;
 	}
@@ -52,7 +52,7 @@ public class VehicleNoRepeatSound extends MovingSound
 			this.zPosF = (float)this.attachedEntity.posZ;
 			double prevdisttoPlayer = disttoPlayer;
 			disttoPlayer = attachedEntity.getDistanceSqToEntity(HMG_proxy.getMCInstance().renderViewEntity);
-			hasLoopSound.yourSoundIsremain(sound);
+			//hasLoopSound.yourSoundIsremain(sound);
 			float soundpitch = 1;
 			this.field_147663_c = 0.0F;
 			volume = 4;

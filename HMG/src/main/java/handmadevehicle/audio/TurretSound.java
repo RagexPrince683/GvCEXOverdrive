@@ -44,7 +44,7 @@ public class TurretSound extends MovingSound
 		}
 		else
 		{
-			attachedturret.yourSoundIsremain(sound);
+			//attachedturret.yourSoundIsremain(sound);
 			if(sound.equals(attachedturret.getsound())) {//参照渡しだから問題ないはず
 
 				Entity renderViewEntity = HMG_proxy.getMCInstance().renderViewEntity;

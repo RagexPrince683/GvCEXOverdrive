@@ -249,45 +249,45 @@ public class PartsRender_Vehicle extends PartsRender {
 				}
 			}
 
-			if (((HMVVehicleParts) parts).isPera){
-				float peraOffset = (currentBaseLogic.prev_pera_trackPos + (currentBaseLogic.pera_trackPos - currentBaseLogic.prev_pera_trackPos) * smooth)/currentBaseLogic.prefab_vehicle.max_pera_trackPos;
-				peraOffset = peraOffset%currentBaseLogic.prefab_vehicle.max_pera_trackPos;
-				if(peraOffset<0)peraOffset = peraOffset + currentBaseLogic.prefab_vehicle.max_pera_trackPos;
-				HMGGunParts_Motion_PosAndRotation peraPosAndRotation = ((HMVVehicleParts) parts).getRenderinfOfPeraPosAndRotation();
-				if(peraPosAndRotation != null) {
-					glTranslatef(peraPosAndRotation.posX * peraOffset, peraPosAndRotation.posY * peraOffset, peraPosAndRotation.posZ * peraOffset);
-					if(parts.rotateTypeIsVector){
-						glTranslatef(rotationCenterAndRotation.posX, rotationCenterAndRotation.posY, rotationCenterAndRotation.posZ);
-						glRotatef(peraPosAndRotation.rotationX * peraOffset, rotationCenterAndRotation.rotateVec.x, rotationCenterAndRotation.rotateVec.y, rotationCenterAndRotation.rotateVec.z);
-						glTranslatef(-rotationCenterAndRotation.posX, -rotationCenterAndRotation.posY, -rotationCenterAndRotation.posZ);
-					}else {
-						glTranslatef(rotationCenterAndRotation.posX, rotationCenterAndRotation.posY, rotationCenterAndRotation.posZ);
-						glRotatef(peraPosAndRotation.rotationY * peraOffset, 0, 1, 0);
-						glRotatef(peraPosAndRotation.rotationX * peraOffset, 1, 0, 0);
-						glRotatef(peraPosAndRotation.rotationZ * peraOffset, 0, 0, 1);
-						glTranslatef(-rotationCenterAndRotation.posX, -rotationCenterAndRotation.posY, -rotationCenterAndRotation.posZ);
-					}
-				}
-			}
+			//if (((HMVVehicleParts) parts).isPera){
+			//	//float peraOffset = (currentBaseLogic.prev_pera_trackPos + (currentBaseLogic.pera_trackPos - currentBaseLogic.prev_pera_trackPos) * smooth)/currentBaseLogic.prefab_vehicle.max_pera_trackPos;
+			//	//peraOffset = peraOffset%currentBaseLogic.prefab_vehicle.max_pera_trackPos;
+			//	//if(peraOffset<0)peraOffset = peraOffset + currentBaseLogic.prefab_vehicle.max_pera_trackPos;
+			//	HMGGunParts_Motion_PosAndRotation peraPosAndRotation = ((HMVVehicleParts) parts).getRenderinfOfPeraPosAndRotation();
+			//	if(peraPosAndRotation != null) {
+			//		glTranslatef(peraPosAndRotation.posX * peraOffset, peraPosAndRotation.posY * peraOffset, peraPosAndRotation.posZ * peraOffset);
+			//		if(parts.rotateTypeIsVector){
+			//			glTranslatef(rotationCenterAndRotation.posX, rotationCenterAndRotation.posY, rotationCenterAndRotation.posZ);
+			//			glRotatef(peraPosAndRotation.rotationX * peraOffset, rotationCenterAndRotation.rotateVec.x, rotationCenterAndRotation.rotateVec.y, rotationCenterAndRotation.rotateVec.z);
+			//			glTranslatef(-rotationCenterAndRotation.posX, -rotationCenterAndRotation.posY, -rotationCenterAndRotation.posZ);
+			//		}else {
+			//			glTranslatef(rotationCenterAndRotation.posX, rotationCenterAndRotation.posY, rotationCenterAndRotation.posZ);
+			//			glRotatef(peraPosAndRotation.rotationY * peraOffset, 0, 1, 0);
+			//			glRotatef(peraPosAndRotation.rotationX * peraOffset, 1, 0, 0);
+			//			glRotatef(peraPosAndRotation.rotationZ * peraOffset, 0, 0, 1);
+			//			glTranslatef(-rotationCenterAndRotation.posX, -rotationCenterAndRotation.posY, -rotationCenterAndRotation.posZ);
+			//		}
+			//	}
+			//}
 			if (((HMVVehicleParts) parts).isIdleAnim){
 				HMGGunParts_Motion_PosAndRotation idlePosAndRotation = ((HMVVehicleParts) parts).getRenderinfOfIdlePosAndRotation();
-				if(idlePosAndRotation != null) {
-					float idleOffset = (currentBaseLogic.prev_idleAnimCNT + (currentBaseLogic.idleAnimCNT - currentBaseLogic.prev_idleAnimCNT) * smooth)/currentBaseLogic.prefab_vehicle.max_idleAnimCNT;
-					idleOffset = idleOffset%currentBaseLogic.prefab_vehicle.max_idleAnimCNT;
-					if(idleOffset<0)idleOffset = idleOffset + currentBaseLogic.prefab_vehicle.max_idleAnimCNT;
-					glTranslatef(idlePosAndRotation.posX * idleOffset, idlePosAndRotation.posY * idleOffset, idlePosAndRotation.posZ * idleOffset);
-					if(parts.rotateTypeIsVector){
-						glTranslatef(rotationCenterAndRotation.posX, rotationCenterAndRotation.posY, rotationCenterAndRotation.posZ);
-						glRotatef(idlePosAndRotation.rotationX * idleOffset, rotationCenterAndRotation.rotateVec.x, rotationCenterAndRotation.rotateVec.y, rotationCenterAndRotation.rotateVec.z);
-						glTranslatef(-rotationCenterAndRotation.posX, -rotationCenterAndRotation.posY, -rotationCenterAndRotation.posZ);
-					}else {
-						glTranslatef(rotationCenterAndRotation.posX, rotationCenterAndRotation.posY, rotationCenterAndRotation.posZ);
-						glRotatef(idlePosAndRotation.rotationY * idleOffset, 0, 1, 0);
-						glRotatef(idlePosAndRotation.rotationX * idleOffset, 1, 0, 0);
-						glRotatef(idlePosAndRotation.rotationZ * idleOffset, 0, 0, 1);
-						glTranslatef(-rotationCenterAndRotation.posX, -rotationCenterAndRotation.posY, -rotationCenterAndRotation.posZ);
-					}
-				}
+				//if(idlePosAndRotation != null) {
+				//	float idleOffset = (currentBaseLogic.prev_idleAnimCNT + (currentBaseLogic.idleAnimCNT - currentBaseLogic.prev_idleAnimCNT) * smooth)/currentBaseLogic.prefab_vehicle.max_idleAnimCNT;
+				//	idleOffset = idleOffset%currentBaseLogic.prefab_vehicle.max_idleAnimCNT;
+				//	if(idleOffset<0)idleOffset = idleOffset + currentBaseLogic.prefab_vehicle.max_idleAnimCNT;
+				//	glTranslatef(idlePosAndRotation.posX * idleOffset, idlePosAndRotation.posY * idleOffset, idlePosAndRotation.posZ * idleOffset);
+				//	if(parts.rotateTypeIsVector){
+				//		glTranslatef(rotationCenterAndRotation.posX, rotationCenterAndRotation.posY, rotationCenterAndRotation.posZ);
+				//		glRotatef(idlePosAndRotation.rotationX * idleOffset, rotationCenterAndRotation.rotateVec.x, rotationCenterAndRotation.rotateVec.y, rotationCenterAndRotation.rotateVec.z);
+				//		glTranslatef(-rotationCenterAndRotation.posX, -rotationCenterAndRotation.posY, -rotationCenterAndRotation.posZ);
+				//	}else {
+				//		glTranslatef(rotationCenterAndRotation.posX, rotationCenterAndRotation.posY, rotationCenterAndRotation.posZ);
+				//		glRotatef(idlePosAndRotation.rotationY * idleOffset, 0, 1, 0);
+				//		glRotatef(idlePosAndRotation.rotationX * idleOffset, 1, 0, 0);
+				//		glRotatef(idlePosAndRotation.rotationZ * idleOffset, 0, 0, 1);
+				//		glTranslatef(-rotationCenterAndRotation.posX, -rotationCenterAndRotation.posY, -rotationCenterAndRotation.posZ);
+				//	}
+				//}
 			}
 			if (parts.isbullet) {
 				if (state == GunState.Recoil)
@@ -319,9 +319,9 @@ public class PartsRender_Vehicle extends PartsRender {
 		GL11.glPushMatrix();
 		if (gunStack != null) {
 			IItemRenderer gunrender = MinecraftForgeClient.getItemRenderer(gunStack, IItemRenderer.ItemRenderType.EQUIPPED);
-			GL11.glScaled(1/currentBaseLogic.prefab_vehicle.scale,
-					1/currentBaseLogic.prefab_vehicle.scale,
-					1/currentBaseLogic.prefab_vehicle.scale);
+			//GL11.glScaled(1/currentBaseLogic.prefab_vehicle.scale,
+			//		1/currentBaseLogic.prefab_vehicle.scale,
+			//		1/currentBaseLogic.prefab_vehicle.scale);
 			GL11.glTranslatef(0, turretObj.gunItem.gunInfo.yoffset,0);
 			if (gunrender instanceof HMGRenderItemGun_U_NEW) {
 				GL11.glScalef(0.5f, 0.5f, 0.5f);
@@ -348,7 +348,7 @@ public class PartsRender_Vehicle extends PartsRender {
 
 
 	public void renderParts_Track(HMVVehicleParts parts,float flame,int remainbullets,HMGGunParts_Motion_PosAndRotation rotationCenterAndRotation){
-		flame = ((currentBaseLogic.prev_pera_trackPos + (currentBaseLogic.pera_trackPos - currentBaseLogic.prev_pera_trackPos) * smooth)/currentBaseLogic.prefab_vehicle.max_pera_trackPos) * parts.trackAnimSpeed;
+		//flame = ((currentBaseLogic.prev_pera_trackPos + (currentBaseLogic.pera_trackPos - currentBaseLogic.prev_pera_trackPos) * smooth)/currentBaseLogic.prefab_vehicle.max_pera_trackPos) * parts.trackAnimSpeed;
 		if(flame<=0){
 			flame = flame+1;
 		}else if(flame>1){
@@ -357,7 +357,7 @@ public class PartsRender_Vehicle extends PartsRender {
 		if(parts.isavatar){
 			flame = flame%1;
 			if(parts.isbelt){
-				flame = ((currentBaseLogic.prev_pera_trackPos + (currentBaseLogic.pera_trackPos - currentBaseLogic.prev_pera_trackPos) * smooth)/currentBaseLogic.prefab_vehicle.max_pera_trackPos) * parts.trackAnimSpeed;
+				//flame = ((currentBaseLogic.prev_pera_trackPos + (currentBaseLogic.pera_trackPos - currentBaseLogic.prev_pera_trackPos) * smooth)/currentBaseLogic.prefab_vehicle.max_pera_trackPos) * parts.trackAnimSpeed;
 				flame += parts.trackAnimOffset;
 				if(flame<=0){
 					flame = flame+1;
@@ -486,7 +486,7 @@ public class PartsRender_Vehicle extends PartsRender {
 		}
 	}
 	public void renderParts_Anim(HMVVehicleParts parts,float flame,int remainbullets,HMGGunParts_Motion_PosAndRotation rotationCenterAndRotation){
-		flame = (currentBaseLogic.prev_idleAnimCNT + (currentBaseLogic.idleAnimCNT - currentBaseLogic.prev_idleAnimCNT) * smooth) * (parts.idleAnimSpeed/currentBaseLogic.prefab_vehicle.max_idleAnimCNT);
+		//flame = (currentBaseLogic.prev_idleAnimCNT + (currentBaseLogic.idleAnimCNT - currentBaseLogic.prev_idleAnimCNT) * smooth) * (parts.idleAnimSpeed/currentBaseLogic.prefab_vehicle.max_idleAnimCNT);
 		if(flame<=0){
 			flame = flame+1;
 		}else if(flame>1){
@@ -497,7 +497,7 @@ public class PartsRender_Vehicle extends PartsRender {
 			if(parts.isbelt){
 				int idlePieceCount = (int) parts.idlePieceCount;
 				if(idlePieceCount < parts.idlePieceCount)idlePieceCount ++;
-				flame = (currentBaseLogic.prev_idleAnimCNT + (currentBaseLogic.idleAnimCNT - currentBaseLogic.prev_idleAnimCNT) * smooth) * (parts.idleAnimSpeed/currentBaseLogic.prefab_vehicle.max_idleAnimCNT);
+				//flame = (currentBaseLogic.prev_idleAnimCNT + (currentBaseLogic.idleAnimCNT - currentBaseLogic.prev_idleAnimCNT) * smooth) * (parts.idleAnimSpeed/currentBaseLogic.prefab_vehicle.max_idleAnimCNT);
 				flame += parts.idleAnimOffset;
 				if(flame<=0){
 					flame = flame+1;

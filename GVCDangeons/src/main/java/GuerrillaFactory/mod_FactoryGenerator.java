@@ -1,6 +1,6 @@
 package GuerrillaFactory;
 
-import DungeonGeneratorBase.DungeonData;
+//import DungeonGeneratorBase.DungeonData;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
@@ -9,9 +9,9 @@ import net.minecraftforge.common.MinecraftForge;
 import java.io.*;
 import java.util.ArrayList;
 
-import static DungeonGeneratorBase.DungeonData.loadDungeon;
-import static DungeonGeneratorBase.mod_DungeonGeneratorBase.dangeondatapath;
-import static DungeonGeneratorBase.mod_DungeonGeneratorBase.datafile;
+//import static DungeonGeneratorBase.DungeonData.loadDungeon;
+//import static DungeonGeneratorBase.mod_DungeonGeneratorBase.dangeondatapath;
+//import static DungeonGeneratorBase.mod_DungeonGeneratorBase.datafile;
 
 @Mod(
         modid	= "GuerrillaFactoryGenerator",
@@ -25,7 +25,7 @@ public class mod_FactoryGenerator {
     public void init_(FMLInitializationEvent pEvent) {
         try {
             String path = "assets/gfactory/Factory.gvcdg";
-            InputStream entry = datafile.getInputStream(datafile.getEntry(path));
+            //InputStream entry = datafile.getInputStream(datafile.getEntry(path));
 //            File file = new File(path);
             BufferedReader reader = new BufferedReader(new InputStreamReader(entry));
             loadDangeonData(reader);

@@ -1,6 +1,6 @@
 package handmadevehicle.SlowPathFinder;
 
-import handmadevehicle.entity.parts.IDriver;
+//import handmadevehicle.entity.parts.IDriver;
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.MathHelper;
@@ -24,9 +24,9 @@ public class WorldForPathfind
 
     public PathEntity getEntityPathToXYZ(Entity entity, int targetX, int targetY, int targetZ, float searchRange, boolean isWoddenDoorAllowed, boolean isMovementBlockAllowed, boolean isPathingInWater, boolean canEntityDrown) {
 
-        if(entity instanceof IDriver && ((IDriver) entity).getLinkedVehicle()!= null && !((IDriver) entity).getLinkedVehicle().prefab_vehicle.T_Land_F_Plane){
-            return null;
-        }
+       // if(entity instanceof IDriver && ((IDriver) entity).getLinkedVehicle()!= null && !((IDriver) entity).getLinkedVehicle().prefab_vehicle.T_Land_F_Plane){
+       //     return null;
+       // }
         if(slowPathfinder != null && slowPathfinder.isserchingpath){
             return slowPathfinder.serchPath();
         }else {

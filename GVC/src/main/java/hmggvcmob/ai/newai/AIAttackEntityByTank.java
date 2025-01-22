@@ -30,8 +30,8 @@ public class AIAttackEntityByTank extends AIAttackToEntity{
 		if(super.shouldExecute()) {//ターゲットチェック
 			ridingVehicle = getRidingVehicle(this.shooter);
 			drivingVehicle = getDrivingVehicle(this.shooter);
-			if (ridingVehicle != null && drivingVehicle != null && drivingVehicle.prefab_vehicle.T_Land_F_Plane)
-				return true;//地上車両操縦
+			//if (ridingVehicle != null && drivingVehicle != null && drivingVehicle.prefab_vehicle.T_Land_F_Plane)
+			//	return true;//地上車両操縦
 			if (ridingVehicle != null && drivingVehicle == null)
 				return true;//砲塔を操作する
 		}

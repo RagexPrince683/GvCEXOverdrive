@@ -1,6 +1,6 @@
 package handmadevehicle.network.packets;
 
-import handmadeguns.Util.EntityLinkedPos_Motion;
+//import handmadeguns.Util.EntityLinkedPos_Motion;
 import handmadevehicle.entity.parts.turrets.TurretObj;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,7 +20,7 @@ public class TurretSyncData {
 
 	public int targetID = -1;
 
-	public EntityLinkedPos_Motion targetPosition;
+	//public EntityLinkedPos_Motion targetPosition;
 
 	public Vec3 lockedBlockPos = null;
 
@@ -43,7 +43,7 @@ public class TurretSyncData {
 
 		if(turretObj.target != null){
 			targetID = turretObj.target.getEntityId();
-			targetPosition = new EntityLinkedPos_Motion(turretObj.target,-1);
+			//targetPosition = new EntityLinkedPos_Motion(turretObj.target,-1);
 		}
 
 		childData = new TurretSyncData[turretObj.getChilds().size() + turretObj.getChildsOnBarrel().size() + turretObj.getBrothers().size()];
@@ -73,7 +73,7 @@ public class TurretSyncData {
 		}
 		target.lockedBlockPos = lockedBlockPos;
 		target.target = target.motherEntity.worldObj.getEntityByID(targetID);
-		target.targetPos = targetPosition;
+		//target.targetPos = targetPosition;
 
 		int id = 0;
 		for(TurretObj aturretObj : target.getChilds()){
@@ -101,10 +101,10 @@ public class TurretSyncData {
 
 		targetID = buf.readInt();
 
-		if(targetID != -1){
-			targetPosition = new EntityLinkedPos_Motion();
-			targetPosition.fromBytes(buf);
-		}
+		//if(targetID != -1){
+		//	targetPosition = new EntityLinkedPos_Motion();
+		//	targetPosition.fromBytes(buf);
+		//}
 
 		if(buf.readBoolean()){
 			lockedBlockPos = Vec3.createVectorHelper(buf.readDouble(),buf.readDouble(),buf.readDouble());
@@ -129,7 +129,7 @@ public class TurretSyncData {
 		buf.writeInt(targetID);
 
 		if(targetID != -1){
-			targetPosition.toBytes(buf);
+			//targetPosition.toBytes(buf);
 		}
 
 		boolean flag = lockedBlockPos != null;

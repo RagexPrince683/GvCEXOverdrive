@@ -44,7 +44,7 @@ public class GVCUtil {
 			BaseLogic ridingVehicle = getRidingVehicle(entity);
 			if(ridingVehicle != null){
 				flag |= ridingVehicle.mc_Entity.onGround;
-				flag |= ridingVehicle.prefab_vehicle.T_Land_F_Plane;
+				//flag |= ridingVehicle.prefab_vehicle.T_Land_F_Plane;
 			}
 		}
 		return flag;
@@ -61,14 +61,14 @@ public class GVCUtil {
 			if(ridingEntity instanceof EntityVehicle){
 				BaseLogic ridingVehicle = getRidingVehicle(entity);
 				if(ridingVehicle != null && ridingVehicle.ispilot(entity)) {
-					if (ridingVehicle.prefab_vehicle.T_Land_F_Plane) {
-						return EntityRidingState.Tank;
-					}else
-					if (ridingVehicle.prefab_vehicle.type_F_Plane_T_Heli) {
-						return EntityRidingState.Heli;
-					}else {
+					//if (ridingVehicle.prefab_vehicle.T_Land_F_Plane) {
+					//	return EntityRidingState.Tank;
+					//}else
+					//if (ridingVehicle.prefab_vehicle.type_F_Plane_T_Heli) {
+					//	return EntityRidingState.Heli;
+					//}else {
 						return EntityRidingState.AirPlane;
-					}
+					//}
 				}else {
 					if(getRidingSeat((EntityDummy_rider) entity.ridingEntity).hasAvailableWeapon())
 					return EntityRidingState.Turret;
