@@ -442,7 +442,7 @@ public class ComponentDungeonBase extends StructureComponent {
                                                 Entity newentity = constructor.newInstance(world);
                                                 if (newentity instanceof EntityGBase) {
                                                     ((EntityGBase) newentity).canDespawn = false;
-                                                    ((EntityGBase) newentity).addRandomArmor();
+                                                    //((EntityGBase) newentity).addRandomArmor();
                                                 }
                                                 newentity.setLocationAndAngles(finalI + 0.5, Ystart2 + pos.y, finalJ + 0.5, random.nextInt(360) - 180, 0);
                                                 world.spawnEntityInWorld(newentity);

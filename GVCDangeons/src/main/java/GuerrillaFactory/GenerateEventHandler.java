@@ -18,8 +18,8 @@ public class GenerateEventHandler {
 	public void onPopulateChunkEvent(PopulateChunkEvent.Populate event) {
 		if(event.type == PopulateChunkEvent.Populate.EventType.DUNGEON) {
 			try {
-				mapGenBaseHouses.func_151539_a(event.chunkProvider, event.world, event.chunkX, event.chunkZ, null);
-				mapGenBaseHouses.generateStructuresInChunk(event.world, event.rand, event.chunkX, event.chunkZ);
+				//mapGenBaseHouses.func_151539_a(event.chunkProvider, event.world, event.chunkX, event.chunkZ, null);
+				//mapGenBaseHouses.generateStructuresInChunk(event.world, event.rand, event.chunkX, event.chunkZ);
 			}catch (Exception e){
 				e.printStackTrace();
 			}

@@ -8,7 +8,7 @@ package GuerrillaFactory;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static GuerrillaFactory.mod_FactoryGenerator.dungeonData;
+//import static GuerrillaFactory.mod_FactoryGenerator.dungeonData;
 
 public class ComponentFactory {
 
