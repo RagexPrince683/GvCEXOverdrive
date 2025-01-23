@@ -13,6 +13,9 @@ import net.minecraft.world.World;
 public class HMGEntityLight extends Entity {
     private Entity sourceEntity;
     private static final int LIGHT_RADIUS = 10;
+    private int lastLightX = Integer.MIN_VALUE;
+    private int lastLightY = Integer.MIN_VALUE;
+    private int lastLightZ = Integer.MIN_VALUE;
 
     public HMGEntityLight(World world, Entity sourceEntity, float range) {
         super(world);
@@ -40,14 +43,25 @@ public class HMGEntityLight extends Entity {
 
         if (sourceEntity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sourceEntity;
-            // Calculate the position where light is emitted
+
+            // Calculate the light position
             Vec3 lookVec = player.getLookVec();
             int lightX = MathHelper.floor_double(this.posX + lookVec.xCoord * LIGHT_RADIUS);
             int lightY = MathHelper.floor_double(this.posY + lookVec.yCoord * LIGHT_RADIUS);
             int lightZ = MathHelper.floor_double(this.posZ + lookVec.zCoord * LIGHT_RADIUS);
 
-            // Update light level at the target position
-            this.worldObj.setLightValue(EnumSkyBlock.Block, lightX, lightY, lightZ, 15);
+            // If the light position changes, reset the old light
+            if (lightX != lastLightX || lightY != lastLightY || lightZ != lastLightZ) {
+                if (lastLightX != Integer.MIN_VALUE) {
+                    this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
+                }
+
+                // Update light at the new position
+                this.worldObj.setLightValue(EnumSkyBlock.Block, lightX, lightY, lightZ, 15);
+                lastLightX = lightX;
+                lastLightY = lightY;
+                lastLightZ = lightZ;
+            }
         }
     }
 
@@ -55,15 +69,9 @@ public class HMGEntityLight extends Entity {
     public void setDead() {
         super.setDead();
 
-        // Ensure light is removed when the entity is dead
-        if (!this.worldObj.isRemote && sourceEntity instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) sourceEntity;
-            Vec3 lookVec = player.getLookVec();
-            int lightX = MathHelper.floor_double(this.posX + lookVec.xCoord * LIGHT_RADIUS);
-            int lightY = MathHelper.floor_double(this.posY + lookVec.yCoord * LIGHT_RADIUS);
-            int lightZ = MathHelper.floor_double(this.posZ + lookVec.zCoord * LIGHT_RADIUS);
-
-            this.worldObj.setLightValue(EnumSkyBlock.Block, lightX, lightY, lightZ, 0);
+        // Ensure the light is removed when the entity is dead
+        if (!this.worldObj.isRemote && lastLightX != Integer.MIN_VALUE) {
+            this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
         }
     }
 
