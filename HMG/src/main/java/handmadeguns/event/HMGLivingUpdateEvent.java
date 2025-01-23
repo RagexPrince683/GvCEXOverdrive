@@ -30,9 +30,10 @@ public class HMGLivingUpdateEvent {
 
         // Check if it's a headshot
         if (isHeadshot(entity, attacker)) {
-            event.ammount *= 2.0F; // Double the damage for headshots
+            float newDamage = event.ammount * 2.0F; // Double the damage for headshots
+            event.ammount = newDamage; // Update the event's damage amount
+            entity.attackEntityFrom(event.source, newDamage); // Reapply the adjusted damage
             entity.worldObj.playSoundAtEntity(entity, "random.orb", 1.0F, 1.0F); // Headshot sound
-
         }
     }
 
