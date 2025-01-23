@@ -8,6 +8,7 @@ import handmadevehicle.entity.EntityVehicle;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -16,8 +17,10 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 import static net.minecraft.util.DamageSource.inWall;
+import java.util.WeakHashMap;
 
 public class HMGLivingUpdateEvent {
+    private final WeakHashMap<EntityLivingBase, Boolean> headshotProcessed = new WeakHashMap<>();
 
 
     @SubscribeEvent
@@ -28,12 +31,27 @@ public class HMGLivingUpdateEvent {
         EntityLivingBase entity = event.entityLiving;
         Entity attacker = event.source.getSourceOfDamage();
 
+        // Ensure damage is only applied once per headshot
+        if (headshotProcessed.getOrDefault(entity, false)) return;
+
         // Check if it's a headshot
         if (isHeadshot(entity, attacker)) {
-            float newDamage = event.ammount * 2.0F; // Double the damage for headshots
-            event.ammount = newDamage; // Update the event's damage amount
-            entity.attackEntityFrom(event.source, newDamage); // Reapply the adjusted damage
+            event.ammount *= 2.0F; // Double the damage for headshots
             entity.worldObj.playSoundAtEntity(entity, "random.orb", 1.0F, 1.0F); // Headshot sound
+
+            // Mark this entity as having processed headshot damage
+            headshotProcessed.put(entity, true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent event) {
+        // Reset the headshotProcessed flag after the entity updates
+        if (event.entity instanceof EntityLivingBase) {
+            EntityLivingBase entity = (EntityLivingBase) event.entity;
+            if (headshotProcessed.containsKey(entity)) {
+                headshotProcessed.put(entity, false);
+            }
         }
     }
 
@@ -80,7 +98,9 @@ public class HMGLivingUpdateEvent {
             return hit.hitVec.yCoord >= headStartY;
         }
 
-        return false;
+        //probably should return true?
+        //return false;
+        return true;
     }
 
     @SubscribeEvent
