@@ -6,13 +6,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 
 public class HMGEntityLight extends Entity {
     private Entity sourceEntity;
-    private static final int LIGHT_RADIUS = 10;
     private int lastLightX = Integer.MIN_VALUE;
     private int lastLightY = Integer.MIN_VALUE;
     private int lastLightZ = Integer.MIN_VALUE;
@@ -44,24 +44,52 @@ public class HMGEntityLight extends Entity {
         if (sourceEntity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sourceEntity;
 
-            // Calculate the light position
+            // Raytrace to find the exact position of the light
+            Vec3 start = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
             Vec3 lookVec = player.getLookVec();
-            int lightX = MathHelper.floor_double(this.posX + lookVec.xCoord * LIGHT_RADIUS);
-            int lightY = MathHelper.floor_double(this.posY + lookVec.yCoord * LIGHT_RADIUS);
-            int lightZ = MathHelper.floor_double(this.posZ + lookVec.zCoord * LIGHT_RADIUS);
+            Vec3 end = start.addVector(lookVec.xCoord * 10, lookVec.yCoord * 10, lookVec.zCoord * 10); // Maximum distance of 10 blocks
 
-            // If the light position changes, reset the old light
-            if (lightX != lastLightX || lightY != lastLightY || lightZ != lastLightZ) {
-                if (lastLightX != Integer.MIN_VALUE) {
-                    this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
+            //raytraceblocks for the ancient dark arts of forge 1.7.10
+            MovingObjectPosition hit = this.worldObj.func_147447_a(start, end, false, true, false);
+            if (hit != null) {
+                // Light position is where the ray hits a block
+                int lightX = hit.blockX;
+                int lightY = hit.blockY;
+                int lightZ = hit.blockZ;
+
+                // Adjust light position to the face of the block
+                switch (hit.sideHit) {
+                    case 0: lightY -= 1; break; // Bottom
+                    case 1: lightY += 1; break; // Top
+                    case 2: lightZ -= 1; break; // North
+                    case 3: lightZ += 1; break; // South
+                    case 4: lightX -= 1; break; // West
+                    case 5: lightX += 1; break; // East
                 }
 
-                // Update light at the new position
-                this.worldObj.setLightValue(EnumSkyBlock.Block, lightX, lightY, lightZ, 15);
-                lastLightX = lightX;
-                lastLightY = lightY;
-                lastLightZ = lightZ;
+                updateLightPosition(lightX, lightY, lightZ);
+            } else {
+                // If no block is hit, use the max distance
+                int lightX = MathHelper.floor_double(end.xCoord);
+                int lightY = MathHelper.floor_double(end.yCoord);
+                int lightZ = MathHelper.floor_double(end.zCoord);
+                updateLightPosition(lightX, lightY, lightZ);
             }
+        }
+    }
+
+    private void updateLightPosition(int lightX, int lightY, int lightZ) {
+        // If the light position changes, reset the old light
+        if (lightX != lastLightX || lightY != lastLightY || lightZ != lastLightZ) {
+            if (lastLightX != Integer.MIN_VALUE) {
+                this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
+            }
+
+            // Update light at the new position
+            this.worldObj.setLightValue(EnumSkyBlock.Block, lightX, lightY, lightZ, 15);
+            lastLightX = lightX;
+            lastLightY = lightY;
+            lastLightZ = lightZ;
         }
     }
 
