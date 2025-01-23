@@ -176,16 +176,15 @@ public class HMGEntityLight extends Entity
         }
     }
 
-    
+
     @SideOnly(Side.CLIENT)
-    public int getBrightnessForRender(float par1)
-    {
-        return 15728880;
+    public int getBrightnessForRender(float partialTickTime) {
+        return 15728880; // Maximum brightness (15 light level)
     }
-    
-    public float getBrightness(float par1)
-    {
-        return 1.0F;
+
+    @SideOnly(Side.CLIENT)
+    public float getBrightness(float partialTickTime) {
+        return 1.0F; // Maximum brightness
     }
     
     protected boolean isValidLightLevel()
@@ -200,6 +199,12 @@ public class HMGEntityLight extends Entity
     public void onUpdate()
     {
         super.onUpdate();
+
+
+        if (this.shootingEntity instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) this.shootingEntity;
+            this.setPosition(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+        }
 
         Block block = this.worldObj.getBlock(this.field_145791_d, this.field_145792_e, this.field_145789_f);
 
@@ -297,7 +302,7 @@ public class HMGEntityLight extends Entity
                         field_145792_e = (int) this.posY;
                         field_145789_f = (int) this.posZ;
                         worldObj.func_147451_t(field_145791_d, field_145792_e, field_145789_f);
-                        worldObj.setLightValue(EnumSkyBlock.Block, this.field_145791_d, this.field_145792_e, this.field_145789_f, 0x99);
+                        //worldObj.setLightValue(EnumSkyBlock.Block, this.field_145791_d, this.field_145792_e, this.field_145789_f, 0x99);
                         worldObj.func_147451_t(field_145791_d - 1, field_145792_e, field_145789_f);
                         worldObj.func_147451_t(field_145791_d + 1, field_145792_e, field_145789_f);
                         worldObj.func_147451_t(field_145791_d, field_145792_e - 1, field_145789_f);
@@ -322,7 +327,7 @@ public class HMGEntityLight extends Entity
                         this.arrowShake = 7;
 
                         worldObj.func_147451_t(field_145791_d, field_145792_e, field_145789_f);
-                        worldObj.setLightValue(EnumSkyBlock.Block, this.field_145791_d, this.field_145792_e, this.field_145789_f, 0x99);
+                        //worldObj.setLightValue(EnumSkyBlock.Block, this.field_145791_d, this.field_145792_e, this.field_145789_f, 0x99);
                         worldObj.func_147451_t(field_145791_d - 1, field_145792_e, field_145789_f);
                         worldObj.func_147451_t(field_145791_d + 1, field_145792_e, field_145789_f);
                         worldObj.func_147451_t(field_145791_d, field_145792_e - 1, field_145789_f);
@@ -382,7 +387,7 @@ public class HMGEntityLight extends Entity
             this.inGround = true;
 
             worldObj.func_147451_t(field_145791_d, field_145792_e, field_145789_f);
-            worldObj.setLightValue(EnumSkyBlock.Block, this.field_145791_d, this.field_145792_e, this.field_145789_f, 0x99);
+            //worldObj.setLightValue(EnumSkyBlock.Block, this.field_145791_d, this.field_145792_e, this.field_145789_f, 0x99);
             worldObj.func_147451_t(field_145791_d - 1, field_145792_e, field_145789_f);
             worldObj.func_147451_t(field_145791_d + 1, field_145792_e, field_145789_f);
             worldObj.func_147451_t(field_145791_d, field_145792_e - 1, field_145789_f);
