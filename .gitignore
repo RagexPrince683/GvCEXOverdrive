@@ -13,3 +13,7 @@ gradlew.bat
 gradlew
 gradle/wrapper/gradle-wrapper.properties
 gradle/wrapper/gradle-wrapper.jar
+*.properties
+local.properties
+*.properties
+C:\Users\Owner\Documents\Downloads\MCH-master\GvCEXOverdrive\local.properties

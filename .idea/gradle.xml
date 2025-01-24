@@ -13,6 +13,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/DCreator" />
+            <option value="$PROJECT_DIR$/Depend" />
             <option value="$PROJECT_DIR$/GVC" />
             <option value="$PROJECT_DIR$/GVCDangeons" />
             <option value="$PROJECT_DIR$/GVCDangeonsBase" />
@@ -20,7 +21,6 @@
             <option value="$PROJECT_DIR$/HMP" />
             <option value="$PROJECT_DIR$/Linker" />
             <option value="$PROJECT_DIR$/WW2" />
-            <option value="$PROJECT_DIR$/depend" />
           </set>
         </option>
       </GradleProjectSettings>
