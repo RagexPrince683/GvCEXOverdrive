@@ -1,21 +1,22 @@
 package handmadeguns.entity;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import handmadeguns.items.HMGItemAttachment_light;
+import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
 
 public class HMGEntityLight extends Entity {
-    //light range isn't actually the range of the light, its just a placeholder value to make sure we are holding a gun with a light.
-    private boolean gunisheld; // Remove 'final' to allow updates
+    private boolean gunisheld;
     private Entity sourceEntity;
     private int lastLightX = Integer.MIN_VALUE;
     private int lastLightY = Integer.MIN_VALUE;
@@ -26,7 +27,7 @@ public class HMGEntityLight extends Entity {
         this.sourceEntity = sourceEntity;
         this.setSize(0.5F, 0.5F);
         this.renderDistanceWeight = 10.0D;
-        this.gunisheld = held; // Store the gun as being held
+        this.gunisheld = held;
     }
 
     // Add a setter to allow updates
@@ -34,7 +35,40 @@ public class HMGEntityLight extends Entity {
         this.gunisheld = held;
     }
 
+    /**
+     * Determines if the given item stack is a gun with a flashlight attachment.
+     *
+     * @param itemstack The item stack to check.
+     * @return True if the item is a gun with a flashlight, false otherwise.
+     */
+    private boolean isGunWithFlashlight(ItemStack itemstack) {
+        if (itemstack == null) return false;
 
+        try {
+            NBTTagCompound tagCompound = itemstack.getTagCompound();
+            if (tagCompound != null) {
+                NBTTagList tags = (NBTTagList) tagCompound.getTag("Items");
+                if (tags != null) {
+                    for (int i = 0; i < tags.tagCount(); i++) {
+                        NBTTagCompound attachmentTag = tags.getCompoundTagAt(i);
+                        int slot = attachmentTag.getByte("Slot");
+
+                        // Check the slot for the flashlight attachment
+                        if (slot == 2) { // Assuming slot 2 is for flashlight attachments
+                            ItemStack attachment = ItemStack.loadItemStackFromNBT(attachmentTag);
+                            if (attachment != null && attachment.getItem() instanceof HMGItemAttachment_light) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 
     @Override
     protected void entityInit() {
@@ -43,11 +77,6 @@ public class HMGEntityLight extends Entity {
 
     @Override
     public void onUpdate() {
-
-        if (gunisheld != true) { // Only process logic if holding gun
-            return;
-        }
-
         super.onUpdate();
 
         if (sourceEntity == null || sourceEntity.isDead) {
@@ -55,38 +84,42 @@ public class HMGEntityLight extends Entity {
             return;
         }
 
-        // Update position to follow the source entity
-        this.setPosition(sourceEntity.posX, sourceEntity.posY + sourceEntity.getEyeHeight(), sourceEntity.posZ);
-
         if (sourceEntity instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) sourceEntity;
 
-            // Raytrace to find the exact position of the light
+            // Check if the player is holding a gun with a flashlight attachment
+            ItemStack heldItem = player.getHeldItem();
+            gunisheld = isGunWithFlashlight(heldItem);
+
+            // If no gun with a flashlight is held, remove the light entity
+            if (!gunisheld) {
+                this.setDead();
+                return;
+            }
+
+            // Raytrace to calculate light position
             Vec3 start = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
             Vec3 lookVec = player.getLookVec();
-            Vec3 end = start.addVector(lookVec.xCoord * 10, lookVec.yCoord * 10, lookVec.zCoord * 10); // Maximum distance of 10 blocks
+            Vec3 end = start.addVector(lookVec.xCoord * 10, lookVec.yCoord * 10, lookVec.zCoord * 10);
 
-            //raytraceblocks for the ancient dark arts of forge 1.7.10
             MovingObjectPosition hit = this.worldObj.func_147447_a(start, end, false, true, false);
             if (hit != null) {
-                // Light position is where the ray hits a block
                 int lightX = hit.blockX;
                 int lightY = hit.blockY;
                 int lightZ = hit.blockZ;
 
-                // Adjust light position to the face of the block
+                // Adjust to the block face
                 switch (hit.sideHit) {
-                    case 0: lightY -= 1; break; // Bottom
-                    case 1: lightY += 1; break; // Top
-                    case 2: lightZ -= 1; break; // North
-                    case 3: lightZ += 1; break; // South
-                    case 4: lightX -= 1; break; // West
-                    case 5: lightX += 1; break; // East
+                    case 0: lightY -= 1; break;
+                    case 1: lightY += 1; break;
+                    case 2: lightZ -= 1; break;
+                    case 3: lightZ += 1; break;
+                    case 4: lightX -= 1; break;
+                    case 5: lightX += 1; break;
                 }
 
                 updateLightPosition(lightX, lightY, lightZ);
             } else {
-                // If no block is hit, use the max distance
                 int lightX = MathHelper.floor_double(end.xCoord);
                 int lightY = MathHelper.floor_double(end.yCoord);
                 int lightZ = MathHelper.floor_double(end.zCoord);
@@ -112,11 +145,6 @@ public class HMGEntityLight extends Entity {
 
     @Override
     public void setDead() {
-
-        if (gunisheld != true) { // Skip logic if gun is not held
-            return;
-        }
-
         super.setDead();
 
         // Ensure the light is removed when the entity is dead
@@ -134,6 +162,7 @@ public class HMGEntityLight extends Entity {
     protected void writeEntityToNBT(NBTTagCompound tagCompound) {
         // No persistent data needed
     }
+
 
     @SideOnly(Side.CLIENT)
     @Override
