@@ -1,5 +1,7 @@
 package handmadeguns.entity;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.Entity;
@@ -12,17 +14,27 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 
 public class HMGEntityLight extends Entity {
+    //light range isn't actually the range of the light, its just a placeholder value to make sure we are holding a gun with a light.
+    private boolean gunisheld; // Remove 'final' to allow updates
     private Entity sourceEntity;
     private int lastLightX = Integer.MIN_VALUE;
     private int lastLightY = Integer.MIN_VALUE;
     private int lastLightZ = Integer.MIN_VALUE;
 
-    public HMGEntityLight(World world, Entity sourceEntity, float range) {
+    public HMGEntityLight(World world, Entity sourceEntity, boolean held) {
         super(world);
         this.sourceEntity = sourceEntity;
         this.setSize(0.5F, 0.5F);
         this.renderDistanceWeight = 10.0D;
+        this.gunisheld = held; // Store the gun as being held
     }
+
+    // Add a setter to allow updates
+    public void setGunIsHeld(boolean held) {
+        this.gunisheld = held;
+    }
+
+
 
     @Override
     protected void entityInit() {
@@ -31,6 +43,11 @@ public class HMGEntityLight extends Entity {
 
     @Override
     public void onUpdate() {
+
+        if (gunisheld != true) { // Only process logic if holding gun
+            return;
+        }
+
         super.onUpdate();
 
         if (sourceEntity == null || sourceEntity.isDead) {
@@ -95,6 +112,11 @@ public class HMGEntityLight extends Entity {
 
     @Override
     public void setDead() {
+
+        if (gunisheld != true) { // Skip logic if gun is not held
+            return;
+        }
+
         super.setDead();
 
         // Ensure the light is removed when the entity is dead

@@ -1719,10 +1719,16 @@ public class HMGItem_Unified_Guns extends Item {
 
 				} else if (itemstackattach != null && itemstackattach.getItem() instanceof HMGItemAttachment_light) {
 					if (world.isRemote) {
-						HMGEntityLight var8 = new HMGEntityLight(world, entity, 2.0F);
+						//spawn light
+						HMGEntityLight var8 = new HMGEntityLight(world, entity, true);
 						world.spawnEntityInWorld(var8);
 					}
 				}
+				//somehow made this break, I think its making two lights so this just fucks itself
+				//else {
+				//	HMGEntityLight var8 = new HMGEntityLight(world, entity, false);
+				//	var8.setGunIsHeld(false); // Reset or change the value as required
+				//}
 				itemstackattach = guntemp.items[3];
 				if (itemstackattach != null && itemstackattach.getItem() instanceof HMGItemAttachment_Suppressor) {
 					guntemp.sound = gunInfo.soundsu;
