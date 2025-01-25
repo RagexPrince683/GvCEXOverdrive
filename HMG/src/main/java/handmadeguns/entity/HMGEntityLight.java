@@ -132,11 +132,19 @@ public class HMGEntityLight extends Entity {
         // If the light position changes, reset the old light
         if (lightX != lastLightX || lightY != lastLightY || lightZ != lastLightZ) {
             if (lastLightX != Integer.MIN_VALUE) {
+                // Reset the light level of the old position
                 this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
+
+                // Ensure the client also resets the light level
+                if (this.worldObj.isRemote) {
+                    this.worldObj.markBlockForUpdate(lastLightX, lastLightY, lastLightZ);
+                }
             }
 
             // Update light at the new position
             this.worldObj.setLightValue(EnumSkyBlock.Block, lightX, lightY, lightZ, 15);
+
+            // Update the previous position
             lastLightX = lightX;
             lastLightY = lightY;
             lastLightZ = lightZ;
