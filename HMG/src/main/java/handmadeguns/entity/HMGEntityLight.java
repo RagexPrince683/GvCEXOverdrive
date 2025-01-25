@@ -93,6 +93,11 @@ public class HMGEntityLight extends Entity {
 
             // If no gun with a flashlight is held, remove the light entity
             if (!gunisheld) {
+                //todo add light level reset after gun is no longer held
+                if (lastLightX != Integer.MIN_VALUE) {
+                    this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
+                    this.worldObj.markBlockForUpdate(lastLightX, lastLightY, lastLightZ); // Ensure client updates
+                }
                 this.setDead();
                 return;
             }

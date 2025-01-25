@@ -70,6 +70,7 @@ public class CLProxy extends CMProxy {
 	static int currentStickControllerID;
 
 	public CLProxy() {
+		//todo comment out shitlow code
 		if(!inited) {
 			net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(hmv_commandReloadparm);
 			ClientRegistry.registerKeyBinding(Throttle_up.keyBinding);
