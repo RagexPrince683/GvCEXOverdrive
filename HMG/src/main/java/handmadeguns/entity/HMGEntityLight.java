@@ -128,6 +128,17 @@ public class HMGEntityLight extends Entity {
         }
     }
 
+    @Override
+    public void setDead() {
+        super.setDead();
+
+        // Ensure the light is removed when the entity is dead
+        if (!this.worldObj.isRemote && lastLightX != Integer.MIN_VALUE) {
+            this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
+            this.worldObj.markBlockForUpdate(lastLightX, lastLightY, lastLightZ); // Force light recalculation
+        }
+    }
+
     private void updateLightPosition(int lightX, int lightY, int lightZ) {
         // If the light position changes, reset the old light
         if (lightX != lastLightX || lightY != lastLightY || lightZ != lastLightZ) {
@@ -144,20 +155,13 @@ public class HMGEntityLight extends Entity {
             // Update light at the new position
             this.worldObj.setLightValue(EnumSkyBlock.Block, lightX, lightY, lightZ, 15);
 
-            // Update the previous position
+            // Force light recalculation to prevent over-brightening
+            this.worldObj.markBlockForUpdate(lightX, lightY, lightZ);
+
+            // Update the last known light position
             lastLightX = lightX;
             lastLightY = lightY;
             lastLightZ = lightZ;
-        }
-    }
-
-    @Override
-    public void setDead() {
-        super.setDead();
-
-        // Ensure the light is removed when the entity is dead
-        if (!this.worldObj.isRemote && lastLightX != Integer.MIN_VALUE) {
-            this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
         }
     }
 
