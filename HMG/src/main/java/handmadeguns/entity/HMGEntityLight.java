@@ -15,12 +15,18 @@ import handmadeguns.items.HMGItemAttachment_light;
 import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class HMGEntityLight extends Entity {
     private boolean gunisheld;
     private Entity sourceEntity;
     private int lastLightX = Integer.MIN_VALUE;
     private int lastLightY = Integer.MIN_VALUE;
     private int lastLightZ = Integer.MIN_VALUE;
+
+    private Map<String, Integer> originalLightLevels = new HashMap<>();
+
 
     public HMGEntityLight(World world, Entity sourceEntity, boolean held) {
         super(world);
@@ -78,6 +84,14 @@ public class HMGEntityLight extends Entity {
     @Override
     public void onUpdate() {
         super.onUpdate();
+
+        if (!this.worldObj.isRemote) {
+            int lightX = MathHelper.floor_double(this.posX);
+            int lightY = MathHelper.floor_double(this.posY);
+            int lightZ = MathHelper.floor_double(this.posZ);
+
+            updateLightPosition(lightX, lightY, lightZ);
+        }
 
         if (sourceEntity == null || sourceEntity.isDead) {
             this.setDead();
@@ -137,6 +151,10 @@ public class HMGEntityLight extends Entity {
     public void setDead() {
         super.setDead();
 
+        if (!this.worldObj.isRemote) {
+            resetLightAtLastPosition();
+        }
+
         // Ensure the light is removed when the entity is dead
         if (!this.worldObj.isRemote && lastLightX != Integer.MIN_VALUE) {
             this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
@@ -147,6 +165,19 @@ public class HMGEntityLight extends Entity {
     private void updateLightPosition(int lightX, int lightY, int lightZ) {
         // If the light position changes, reset the old light
         if (lightX != lastLightX || lightY != lastLightY || lightZ != lastLightZ) {
+            resetLightAtLastPosition();
+
+            // Store the original light level of the new position
+            String positionKey = getPositionKey(lightX, lightY, lightZ);
+            if (!originalLightLevels.containsKey(positionKey)) {
+                int originalLight = this.worldObj.getSavedLightValue(EnumSkyBlock.Block, lightX, lightY, lightZ);
+                originalLightLevels.put(positionKey, originalLight);
+            }
+
+            // Update light at the new position
+            this.worldObj.setLightValue(EnumSkyBlock.Block, lightX, lightY, lightZ, 15);
+            this.worldObj.markBlockForUpdate(lightX, lightY, lightZ);
+
             if (lastLightX != Integer.MIN_VALUE) {
                 // Reset the light level of the old position
                 this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, 0);
@@ -168,6 +199,26 @@ public class HMGEntityLight extends Entity {
             lastLightY = lightY;
             lastLightZ = lightZ;
         }
+    }
+
+    private void resetLightAtLastPosition() {
+        if (lastLightX != Integer.MIN_VALUE) {
+            String positionKey = getPositionKey(lastLightX, lastLightY, lastLightZ);
+
+            // Restore the original light level
+            if (originalLightLevels.containsKey(positionKey)) {
+                int originalLight = originalLightLevels.get(positionKey);
+                this.worldObj.setLightValue(EnumSkyBlock.Block, lastLightX, lastLightY, lastLightZ, originalLight);
+                this.worldObj.markBlockForUpdate(lastLightX, lastLightY, lastLightZ);
+
+                // Remove the entry from the map
+                originalLightLevels.remove(positionKey);
+            }
+        }
+    }
+
+    private String getPositionKey(int x, int y, int z) {
+        return x + "," + y + "," + z;
     }
 
     @Override
