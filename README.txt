@@ -10,6 +10,19 @@ Also theres like some vehicle code or something but like I already do that so I 
 
 1: (If god hates you I'm using android-studio-2024.1.2.12-windows so go find that version, no im not gonna go find it for you)
 
+GPT TLDR FOR GOLDFISH:
+
+TL;DR:
+This repo has tons of missing dependencies, and I have no idea why.
+
+Setup & Build (for some projects):
+Use IntelliJ – Eclipse is trash, and light theme is for masochists.
+Get the Android SDK – [Download here](https://developer.android.com/studio). For some reason, it's needed for this Minecraft project.
+Path IntelliJ to the SDK – Expect errors. At least 1/4th of the mods will build.
+Ignore broken vehicle code – Missing files, I don’t care.
+Storage issues? – Maybe I ran out, but that’s just a glowing federal psyop.
+Bonus: If you're cursed, I'm using Android Studio 2024.1.2.12 (Windows)—go find it yourself.
+
 
 Regular forge install tutorial:
 
