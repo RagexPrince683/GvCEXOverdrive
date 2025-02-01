@@ -1,3 +1,19 @@
+--------------------------
+SPECIAL INFORMATION FOR GVC, HMG, AND ANYTHING ELSE THAT SEEMS TO BE COLLUDING TOGETHER
+--------------------------
+
+I'm not exactly sure why, but there are like a ton of missing dependencies from this repo.
+Now with that out of the way, here's how you set this up and build like *a few* of the projects. You use intellij because eclipse is hot garbage and light theme is for people who are into torture. Now You grab your trusty android SDK (https://developer.android.com/studio ), 1 for this minecraft project for some fucking reason,
+path intellij there and boom, error hub but the great thing is at least 1/4th of the mods build the rest are either anime or like uhhh something I really don't even know anymore man I just like guns
+Also theres like some vehicle code or something but like I already do that so I am taking the liberty of just ignoring it because it errored out because there were like some missing files or something...
+(I might have maybe possibly ran out of storage space, but like that's not real and thats a glowingfederal psyop)
+
+1: (If god hates you I'm using android-studio-2024.1.2.12-windows so go find that version, no im not gonna go find it for you)
+
+
+Regular forge install tutorial:
+
+
 -------------------------------------------
 Source installation information for modders
 -------------------------------------------
