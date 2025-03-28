@@ -1,23 +1,39 @@
+# Ignore IntelliJ IDEA project files
+.idea/
+*.iml
 
-local.properties
-local.properties
-local.properties
-gradle/wrapper/gradle-wrapper.jar
-gradle/wrapper/gradle-wrapper.properties
-gradlew
-gradlew.bat
-hs_err_pid11950.log
-hs_err_pid16957.log
-local.properties
-gradlew.bat
-gradlew
-gradle/wrapper/gradle-wrapper.properties
-gradle/wrapper/gradle-wrapper.jar
-*.properties
-local.properties
-*.properties
-C:\Users\Owner\Documents\Downloads\MCH-master\GvCEXOverdrive\local.properties
-local.properties
-/.gradle
-/.idea
+# Ignore Gradle and build output directories
+/.gradle/
+/build/
+/out/
+
+# Ignore Eclipse project files (if applicable)
+.classpath
+.project
+.settings/
+
+# Ignore logs and temp files
 *.log
+*.tmp
+*.swp
+*.swo
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore compiled Java class files
+/bin/
+/*.class
+
+# Ignore dependency caches and generated files
+.gradle/
+/mcp/
+/run/
+/eclipse/
+/libs/
+/jars/
+
+# Ignore personal or environment-specific files
+.env
+*.credentials
