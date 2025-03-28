@@ -1,0 +1,213 @@
+.
+├── blocks
+│   └── HMGBlockMounter.java
+├── client
+│   ├── audio
+│   │   ├── BulletSoundHMG.java
+│   │   ├── GunSoundHMG.java
+│   │   ├── MovingSoundHMG.java
+│   │   └── ReloadSoundHMG.java
+│   ├── modelLoader
+│   │   ├── emb_modelloader
+│   │   │   ├── MQO_Face.java
+│   │   │   ├── MQO_GroupObject.java
+│   │   │   ├── MQO_Material.java
+│   │   │   ├── MQO_MetasequoiaObject.java
+│   │   │   ├── MQO_ModelLoader.java
+│   │   │   └── MQO_TextureCoordinate.java
+│   │   ├── obj_modelloaderMod
+│   │   │   └── obj
+│   │   │       ├── HMGFace.java
+│   │   │       ├── HMGGroupObject.java
+│   │   │       ├── HMGObjModelLoader.java
+│   │   │       ├── HMGTextureCoordinate.java
+│   │   │       ├── HMGVertex.java
+│   │   │       └── HMGWavefrontObject.java
+│   │   └── tcn_modelloaderMod
+│   │       ├── TechneGroupObject.java
+│   │       ├── TechneModel.java
+│   │       └── TechneModelLoader.java
+│   └── render
+│       ├── FrameBuffer.java
+│       ├── GunState.java
+│       ├── HMGGunParts.java
+│       ├── HMGGunParts_Motion.java
+│       ├── HMGGunParts_Motion_PosAndRotation.java
+│       ├── HMGGunParts_Motions.java
+│       ├── HMGParts.java
+│       ├── HMGRenderBulletCartridge.java
+│       ├── HMGRenderBulletExplode.java
+│       ├── HMGRenderBullet.java
+│       ├── HMGRenderItemCustom.java
+│       ├── HMGRenderItemGun_S.java
+│       ├── HMGRenderItemGun_U.java
+│       ├── HMGRenderItemGun_U_NEW.java
+│       ├── HMGRenderItemMount2.java
+│       ├── HMGRenderItemMount.java
+│       ├── HMGRenderLaser.java
+│       ├── HMGRenderParticles2.java
+│       ├── HMGRenderParticles.java
+│       ├── HMGRenderRight2.java
+│       ├── HMGRenderRight.java
+│       ├── IModelCustom_HMG.java
+│       ├── ModelSetAndData.java
+│       ├── PartsRender_Gun.java
+│       ├── PartsRender.java
+│       ├── PlacedGun_Render.java
+│       ├── RenderFallingBlockMod.java
+│       └── RenderTileMounter.java
+├── ClientProxyHMG.java
+├── command
+│   └── HMG_CommandReloadparm.java
+├── CommonSideProxyHMG.java
+├── entity
+│   ├── bullets
+│   │   ├── HMGEntityBullet_AP.java
+│   │   ├── HMGEntityBullet_AT.java
+│   │   ├── HMGEntityBulletBase.java
+│   │   ├── HMGEntityBulletCartridge.java
+│   │   ├── HMGEntityBulletExprode.java
+│   │   ├── HMGEntityBullet_Flame.java
+│   │   ├── HMGEntityBullet_Frag.java
+│   │   ├── HMGEntityBullet_HE.java
+│   │   ├── HMGEntityBullet.java
+│   │   ├── HMGEntityBulletRocket.java
+│   │   ├── HMGEntityBullet_TE.java
+│   │   └── HMGEntityBulletTorp.java
+│   ├── EntityHasMaster.java
+│   ├── HMGEntityFallingBlockModified.java
+│   ├── HMGEntityItemMount2.java
+│   ├── HMGEntityItemMountBase.java
+│   ├── HMGEntityItemMount.java
+│   ├── HMGEntityLaser.java
+│   ├── HMGEntityLight2.java
+│   ├── HMGEntityLight.java
+│   ├── HMGEntityParticles.java
+│   ├── HMGExplosion.java
+│   ├── IFF.java
+│   ├── IMGGunner.java
+│   ├── I_SPdamageHandle.java
+│   ├── MovingObjectPosition_And_Entity.java
+│   ├── PlacedGunEntity.java
+│   └── SpHitCheckEntity.java
+├── EntityItemFrameHMG.java
+├── event
+│   ├── GunSoundEvent.java
+│   ├── HMGEventZoom.java
+│   ├── HMGLivingUpdateEvent.java
+│   └── RenderTickSmoothing.java
+├── gui
+│   ├── HMGContainerInventoryItem.java
+│   ├── HMGContainerInventoryItemMount2.java
+│   ├── HMGContainerInventoryItemMount.java
+│   ├── HMGGuiHandler.java
+│   ├── HMGGuiInventoryItem.java
+│   ├── HMGGuiInventoryItemMount2.java
+│   ├── HMGGuiInventoryItemMount.java
+│   ├── HMGGuiInventoryItemMountnew.java
+│   ├── HMGInventoryItem.java
+│   └── HMGSlotInventoryItem.java
+├── Handler
+│   ├── MessageCatchEntityData.java
+│   ├── MessageCatcher_ChangeMagazineType.java
+│   ├── MessageCatcher_ChangeModeHeldItem.java
+│   ├── MessageCatcher_DamageHeldItem.java
+│   ├── MessageCatcher_DamageHeldItemsAttach.java
+│   ├── MessageCatcher_dropCartridge.java
+│   ├── MessageCatcher_FixGun.java
+│   ├── MessageCatcher_OpenGui.java
+│   ├── MessageCatcher_PlacedGunFire.java
+│   ├── MessageCatcher_PlacedGunStack.java
+│   ├── MessageCatcher_Playsound.java
+│   ├── MessageCatcher_RecieveSpawnparticle.java
+│   ├── MessageCatcher_returnMagazineItem.java
+│   ├── MessageCatcher_SeekerOpen.java
+│   ├── MessageCatcher_Spawnparticle.java
+│   ├── MessageCatcher_TriggerUnder.java
+│   ├── MessageCatch_PlaySound_Gui.java
+│   ├── MessageCatchRecoilOrder.java
+│   ├── MessageCatch_Reloadparm.java
+│   └── MessageCatch_SetElevation.java
+├── HandmadeGunsCore.java
+├── HMGAddAttachment.java
+├── HMGAddBullets.java
+├── HMGAddmagazine.java
+├── HMGAddSounds.java
+├── HMGAddTabs.java
+├── HMGCreativeTab_ForCustom.java
+├── HMGCreativeTab.java
+├── HMGGunMaker.java
+├── HMGMessageKeyPressedC.java
+├── HMGMessageKeyPressedHandlerC.java
+├── HMGPacketHandler.java
+├── HMGParticles.java
+├── inventory
+│   ├── ContainerHolder.java
+│   └── GunInventory.java
+├── ItemHangingEntityHMG.java
+├── items
+│   ├── FireTemp.java
+│   ├── GunInfo.java
+│   ├── guns
+│   │   ├── HMGItemSwordBase.java
+│   │   ├── HMGItem_Unified_Guns.java
+│   │   └── HMGXItemGun_Sword.java
+│   ├── GunTemp.java
+│   ├── HMGItemAttachmentBase.java
+│   ├── HMGItemAttachment_grip.java
+│   ├── HMGItemAttachment_laser.java
+│   ├── HMGItemAttachment_light.java
+│   ├── HMGItemAttachment_Muzzle.java
+│   ├── HMGItemAttachment_reddot.java
+│   ├── HMGItemAttachment_scope.java
+│   ├── HMGItemAttachment_Suppressor.java
+│   ├── HMGItemBattlePack.java
+│   ├── HMGItemBullet_AP.java
+│   ├── HMGItemBullet_AT.java
+│   ├── HMGItemBullet_Frag.java
+│   ├── HMGItemBullet.java
+│   ├── HMGItemBullet_TE.java
+│   ├── HMGItemBullet_with_Internal_Bullet.java
+│   ├── HMGItemCustomMagazine.java
+│   ├── HMGItemSightBase.java
+│   └── HMG_simpleMaterial.java
+├── KeyBinding_mod.java
+├── mod_file_tree.txt
+├── mqoLoader_server
+│   ├── MQO_Face_Common.java
+│   └── MQO_MetasequoiaObjectForCommon.java
+├── network
+│   ├── PacketChangeMagazineType.java
+│   ├── PacketChangeModeHeldItem.java
+│   ├── PacketDamageHeldItem.java
+│   ├── PacketDamageHeldItemsAttach.java
+│   ├── PacketDropCartridge.java
+│   ├── PacketFixClientbullet.java
+│   ├── PacketFixGun.java
+│   ├── PacketOpenGui.java
+│   ├── PacketPlacedGunShot.java
+│   ├── PacketPlaySound_Gui.java
+│   ├── PacketPlaysound.java
+│   ├── PacketRecoil.java
+│   ├── PacketReloadparm.java
+│   ├── PacketRequestSpawnParticle.java
+│   ├── PacketreturnMgazineItem.java
+│   ├── PacketSeekerOpen.java
+│   ├── PacketSendPlacedGunStack.java
+│   ├── PacketSetElevation.java
+│   ├── PacketShotBullet.java
+│   ├── PacketSpawnParticle.java
+│   └── PacketTriggerUnder.java
+├── RenderItemFrameHMG.java
+├── StackTracer.java
+├── tile
+│   └── TileMounter.java
+└── Util
+    ├── GunsUtils.java
+    ├── PlaceGunShooterPosGetter.java
+    ├── sendEntitydata.java
+    ├── SoundInfo.java
+    ├── StackAndSlot.java
+    └── TrailInfo.java
+
+23 directories, 188 files
