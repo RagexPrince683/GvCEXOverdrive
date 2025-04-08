@@ -1,5 +1,5 @@
 
-project.version = "EX14.3"
+project.version = "EX14.4"
 
 tasks.withType(Jar) {
     compileJava.options.encoding = 'UTF-8'

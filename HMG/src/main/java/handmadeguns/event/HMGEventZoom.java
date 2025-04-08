@@ -827,7 +827,7 @@ public class HMGEventZoom {
 //		OpenGlHelper.glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR, 1, 0);
 		GL11.glAlphaFunc(GL11.GL_GREATER, 0);
 		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);
-//		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		minecraft.getTextureManager().bindTexture(crosstex);
 //		GL11.glTranslatef(i/2f, j/2f,0);
 		double x =bure*2d/10d;
