@@ -22,6 +22,10 @@ public class AmmoHUDRenderer {
         int current = gun.remain_Bullet(gunstack);
         int reserve = getTotalReserveAmmo(gunstack);
 
+        // Format ammo counts with 3 digits (000 to 999)
+        String currentAmmo = String.format("%03d", current);
+        String reserveAmmo = String.format("%03d", reserve);
+
         // Fire mode
         int mode = gunstack.getTagCompound().getInteger("HMGMode");
         String modeText = getFireModeText(gun, mode);
@@ -33,31 +37,42 @@ public class AmmoHUDRenderer {
 
         if (!isSingle && !gun.gunInfo.rates.isEmpty() && gun.gunInfo.rates.size() > mode && gun.gunInfo.rates.get(mode) > 0) {
             float delayTicks = gun.gunInfo.rates.get(mode);
-            int rpm = (int)(1200.0 / delayTicks); // 60s * 20 ticks = 1200
+            int rpm = (int) (1200.0 / delayTicks); // 60s * 20 ticks = 1200
             rpmText = rpm + " RPM";
         }
 
         // Box size
-        int boxHeight = 40;
+        int boxHeight = 45;
         int boxWidth = 120;
         int x = screenWidth - boxWidth - 10;
         int y = screenHeight - boxHeight - 10;
 
         drawRectWithAlpha(x, y, x + boxWidth, y + boxHeight, 0x80000000);
 
-        // Ammo string
-        fontrenderer.drawStringWithShadow(current + " / " + reserve, x + 6, y + 6, 0xFFFFFF);
+        // Render current ammo without brackets
+        renderText(fontrenderer, currentAmmo, x + 6, y + 6, 0xFFFFFF);
 
-        // Fire mode
-        fontrenderer.drawStringWithShadow(modeText, x + 6, y + 20, 0xCCCCCC);
+        // Calculate the new width after rendering current ammo (no scaling applied)
+        int currentAmmoWidth = fontrenderer.getStringWidth(currentAmmo);
 
-        // RPM (draw it right-aligned beside modeText)
+        // Reserve ammo count (now slightly below current ammo, to the right of it)
+        renderText(fontrenderer, "/ " + reserveAmmo, x + 6 + currentAmmoWidth, y + 6, 0xBBBBBB);
+
+        // Fire mode (slightly to the left)
+        renderText(fontrenderer, "[" + modeText + "]", x + 6 + currentAmmoWidth - 4, y + 18, 0xCCCCCC);
+
+        // RPM - Now static inside the box, not shifting
         if (!rpmText.isEmpty()) {
-            int modeTextWidth = fontrenderer.getStringWidth(modeText);
-            fontrenderer.drawStringWithShadow(rpmText, x + 12 + modeTextWidth, y + 20, 0x999999);
+            int rpmX = x + 6; // Fixed X position within the box
+            int rpmY = y + boxHeight - 15; // Adjust Y for a static position inside the box
+            renderText(fontrenderer, rpmText, rpmX, rpmY, 0x999999); // RPM text rendered at fixed position inside the box
         }
     }
 
+    // Function to render text with shadow (helper method)
+    private static void renderText(FontRenderer fontrenderer, String text, int x, int y, int color) {
+        fontrenderer.drawStringWithShadow(text, x, y, color);
+    }
 
     // Function to get the fire mode text (Safe, Semi, Auto, Burst)
     private static String getFireModeText(HMGItem_Unified_Guns gun, int mode) {
@@ -68,8 +83,6 @@ public class AmmoHUDRenderer {
         else if (burst == -1) return "AUTO";
         else return burst + "BURST";
     }
-
-
 
     // Function to calculate total reserve ammo from player's inventory
     public static int getTotalReserveAmmo(ItemStack gunStack) {
@@ -104,7 +117,6 @@ public class AmmoHUDRenderer {
         return totalReserveAmmo;
     }
 
-
     // Function to draw a box with alpha transparency
     public static void drawRectWithAlpha(int left, int top, int right, int bottom, int color) {
         Tessellator tessellator = Tessellator.instance;
@@ -122,6 +134,7 @@ public class AmmoHUDRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 }
+
 
 
 
