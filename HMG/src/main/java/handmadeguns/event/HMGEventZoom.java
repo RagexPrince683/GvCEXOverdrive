@@ -4,6 +4,7 @@ import handmadeguns.HandmadeGunsCore;
 import handmadeguns.entity.PlacedGunEntity;
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
+import handmadeguns.event.AmmoHUDRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.entity.Entity;
@@ -463,9 +464,10 @@ public class HMGEventZoom {
 					}
 					GL11.glPopMatrix();
 					setUp2DView(minecraft);
-
+// Get screen dimensions
 					screenWidth = scaledresolution.getScaledWidth();
 					screenHeight = scaledresolution.getScaledHeight();
+
 					if (tags != null) {
 						{
 							NBTTagCompound tagCompound = tags.getCompoundTagAt(5);
@@ -479,40 +481,39 @@ public class HMGEventZoom {
 					GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 					GL11.glEnable(GL11.GL_BLEND);
 					GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
 					boolean skipAfter = false;
-					if(gunItem.gunInfo.script != null) {
+
+					if (gunItem.gunInfo.script != null) {
 						try {
-							skipAfter = (boolean) ((Invocable)gunItem.gunInfo.script).invokeFunction("GUI_rendering_2D", this,gunItem,gunstack);
+							skipAfter = (boolean) ((Invocable) gunItem.gunInfo.script).invokeFunction("GUI_rendering_2D", this, gunItem, gunstack);
 						} catch (NoSuchMethodException | ScriptException e) {
 							e.printStackTrace();
 						}
 					}
-					if(!skipAfter) {
-						String d = String.format("%1$3d", gunItem.remain_Bullet(gunstack));
-						String d1 = String.format("%1$3d", gunItem.max_Bullet(gunstack));
-						fontrenderer.drawStringWithShadow(d + " /" + d1, (int) screenWidth - 70, (int) screenHeight - fontrenderer.FONT_HEIGHT * 4, 0xFFFFFF);
 
-						GuiIngame g = minecraft.ingameGUI;
-						//g.drawTexturedModelRectFromIcon(screenWidth-40, screenHeight-33, gunItem.magazine.getIconFromDamage(0), 16, 16);
-						if (gunItem.getcurrentMagazine(gunstack) != null) {
-							int stacksize = 0;
-							minecraft.getTextureManager().bindTexture(TextureMap.locationItemsTexture);
-							g.drawTexturedModelRectFromIcon((int) screenWidth - 70, (int) screenHeight - 53, gunItem.getcurrentMagazine(gunstack).getIconFromDamage(0), 16, 16);
-							for (int is = 0; is < 36; ++is) {
-								InventoryPlayer playerInv = entityplayer.inventory;
-								ItemStack itemi = playerInv.getStackInSlot(is);
-								if (itemi != null && itemi.getItem() == gunItem.getcurrentMagazine(gunstack)) {
-									stacksize += itemi.stackSize;
-								}
-							}
-							String d2 = String.format("%1$3d", stacksize);
-							fontrenderer.drawStringWithShadow("x" + d2, (int) screenWidth - 50, (int) screenHeight - fontrenderer.FONT_HEIGHT * 5, 0xFFFFFF);
-						}
+					GuiIngame g = minecraft.ingameGUI;
+					if (!skipAfter) {
+						// Positioning for the magazine icons and counts
+						int boxHeight = 42; // Space for magazine info
+						int boxWidth = 65; // Adjusted width for the box (fits the icons)
+						int iconOffsetX = 6; // Offset for magazine icon X
+						int iconOffsetY = 20; // Offset for magazine icon Y
+						int x = (int) screenWidth - boxWidth - 10;
+						int y = (int) screenHeight - boxHeight - 100; // Position above the ammo HUD
 
+						// Render the selected magazine icon and "Next" label
 						if (gunItem.get_selectingMagazine(gunstack) != null && gunItem.getcurrentMagazine(gunstack) != gunItem.get_selectingMagazine(gunstack)) {
 							int stacksize = 0;
+
+							// Position the selected magazine above the current one
+							int selectedMagazineY = y - 35; // Adjust this to move the selected magazine higher
+
 							minecraft.getTextureManager().bindTexture(TextureMap.locationItemsTexture);
-							g.drawTexturedModelRectFromIcon((int) screenWidth - 120, (int) screenHeight - 53, gunItem.get_selectingMagazine(gunstack).getIconFromDamage(0), 16, 16);
+							// Draw the selected magazine icon above the current magazine icon
+							g.drawTexturedModelRectFromIcon(x + iconOffsetX, selectedMagazineY + iconOffsetY, gunItem.get_selectingMagazine(gunstack).getIconFromDamage(0), 16, 16);
+
+							// Check how many of the selected magazine are in the player's inventory
 							for (int is = 0; is < 36; ++is) {
 								InventoryPlayer playerInv = entityplayer.inventory;
 								ItemStack itemi = playerInv.getStackInSlot(is);
@@ -521,15 +522,40 @@ public class HMGEventZoom {
 								}
 							}
 							String d2 = String.format("%1$3d", stacksize);
-							fontrenderer.drawStringWithShadow("x" + d2, (int) screenWidth - 100, (int) screenHeight - fontrenderer.FONT_HEIGHT * 5, 0xFFFFFF);
-							fontrenderer.drawStringWithShadow("next", (int) screenWidth - 120, (int) screenHeight - fontrenderer.FONT_HEIGHT * 5 - 16, 0xFFFFFF);
+							fontrenderer.drawStringWithShadow("x" + d2, x + iconOffsetX + 30, selectedMagazineY + iconOffsetY, 0xFFFFFF);
+
+							// Position "Next" above the selected magazine count
+							fontrenderer.drawStringWithShadow("next", x + iconOffsetX, selectedMagazineY + iconOffsetY - 10, 0xFFFFFF);
 						}
-						this.renderBullet(fontrenderer, (int) screenWidth, (int) screenHeight, gunstack);
-						if (gunItem.gunInfo.canlock) {
-							if (nbt.getBoolean("SeekerOpened"))
-								fontrenderer.drawStringWithShadow("Seekeropen", (int) screenWidth - 60, (int) screenHeight - fontrenderer.FONT_HEIGHT * 2, 0xFFFFFF);
+
+						// Render the current magazine icon and count
+						if (gunItem.getcurrentMagazine(gunstack) != null) {
+							int stacksize = 0;
+							minecraft.getTextureManager().bindTexture(TextureMap.locationItemsTexture);
+							// Draw the current magazine icon
+							g.drawTexturedModelRectFromIcon(x + iconOffsetX, y + iconOffsetY, gunItem.getcurrentMagazine(gunstack).getIconFromDamage(0), 16, 16);
+
+							// Check how many of the current magazine are in the player's inventory
+							for (int is = 0; is < 36; ++is) {
+								InventoryPlayer playerInv = entityplayer.inventory;
+								ItemStack itemi = playerInv.getStackInSlot(is);
+								if (itemi != null && itemi.getItem() == gunItem.getcurrentMagazine(gunstack)) {
+									stacksize += itemi.stackSize;
+								}
+							}
+							String d2 = String.format("%1$3d", stacksize);
+							fontrenderer.drawStringWithShadow("x" + d2, x + iconOffsetX + 30, y + iconOffsetY, 0xFFFFFF);
+						}
+
+						// Render the box around both icons (ensuring no overlap)
+						AmmoHUDRenderer.drawRectWithAlpha(x, y - 35, x + boxWidth, y + boxHeight, 0x80000000);
+
+						// Render the Ammo HUD (ammo count for the gun and reserve)
+						if (gunstack != null && gunstack.getItem() instanceof HMGItem_Unified_Guns) {
+							AmmoHUDRenderer.renderAmmoHUD(fontrenderer, (int) screenWidth, (int) screenHeight, gunstack);
 						}
 					}
+
 					GL11.glPopMatrix();
 					GL11.glPopAttrib();
 

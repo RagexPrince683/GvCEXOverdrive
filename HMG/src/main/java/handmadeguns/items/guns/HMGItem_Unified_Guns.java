@@ -10,6 +10,7 @@ import handmadeguns.entity.HMGEntityLaser;
 import handmadeguns.entity.HMGEntityLight;
 import handmadeguns.entity.PlacedGunEntity;
 import handmadeguns.entity.bullets.*;
+import handmadeguns.event.AmmoHUDRenderer;
 import handmadeguns.items.*;
 import handmadeguns.network.*;
 import handmadevehicle.Utils;
@@ -1324,38 +1325,52 @@ public class HMGItem_Unified_Guns extends Item {
 		return temp;
 	}
 	public void proceedreload(ItemStack itemstack , World world , Entity entity , NBTTagCompound nbt, int i){
-		nbt.setInteger("getcurrentMagazine",nbt.getInteger("get_selectingMagazine"));
+		nbt.setInteger("getcurrentMagazine", nbt.getInteger("get_selectingMagazine"));
+
 		try {
-			if(guntemp.invocable!= null)
-				guntemp.invocable.invokeFunction("proceedreload",this,itemstack,nbt,entity);
-		} catch (ScriptException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
+			if(guntemp.invocable != null) {
+				guntemp.invocable.invokeFunction("proceedreload", this, itemstack, nbt, entity);
+			}
+		} catch (ScriptException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+
 		int reloadti = nbt.getInteger("RloadTime");
-		if (remain_Bullet(itemstack) <= 0 ) {
-			if(canreloadBullets(itemstack,world,entity)) {
+
+		// Check if current ammo is depleted
+		if (remain_Bullet(itemstack) <= 0) {
+			if (canreloadBullets(itemstack, world, entity)) {
 				if (!world.isRemote && reloadti == 0 && !gunInfo.isOneuse) {
 					HMGPacketHandler.INSTANCE.sendToAll(new PacketPlaysound(entity, gunInfo.soundre.length > nbt.getInteger("getcurrentMagazine") ? gunInfo.soundre[nbt.getInteger("getcurrentMagazine")] : gunInfo.soundre[0], gunInfo.soundrespeed, gunInfo.soundrelevel, true));
 				}
+
+				// Reload time countdown
 				++reloadti;
 				nbt.setBoolean("WaitReloading", false);
-			}else {
+
+				// Update total reserve ammo when reloading
+				int totalReserveAmmo = AmmoHUDRenderer.getTotalReserveAmmo(itemstack);
+				System.out.println("Total Reserve Ammo: " + totalReserveAmmo); // For debugging
+			} else {
 				nbt.setBoolean("IsReloading", false);
 				nbt.setBoolean("WaitReloading", true);
 			}
-		}else {
+		} else {
 			reloadti = 0;
 		}
-		if(!world.isRemote) {
+
+		// Perform reload logic when reload time reaches its limit
+		if (!world.isRemote) {
 			if (reloadti >= reloadTime(itemstack)) {
 				resetReload(itemstack, world, entity, i);
+
+				// Reset cocking state after reload
 				if (gunInfo.needFirstCock) {
 					nbt.setBoolean("cocking", false);
 				} else {
 					nbt.setBoolean("cocking", true);
 				}
+
 				nbt.setBoolean("IsReloading", false);
 				nbt.setBoolean("WaitReloading", false);
 				nbt.setInteger("RloadTime", 0);
@@ -1364,10 +1379,11 @@ public class HMGItem_Unified_Guns extends Item {
 			} else if (nbt.getBoolean("IsReloading")) {
 				nbt.setInteger("RloadTime", reloadti);
 			}
-		}else{
+		} else {
 			nbt.setInteger("RloadTime", reloadti);
 		}
 	}
+
 	public void resetReload(ItemStack par1ItemStack, World par2World, Entity entity, int i) {
 		if(guntemp != null)guntemp.items[5] = null;//撃ち終わりに特殊弾を消去
 		if(gunInfo.isOneuse) {
