@@ -18,38 +18,58 @@ public class AmmoHUDRenderer {
         if (!(gunstack.getItem() instanceof HMGItem_Unified_Guns)) return;
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) gunstack.getItem();
 
-        // Get the current ammo, magazine size, and total reserve ammo
-        int current = gun.remain_Bullet(gunstack);  // Current ammo in the gun
-        int reserve = getTotalReserveAmmo(gunstack); // Reserve ammo from inventory
+        // Ammo data
+        int current = gun.remain_Bullet(gunstack);
+        int reserve = getTotalReserveAmmo(gunstack);
 
-        // Calculate fire mode text (Safe, Semi, Auto, Burst)
+        // Fire mode
         int mode = gunstack.getTagCompound().getInteger("HMGMode");
         String modeText = getFireModeText(gun, mode);
 
-        // Draw hud box
+        // Proper RPM logic from mod behavior
+        String rpmText = "";
+        int burst = gun.getburstCount(mode);
+        boolean isSingle = (burst == 1 && gun.gunInfo.needcock);
+
+        if (!isSingle && !gun.gunInfo.rates.isEmpty() && gun.gunInfo.rates.size() > mode && gun.gunInfo.rates.get(mode) > 0) {
+            float delayTicks = gun.gunInfo.rates.get(mode);
+            int rpm = (int)(1200.0 / delayTicks); // 60s * 20 ticks = 1200
+            rpmText = rpm + " RPM";
+        }
+
+        // Box size
         int boxHeight = 40;
-        int boxWidth = 120;  // Box width
+        int boxWidth = 120;
         int x = screenWidth - boxWidth - 10;
         int y = screenHeight - boxHeight - 10;
 
-        // Draw the background box with adjusted height
         drawRectWithAlpha(x, y, x + boxWidth, y + boxHeight, 0x80000000);
 
-        // Format ammo string (current ammo / reserve ammo)
-        String ammoString = current + " / " + reserve;
-        fontrenderer.drawStringWithShadow(ammoString, x + 6, y + 6, 0xFFFFFF);
+        // Ammo string
+        fontrenderer.drawStringWithShadow(current + " / " + reserve, x + 6, y + 6, 0xFFFFFF);
+
+        // Fire mode
         fontrenderer.drawStringWithShadow(modeText, x + 6, y + 20, 0xCCCCCC);
+
+        // RPM (draw it right-aligned beside modeText)
+        if (!rpmText.isEmpty()) {
+            int modeTextWidth = fontrenderer.getStringWidth(modeText);
+            fontrenderer.drawStringWithShadow(rpmText, x + 12 + modeTextWidth, y + 20, 0x999999);
+        }
     }
+
 
     // Function to get the fire mode text (Safe, Semi, Auto, Burst)
     private static String getFireModeText(HMGItem_Unified_Guns gun, int mode) {
         int burst = gun.getburstCount(mode);
         if (burst == 0) return "SAFE";
-        else if (burst == 1 && gun.gunInfo.needcock) return "ONE";
+        else if (burst == 1 && gun.gunInfo.needcock) return "SINGLE";
         else if (burst == 1) return "SEMI";
         else if (burst == -1) return "AUTO";
         else return burst + "BURST";
     }
+
+
 
     // Function to calculate total reserve ammo from player's inventory
     public static int getTotalReserveAmmo(ItemStack gunStack) {
