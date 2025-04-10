@@ -18,15 +18,28 @@ public class AmmoHUDRenderer {
     public static void drawRectWithAlpha(int left, int top, int right, int bottom, int color) {
         Tessellator tessellator = Tessellator.instance;
 
-        // Draw the box without applying tilt
+        // Enable blending for transparency effects
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        // Set the color (with transparency)
+        // Render the glowing white border first (before the box)
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F); // Set white color for the glowing effect
+        float glowThickness = 2.0f; // Thickness of the border glow
+
+        // Draw the glowing border by making the box slightly larger than the original and drawing it first
+        tessellator.startDrawingQuads();
+        tessellator.addVertex((double) (left - glowThickness), (double) (bottom + glowThickness), 0.0D);
+        tessellator.addVertex((double) (right + glowThickness), (double) (bottom + glowThickness), 0.0D);
+        tessellator.addVertex((double) (right + glowThickness), (double) (top - glowThickness), 0.0D);
+        tessellator.addVertex((double) (left - glowThickness), (double) (top - glowThickness), 0.0D);
+        tessellator.draw();
+
+        // Now render the inner, darker box (the main box)
+        // Set the color for the main box (with a darker shade, reduce RGB values)
         GL11.glColor4ub((byte) (color >> 16 & 255), (byte) (color >> 8 & 255), (byte) (color & 255), (byte) (color >> 24 & 255));
 
-        // Draw the box first
+        // Draw the inner, darker box (with the same dimensions as before)
         tessellator.startDrawingQuads();
         tessellator.addVertex((double) left, (double) bottom, 0.0D);
         tessellator.addVertex((double) right, (double) bottom, 0.0D);
@@ -34,6 +47,32 @@ public class AmmoHUDRenderer {
         tessellator.addVertex((double) left, (double) top, 0.0D);
         tessellator.draw();
 
+        // Re-enable texture rendering and disable blending
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    // Function to draw the transparent box (no glowing effect)
+    public static void drawTransparentRect(int left, int top, int right, int bottom, int color) {
+        Tessellator tessellator = Tessellator.instance;
+
+        // Enable blending for transparency effects
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        // Set the color (with transparency)
+        GL11.glColor4ub((byte) (color >> 16 & 255), (byte) (color >> 8 & 255), (byte) (color & 255), (byte) (color >> 24 & 255));
+
+        // Draw the box without glowing
+        tessellator.startDrawingQuads();
+        tessellator.addVertex((double) left, (double) bottom, 0.0D);
+        tessellator.addVertex((double) right, (double) bottom, 0.0D);
+        tessellator.addVertex((double) right, (double) top, 0.0D);
+        tessellator.addVertex((double) left, (double) top, 0.0D);
+        tessellator.draw();
+
+        // Re-enable texture rendering and disable blending
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
     }
@@ -43,76 +82,57 @@ public class AmmoHUDRenderer {
         if (!(gunstack.getItem() instanceof HMGItem_Unified_Guns)) return;
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) gunstack.getItem();
 
-        // Ammo data
         int current = gun.remain_Bullet(gunstack);
         int reserve = getTotalReserveAmmo(gunstack);
-
-        // Format ammo counts with 3 digits (000 to 999)
         String currentAmmo = String.format("%03d", current);
         String reserveAmmo = String.format("%03d", reserve);
 
-        // Fire mode
         int mode = gunstack.getTagCompound().getInteger("HMGMode");
         String modeText = getFireModeText(gun, mode);
 
-        // RPM logic
         String rpmText = "";
         int burst = gun.getburstCount(mode);
         boolean isSingle = (burst == 1 && gun.gunInfo.needcock);
-
         if (!isSingle && !gun.gunInfo.rates.isEmpty() && gun.gunInfo.rates.size() > mode && gun.gunInfo.rates.get(mode) > 0) {
             float delayTicks = gun.gunInfo.rates.get(mode);
-            int rpm = (int) (1200.0 / delayTicks); // 60s * 20 ticks = 1200
+            int rpm = (int) (1200.0 / delayTicks);
             rpmText = rpm + " RPM";
         }
 
-        // Box size
-        int boxHeight = 45;
-        int boxWidth = 120;
-        int x = screenWidth - boxWidth - 10;
+        int boxHeight = 50;
+        int boxWidth = 100;
+        int x = screenWidth - boxWidth - 20;
         int y = screenHeight - boxHeight - 10;
 
-        // Render the box first (without text)
         drawRectWithAlpha(x, y, x + boxWidth, y + boxHeight, 0x80000000);
 
-        // Adjust text offsets to properly align with the tilted box
-        int textOffsetY = 4;  // Move the text up to align with the box
+        int textOffsetY = 5;
 
-        // Render current ammo with blue text and glow
-        renderTextWithGlow(fontrenderer, currentAmmo, x + 6, y + textOffsetY, 0x0000FF, 0x000000);  // Blue text with black glow
+        // Scaling for current ammo count
+        float currentAmmoScale = 2.2F;
+        float reserveAmmoScale = 1.0F   ;
 
-        // Calculate the new width after rendering current ammo (no scaling applied)
-        int currentAmmoWidth = fontrenderer.getStringWidth(currentAmmo);
+        // Scaled current ammo
+        float currentAmmoX = x + 6;
+        float currentAmmoY = y + textOffsetY;
+        renderTextWithGlow(fontrenderer, currentAmmo, currentAmmoX, currentAmmoY, 0xFFFFFF, 0x000000, currentAmmoScale);
 
-        // Reserve ammo count (slightly below current ammo, to the right of it)
-        renderText(fontrenderer, "/ " + reserveAmmo, x + 6 + currentAmmoWidth, y + textOffsetY, 0xBBBBBB);
+        // Width of scaled current ammo
+        int currentAmmoWidth = (int) (fontrenderer.getStringWidth(currentAmmo) * currentAmmoScale);
 
-        // Fire mode (move it upwards within the box)
-        renderFireModeWithColor(fontrenderer, modeText, x + 6 + currentAmmoWidth - 4, y + textOffsetY - 6);  // Move fire mode up
+        // Reserve ammo beside current, smaller
+        float reserveAmmoX = currentAmmoX + currentAmmoWidth + 4; // +4 for spacing
+        renderTextWithGlow(fontrenderer, " / " + reserveAmmo, reserveAmmoX, currentAmmoY + 1, 0xFFFFFF, 0x000000, reserveAmmoScale);
 
-        // RPM - Now static inside the box, not shifting
+        // Fire mode, aligned under reserve
+        renderFireModeWithColor(fontrenderer, modeText, (int) reserveAmmoX - 4, (int) currentAmmoY - 5);
+
+        // RPM text
         if (!rpmText.isEmpty()) {
-            int rpmX = x + 6; // Fixed X position within the box
-            int rpmY = y + boxHeight - 15; // Adjust Y for a static position inside the box
-            renderText(fontrenderer, rpmText, rpmX, rpmY, 0x999999); // RPM text rendered at fixed position inside the box
+            int rpmX = x + 6;
+            int rpmY = y + boxHeight - 20;
+            renderText(fontrenderer, rpmText, rpmX, rpmY, 0x999999, 1.0F);
         }
-    }
-
-    // Function to render text with glow effect
-    private static void renderTextWithGlow(FontRenderer fontrenderer, String text, int x, int y, int textColor, int glowColor) {
-        // Render glow first with an offset
-        renderText(fontrenderer, text, x - 1, y - 1, glowColor);
-        renderText(fontrenderer, text, x + 1, y - 1, glowColor);
-        renderText(fontrenderer, text, x - 1, y + 1, glowColor);
-        renderText(fontrenderer, text, x + 1, y + 1, glowColor);
-
-        // Render the original text on top
-        renderText(fontrenderer, text, x, y, textColor);
-    }
-
-    // Function to render text with shadow (helper method)
-    private static void renderText(FontRenderer fontrenderer, String text, int x, int y, int color) {
-        fontrenderer.drawStringWithShadow(text, x, y, color);
     }
 
     // Function to render fire mode text with color
@@ -133,9 +153,25 @@ public class AmmoHUDRenderer {
                 break;
         }
 
-        renderTextWithGlow(fontrenderer, "[" + modeText + "]", x + 6, y + 18, modeColor, 0x000000); // Glow effect in black
+        renderTextWithGlow(fontrenderer, "[" + modeText + "]", x + 6.0F, y + 18.0F, modeColor, 0x000000, 1.0F);
     }
 
+    public static void renderTextWithGlow(FontRenderer fontrenderer, String text, float x, float y, int textColor, int glowColor, float scale) {
+        // These offsets are scaled inside the GL context now
+        renderText(fontrenderer, text, x - 1 * scale, y - 1 * scale, glowColor, scale);
+        renderText(fontrenderer, text, x + 1 * scale, y - 1 * scale, glowColor, scale);
+        renderText(fontrenderer, text, x - 1 * scale, y + 1 * scale, glowColor, scale);
+        renderText(fontrenderer, text, x + 1 * scale, y + 1 * scale, glowColor, scale);
+        renderText(fontrenderer, text, x, y, textColor, scale);
+    }
+
+    public static void renderText(FontRenderer fontrenderer, String text, float x, float y, int color, float scale) {
+        GL11.glPushMatrix();
+        GL11.glTranslatef(x, y, 0.0F);
+        GL11.glScalef(scale, scale, scale);
+        fontrenderer.drawStringWithShadow(text, 0, 0, color); // Draw at (0,0) since position is handled by glTranslate
+        GL11.glPopMatrix();
+    }
     // Function to get the fire mode text (Safe, Semi, Auto, Burst)
     private static String getFireModeText(HMGItem_Unified_Guns gun, int mode) {
         int burst = gun.getburstCount(mode);

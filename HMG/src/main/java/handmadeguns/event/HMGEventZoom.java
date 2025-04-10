@@ -300,7 +300,7 @@ public class HMGEventZoom {
 
 							//if (entityplayer.isSneaking())
 
-							if (firstPerson_ADSState && prevADSState) {
+							if (firstPerson_ADSState && prevADSState && Minecraft.getMinecraft().currentScreen == null && gunstack == previtemstack) {
 								if (itemstackSight != null) {
 									if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
 										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer) {
@@ -464,16 +464,14 @@ public class HMGEventZoom {
 					}
 					GL11.glPopMatrix();
 					setUp2DView(minecraft);
-// Get screen dimensions
+					// Get screen dimensions
 					screenWidth = scaledresolution.getScaledWidth();
 					screenHeight = scaledresolution.getScaledHeight();
 
 					if (tags != null) {
-						{
-							NBTTagCompound tagCompound = tags.getCompoundTagAt(5);
-							ItemStack temp = ItemStack.loadItemStackFromNBT(tagCompound);
-							if (temp != null) itemss = temp.getItem();
-						}
+						NBTTagCompound tagCompound = tags.getCompoundTagAt(5);
+						ItemStack temp = ItemStack.loadItemStackFromNBT(tagCompound);
+						if (temp != null) itemss = temp.getItem();
 					}
 
 					FontRenderer fontrenderer = minecraft.fontRenderer;
@@ -494,23 +492,21 @@ public class HMGEventZoom {
 
 					GuiIngame g = minecraft.ingameGUI;
 					if (!skipAfter) {
-						// Positioning for the magazine icons and counts
-						int boxHeight = 42; // Space for magazine info
+						// Keeping your existing offsets and positions
+						int boxHeight = 5; // Space for magazine info
 						int boxWidth = 65; // Adjusted width for the box (fits the icons)
 						int iconOffsetX = 6; // Offset for magazine icon X
-						int iconOffsetY = 20; // Offset for magazine icon Y
+						int iconOffsetY = -15; // Offset for magazine icon Y
 						int x = (int) screenWidth - boxWidth - 10;
 						int y = (int) screenHeight - boxHeight - 100; // Position above the ammo HUD
 
-						// Render the selected magazine icon and "Next" label
+						// First render the icon to ensure it stays on top of the background
 						if (gunItem.get_selectingMagazine(gunstack) != null && gunItem.getcurrentMagazine(gunstack) != gunItem.get_selectingMagazine(gunstack)) {
 							int stacksize = 0;
-
-							// Position the selected magazine above the current one
-							int selectedMagazineY = y - 35; // Adjust this to move the selected magazine higher
+							int selectedMagazineY = y - 45; // Position the selected magazine box above the current one
 
 							minecraft.getTextureManager().bindTexture(TextureMap.locationItemsTexture);
-							// Draw the selected magazine icon above the current magazine icon
+							// Draw the selected magazine icon first (ensure it stays on top)
 							g.drawTexturedModelRectFromIcon(x + iconOffsetX, selectedMagazineY + iconOffsetY, gunItem.get_selectingMagazine(gunstack).getIconFromDamage(0), 16, 16);
 
 							// Check how many of the selected magazine are in the player's inventory
@@ -521,14 +517,17 @@ public class HMGEventZoom {
 									stacksize += itemi.stackSize;
 								}
 							}
-							String d2 = String.format("%1$3d", stacksize);
-							fontrenderer.drawStringWithShadow("x" + d2, x + iconOffsetX + 30, selectedMagazineY + iconOffsetY, 0xFFFFFF);
 
-							// Position "Next" above the selected magazine count
-							fontrenderer.drawStringWithShadow("next", x + iconOffsetX, selectedMagazineY + iconOffsetY - 10, 0xFFFFFF);
+							// Render the background box for the selected magazine (darker inner box)
+							AmmoHUDRenderer.drawTransparentRect(x, selectedMagazineY - 35, x + boxWidth, selectedMagazineY + boxHeight, 0x80000000);
+
+							// Render the "x" stack size text for the selected magazine
+							String d2 = String.format("%1$3d", stacksize);
+							AmmoHUDRenderer.renderTextWithGlow(fontrenderer, "x" + d2, x + iconOffsetX + 30, selectedMagazineY + iconOffsetY, 0xFFFFFF, 0x000000, 1.0f);
+							AmmoHUDRenderer.renderTextWithGlow(fontrenderer, "next", x + iconOffsetX, selectedMagazineY + iconOffsetY - 10, 0xFFFFFF, 0x000000, 1.0f);
 						}
 
-						// Render the current magazine icon and count
+						// Then render the current magazine box and icon
 						if (gunItem.getcurrentMagazine(gunstack) != null) {
 							int stacksize = 0;
 							minecraft.getTextureManager().bindTexture(TextureMap.locationItemsTexture);
@@ -543,12 +542,17 @@ public class HMGEventZoom {
 									stacksize += itemi.stackSize;
 								}
 							}
-							String d2 = String.format("%1$3d", stacksize);
-							fontrenderer.drawStringWithShadow("x" + d2, x + iconOffsetX + 30, y + iconOffsetY, 0xFFFFFF);
-						}
 
-						// Render the box around both icons (ensuring no overlap)
-						AmmoHUDRenderer.drawRectWithAlpha(x, y - 35, x + boxWidth, y + boxHeight, 0x80000000);
+							// Render the background box for the current magazine (this happens if the selected box was not drawn)
+							AmmoHUDRenderer.drawTransparentRect(x, y - 35, x + boxWidth, y + boxHeight, 0x80000000);
+
+							// Render the "x" stack size text for the current magazine
+							String d2 = String.format("%1$3d", stacksize);
+							AmmoHUDRenderer.renderTextWithGlow(fontrenderer, "x" + d2, x + iconOffsetX + 30, y + iconOffsetY, 0xFFFFFF, 0x000000, 1.0f);
+
+							// Render the "Current" label above the current magazine icon
+							AmmoHUDRenderer.renderTextWithGlow(fontrenderer, "Current", x + iconOffsetX, y + iconOffsetY - 10, 0xFFFFFF, 0x000000, 1.0f);
+						}
 
 						// Render the Ammo HUD (ammo count for the gun and reserve)
 						if (gunstack != null && gunstack.getItem() instanceof HMGItem_Unified_Guns) {
