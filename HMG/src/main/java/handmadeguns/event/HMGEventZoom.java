@@ -300,7 +300,7 @@ public class HMGEventZoom {
 
 							//if (entityplayer.isSneaking())
 
-							if (firstPerson_ADSState && prevADSState && Minecraft.getMinecraft().currentScreen == null && gunstack == previtemstack) {
+							if (firstPerson_ADSState && prevADSState) {
 								if (itemstackSight != null) {
 									if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
 										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer) {
