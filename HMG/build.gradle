@@ -1,5 +1,5 @@
 
-project.version = "Overdrive2.5"
+project.version = "Overdrive2.6"
 
 tasks.withType(Jar) {
     compileJava.options.encoding = 'UTF-8'
