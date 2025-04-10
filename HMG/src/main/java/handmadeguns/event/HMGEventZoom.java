@@ -497,8 +497,8 @@ public class HMGEventZoom {
 						int boxWidth = 65; // Adjusted width for the box (fits the icons)
 						int iconOffsetX = 6; // Offset for magazine icon X
 						int iconOffsetY = -15; // Offset for magazine icon Y
-						int x = (int) screenWidth - boxWidth - 10;
-						int y = (int) screenHeight - boxHeight - 100; // Position above the ammo HUD
+						int x = (int) screenWidth - boxWidth - 40;
+						int y = (int) screenHeight - boxHeight - 110; // Position above the ammo HUD
 
 						// First render the icon to ensure it stays on top of the background
 						if (gunItem.get_selectingMagazine(gunstack) != null && gunItem.getcurrentMagazine(gunstack) != gunItem.get_selectingMagazine(gunstack)) {
@@ -524,7 +524,7 @@ public class HMGEventZoom {
 							// Render the "x" stack size text for the selected magazine
 							String d2 = String.format("%1$3d", stacksize);
 							AmmoHUDRenderer.renderTextWithGlow(fontrenderer, "x" + d2, x + iconOffsetX + 30, selectedMagazineY + iconOffsetY, 0xFFFFFF, 0x000000, 1.0f);
-							AmmoHUDRenderer.renderTextWithGlow(fontrenderer, "next", x + iconOffsetX, selectedMagazineY + iconOffsetY - 10, 0xFFFFFF, 0x000000, 1.0f);
+							AmmoHUDRenderer.renderTextWithGlow(fontrenderer, "Next", x + iconOffsetX, selectedMagazineY + iconOffsetY - 10, 0xFFFFFF, 0x000000, 1.0f);
 						}
 
 						// Then render the current magazine box and icon
@@ -611,7 +611,7 @@ public class HMGEventZoom {
 		Minecraft.getMinecraft().renderEngine.bindTexture(icons);
 	}
 
-	
+
 	@SideOnly(Side.CLIENT)
 	protected void renderBullet(FontRenderer fontrenderer, int i, int j, ItemStack itemstack) {
 		String sss = "null";
@@ -851,29 +851,29 @@ public class HMGEventZoom {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDepthMask(false);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F); // Adjust alpha for transparency (50% transparent)
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
-//		OpenGlHelper.glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR, 1, 0);
 		GL11.glAlphaFunc(GL11.GL_GREATER, 0);
-		glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_COLOR);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // Standard transparency blend
 		minecraft.getTextureManager().bindTexture(crosstex);
-//		GL11.glTranslatef(i/2f, j/2f,0);
-		double x =bure*2d/10d;
-		double y =-1d/10d;
-		double widthx = 16d/10d;
-		double widthy = 2d/10d;
-		for(int cnt = 0;cnt < 4;cnt ++ ) {
+
+		double x = bure * 2d / 10d;
+		double y = -1d / 10d;
+		double widthx = 16d / 10d;
+		double widthy = 2d / 10d;
+
+		for (int cnt = 0; cnt < 4; cnt++) {
 			Tessellator tessellator = Tessellator.instance;
 			tessellator.startDrawingQuads();
-			tessellator.addVertexWithUV(x + 0		, y + widthy	, 20.0D, 0.0D, 1.0D);
-			tessellator.addVertexWithUV(x + widthx	, y + widthy	, 20.0D, 1.0D, 1.0D);
-			tessellator.addVertexWithUV(x + widthx	, y + 0			, 20.0D, 1.0D, 0.0D);
-			tessellator.addVertexWithUV(x + 0		, y + 0			, 20.0D, 0.0D, 0.0D);
+			tessellator.addVertexWithUV(x + 0, y + widthy, 20.0D, 0.0D, 1.0D);
+			tessellator.addVertexWithUV(x + widthx, y + widthy, 20.0D, 1.0D, 1.0D);
+			tessellator.addVertexWithUV(x + widthx, y + 0, 20.0D, 1.0D, 0.0D);
+			tessellator.addVertexWithUV(x + 0, y + 0, 20.0D, 0.0D, 0.0D);
 			tessellator.draw();
 			GL11.glRotatef(90, 0, 0, 1);
 		}
+
 //		tessellator.startDrawingQuads();
 //		tessellator.addVertexWithUV(x + 0   ,y +widthy, 10.0D, 0.0D, 1.0D);
 //		tessellator.addVertexWithUV(x+widthx,y +widthy, 10.0D, 1.0D, 1.0D);

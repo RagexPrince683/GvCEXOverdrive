@@ -101,8 +101,8 @@ public class AmmoHUDRenderer {
 
         int boxHeight = 50;
         int boxWidth = 100;
-        int x = screenWidth - boxWidth - 20;
-        int y = screenHeight - boxHeight - 10;
+        int x = screenWidth - boxWidth - 40;
+        int y = screenHeight - boxHeight - 20;
 
         drawRectWithAlpha(x, y, x + boxWidth, y + boxHeight, 0x80000000);
 
