@@ -1347,10 +1347,7 @@ public class HMGItem_Unified_Guns extends Item {
 				// Reload time countdown
 				++reloadti;
 				nbt.setBoolean("WaitReloading", false);
-
-				// Update total reserve ammo when reloading
-				int totalReserveAmmo = AmmoHUDRenderer.getTotalReserveAmmo(itemstack);
-				System.out.println("Total Reserve Ammo: " + totalReserveAmmo); // For debugging
+				
 			} else {
 				nbt.setBoolean("IsReloading", false);
 				nbt.setBoolean("WaitReloading", true);
