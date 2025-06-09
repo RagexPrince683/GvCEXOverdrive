@@ -21,6 +21,7 @@ import java.util.*;
 import static java.lang.Math.abs;
 
 public class HMGExplosion extends Explosion {
+	//todo hardpatch for MCH vehicles
 	private static final Random explosionRNG = new Random();
 	public HMGExplosion(World p_i1948_1_, Entity p_i1948_2_, double p_i1948_3_, double p_i1948_5_, double p_i1948_7_, float p_i1948_9_) {
 		super(p_i1948_1_, p_i1948_2_, p_i1948_3_, p_i1948_5_, p_i1948_7_, p_i1948_9_);

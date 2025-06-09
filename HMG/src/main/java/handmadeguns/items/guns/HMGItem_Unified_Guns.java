@@ -1126,6 +1126,7 @@ public class HMGItem_Unified_Guns extends Item {
 		return bulletinstances;
 	}
 	public HMGEntityBulletBase[] FireBulletRPG(World par2World, Entity par3Entity){
+		//dawhg I just want to fix the MCH BS
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
 		for(int i = 0; i < gunInfo.pellet; i++){
 			bulletinstances[i] = new HMGEntityBulletRocket(par2World, par3Entity,

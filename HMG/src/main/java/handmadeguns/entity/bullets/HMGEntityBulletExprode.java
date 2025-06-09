@@ -29,6 +29,7 @@ import static handmadeguns.HandmadeGunsCore.cfg_blockdestroy;
 import static handmadeguns.HandmadeGunsCore.islmmloaded;
 
 public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEntityAdditionalSpawnData
+	//oh my god why
 {
 	public float exlevel = 2.5F;
 	public MovingObjectPosition hitobjectposition;

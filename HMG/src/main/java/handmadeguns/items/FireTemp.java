@@ -36,6 +36,9 @@ public class FireTemp {
 		this.speed *= magazine.speedmodify;
 		if(magazine.fuse != -1)this.fuse = magazine.fuse;
 		if(magazine.explosionlevel != -1)this.exlevel = magazine.explosionlevel;
+		//todo this is causing mch vehicles to take way less damage than they should from anti tank weaponry
+		// specifically explosive weaponry because the math for MCH is wrong for explosion calcs but also the logic for this is weak
+		//
 		this.destroyBlock &= magazine.blockdestroyex;
 		if(magazine.bulletmodel != null)this.model = magazine.bulletmodel;
 		

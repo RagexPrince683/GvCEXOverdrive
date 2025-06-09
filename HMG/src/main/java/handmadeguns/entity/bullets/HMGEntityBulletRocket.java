@@ -10,6 +10,7 @@ import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 
 public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEntityAdditionalSpawnData
 {
+	//what the actual fuck is this spaghetti nightmare code
 	public HMGEntityBulletRocket(World worldIn) {
 		super(worldIn);
 	}
@@ -20,6 +21,13 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 		this.bouncerate = 0.1f;
 		
 	}
+
+	@Override
+	public void explode(double x, double y, double z, float level, boolean candestroy) {
+		System.out.println("Rocket tried to explode but override blocked it.");
+		this.setDead(); // Suppress explosion
+	}
+
 	public HMGEntityBulletRocket(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, float exl, boolean canex) {
 		this(worldIn, throwerIn, damege, bspeed, bure);
 		exlevel = exl;
