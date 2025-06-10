@@ -4,7 +4,10 @@ package handmadeguns.entity.bullets;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import handmadeguns.network.PacketSpawnParticle;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+
+import java.util.List;
 
 import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 
@@ -24,11 +27,43 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 
 	@Override
 	public void explode(double x, double y, double z, float level, boolean candestroy) {
-		//System.out.println("Rocket tried to explode but override blocked it.");
-		//todo override with MCH style explosion
-		//this works but like at what cost
-		//so we will want like entity.attackEntityFrom(ds, damage); stuff here
-		this.setDead(); // Suppress explosion
+		if (!worldObj.isRemote) {
+			// Handle damage to nearby entities
+			List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this,
+					this.boundingBox.expand(3.5D, 3.5D, 3.5D)); // ~7x7x7 damage radius (adjustable)
+
+			for (Entity target : entities) {
+				if (!target.isDead && target.canBeCollidedWith()) {
+					float distance = (float) this.getDistanceToEntity(target);
+					float damage = this.getDamageBasedOnDistance(distance, level); // Your method (below)
+					DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
+
+					// Optional: pierce logic, armor reduction, etc.
+					target.attackEntityFrom(ds, damage);
+				}
+			}
+
+			// Optional explosion visual + block damage if allowed
+			if (canex) {
+				worldObj.createExplosion(this, x, y, z, level, candestroy); // handles both visual and terrain
+			}
+		}
+
+		this.setDead();
+	}
+
+	private float getDamageBasedOnDistance(float distance, float explosionPower) {
+		//float explosionPower is never used
+		float maxDamage = (float)this.damage; // dip my balls in texas road house butter
+		float falloffStart = 1.5f;
+		float falloffEnd = 3.5f;
+
+		if (distance <= falloffStart) return maxDamage;
+		if (distance >= falloffEnd) return 0;
+
+		float falloffRange = falloffEnd - falloffStart;
+		float scale = 1.0f - ((distance - falloffStart) / falloffRange);
+		return maxDamage * scale;
 	}
 
 	public HMGEntityBulletRocket(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, float exl, boolean canex) {
