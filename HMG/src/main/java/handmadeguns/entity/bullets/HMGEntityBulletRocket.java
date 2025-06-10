@@ -24,7 +24,10 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 
 	@Override
 	public void explode(double x, double y, double z, float level, boolean candestroy) {
-		System.out.println("Rocket tried to explode but override blocked it.");
+		//System.out.println("Rocket tried to explode but override blocked it.");
+		//todo override with MCH style explosion
+		//this works but like at what cost
+		//so we will want like entity.attackEntityFrom(ds, damage); stuff here
 		this.setDead(); // Suppress explosion
 	}
 
