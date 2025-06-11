@@ -128,6 +128,8 @@ public class HMGExplosion extends Explosion {
 					double d10 = (double)this.worldObj.getBlockDensity(vec3, entity.boundingBox);
 					double d11 = (1.0D - d4) * d10;
 					entity.attackEntityFrom(DamageSource.setExplosionSource(this), (float)((int)((d11 * d11 + d11) / 1.2D * (double)this.explosionSize)));
+					//old method:
+					//entity.attackEntityFrom(DamageSource.setExplosionSource(this), (float)((int)((d11 * d11 + d11) / 2.0D * 8.0D * (double)this.explosionSize + 1.0D)));
 					//float damage = (float)((int)((var41 * var41 + var41) / 1.2D * (double)super.explosionSize));
 					//hopefully parity with MCH so we aren't completely busting our balls trying to compat ts into oblivion
 					double d8 = EnchantmentProtection.func_92092_a(entity, d11);

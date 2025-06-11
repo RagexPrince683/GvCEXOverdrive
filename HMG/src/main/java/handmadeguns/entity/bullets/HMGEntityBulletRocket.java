@@ -43,10 +43,10 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 				}
 			}
 
-			// Optional explosion visual + block damage if allowed
-			if (canex) {
+			// removed if statement
+			//if (canex) {
 				worldObj.createExplosion(this, x, y, z, level, candestroy); // handles both visual and terrain
-			}
+			//}
 		}
 
 		this.setDead();
