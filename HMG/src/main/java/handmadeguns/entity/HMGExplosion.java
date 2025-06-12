@@ -46,8 +46,13 @@ public class HMGExplosion extends Explosion {
 
 			double distance = Math.sqrt(distSq);
 			double exposure = (1.0 - distance / radius);
+			//get BulletPower value here from the acutal fucking HMG shit not just 'size'
 
-			float damage = (this.explosionSize * 100F) * (float) exposure; // tune multiplier
+			//we want BulletPower which is gunInfo.power in GunInfo.java which is also gunInfo.power = (int) (parseInt(type[1]) * damageCof);
+			//whatever that means, which is also this.power = gunInfo.power;
+			//I FUCKING LOVE THIS SHIT IT'S DEFINITELY NOT JUST INFINITE SMOKE AND FUCKING MIRRORS YAYYYYYYY
+
+			float damage = (this.explosionSize * BulletPower) * (float) exposure; // tune multiplier
 
 			// Force explosion damage handling in MCH_EntityAircraft
 			DamageSource ds = DamageSource.setExplosionSource(this);

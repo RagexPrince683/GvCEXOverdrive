@@ -612,6 +612,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 							accelVec.sub(new Vector3d(this.posX,this.posY,this.posZ));
 							accelVec.normalize();
 							entity1.hurtResistantTime = 0;
+							//todo here?
 							entity1.attackEntityFrom((new EntityDamageSourceIndirect("explosion", this, this.getThrower())).setProjectile().setExplosion(), (float) (var2*f/(damageRange * damageRange)));
 							entity1.motionX -=accelVec.x *  var2/12000 * f /(damageRange * damageRange);
 							entity1.motionY -=accelVec.y *  var2/12000 * f /(damageRange * damageRange);
