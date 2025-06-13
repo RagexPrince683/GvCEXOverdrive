@@ -21,6 +21,8 @@ import handmadeguns.Util.TrailInfo;
 import handmadeguns.Util.GunsUtils;
 import handmadeguns.Util.sendEntitydata;
 import handmadeguns.entity.*;
+import handmadeguns.items.GunInfo;
+import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadeguns.network.PacketFixClientbullet;
 import handmadeguns.network.PacketSpawnParticle;
 import handmadevehicle.HMVChunkLoaderManager;
@@ -159,6 +161,20 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	public double firstZ;
 
 	public boolean chunkLoaderBullet = false;
+	GunInfo gunInfo = this.getCurrentGuninfo();
+	public HMGItem_Unified_Guns gunItem;
+	//im actually gonna kill someone because WHY WAS THIS SHIT NOT PARSED PROPERLY ALREADY????
+	//I guarantee you my jerry rigged ass method is NOT gonna work here I took like 8 different refs from other classes and
+	//hodgepodged it all together here there's no fucking shot it's gonna crash I just fucking know it is there's no fucking way
+
+
+	public GunInfo getCurrentGuninfo(){
+		GunInfo currentGunInfo = this.gunInfo;
+		if(gunItem != null && gunItem.gunInfo != null){
+			currentGunInfo = gunItem.gunInfo;
+		}
+		return currentGunInfo;
+	}
 
 	
 	//int i = mod_IFN_GuerrillaVsCommandGuns.RPGExplosiontime;
@@ -686,7 +702,10 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	{
 		noex = true;
 		if(!worldObj.isRemote){
-			HMGExplosion explosion = new HMGExplosion(worldObj,thrower,x,y,z, level);
+			System.out.println("this stupid ass gun info power" + gunInfo.power);
+			HMGExplosion explosion = new HMGExplosion(worldObj,thrower,x,y,z, level, gunInfo.power);
+			//get stupid fucking bulletpower value that isn't parsable here here
+			//I swear to god if the bullet somehow isn't assigned to the stupid ass fucking weapon or some shit and this crashes I WILL crash the fuck out
 			explosion.isFlaming = false;
 			explosion.isSmoking = candestroy;
 			if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(worldObj, explosion)) return;

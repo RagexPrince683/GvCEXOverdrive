@@ -320,7 +320,8 @@ public class GVCEntityGuerrillaBM extends EntityGBase
     public void explode(double x,double y,double z,float level,boolean candestroy)
     {
         if(!worldObj.isRemote){
-            HMGExplosion explosion = new HMGExplosion(worldObj,this,x,y,z, level);
+            HMGExplosion explosion = new HMGExplosion(worldObj,this,x,y,z, level, 100);
+            //I literally cannot be bothered to fix this
             explosion.isFlaming = false;
             explosion.isSmoking = candestroy;
             if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(worldObj, explosion)) return;

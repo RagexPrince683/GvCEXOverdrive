@@ -11,22 +11,23 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class HMGExplosion extends Explosion {
-
 	private final World worldObj;
+	private final float bulletPower;
 
-	public HMGExplosion(World world, Entity exploder, double x, double y, double z, float size) {
+	public HMGExplosion(World world, Entity exploder, double x, double y, double z, float size, float bulletPower) {
 		super(world, exploder, x, y, z, size);
 		this.worldObj = world;
+		this.bulletPower = bulletPower;
 	}
 
 	@Override
 	public void doExplosionA() {
-		// Skip vanilla block damage
+		// Skipping vanilla explosion block logic
 	}
 
 	@Override
 	public void doExplosionB(boolean doParticles) {
-		float radius = this.explosionSize * 2.0F;
+		float radius = this.explosionSize;
 		AxisAlignedBB aabb = AxisAlignedBB.getBoundingBox(
 				explosionX - radius, explosionY - radius, explosionZ - radius,
 				explosionX + radius, explosionY + radius, explosionZ + radius
@@ -45,22 +46,18 @@ public class HMGExplosion extends Explosion {
 			if (distSq > radius * radius) continue;
 
 			double distance = Math.sqrt(distSq);
-			double exposure = (1.0 - distance / radius);
-			//get BulletPower value here from the acutal fucking HMG shit not just 'size'
+			double exposure = 1.0 - (distance / radius);
+			exposure = Math.max(0, exposure); // clamp
 
-			//we want BulletPower which is gunInfo.power in GunInfo.java which is also gunInfo.power = (int) (parseInt(type[1]) * damageCof);
-			//whatever that means, which is also this.power = gunInfo.power;
-			//I FUCKING LOVE THIS SHIT IT'S DEFINITELY NOT JUST INFINITE SMOKE AND FUCKING MIRRORS YAYYYYYYY
+			float damage = this.bulletPower * (float) exposure;
 
-			float damage = (this.explosionSize * BulletPower) * (float) exposure; // tune multiplier
-
-			// Force explosion damage handling in MCH_EntityAircraft
 			DamageSource ds = DamageSource.setExplosionSource(this);
 			try {
 				entity.attackEntityFrom(ds, damage);
 			} catch (Exception ex) {
-				ex.printStackTrace(); // don't crash the server
+				ex.printStackTrace();
 			}
 		}
 	}
 }
+
