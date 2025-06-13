@@ -2,6 +2,7 @@ package handmadeguns.entity.bullets;
 
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import handmadeguns.items.GunInfo;
 import handmadeguns.network.PacketSpawnParticle;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.DamageSource;
@@ -13,48 +14,54 @@ import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 
 public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEntityAdditionalSpawnData
 {
+	protected GunInfo gunInfo;
+	protected int power;
+
 	//what the actual fuck is this spaghetti nightmare code
 	public HMGEntityBulletRocket(World worldIn) {
 		super(worldIn);
 	}
-	public HMGEntityBulletRocket(World worldIn, Entity throwerIn, int damege, float bspeed, float bure) {
-		super(worldIn, throwerIn, damege, bspeed, bure);
+	public HMGEntityBulletRocket(World world, Entity thrower, GunInfo gunInfo, float speed, float spread, float exl, boolean canex) {
+		super(world, thrower, gunInfo.power, speed, spread);
+		this.gunInfo = gunInfo;
+		this.power = gunInfo.power;
 		this.bulletTypeName = "byfrou01_Rocket";
 		this.canbounce = false;
 		this.bouncerate = 0.1f;
-		
+		this.exlevel = exl;
+		this.canex = canex;
 	}
+
 
 	@Override
 	public void explode(double x, double y, double z, float level, boolean candestroy) {
 		if (!worldObj.isRemote) {
-			// Handle damage to nearby entities
+			float explosionRadius = 3.5F; // adjust radius
+
 			List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this,
-					this.boundingBox.expand(3.5D, 3.5D, 3.5D)); // ~7x7x7 damage radius (adjustable)
+					this.boundingBox.expand(explosionRadius, explosionRadius, explosionRadius));
 
 			for (Entity target : entities) {
 				if (!target.isDead && target.canBeCollidedWith()) {
 					float distance = (float) this.getDistanceToEntity(target);
-					float damage = this.getDamageBasedOnDistance(distance, level); // Your method (below)
+
+					// maxDamage based on gunInfo
+					float maxDamage = gunInfo != null ? gunInfo.power : this.power;
+					float damage = getDamageBasedOnDistance(distance, level, maxDamage);
 					DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
 
-					// Optional: pierce logic, armor reduction, etc.
 					target.attackEntityFrom(ds, damage);
 				}
 			}
 
-			// removed if statement
-			//if (canex) {
-				worldObj.createExplosion(this, x, y, z, level, candestroy); // handles both visual and terrain
-			//}
+			// Do the visual explosion
+			worldObj.createExplosion(this, x, y, z, level, candestroy);
 		}
 
 		this.setDead();
 	}
 
-	private float getDamageBasedOnDistance(float distance, float explosionPower) {
-		//float explosionPower is never used
-		float maxDamage = (float)this.damage; // dip my balls in texas road house butter
+	private float getDamageBasedOnDistance(float distance, float explosionPower, float maxDamage) {
 		float falloffStart = 1.5f;
 		float falloffEnd = 3.5f;
 
@@ -66,13 +73,13 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 		return maxDamage * scale;
 	}
 
-	public HMGEntityBulletRocket(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, float exl, boolean canex) {
-		this(worldIn, throwerIn, damege, bspeed, bure);
-		exlevel = exl;
-		this.canex = canex;
-		this.canbounce = false;
-		this.bouncerate = 0.1f;
-	}
+	//public HMGEntityBulletRocket(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, float exl, boolean canex) {
+	//	this(worldIn, throwerIn, damege, bspeed, bure);
+	//	exlevel = exl;
+	//	this.canex = canex;
+	//	this.canbounce = false;
+	//	this.bouncerate = 0.1f;
+	//}
 	public HMGEntityBulletRocket(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, float exl, boolean canex, String modelname) {
 		super(worldIn, throwerIn, damege, bspeed, bure,exl,canex, modelname);
 		exlevel = exl;
