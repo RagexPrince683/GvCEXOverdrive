@@ -62,7 +62,7 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 	}
 
 	private float getDamageBasedOnDistance(float distance, float explosionPower, float maxDamage) {
-		float falloffStart = 1.5f;
+		float falloffStart = 0.5f;
 		float falloffEnd = 3.5f;
 
 		if (distance <= falloffStart) return maxDamage;
