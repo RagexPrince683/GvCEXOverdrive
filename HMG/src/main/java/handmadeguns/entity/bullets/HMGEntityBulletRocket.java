@@ -29,6 +29,10 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 	public void explode(double x, double y, double z, float level, boolean candestroy) {
 		System.out.println("explode fired");
 		if (!worldObj.isRemote) {
+			//handle damage in range probably or something idk hopefully this works
+			DamageSource ds1 = DamageSource.causeThrownDamage(this, this.thrower);
+			this.attackEntityFrom(ds1, Bdamege);
+			System.out.println("serverside damage applied");
 			// Handle damage to nearby entities
 			List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this,
 					this.boundingBox.expand(3.5D, 3.5D, 3.5D)); // ~7x7x7 damage radius (adjustable)
