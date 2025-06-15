@@ -36,7 +36,8 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 
 			for (Entity target : entities) {
 				if (!target.isDead && target.canBeCollidedWith()) {
-					float distance = (float) this.getDistanceToEntity(target);
+					//float distance = (float) this.getDistanceToEntity(target);
+					//dist unused
 					//float damage = this.getDamageBasedOnDistance(distance, level); // Your method (below)
 					//todo get the fucking stupid ass fucking gunpower info or whatever the fuck we were working
 					// with before the big ass error of death happened
