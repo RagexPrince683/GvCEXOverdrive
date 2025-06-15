@@ -31,15 +31,21 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 			// Handle damage to nearby entities
 			List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this,
 					this.boundingBox.expand(3.5D, 3.5D, 3.5D)); // ~7x7x7 damage radius (adjustable)
+			//todo expand size to be the actual explosion size value
 
 			for (Entity target : entities) {
 				if (!target.isDead && target.canBeCollidedWith()) {
 					float distance = (float) this.getDistanceToEntity(target);
-					float damage = this.getDamageBasedOnDistance(distance, level); // Your method (below)
+					//float damage = this.getDamageBasedOnDistance(distance, level); // Your method (below)
+					//todo get the fucking stupid ass fucking gunpower info or whatever the fuck we were working
+					// with before the big ass error of death happened
+					System.out.println("new explosion bullshit" + Bdamege + "bdamage" + this.thrower);
+					//damage = this.whateverthefuck
 					DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
 
-					// Optional: pierce logic, armor reduction, etc.
-					target.attackEntityFrom(ds, damage);
+					// hopefully does the base damage that the projectile does as opposed to relying on the stupid fucking explosion value
+					target.attackEntityFrom(ds, Bdamege);
+					//holy shit this is a nightmare to work with
 				}
 			}
 
@@ -52,19 +58,20 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 		this.setDead();
 	}
 
-	private float getDamageBasedOnDistance(float distance, float explosionPower) {
-		//float explosionPower is never used
-		float maxDamage = (float)this.damage; // dip my balls in texas road house butter
-		float falloffStart = 1.5f;
-		float falloffEnd = 3.5f;
-
-		if (distance <= falloffStart) return maxDamage;
-		if (distance >= falloffEnd) return 0;
-
-		float falloffRange = falloffEnd - falloffStart;
-		float scale = 1.0f - ((distance - falloffStart) / falloffRange);
-		return maxDamage * scale;
-	}
+	//private float getDamageBasedOnDistance(float distance, float explosionPower) {
+	//	//float explosionPower is never used
+	//	float maxDamage = (float)this.damage; // dip my balls in texas road house butter
+	//	float falloffStart = 1.5f;
+	//	float falloffEnd = 3.5f;
+//
+	//	if (distance <= falloffStart) return maxDamage;
+	//	if (distance >= falloffEnd) return 0;
+//
+	//	float falloffRange = falloffEnd - falloffStart;
+	//	float scale = 1.0f - ((distance - falloffStart) / falloffRange);
+	//	return maxDamage * scale;
+	//}
+	//DOES NOT WORK, CAUSED A LOT OF CRASHES AND ISSUES
 
 	public HMGEntityBulletRocket(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, float exl, boolean canex) {
 		this(worldIn, throwerIn, damege, bspeed, bure);
