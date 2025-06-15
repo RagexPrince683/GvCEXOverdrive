@@ -27,6 +27,7 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 
 	@Override
 	public void explode(double x, double y, double z, float level, boolean candestroy) {
+		System.out.println("explode fired");
 		if (!worldObj.isRemote) {
 			// Handle damage to nearby entities
 			List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this,

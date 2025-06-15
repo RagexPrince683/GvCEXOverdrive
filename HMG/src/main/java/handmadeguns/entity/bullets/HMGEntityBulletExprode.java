@@ -136,6 +136,11 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 	 */
 	protected void onImpact(MovingObjectPosition var1)
 	{
+		DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
+		//hopefully whenever the other bullshit logic isn't fired this shit can clutch up and make
+		// SURE MCH tanks recieve the damage that should be applied.
+		this.attackEntityFrom(ds, Bdamege);
+
 		super.onImpact(var1);
 		if (var1.entityHit != null)
 		{
