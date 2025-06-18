@@ -36,8 +36,13 @@ public class HMGLivingUpdateEvent {
 
         // Check if it's a headshot
         if (isHeadshot(entity, attacker)) {
-            event.ammount *= 2.0F; // Double the damage for headshots
-            entity.worldObj.playSoundAtEntity(entity, "random.orb", 1.0F, 1.0F); // Headshot sound
+            event.ammount *= 1.75F; // Double the damage for headshots
+            //changed from 2 to 1.75 because it seemed a little cancer
+            //entity.worldObj.playSoundAtEntity(entity, "random.orb", 1.0F, 1.0F); // Headshot sound
+            entity.worldObj.playSoundAtEntity(entity, "note.bd", 1.0F, 1.0F); // Headshot sound
+            //it sounds at least a bit better but I don't feel like adding custom sounds rn
+
+            //todo change to a gore sound
 
             // Mark this entity as having processed headshot damage
             headshotProcessed.put(entity, true);
@@ -56,8 +61,50 @@ public class HMGLivingUpdateEvent {
     }
 
     private boolean isHeadshot(EntityLivingBase entity, Entity attacker) {
+
+        //this is probably gassing out the vehicles and making the player vulnerable/causing that one kick where you can smack yourself
+
+
+        //todo: IF MCH_EntityAircraft or any SUBSIDIARIES RETURN FALSE!!!
+        //todone also if attacker is attacking self return FALSE!!!
+
         // Check for null or invalid input
         if (entity == null || attacker == null) {
+            return false;
+        }
+
+        if (entity == attacker) {
+            return false;
+        }
+
+        //if(entity.entityClassName.contains("MCH_EntityHeli")
+        //        || entity.entityClassName.contains("MCP_EntityPlane")
+        //        || entity.entityClassName.contains("MCH_EntityShip")
+        //        || entity.entityClassName.contains("MCH_EntityTank")
+        //        || entity.entityClassName.contains("MCH_EntityVehicle")) {
+        //    return false;
+        //}
+
+        //unfortunately due to headache simulator (this not being MCH we don't have access to MCH, it's classes or its methods)
+
+        //ok let's do some other bullshit
+
+        String entityClassName = entity.getClass().getName();
+        String attackerClassName = attacker.getClass().getName();
+
+        // Ignore aircraft-like entities by class name (substring match)
+        if (entityClassName.contains("MCH_EntityHeli") ||
+                entityClassName.contains("MCH_EntityPlane") ||
+                entityClassName.contains("MCH_EntityShip") ||
+                entityClassName.contains("MCH_EntityTank") ||
+                entityClassName.contains("MCH_EntityVehicle") ||
+                entityClassName.contains("MCP_EntityPlane") ||
+                attackerClassName.contains("MCH_EntityHeli") ||
+                attackerClassName.contains("MCH_EntityPlane") ||
+                attackerClassName.contains("MCH_EntityShip") ||
+                attackerClassName.contains("MCH_EntityTank") ||
+                attackerClassName.contains("MCH_EntityVehicle") ||
+                attackerClassName.contains("MCP_EntityPlane")) {
             return false;
         }
 
