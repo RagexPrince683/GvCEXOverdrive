@@ -1,7 +1,7 @@
 [
 {
   "modid": "${modid}",
-  "name": "HandMadeGuns&VehicleModEX",
+  "name": "HandMadeGunsOverdrive",
   "description": "The Addable Gun & Vehicle Mod",
   "version": "${version}",
   "mcversion": "${mcversion}",
