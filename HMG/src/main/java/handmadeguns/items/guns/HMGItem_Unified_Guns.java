@@ -70,6 +70,8 @@ public class HMGItem_Unified_Guns extends Item {
 	public HMGItem_Unified_Guns(){
 	}
 
+	//oh my god this class is fucking spaghetti hell
+
 	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4){
 		checkTags(par1ItemStack);
 		{
@@ -85,26 +87,26 @@ public class HMGItem_Unified_Guns extends Item {
 			String nokori = String.valueOf(getMaxDamage() - par1ItemStack.getItemDamage());
 
 			par3List.add(EnumChatFormatting.RED + "Magazine Round " + StatCollector.translateToLocal(nokori));
-			par3List.add(EnumChatFormatting.WHITE + "FireDamege " + "+" + StatCollector.translateToLocal(powor));
-			par3List.add(EnumChatFormatting.WHITE + "BulletSpeed " + "+" + StatCollector.translateToLocal(speed));
-			par3List.add(EnumChatFormatting.WHITE + "BulletSpread " + "+" + StatCollector.translateToLocal(bure));
+			par3List.add(EnumChatFormatting.WHITE + "Damage " + "+" + StatCollector.translateToLocal(powor));
+			par3List.add(EnumChatFormatting.WHITE + "Bullet Speed " + "+" + StatCollector.translateToLocal(speed));
+			par3List.add(EnumChatFormatting.WHITE + "Bullet Spread " + "+" + StatCollector.translateToLocal(bure));
 			par3List.add(EnumChatFormatting.WHITE + "Recoil " + "+" + StatCollector.translateToLocal(recoil));
-			par3List.add(EnumChatFormatting.YELLOW + "ReloadTime " + "+" + StatCollector.translateToLocal(retime));
+			par3List.add(EnumChatFormatting.YELLOW + "Reload Time " + "+" + StatCollector.translateToLocal(retime));
 			// par3List.add(EnumChatFormatting.YELLOW + "MagazimeType " +
 			// StatCollector.translateToLocal("ARMagazine"));
 			if (!(gunInfo.scopezoombase == 1.0f)) {
 				String scopezoom = String.valueOf(gunInfo.scopezoombase);
-				par3List.add(EnumChatFormatting.WHITE + "ScopeZoom " + "x" + StatCollector.translateToLocal(scopezoom));
+				par3List.add(EnumChatFormatting.WHITE + "Scope Zoom " + "x" + StatCollector.translateToLocal(scopezoom));
 			}
 			if (gunInfo.needfix && gunInfo.canfix) {
-				par3List.add(EnumChatFormatting.WHITE + "you cannot handhold Shot.");
-				par3List.add(EnumChatFormatting.WHITE + "Press " + HMG_proxy.getFixkey() + " while pointing block");
+				par3List.add(EnumChatFormatting.WHITE + "You cannot shoot this handheld.");
+				par3List.add(EnumChatFormatting.WHITE + "Press " + HMG_proxy.getFixkey() + " while pointing at a block.");
 			} else if (gunInfo.canfix) {
-				par3List.add(EnumChatFormatting.WHITE + "you can put on block this.");
-				par3List.add(EnumChatFormatting.WHITE + "Press " + HMG_proxy.getFixkey() + " while pointing block");
+				par3List.add(EnumChatFormatting.WHITE + "You can place this on a block.");
+				par3List.add(EnumChatFormatting.WHITE + "Press " + HMG_proxy.getFixkey() + " while pointing at a block.");
 			} else if (gunInfo.needfix) {
-				par3List.add(EnumChatFormatting.WHITE + "you can not shot gun by hand");
-				par3List.add(EnumChatFormatting.WHITE + "you can use with vehicle");
+				par3List.add(EnumChatFormatting.WHITE + "You can not shoot this gun by hand.");
+				par3List.add(EnumChatFormatting.WHITE + "You can use this gun with a vehicle.");
 			}
 
 		}{
