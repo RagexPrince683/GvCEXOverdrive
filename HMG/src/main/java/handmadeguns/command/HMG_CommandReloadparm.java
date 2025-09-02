@@ -61,31 +61,47 @@ public class HMG_CommandReloadparm extends CommandBase implements ICommand{
 //        }
         File packdir = new File(HMG_proxy.ProxyFile(), "handmadeguns_Packs");
         packdir.mkdirs();
-        File[] packlist = packdir.listFiles();
-        Arrays.sort(packlist, new Comparator<File>() {
-            public int compare(File file1, File file2){
-                return file1.getName().compareTo(file2.getName());
-            }
-        });
-        for (File apack : packlist) {
 
-            File diregun = new File(apack, "guns");
-            File[] filegun = diregun.listFiles();
-            Arrays.sort(filegun, new Comparator<File>() {
-                public int compare(File file1, File file2) {
-                    return file1.getName().compareTo(file2.getName());
-                }
-            });
-            for (int ii = 0; ii < filegun.length; ii++) {
-                if (filegun[ii].isFile()) {
-                    try {
-                        new HMGGunMaker().load(true, filegun[ii]);
-                    } catch (ModelFormatException e) {
-                        e.printStackTrace();
-                    }
+        File[] packlist = packdir.listFiles(File::isDirectory);
+        if (packlist == null) return;
+
+        Arrays.sort(packlist, Comparator.comparing(File::getName)); // optional
+
+        HMGGunMaker gunMaker = new HMGGunMaker();
+
+        /***
+         * File diregun = new File(apack, "guns");
+         *             File[] filegun = diregun.listFiles();
+         *             Arrays.sort(filegun, new Comparator<File>() {
+         *                 public int compare(File file1, File file2) {
+         *                     return file1.getName().compareTo(file2.getName());
+         *                 }
+         *             });
+         *             for (int ii = 0; ii < filegun.length; ii++) {
+         *                 if (filegun[ii].isFile()) {
+         *                     try {
+         *                         new HMGGunMaker().load(true, filegun[ii]);
+         *                     } catch (ModelFormatException e) {
+         *                         e.printStackTrace();
+         *                     }
+         */
+
+        for (File apack : packlist) {
+            File gunDir = new File(apack, "guns");
+            File[] gunFiles = gunDir.listFiles(File::isFile);
+            if (gunFiles == null) continue;
+
+            Arrays.sort(gunFiles, Comparator.comparing(File::getName)); // optional
+
+            for (File gunFile : gunFiles) {
+                try {
+                    gunMaker.load(true, gunFile);
+                } catch (ModelFormatException e) {
+                    e.printStackTrace();
                 }
             }
         }
+
         HMG_proxy.setUpModels();
     }
 
