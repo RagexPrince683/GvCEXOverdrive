@@ -86,7 +86,7 @@ public class HMGItem_Unified_Guns extends Item {
 			String retime = String.valueOf(gunInfo.reloadTimes[selecting]);
 			String nokori = String.valueOf(getMaxDamage() - par1ItemStack.getItemDamage());
 
-			par3List.add(EnumChatFormatting.RED + "Magazine Round " + StatCollector.translateToLocal(nokori));
+			par3List.add(EnumChatFormatting.RED + "Magazine Rounds " + StatCollector.translateToLocal(nokori));
 			par3List.add(EnumChatFormatting.WHITE + "Damage " + "+" + StatCollector.translateToLocal(powor));
 			par3List.add(EnumChatFormatting.WHITE + "Bullet Speed " + "+" + StatCollector.translateToLocal(speed));
 			par3List.add(EnumChatFormatting.WHITE + "Bullet Spread " + "+" + StatCollector.translateToLocal(bure));
