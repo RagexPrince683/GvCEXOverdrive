@@ -27,7 +27,7 @@ public class WhizEventHandler {
         World world = player.worldObj;
 
         if (world.isRemote) {
-            System.out.println("[WHIZZ] Running bullet detection on CLIENT for " + player.getCommandSenderName());
+            //System.out.println("[WHIZZ] Running bullet detection on CLIENT for " + player.getCommandSenderName());
             detectBulletWhizz(player, world);
         } else {
             //System.out.println("[WHIZZ] Ignoring SERVER side");
