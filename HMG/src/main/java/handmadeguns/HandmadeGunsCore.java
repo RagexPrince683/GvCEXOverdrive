@@ -691,6 +691,7 @@ public class HandmadeGunsCore {
 		FMLCommonHandler.instance().bus().register(this);
 		//if(pEvent.getSide().isClient())
 		{
+			MinecraftForge.EVENT_BUS.register(new WhizEventHandler());
 			MinecraftForge.EVENT_BUS.register(new LivingEventHooks());
 		}
 
@@ -851,53 +852,60 @@ public class HandmadeGunsCore {
 	}
 
 
-	@SubscribeEvent
-	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase != TickEvent.Phase.END) return;
+	public class WhizEventHandler {
 
-		EntityPlayer player = event.player;
-		World world = player.worldObj;
 
-		if (world.isRemote) {
-			detectBulletWhizz(player, world);
-		}
-	}
+		@SubscribeEvent
+		public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+			if (event.phase != TickEvent.Phase.END) return;
 
-	private final Map<UUID, Set<Integer>> playerWhizzedBullets = new HashMap<>();
+			EntityPlayer player = event.player;
+			World world = player.worldObj;
 
-	private void detectBulletWhizz(EntityPlayer player, World world) {
-		double radius = 10.0D;
-
-		// Get or create tracking set for this player
-		Set<Integer> trackedBullets = playerWhizzedBullets.computeIfAbsent(player.getUniqueID(), k -> new HashSet<>());
-
-		// Find all bullets around the player
-		List<HMGEntityBulletBase> bullets = world.getEntitiesWithinAABB(
-				HMGEntityBulletBase.class,
-				player.boundingBox.expand(radius, radius, radius)
-		);
-
-		for (HMGEntityBulletBase bullet : bullets) {
-			int bulletId = bullet.getEntityId();
-
-			// If we haven't played sound for this bullet yet
-			if (!trackedBullets.contains(bulletId)) {
-				world.playSound(
-						bullet.posX,
-						bullet.posY,
-						bullet.posZ,
-						"handmadeguns:handmadeguns.bulletflyby",
-						5.0F,
-						1.0F,
-						false
-				);
-				trackedBullets.add(bulletId);
+			if (world.isRemote) {
+				detectBulletWhizz(player, world);
 			}
 		}
 
-		// Optional: clean up old bullets that are gone
-		trackedBullets.removeIf(id -> world.getEntityByID(id) == null);
+		private final Map<UUID, Set<Integer>> playerWhizzedBullets = new HashMap<>();
+
+		private void detectBulletWhizz(EntityPlayer player, World world) {
+			double radius = 10.0D;
+
+			// Get or create tracking set for this player
+			Set<Integer> trackedBullets = playerWhizzedBullets.computeIfAbsent(player.getUniqueID(), k -> new HashSet<>());
+
+			// Find all bullets around the player
+			List<HMGEntityBulletBase> bullets = world.getEntitiesWithinAABB(
+					HMGEntityBulletBase.class,
+					player.boundingBox.expand(radius, radius, radius)
+			);
+
+			for (HMGEntityBulletBase bullet : bullets) {
+				int bulletId = bullet.getEntityId();
+
+				// If we haven't played sound for this bullet yet
+				if (!trackedBullets.contains(bulletId)) {
+					world.playSound(
+							bullet.posX,
+							bullet.posY,
+							bullet.posZ,
+							"handmadeguns:handmadeguns.bulletflyby",
+							5.0F,
+							1.0F,
+							false
+					);
+					trackedBullets.add(bulletId);
+				}
+			}
+
+			// Optional: clean up old bullets that are gone
+			trackedBullets.removeIf(id -> world.getEntityByID(id) == null);
+		}
+
+
 	}
+
 
 
 	public class LivingEventHooks
