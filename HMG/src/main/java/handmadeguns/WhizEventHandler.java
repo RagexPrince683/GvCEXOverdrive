@@ -10,7 +10,7 @@ import java.util.*;
 
 public class WhizEventHandler {
     public WhizEventHandler() {
-        System.out.println("[Whiz Debug] WhizEventHandler constructed");
+        //System.out.println("[Whiz Debug] WhizEventHandler constructed");
 
     }
 
@@ -19,7 +19,7 @@ public class WhizEventHandler {
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         // Basic event fire check
-        System.out.println("[WHIZZ] onPlayerTick FIRED for: " + event.player.getCommandSenderName() + " | Phase: " + event.phase);
+        //System.out.println("[WHIZZ] onPlayerTick FIRED for: " + event.player.getCommandSenderName() + " | Phase: " + event.phase);
 
         if (event.phase != TickEvent.Phase.END) return;
 
@@ -30,7 +30,7 @@ public class WhizEventHandler {
             System.out.println("[WHIZZ] Running bullet detection on CLIENT for " + player.getCommandSenderName());
             detectBulletWhizz(player, world);
         } else {
-            System.out.println("[WHIZZ] Ignoring SERVER side");
+            //System.out.println("[WHIZZ] Ignoring SERVER side");
         }
     }
 
@@ -46,13 +46,13 @@ public class WhizEventHandler {
                 player.boundingBox.expand(radius, radius, radius)
         );
 
-        System.out.println("[WHIZZ] Found " + bullets.size() + " bullets near " + player.getCommandSenderName());
+        //System.out.println("[WHIZZ] Found " + bullets.size() + " bullets near " + player.getCommandSenderName());
 
         for (HMGEntityBulletBase bullet : bullets) {
             int bulletId = bullet.getEntityId();
 
             if (!trackedBullets.contains(bulletId)) {
-                System.out.println("[WHIZZ] Bullet " + bulletId + " triggered whizz sound at " + bullet.posX + "," + bullet.posY + "," + bullet.posZ);
+                //System.out.println("[WHIZZ] Bullet " + bulletId + " triggered whizz sound at " + bullet.posX + "," + bullet.posY + "," + bullet.posZ);
 
                 world.playSound(
                         bullet.posX,
@@ -67,7 +67,7 @@ public class WhizEventHandler {
                 trackedBullets.add(bulletId);
             } else {
                 // Optional: useful to verify the set is working correctly
-                System.out.println("[WHIZZ] Bullet " + bulletId + " already triggered before, skipping.");
+                //System.out.println("[WHIZZ] Bullet " + bulletId + " already triggered before, skipping.");
             }
         }
 
@@ -77,7 +77,7 @@ public class WhizEventHandler {
         int after = trackedBullets.size();
 
         if (before != after) {
-            System.out.println("[WHIZZ] Cleaned up " + (before - after) + " stale bullet IDs for " + player.getCommandSenderName());
+            //System.out.println("[WHIZZ] Cleaned up " + (before - after) + " stale bullet IDs for " + player.getCommandSenderName());
         }
     }
 }

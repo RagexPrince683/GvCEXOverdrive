@@ -174,6 +174,11 @@ public class HandmadeGunsCore {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent pEvent) {
 		MinecraftForge.EVENT_BUS.register(this);
+
+		//WhizEventHandler whizHandler = new WhizEventHandler();
+		//MinecraftForge.EVENT_BUS.register(whizHandler);
+		//FMLCommonHandler.instance().bus().register(whizHandler);
+
 		configFile = pEvent.getSuggestedConfigurationFile();
 		Configuration lconf = new Configuration(configFile);
 		lconf.load();
@@ -637,6 +642,10 @@ public class HandmadeGunsCore {
 		//		'b', new ItemStack(Blocks.wooden_slab, 1, D)
 		//);
 		//buggy things
+
+		WhizEventHandler whizHandler = new WhizEventHandler();
+		FMLCommonHandler.instance().bus().register(whizHandler);
+		MinecraftForge.EVENT_BUS.register(whizHandler);
 
 
 //		EntityRegistry.registerModEntity(EntityItemFrameHMG.class, "ItemFrameHMG", 200, this, 128, 5, true);
