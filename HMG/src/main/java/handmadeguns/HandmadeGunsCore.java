@@ -173,6 +173,7 @@ public class HandmadeGunsCore {
 	//@net.minecraftforge.fml.common.Mod.EventHandler
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent pEvent) {
+		MinecraftForge.EVENT_BUS.register(this);
 		configFile = pEvent.getSuggestedConfigurationFile();
 		Configuration lconf = new Configuration(configFile);
 		lconf.load();
@@ -886,7 +887,7 @@ public class HandmadeGunsCore {
 						bullet.posY,
 						bullet.posZ,
 						"handmadeguns:handmadeguns.bulletflyby",
-						1.0F,
+						5.0F,
 						1.0F,
 						false
 				);
