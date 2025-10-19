@@ -1,0 +1,16 @@
+Texture,762sr10magazine
+Stack,2
+BulletRound,10
+Name,10 Rnd 7.62x51mm NATO SR-25 Pattern Box Magazine
+
+Tabname,HMG_Ammo
+
+CustomMagazine,7.62mm sr magazine
+
+Recipe1,aa 
+Recipe2,bbb
+Recipe3,cc 
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,7.62mm sr magazine,2

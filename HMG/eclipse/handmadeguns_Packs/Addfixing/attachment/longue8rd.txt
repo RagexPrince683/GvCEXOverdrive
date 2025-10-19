@@ -1,0 +1,7 @@
+Texture,bullet_hg
+Stack,4
+Tabname,HMG_Ammo
+Name,8 Rnd 7.65x20mm Longue Magazine
+BulletRound,8
+Magazine,longue8rd
+addRecipe,longue8rd,3,aa0,e00,000,265,289,289,289,289,289,289,289,289

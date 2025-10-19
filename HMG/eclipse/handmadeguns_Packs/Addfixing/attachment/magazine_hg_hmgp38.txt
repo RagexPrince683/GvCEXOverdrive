@@ -1,0 +1,7 @@
+Texture,bullet_hg
+Stack,3
+BulletRound,8
+Tabname,HMG_Ammo
+Name,8 Rnd 9x19mm Parabellum P-38 Magazine
+Magazine,bullet_hg_hmgp38
+addRecipe,bullet_hg_hmgp38,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

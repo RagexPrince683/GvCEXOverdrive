@@ -1,0 +1,16 @@
+Texture,762bullet_long
+Stack,1
+BulletRound,40
+Name,40 Rnd 7.62x39mm Long Magazine
+
+Tabname,HMG_Ammo
+
+CustomMagazine,7.62mm long magazine
+
+Recipe1,a  
+Recipe2,a  
+Recipe3,cc 
+ItemA,HandmadeGuns,7.62mm magazine 30Round
+ItemB,minecraft,gunpowder
+ItemC,minecraft,iron_ingot
+addNewRecipe,HandmadeGuns,7.62mm long magazine,1

@@ -1,0 +1,15 @@
+Texture,223bulletclip
+Stack,2
+Name,8 Rnd .30-06 (7.62x63mm) Clip
+BulletRound,8
+
+Tabname,HMG_Ammo
+
+CustomMagazine,7.62x63mm bulletclip
+
+Recipe1,abb
+Recipe2,bbb  
+Recipe3,bbb
+ItemA,minecraft,iron_ingot
+ItemB,HandmadeGuns,7.62x63mm bullet
+addNewRecipe,HandmadeGuns,7.62x63mm bulletclip,1

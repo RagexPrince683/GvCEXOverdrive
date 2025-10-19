@@ -1,0 +1,16 @@
+Texture,bullet_lmg_hmg_Cmag
+Stack,1
+ReloadTimeOption,75
+BulletRound,100
+Name,100 Rnd 5.56x45mm Beta C-Mag
+
+Tabname,HMG_Ammo
+
+CustomMagazine,bullet_lmg_hmg_CMag
+Recipe1,abc
+Recipe2,bc 
+Recipe3,c  
+ItemA,minecraft,gunpowder
+ItemB,minecraft,iron_block
+ItemC,HandmadeGuns,5.56mm magazine
+addNewRecipe,HandmadeGuns,bullet_lmg_hmg_CMag,1

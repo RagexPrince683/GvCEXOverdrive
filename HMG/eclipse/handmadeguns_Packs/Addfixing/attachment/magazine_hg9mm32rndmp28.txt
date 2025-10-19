@@ -1,0 +1,7 @@
+Texture,mac10mag
+Stack,1
+Tabname,HMG_Ammo
+BulletRound,32
+Name,32 Rnd 9x19mm Parabellum MP-28 Magazine
+Magazine,bullet_hg_9mm32rndmp28
+addRecipe,bullet_hg_9mm32rndmp28,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

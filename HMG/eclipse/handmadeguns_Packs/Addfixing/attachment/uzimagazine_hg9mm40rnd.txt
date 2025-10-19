@@ -1,0 +1,7 @@
+Texture,bullet_hg_9mm15sig
+Stack,1
+Tabname,HMG_Ammo
+BulletRound,40
+Name,40 Rnd 9x19mm Parabellum Uzi Magazine
+Magazine,uzibullet_hg_9mm40rnd
+addRecipe,uzibullet_hg_9mm40rnd,1,a00,0e0,000,265,289,289,289,289,289,289,289,289

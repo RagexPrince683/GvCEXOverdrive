@@ -1,0 +1,7 @@
+Texture,bullet_hg
+Stack,1
+Tabname,HMG_Ammo
+BulletRound,71
+Name,71 Rnd 7.62x25mm Tokarev Drum Magazine
+Magazine,bullet_hg_hmgppsh
+addRecipe,bullet_hg_hmgppsh,1,a00,0e0,000,265,289,289,289,289,289,289,289,289

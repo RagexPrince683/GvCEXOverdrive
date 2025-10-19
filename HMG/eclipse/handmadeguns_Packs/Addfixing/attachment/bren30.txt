@@ -1,0 +1,17 @@
+Texture,223bulletclip
+Stack,1
+Name,30 Rnd .303 British Curved Magazine
+BulletRound,30
+
+Tabname,HMG_Ammo
+
+CustomMagazine,bren30
+
+//todo change
+
+//Recipe1,aa 
+//Recipe2,aa 
+//Recipe3,bb 
+//ItemA,HandmadeGuns,7.92mm bulletclip
+//ItemB,minecraft,iron_ingot
+//addNewRecipe,HandmadeGuns,bren30,1

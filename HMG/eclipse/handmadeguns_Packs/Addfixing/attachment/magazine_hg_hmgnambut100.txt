@@ -1,0 +1,7 @@
+Texture,bullet_hg
+Stack,3
+Tabname,HMG_Ammo
+BulletRound,30
+Name,30 Rnd 8x22mm Nambu Curved Magazine
+Magazine,bullet_hg_hmgt100
+addRecipe,bullet_hg_hmgt100,2,a00,0e0,aee,265,289,289,289,289,289,289,289,289

@@ -1,0 +1,16 @@
+Texture,1270bullet5
+Stack,1
+Name,5 Rnd .50 BMG Magazine
+BulletRound,5
+
+Tabname,HMG_Ammo
+
+CustomMagazine,12.7mm Magazine5
+
+Recipe1,aaa
+Recipe2,b  
+Recipe3,c  
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,12.7mm Magazine5,1

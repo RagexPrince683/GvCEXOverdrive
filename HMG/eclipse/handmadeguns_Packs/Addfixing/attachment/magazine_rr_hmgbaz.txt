@@ -1,0 +1,6 @@
+Texture,bullet_rr
+Stack,1
+Tabname,HMG_Ammo
+Name,60mm M6A3 HEAT Rocket
+Magazine,bullet_rr_hmgbaz
+addRecipe,bullet_rr_hmgbaz,1,abc,def,000,289,265,289,289,265,289,289,289,289

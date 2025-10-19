@@ -1,0 +1,17 @@
+Texture,bullet_lmg7.62NATOsack
+Stack,1
+Name,50 Rnd 7.62x51mm NATO ACU Magazine 'Nutsack'
+BulletRound,50
+
+Tabname,HMG_Ammo
+
+CustomMagazine,bullet_lmg_hmg_7_62_NATOsack
+
+Recipe1,aa
+Recipe2,cc
+Recipe3,bb
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,emerald
+ItemC,minecraft,gunpowder
+//ItemD,HandmadeGuns,NATO_Certificate
+addNewRecipe,HandmadeGuns,bullet_lmg_hmg_7_62_NATOsack,1

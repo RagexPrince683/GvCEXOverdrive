@@ -1,0 +1,7 @@
+Texture,mp720
+Stack,4
+Tabname,HMG_Ammo
+BulletRound,20
+Name,20 Rnd HK 4.6x30mm Magazine
+Magazine,mp720
+addRecipe,mp720,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

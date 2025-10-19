@@ -1,0 +1,16 @@
+Texture,127x99bullet
+Stack,1
+BulletRound,110
+Name,110 Rnd .50 Cal Belt
+
+Tabname,HMG_Ammo
+
+CustomMagazine,12.7mmx99mmBox
+
+Recipe1,a  
+Recipe2,bbb
+Recipe3,ccc
+ItemA,minecraft,iron_block
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,12.7mmx99mmBox,1

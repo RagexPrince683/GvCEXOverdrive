@@ -1,0 +1,16 @@
+Texture,chinamag1
+Stack,2
+BulletRound,30
+Name,30 Rnd 5.8x42mm DBP87 Magazine
+
+Tabname,HMG_Ammo
+
+CustomMagazine,chinamag1
+
+Recipe1,aaa
+Recipe2,bab
+Recipe3,bcb
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,chinamag1,2

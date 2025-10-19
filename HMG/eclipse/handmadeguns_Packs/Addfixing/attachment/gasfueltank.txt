@@ -1,0 +1,17 @@
+Texture,gastank
+Stack,1
+Name,2 US gal Gasoline Fuel Tank
+BulletRound,300
+
+Tabname,HMG_Ammo
+
+CustomMagazine,gastank
+
+Recipe1,aa
+Recipe2,cc
+Recipe3,bb
+ItemA,minecraft,iron_block
+ItemB,minecraft,emerald_block
+ItemC,minecraft,iron_ingot
+//ItemD,HandmadeGuns,NATO_Certificate
+addNewRecipe,HandmadeGuns,gastank,1

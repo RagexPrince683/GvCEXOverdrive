@@ -1,0 +1,15 @@
+Texture,bullet_shell_bird
+Stack,16
+Tabname,HMG_Ammo
+BulletPower,6
+BlletSpread,0.2f
+ShotGun_Pellet,40
+Name,12 Gauge BirdShot 4
+Magazine,bullet_shell_bird
+Recipe1,aa 
+Recipe2,b b
+Recipe3,cc 
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,bullet_shell_bird,1

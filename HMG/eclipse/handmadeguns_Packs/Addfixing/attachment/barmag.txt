@@ -1,0 +1,7 @@
+Texture,bullet_hg1911slong
+Stack,2
+BulletRound,20
+Tabname,HMG_Ammo
+Name,20 Rnd .30-06 BAR Magazine
+Magazine,barmag
+addRecipe,barmag,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

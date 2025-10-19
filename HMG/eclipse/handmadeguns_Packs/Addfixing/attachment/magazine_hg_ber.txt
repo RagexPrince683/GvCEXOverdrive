@@ -1,0 +1,7 @@
+Texture,bullet_hgber
+Stack,4
+Tabname,HMG_Ammo
+BulletRound,10
+Name,Limited 10 Rnd 9x19mm Parabellum Beretta Magazine
+Magazine,bullet_hg_hmgber
+addRecipe,bullet_hg_hmgber,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

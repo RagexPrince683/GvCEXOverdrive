@@ -1,0 +1,16 @@
+Texture,762bullet_20Round
+Stack,2
+BulletRound,20
+Name,20 Rnd 7.62x39mm Magazine
+
+Tabname,HMG_Ammo
+
+CustomMagazine,7.62mm magazine 20Round
+
+Recipe1,aa 
+Recipe2,bb 
+Recipe3,cc 
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,7.62mm magazine 20Round,2

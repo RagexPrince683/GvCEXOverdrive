@@ -1,0 +1,17 @@
+Texture,bullet_14_5
+Stack,1
+BulletRound,5
+Name,5 Rnd 14.5x114mm BS-41 APCR Round Clip
+
+Tabname,HMG_Ammo
+
+CustomMagazine,14.5mm Ammoclip
+
+//Recipe1,bb 
+//Recipe2,bb 
+//Recipe3,ab 
+//ItemA,minecraft,iron_ingot
+//ItemB,HandmadeGuns,14.5mm Ammo
+//addNewRecipe,HandmadeGuns,14.5mm Ammoclip,1
+
+//ItemC,minecraft,emerald

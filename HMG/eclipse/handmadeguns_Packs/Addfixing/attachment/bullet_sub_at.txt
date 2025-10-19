@@ -1,0 +1,5 @@
+Texture,bullet_sub_at
+Stack,1
+Name,Hollowpoint Rounds
+BulletAT,Bullet_AT
+addRecipe,Bullet_AT,1,ab0,de0,000,265,266,0,266,289,0,0,0,0

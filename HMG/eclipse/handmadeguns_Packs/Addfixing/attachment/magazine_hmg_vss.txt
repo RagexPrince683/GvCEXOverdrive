@@ -1,0 +1,19 @@
+Texture,556bullet20
+Stack,2
+BulletRound,20
+Name,20 Rnd 9x39mm Magazine
+
+Tabname,HMG_Ammo
+
+==!!!=====Disabled=====!!!==
+//BulletItemName,HandmadeGuns:5.45mmCart&Bullet
+//CartItemName,HandmadeGuns:5.45mmCart
+
+CustomMagazine,vss20
+Recipe1,aa 
+Recipe2,bbc
+Recipe3,c  
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,vss20,2

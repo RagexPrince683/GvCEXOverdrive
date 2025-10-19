@@ -1,0 +1,17 @@
+Texture,223bulletclip
+Stack,2
+Name,10 Rnd .303 British Magaizne
+BulletRound,10
+
+Tabname,HMG_Ammo
+
+CustomMagazine,enfieldmag
+
+
+//Recipe1,aab
+//Recipe2,bac
+//Recipe3,cba
+//ItemA,minecraft,iron_ingot
+//ItemB,minecraft,gunpowder
+//ItemC,minecraft,emerald
+//addNewRecipe,HandmadeGuns,308win bulletclip,1

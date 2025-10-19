@@ -1,0 +1,15 @@
+Texture,762bulletclip
+Stack,5
+Name,7.62x39mm Stripper Clip
+BulletRound,10
+
+Tabname,HMG_Ammo
+
+CustomMagazine,7.62mm Stripper
+
+Recipe1,aaa
+Recipe2,baa
+Recipe3,   
+ItemA,HandmadeGuns,7.62mm bullet
+ItemB,minecraft,iron_ingot
+addNewRecipe,HandmadeGuns,7.62mm Stripper,1

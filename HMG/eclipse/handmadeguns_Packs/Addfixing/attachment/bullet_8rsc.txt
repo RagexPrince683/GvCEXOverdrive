@@ -1,0 +1,15 @@
+Texture,8bullet
+Stack,3
+Name,5 Rnd 8x50mmR Lebel Clip
+BulletRound,5
+
+Tabname,HMG_Ammo
+
+CustomMagazine,8mm bulletmle
+
+Recipe1,aaa
+Recipe2,bb 
+Recipe3,b  
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,8mm bulletmle,3

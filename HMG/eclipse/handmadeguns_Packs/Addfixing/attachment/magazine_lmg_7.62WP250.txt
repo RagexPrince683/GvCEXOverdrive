@@ -1,0 +1,23 @@
+Texture,bullet_lmg7.62x54R250
+Stack,1
+Name,250 Rnd 7.62x54mmR Box
+BulletRound,250
+
+Tabname,HMG_Ammo
+
+CustomMagazine,bullet_lmg_hmg_7_62_WP250
+Recipe1,aaa
+Recipe2, c 
+Recipe3,b b
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,emerald
+ItemC,HandmadeGuns,bullet_lmg_hmg_7_62_WP
+//ItemD,HandmadeGuns,WP_Certificate
+addNewRecipe,HandmadeGuns,bullet_lmg_hmg_7_62_WP250,1
+
+//Recipe1,ab 
+//Recipe2,   
+//Recipe3,   
+//ItemA,HandmadeGuns,bullet_lmg_hmg
+//ItemB,HandmadeGuns,WP_Certificate
+//addNewRecipe,HandmadeGuns,bullet_lmg_hmg_7_62_WP,1

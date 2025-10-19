@@ -1,0 +1,7 @@
+Texture,bullet_hg12rnd
+Stack,2
+Tabname,HMG_Ammo
+BulletRound,12
+Name,12 Rnd 9x19mm Parabellum Makarov Box Magazine
+Magazine,bullet_hg_9mm12rndmak
+addRecipe,bullet_hg_9mm12rndmak,1,aa0,ee0,000,265,289,289,289,289,289,289,289,289

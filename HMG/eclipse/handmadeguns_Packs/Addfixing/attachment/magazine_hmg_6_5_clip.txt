@@ -1,0 +1,15 @@
+Texture,6_5bulletclip
+Stack,2
+BulletRound,5
+Name,5 Rnd 6.5x50mm Arisaka Clip
+
+Tabname,HMG_Ammo
+
+CustomMagazine,6.5mm clip
+
+Recipe1,abb
+Recipe2,b  
+Recipe3,   
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,6.5mm clip,1

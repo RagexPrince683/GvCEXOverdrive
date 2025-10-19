@@ -1,0 +1,16 @@
+Texture,545bullet_cas
+Stack,1
+BulletRound,60
+Name,60 Rnd 5.45x39mm Quad-Stack/Casket Magazine
+
+Tabname,HMG_Ammo
+
+CustomMagazine,5.45mm casket magazine
+
+Recipe1,a  
+Recipe2,a  
+Recipe3,c  
+ItemA,HandmadeGuns,5.45mm magazine
+ItemB,minecraft,gunpowder
+ItemC,minecraft,iron_block
+addNewRecipe,HandmadeGuns,5.45mm casket magazine,1

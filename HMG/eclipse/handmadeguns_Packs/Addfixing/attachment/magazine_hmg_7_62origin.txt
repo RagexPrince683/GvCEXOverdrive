@@ -1,0 +1,16 @@
+Texture,762sr20magazine
+Stack,2
+BulletRound,20
+Name,20 Rnd 7.62x51mm NATO Magazine
+
+Tabname,HMG_Ammo
+
+CustomMagazine,7.62mm og magazine
+
+Recipe1,aba
+Recipe2,bbb
+Recipe3,ccc
+ItemA,minecraft,gunpowder
+ItemB,minecraft,iron_ingot
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,7.62mm og magazine,2

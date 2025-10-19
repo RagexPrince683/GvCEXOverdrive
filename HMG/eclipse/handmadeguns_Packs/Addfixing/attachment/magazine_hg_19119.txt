@@ -1,0 +1,7 @@
+Texture,bullet_hg1911
+Stack,4
+BulletRound,9
+Tabname,HMG_Ammo
+Name,9 Rnd .45 ACP Box Magazine
+Magazine,bullet_hg_hmg19119
+addRecipe,bullet_hg_hmg19119,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

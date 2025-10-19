@@ -1,0 +1,6 @@
+Texture,missile
+Stack,1
+Tabname,HMG_Ammo
+Name,FIM-92 Stinger Missile
+Magazine,bullet_rr_hmgstinger
+addRecipe,bullet_rr_hmgstinger,2,abc,def,000,289,265,289,289,265,289,289,289,289

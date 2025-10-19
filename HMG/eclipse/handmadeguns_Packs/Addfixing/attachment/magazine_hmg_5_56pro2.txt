@@ -1,0 +1,17 @@
+Texture,556bullet
+Stack,1
+BulletRound,50
+Name,50 Rnd 5.56x45mm Galil Magazine
+//Magazine,5.56mm magazine
+
+Tabname,HMG_Ammo
+
+CustomMagazine,5.56mm magazinepro2
+
+Recipe1,aa 
+Recipe2,b  
+Recipe3,cc 
+ItemA,HandmadeGuns,5.56mm magazinepro
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,5.56mm magazinepro2,1

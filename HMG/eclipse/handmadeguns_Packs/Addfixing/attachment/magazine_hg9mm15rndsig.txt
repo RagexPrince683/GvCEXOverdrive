@@ -1,0 +1,7 @@
+Texture,bullet_hg_9mm15sig
+Stack,2
+BulletRound,15
+Tabname,HMG_Ammo
+Name,15 Rnd 9x19mm Parabellum SIG Magazine
+Magazine,bullet_hg_9mm15sig
+addRecipe,bullet_hg_9mm15sig,2,aa0,ee0,000,265,289,289,289,289,289,289,289,289

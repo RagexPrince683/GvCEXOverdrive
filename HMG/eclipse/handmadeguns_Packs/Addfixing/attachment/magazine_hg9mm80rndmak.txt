@@ -1,0 +1,7 @@
+Texture,bullet_hg80rnd
+Stack,1
+Tabname,HMG_Ammo
+BulletRound,80
+Name,80 Rnd 9x19mm Parabellum Makarov Drum Magazine
+Magazine,bullet_hg_9mm80rndmak
+addRecipe,bullet_hg_9mm80rndmak,1,aaa,eee,aaa,265,289,289,289,289,289,289,289,289

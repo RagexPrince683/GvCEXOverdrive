@@ -1,0 +1,15 @@
+Texture,762rbullet
+Stack,2
+Name,5 Rnd 7.62x54mmR Stripper Clip
+BulletRound,5
+
+Tabname,HMG_Ammo
+
+CustomMagazine,7.62mmR bulletmosin
+
+//Recipe1,abb
+//Recipe2,bbb
+//Recipe3,   
+//ItemA,minecraft,iron_ingot
+//ItemB,HandmadeGuns,7.62mmR bullet
+//addNewRecipe,HandmadeGuns,7.62mmR bulletmosin,1

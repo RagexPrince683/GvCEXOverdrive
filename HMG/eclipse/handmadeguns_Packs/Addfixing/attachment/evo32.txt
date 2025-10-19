@@ -1,0 +1,7 @@
+Texture,bullet_hg_9mm15sig
+Stack,2
+Tabname,HMG_Ammo
+BulletRound,30
+Name,30 Rnd 9x19mm Parabellum EVO-3 Magazine
+Magazine,evo32
+addRecipe,evo32,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

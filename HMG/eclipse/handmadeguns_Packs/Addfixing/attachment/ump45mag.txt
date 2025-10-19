@@ -1,0 +1,7 @@
+Texture,bullet_hg_9mm15sig
+Stack,2
+Tabname,HMG_Ammo
+BulletRound,25
+Name,25 Rnd .45 ACP UMP-45 Magazine
+Magazine,ump45mag
+addRecipe,ump45mag,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

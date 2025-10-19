@@ -1,0 +1,16 @@
+Texture,1270bullet
+Stack,1
+Name,5 Rnd .55 Boys Magazine
+BulletRound,5
+
+Tabname,HMG_Ammo
+
+CustomMagazine,12.7mm Magazineboys
+
+Recipe1,ab 
+Recipe2,bb 
+Recipe3,b  
+ItemA,minecraft,iron_block
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,12.7mm Magazineboys,1

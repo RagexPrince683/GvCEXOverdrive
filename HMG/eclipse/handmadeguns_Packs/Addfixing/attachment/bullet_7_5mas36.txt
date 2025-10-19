@@ -1,0 +1,15 @@
+Texture,75bullet
+Stack,2
+Name,5 Rnd 7.5x54mm French Clip
+BulletRound,5
+
+Tabname,HMG_Ammo
+
+CustomMagazine,7.5mm bulletmas
+
+Recipe1,a  
+Recipe2,b  
+Recipe3,   
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,7.5mm bulletmas,2

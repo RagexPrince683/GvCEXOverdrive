@@ -1,0 +1,18 @@
+Texture,223bulletclip
+Stack,2
+Name,5 Rnd .223 Clip
+BulletRound,5
+
+Tabname,HMG_Ammo
+
+CustomMagazine,.223 Remington clip
+
+Recipe1,a  
+Recipe2,b  
+Recipe3,c  
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,.223 Remington clip,1
+
+

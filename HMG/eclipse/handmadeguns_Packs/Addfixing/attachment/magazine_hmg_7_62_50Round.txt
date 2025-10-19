@@ -1,0 +1,16 @@
+Texture,762bullet_50Round
+Stack,1
+BulletRound,50
+Name,50 Rnd 7.62x39mm Drum
+
+Tabname,HMG_Ammo
+
+CustomMagazine,7.62mm drum 50Round
+
+Recipe1,aa 
+Recipe2,bbb
+Recipe3,ccb
+ItemA,HandmadeGuns,7.62mm magazine 30Round
+ItemB,minecraft,iron_ingot
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,7.62mm drum 50Round,1

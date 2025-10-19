@@ -1,0 +1,7 @@
+Texture,bullet_hg1911slong
+Stack,2
+BulletRound,30
+Tabname,HMG_Ammo
+Name,30 Rnd .45 ACP M3 Magazine
+Magazine,grease30
+addRecipe,grease30,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

@@ -1,0 +1,17 @@
+Texture,556bulletbullshit
+Stack,2
+BulletRound,30
+Name,30 Rnd 5.56x45mm G36 Magazine
+//Magazine,5.56mm magazine
+
+Tabname,HMG_Ammo
+
+CustomMagazine,5.56mm magazineg36
+
+Recipe1,aa 
+Recipe2,   
+Recipe3,cc 
+ItemA,HandmadeGuns,5.56mm magazine
+ItemB,minecraft,gunpowder
+ItemC,minecraft,emerald
+addNewRecipe,HandmadeGuns,5.56mm magazineg36,2

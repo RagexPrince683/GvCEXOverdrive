@@ -1,0 +1,15 @@
+Texture,762bullet
+Stack,64
+Name,.303 British Bullet
+BulletRound,1
+
+Tabname,HMG_Ammo
+
+CustomMagazine,303b bullet
+
+//Recipe1,aa 
+//Recipe2,b  
+//Recipe3,   
+//ItemA,minecraft,iron_ingot
+//ItemB,minecraft,gunpowder
+//addNewRecipe,HandmadeGuns,303b bullet,5
