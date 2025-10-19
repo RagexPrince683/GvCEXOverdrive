@@ -854,38 +854,46 @@ public class HandmadeGunsCore {
 
 	public class WhizEventHandler {
 
+		private final Map<UUID, Set<Integer>> playerWhizzedBullets = new HashMap<>();
 
 		@SubscribeEvent
 		public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+			// Basic event fire check
+			System.out.println("[WHIZZ] onPlayerTick FIRED for: " + event.player.getCommandSenderName() + " | Phase: " + event.phase);
+
 			if (event.phase != TickEvent.Phase.END) return;
 
 			EntityPlayer player = event.player;
 			World world = player.worldObj;
 
 			if (world.isRemote) {
+				System.out.println("[WHIZZ] Running bullet detection on CLIENT for " + player.getCommandSenderName());
 				detectBulletWhizz(player, world);
+			} else {
+				System.out.println("[WHIZZ] Ignoring SERVER side");
 			}
 		}
-
-		private final Map<UUID, Set<Integer>> playerWhizzedBullets = new HashMap<>();
 
 		private void detectBulletWhizz(EntityPlayer player, World world) {
 			double radius = 10.0D;
 
-			// Get or create tracking set for this player
+			// Track map
 			Set<Integer> trackedBullets = playerWhizzedBullets.computeIfAbsent(player.getUniqueID(), k -> new HashSet<>());
 
-			// Find all bullets around the player
+			// Get bullets nearby
 			List<HMGEntityBulletBase> bullets = world.getEntitiesWithinAABB(
 					HMGEntityBulletBase.class,
 					player.boundingBox.expand(radius, radius, radius)
 			);
 
+			System.out.println("[WHIZZ] Found " + bullets.size() + " bullets near " + player.getCommandSenderName());
+
 			for (HMGEntityBulletBase bullet : bullets) {
 				int bulletId = bullet.getEntityId();
 
-				// If we haven't played sound for this bullet yet
 				if (!trackedBullets.contains(bulletId)) {
+					System.out.println("[WHIZZ] Bullet " + bulletId + " triggered whizz sound at " + bullet.posX + "," + bullet.posY + "," + bullet.posZ);
+
 					world.playSound(
 							bullet.posX,
 							bullet.posY,
@@ -895,16 +903,25 @@ public class HandmadeGunsCore {
 							1.0F,
 							false
 					);
+
 					trackedBullets.add(bulletId);
+				} else {
+					// Optional: useful to verify the set is working correctly
+					System.out.println("[WHIZZ] Bullet " + bulletId + " already triggered before, skipping.");
 				}
 			}
 
-			// Optional: clean up old bullets that are gone
+			// Cleanup bullets no longer in world
+			int before = trackedBullets.size();
 			trackedBullets.removeIf(id -> world.getEntityByID(id) == null);
+			int after = trackedBullets.size();
+
+			if (before != after) {
+				System.out.println("[WHIZZ] Cleaned up " + (before - after) + " stale bullet IDs for " + player.getCommandSenderName());
+			}
 		}
-
-
 	}
+
 
 
 
