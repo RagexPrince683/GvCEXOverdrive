@@ -34,6 +34,7 @@ import littleMaidMobX.LMM_EntityLittleMaid;
 import net.minecraft.block.Block;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.IntHashMap;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelFormatException;
 import org.apache.commons.io.FileUtils;
 
@@ -619,20 +620,23 @@ public class HandmadeGunsCore {
 				'g', Items.gunpowder
 			);
 		*/
-		GameRegistry.addRecipe(new ItemStack(hmg_handing, 1),
-				"  s",
-				" ss",
-				"bbb",
-				's', Items.stick,
-				'b', new ItemStack(Blocks.wooden_slab, 1, D)
-		);
-		GameRegistry.addRecipe(new ItemStack(hmg_handing2, 1),
-				" b",
-				"sb",
-				" b",
-				's', Items.stick,
-				'b', new ItemStack(Blocks.wooden_slab, 1, D)
-		);
+
+		//GameRegistry.addRecipe(new ItemStack(hmg_handing, 1),
+		//		"  s",
+		//		" ss",
+		//		"bbb",
+		//		's', Items.stick,
+		//		'b', new ItemStack(Blocks.wooden_slab, 1, D)
+		//);
+		//GameRegistry.addRecipe(new ItemStack(hmg_handing2, 1),
+		//		" b",
+		//		"sb",
+		//		" b",
+		//		's', Items.stick,
+		//		'b', new ItemStack(Blocks.wooden_slab, 1, D)
+		//);
+		//buggy things
+
 
 //		EntityRegistry.registerModEntity(EntityItemFrameHMG.class, "ItemFrameHMG", 200, this, 128, 5, true);
 		EntityRegistry.registerModEntity(HMGEntityFallingBlockModified.class, "HMGEntityFallingBlockModified", 200, this, 128, 5, true);
@@ -659,12 +663,12 @@ public class HandmadeGunsCore {
 		EntityRegistry.registerModEntity(PlacedGunEntity.class, "PlacedGun", 253, this, 65536, 1, true);
 		Block mounter = new HMGBlockMounter(1).setBlockName("ItemHolder").setBlockTextureName("handmadeguns:camp");
 		GameRegistry.registerBlock(mounter, "ItemHolder");
-		GameRegistry.addRecipe(new ItemStack(mounter, 1),
-				"bbb",
-				"bbb",
-				"   ",
-				'b', new ItemStack(Blocks.wooden_slab, 1, D)
-		);
+		//GameRegistry.addRecipe(new ItemStack(mounter, 1),
+		//		"bbb",
+		//		"bbb",
+		//		"   ",
+		//		'b', new ItemStack(Blocks.wooden_slab, 1, D)
+		//);
 //		EntityRegistry.registerModEntity(HMGEntityParticles.class, "HMGEntityParticles", 267, this, 128, 5, true);
 
 		//	EntityRegistry.registerModEntity(HMGEntityTurret.class, "HMGEntityTurret", 268, this, 128, 5, true);
@@ -843,6 +847,55 @@ public class HandmadeGunsCore {
 		}else{
 			return entity.isSneaking();
 		}
+	}
+
+
+	@SubscribeEvent
+	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+		if (event.phase != TickEvent.Phase.END) return;
+
+		EntityPlayer player = event.player;
+		World world = player.worldObj;
+
+		if (world.isRemote) {
+			detectBulletWhizz(player, world);
+		}
+	}
+
+	private final Map<UUID, Set<Integer>> playerWhizzedBullets = new HashMap<>();
+
+	private void detectBulletWhizz(EntityPlayer player, World world) {
+		double radius = 10.0D;
+
+		// Get or create tracking set for this player
+		Set<Integer> trackedBullets = playerWhizzedBullets.computeIfAbsent(player.getUniqueID(), k -> new HashSet<>());
+
+		// Find all bullets around the player
+		List<HMGEntityBulletBase> bullets = world.getEntitiesWithinAABB(
+				HMGEntityBulletBase.class,
+				player.boundingBox.expand(radius, radius, radius)
+		);
+
+		for (HMGEntityBulletBase bullet : bullets) {
+			int bulletId = bullet.getEntityId();
+
+			// If we haven't played sound for this bullet yet
+			if (!trackedBullets.contains(bulletId)) {
+				world.playSound(
+						bullet.posX,
+						bullet.posY,
+						bullet.posZ,
+						"handmadeguns:handmadeguns.bulletflyby",
+						1.0F,
+						1.0F,
+						false
+				);
+				trackedBullets.add(bulletId);
+			}
+		}
+
+		// Optional: clean up old bullets that are gone
+		trackedBullets.removeIf(id -> world.getEntityByID(id) == null);
 	}
 
 
