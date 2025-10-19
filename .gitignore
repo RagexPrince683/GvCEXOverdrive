@@ -37,3 +37,8 @@ Thumbs.db
 # Ignore personal or environment-specific files
 .env
 *.credentials
+/HMG/eclipse/config/
+/HMG/eclipse/saves/
+/HMG/eclipse/logs/
+/HMG/eclipse/world/
+/HMG/eclipse/crash-reports/
