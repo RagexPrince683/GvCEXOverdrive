@@ -48,11 +48,13 @@ import static handmadeguns.HandmadeGunsCore.cfg_ADS_Toggle;
 public class ClientProxyHMG extends CommonSideProxyHMG {
 	public static final KeyBinding_mod Reload					= new KeyBinding_mod("Reload Magazine", Keyboard.KEY_R, "HandmadeGuns");
 	public static final KeyBinding_mod Fire_AttachedGun		= new KeyBinding_mod("Fire AttachedGun", Keyboard.KEY_F, "HandmadeGuns");
-	public static final KeyBinding_mod ADS						= new KeyBinding_mod("ADS_Key", Keyboard.KEY_V, "HandmadeGuns");
-
+	public static final KeyBinding_mod ADS =
+			new KeyBinding_mod("ADS_Key", -100, "HandmadeGuns"); //todone? Left click by default
 	public static final KeyBinding_mod gunPrepare_modification = new KeyBinding_mod("Gun Prepare Modification Key", Keyboard.KEY_LMENU, "HandmadeGuns");
 	public static final KeyBinding_mod Attachment				= new KeyBinding_mod("[Gun Prepare]Attachment GUI", Keyboard.KEY_X, "HandmadeGuns");
 	public static final KeyBinding_mod ChangeMagazineType		= new KeyBinding_mod("[Gun Prepare]Change Magazine Type", Keyboard.KEY_B, "HandmadeGuns");
+	//TODO: PRESS THIS KEY AUTOMATICALLY FOR THE PLAYER UNTIL THE RIGHT MAG IS SELECTED. ^
+	// THIS DOES NOT NEED TO BE A FUCKING KEYBIND!!!
 	public static final KeyBinding_mod Fix						= new KeyBinding_mod("[Gun Prepare]Fix Gun", Keyboard.KEY_H, "HandmadeGuns");
 
 	public static final KeyBinding_mod gunSetting_modification = new KeyBinding_mod("Gun Setting Modification", Keyboard.KEY_NONE, "HandmadeGuns");
@@ -60,7 +62,7 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 	public static final KeyBinding_mod El_Reset				= new KeyBinding_mod("[Gun Setting]Zero in : reset", Keyboard.KEY_H, "HandmadeGuns");
 	public static final KeyBinding_mod El_Down					= new KeyBinding_mod("[Gun Setting]Zero in : decrease", Keyboard.KEY_N, "HandmadeGuns");
 	public static final KeyBinding_mod SeekerOpen_Close		= new KeyBinding_mod("[Gun Setting]Seeker Open/Close", Keyboard.KEY_C, "HandmadeGuns");
-	public static final KeyBinding_mod Mode					= new KeyBinding_mod("[Gun Setting]Cycle Selector", Keyboard.KEY_GRAVE, "HandmadeGuns");
+	public static final KeyBinding_mod Mode					= new KeyBinding_mod("[Gun Setting]Cycle Selector", Keyboard.KEY_F, "HandmadeGuns");
 
 
 	private static final String trailtexture = ("handmadeguns:textures/entity/trail");
