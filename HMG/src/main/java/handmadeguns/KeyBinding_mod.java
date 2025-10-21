@@ -30,6 +30,7 @@ public class KeyBinding_mod {
 	}
 
 	public boolean isKeyDown_noStop(){
+		//what does this fucking do, why is it called no stop????
 		return keyDown(keyBinding);
 	}
 

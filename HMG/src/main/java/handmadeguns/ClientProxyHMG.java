@@ -357,6 +357,11 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 	public boolean FClick(){
 		return Fire_AttachedGun.isKeyDown_withStopper();
 	}
+
+
+	//TODO: CALL THIS FUCKING METHOD REPEATEDLY IF THE PLAYER EVEN JUST HAS THE RIGHT AMMO IN THEIR INVENTORY AND IS NOT NULL,
+	// WHY DO WE NEED TO PRESS STUPID FUCKING KEYS TO CHANGE MAGAZINE TYPE???
+	// oh my god... this SLOP is hardcoded.
 	@Override
 	public boolean ChangeMagazineTypeClick(){
 		return ChangeMagazineType.isKeyDown_withStopper() && (gunPrepare_modification).isKeyDown_noStop();

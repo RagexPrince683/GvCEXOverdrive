@@ -97,6 +97,7 @@ public class CommonSideProxyHMG {
 		return false;
 	}
 
+	//TODO override to true when we have a mag but it's not currently being reloaded or is selected
 	public boolean ChangeMagazineTypeClick(){
 		return false;
 	}
