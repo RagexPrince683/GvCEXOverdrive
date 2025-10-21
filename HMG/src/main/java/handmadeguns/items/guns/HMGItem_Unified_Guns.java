@@ -33,6 +33,7 @@ import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.EnumAction;
@@ -148,6 +149,109 @@ public class HMGItem_Unified_Guns extends Item {
 			gunProcess(itemstack, world, entity, i, flag);
 		}
 	}
+
+	//helpers
+	private int findBestMagazineIndex(EntityPlayer player, ItemStack gunStack) {
+		if (player == null || gunStack == null) return -1;
+		if (this.gunInfo == null || this.gunInfo.magazine == null) return -1;
+
+		int len = this.gunInfo.magazine.length;
+		if (len == 0) return -1;
+
+		int bestIndex = -1;
+		int bestRounds = 0;
+
+		// Get loaded mags from the gun (these are ItemStack[])
+		ItemStack[] loadedMags = this.get_loadedMagazineStack(gunStack);
+
+		// Walk through each magazine type index and sum rounds from loaded + player inventory
+		for (int idx = 0; idx < len; idx++) {
+			Object magDescriptor = this.gunInfo.magazine[idx];
+			Item magItemCandidate = extractItemFromDescriptor(magDescriptor);
+
+			int totalRoundsForThisType = 0;
+
+			// 1) Count rounds in loaded magazines that match this type
+			if (loadedMags != null) {
+				for (ItemStack loaded : loadedMags) {
+					if (loaded == null) continue;
+					if (itemsMatchDescriptor(loaded, magDescriptor, magItemCandidate)) {
+						// your HUD uses (maxDamage - itemDamage) * stackSize -> replicate that
+						int perStack = (loaded.getMaxDamage() - loaded.getItemDamage());
+						totalRoundsForThisType += perStack * loaded.stackSize;
+					}
+				}
+			}
+
+			// 2) Count rounds in player's inventory (mainInventory)
+			InventoryPlayer inv = player.inventory;
+			if (inv != null && inv.mainInventory != null) {
+				for (ItemStack stack : inv.mainInventory) {
+					if (stack == null) continue;
+					if (itemsMatchDescriptor(stack, magDescriptor, magItemCandidate)) {
+						int perStack = (stack.getMaxDamage() - stack.getItemDamage());
+						totalRoundsForThisType += perStack * stack.stackSize;
+					}
+				}
+			}
+
+			// pick best
+			if (totalRoundsForThisType > bestRounds) {
+				bestRounds = totalRoundsForThisType;
+				bestIndex = idx;
+			}
+		}
+
+		return bestIndex;
+	}
+
+	/** Try to pull an Item out of the magazine descriptor. If descriptor is an Item or ItemStack we return the Item; otherwise null. */
+	private Item extractItemFromDescriptor(Object magDescriptor) {
+		try {
+			if (magDescriptor instanceof Item) {
+				return (Item) magDescriptor;
+			} else if (magDescriptor instanceof ItemStack) {
+				return ((ItemStack) magDescriptor).getItem();
+			} else if (magDescriptor instanceof String) {
+				// no direct Item mapping available here
+				return null;
+			}
+		} catch (Throwable t) { }
+		return null;
+	}
+
+	/** Robust matching: if we have the concrete Item, use it; otherwise try to match by unlocalized name or toString fallback. */
+	private boolean itemsMatchDescriptor(ItemStack stack, Object magDescriptor, Item magItemCandidate) {
+		if (stack == null) return false;
+		if (magItemCandidate != null) {
+			return stack.getItem() == magItemCandidate;
+		}
+
+		// If descriptor is ItemStack, compare items
+		if (magDescriptor instanceof ItemStack) {
+			try {
+				return stack.getItem() == ((ItemStack) magDescriptor).getItem();
+			} catch (Throwable t) { }
+		}
+
+		// If descriptor is a String identifier, try to match unlocalized name or display name
+		if (magDescriptor instanceof String) {
+			String id = (String) magDescriptor;
+			try {
+				if (stack.getUnlocalizedName() != null && stack.getUnlocalizedName().toLowerCase().contains(id.toLowerCase())) return true;
+				if (stack.getDisplayName() != null && stack.getDisplayName().toLowerCase().contains(id.toLowerCase())) return true;
+			} catch (Throwable t) { }
+		}
+
+		// Last-ditch fallback: check if the stack's unlocalized name contains "mag" (crude)
+		try {
+			String u = stack.getUnlocalizedName();
+			if (u != null && u.toLowerCase().contains("mag")) return true;
+		} catch (Throwable ignored) { }
+
+		return false;
+	}
+
 	public void gunProcess(ItemStack itemstack, World world, Entity entity, int i, boolean flag){
 		try {
 			if (islmmloaded && entity instanceof LMM_IEntityLittleMaidAvatarBase) {
@@ -317,16 +421,36 @@ public class HMGItem_Unified_Guns extends Item {
 								nbt.setInteger("HMGMode", guntemp.selector);
 								HMGPacketHandler.INSTANCE.sendToServer(new PacketChangeModeHeldItem(entity, guntemp.selector));
 							}
-							if (HMG_proxy.ChangeMagazineTypeClick()) {
-								int selecting = nbt.getInteger("get_selectingMagazine");
-								selecting++;
-								if (selecting >= gunInfo.magazine.length) {
-									selecting = 0;
-								}
-								nbt.setInteger("get_selectingMagazine", selecting);
-								HMGPacketHandler.INSTANCE.sendToServer(new PacketChangeMagazineType(entity, selecting));
-							}
+							//if (HMG_proxy.ChangeMagazineTypeClick()) {
+							//	int selecting = nbt.getInteger("get_selectingMagazine");
+							//	selecting++;
+							//	if (selecting >= gunInfo.magazine.length) {
+							//		selecting = 0;
+							//	}
+							//	nbt.setInteger("get_selectingMagazine", selecting);
+							//	HMGPacketHandler.INSTANCE.sendToServer(new PacketChangeMagazineType(entity, selecting));
+							//} GOODBYE
 							//TODO this is more heckin bullshit for the keybind crap to change le heckin magazine to work
+
+							//automated shit
+
+							// run only on client ? oh my god why
+							if (entity instanceof EntityPlayer && entity.worldObj.isRemote) {
+								EntityPlayer player = (EntityPlayer) entity;
+
+								int selecting = nbt.getInteger("get_selectingMagazine");
+								// CALL THE INSTANCE METHOD ON THIS and pass the actual itemstack param
+								int best = this.findBestMagazineIndex(player, itemstack);
+
+								if (best >= 0 && best != selecting) {
+									selecting = best;
+									nbt.setInteger("get_selectingMagazine", selecting);
+									HMGPacketHandler.INSTANCE.sendToServer(new PacketChangeMagazineType(entity, selecting));
+								}
+								// else if best == selecting or best == -1: do nothing (keeps existing selection)
+							}
+
+
 						} else {
 							if(guntemp.currentConnectedTurret == null && (((EntityPlayer) entity).getHeldItem() == itemstack || i == -1)){
 								if (gunInfo.canlock && nbt.getBoolean("SeekerOpened")) {
