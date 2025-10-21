@@ -41,6 +41,7 @@ public class WhizEventHandler {
         );
 
         for (HMGEntityBulletBase bullet : bullets) {
+            //test
             // Skip bullets fired by this player
             Entity shooter = bullet.getThrower(); // or bullet.shootingEntity if that's the actual field
             if (shooter == player) continue;
