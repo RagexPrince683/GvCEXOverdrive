@@ -735,6 +735,7 @@ public class HMGItem_Unified_Guns extends Item {
 			e.printStackTrace();
 		}
 	}
+	//end of gun process
 	public void lockon(ItemStack itemstack, World worldObj, Entity entity, NBTTagCompound nbt){
 		if(guntemp.currentConnectedTurret != null){
 			guntemp.TGT = guntemp.currentConnectedTurret.target;

@@ -45,3 +45,6 @@ Thumbs.db
 local.properties
 HMG/eclipse/options.txt
 HMG/eclipse/usernamecache.json
+HMG/eclipse/usercache.json
+HMG/eclipse/server.properties
+HMG/eclipse/ops.json
