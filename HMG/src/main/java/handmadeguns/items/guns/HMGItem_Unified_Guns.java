@@ -326,6 +326,7 @@ public class HMGItem_Unified_Guns extends Item {
 								nbt.setInteger("get_selectingMagazine", selecting);
 								HMGPacketHandler.INSTANCE.sendToServer(new PacketChangeMagazineType(entity, selecting));
 							}
+							//TODO this is more heckin bullshit for the keybind crap to change le heckin magazine to work
 						} else {
 							if(guntemp.currentConnectedTurret == null && (((EntityPlayer) entity).getHeldItem() == itemstack || i == -1)){
 								if (gunInfo.canlock && nbt.getBoolean("SeekerOpened")) {
