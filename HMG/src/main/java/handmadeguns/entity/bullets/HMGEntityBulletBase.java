@@ -934,7 +934,8 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 		
 		double remainingMovelength = backupmotion.lengthVector();
 		Vec3 hitedpos = null;
-		Vec3 motionVec = Vec3.createVectorHelper(motionX,motionY,motionZ);
+		// motion normalized guard
+		Vec3 motionVec = Vec3.createVectorHelper(this.motionX, this.motionY, this.motionZ);
 		boolean changemotionflag = false;
 //		int breakcnt = 0;
 		//反射・ヒット処理
@@ -979,10 +980,9 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 //			}
 
 		// --- Fixed VT proximity fuse logic ---
-		if (hasVT && accelerationDelay < ticksInAir && (homingEntity == null || awayFlag || forceVT)) {
+		if (hasVT && accelerationDelay < ticksInAir) {
 			double vtRangeSq = VTRange * VTRange;
 
-			// Expand AABB slightly to account for motion
 			List list = this.getEntitiesWithinAABBExcludingEntity(this,
 					this.boundingBox.expand(VTRange + Math.abs(this.motionX),
 							VTRange + Math.abs(this.motionY),
@@ -990,49 +990,55 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 
 			for (int i = 0; i < list.size(); i++) {
 				Entity entity1 = (Entity) list.get(i);
-				if (entity1 == null || entity1.isDead ) continue; //|| entity1 == this.shootingEntity nah we dont need that
+				if (entity1 == null || entity1.isDead) continue;
 
-				// Allow entities that are aircraft-like or anything damageable
-				boolean validTarget = false;
-
-				// Check class name instead of importing MCH classes
+				// Broad class-name match (no imports)
 				String cname = entity1.getClass().getSimpleName().toLowerCase();
-				if (cname.contains("mcheli") || cname.contains("heli") || cname.contains("aircraft") || cname.contains("plane") ) { //|| cname.contains("jet") not real
-					validTarget = true;
-				}
+				boolean looksLikeAircraft = cname.contains("mcheli") || cname.contains("heli") || cname.contains("aircraft") || cname.contains("plane") ;
 
-				// Fallback: normal entity types that can be damaged
-				if (!validTarget && entity1.canBeCollidedWith() && iscandamageentity(entity1)) {
-					validTarget = true;
-				}
-
+				boolean validTarget = false;
+				if (looksLikeAircraft) validTarget = true;
+				if (!validTarget && entity1.canBeCollidedWith() && iscandamageentity(entity1)) validTarget = true;
 				if (!validTarget) continue;
 
-				// Distance check (properly squared)
+				// squared distance check
 				double distSq = this.getDistanceSqToEntity(entity1);
 				if (distSq > vtRangeSq) continue;
 
-				// Angle check — only detonate if target is within forward cone
-				Vec3 toTGT = Vec3.createVectorHelper(entity1.posX - this.posX,
-						entity1.posY - this.posY,
-						entity1.posZ - this.posZ);
-				toTGT = toTGT.normalize();
-				Vec3 motionNorm = Vec3.createVectorHelper(this.motionX, this.motionY, this.motionZ).normalize();
+				// target center/midpoint (more stable against odd bounding boxes)
+				double tgtX = entity1.posX;
+				double tgtY = entity1.posY + (entity1.height * 0.5);
+				double tgtZ = entity1.posZ;
 
-				double angle = Math.acos(motionNorm.dotProduct(toTGT));
+				// to-target vector
+				Vec3 toTGT = Vec3.createVectorHelper(tgtX - this.posX, tgtY - this.posY, tgtZ - this.posZ);
+				double toTGTlen = toTGT.lengthVector();
+				if (toTGTlen < 1e-6) {
+					// basically inside target — explode
+					this.explode(tgtX, tgtY, tgtZ, ex, cfg_blockdestroy && canex);
+					break;
+				}
+				toTGT = toTGT.normalize();
+
+
+				double mlen = motionVec.lengthVector();
+				if (mlen < 1e-6) continue; // not moving enough to judge
+				Vec3 motionNorm = motionVec.normalize();
+
+				double dot = motionNorm.dotProduct(toTGT);
+				if (dot > 1.0) dot = 1.0;
+				if (dot < -1.0) dot = -1.0;
+				double angle = Math.acos(dot);
 				if (Double.isNaN(angle)) continue;
 
 				if (Math.toDegrees(angle) < VTWidth) {
-					// Detonate near the center of the target
-					this.explode(entity1.posX,
-							entity1.posY + entity1.height * 0.5,
-							entity1.posZ,
-							ex,
-							cfg_blockdestroy && canex);
+					// detonate centered on the target
+					this.explode(tgtX, tgtY, tgtZ, ex, cfg_blockdestroy && canex);
 					break;
 				}
 			}
 		}
+
 
 
 		vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
