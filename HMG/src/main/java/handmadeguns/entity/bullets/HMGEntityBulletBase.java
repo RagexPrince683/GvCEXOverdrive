@@ -1364,45 +1364,82 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				targetX,targetY,targetZ,
 				gra * cfg_defgravitycof,
 				this.getTerminalspeed());
+
+		// normalize desired course direction
 		course.normalize();
+
 		if(dist > 1000000) {
 			if (targetPitch[2] != -1) {
-				course.y = sin(toRadians(targetPitch[0]));
+				course.y = Math.sin(Math.toRadians(targetPitch[0]));
 			} else if (course.y < 0.707106781186547524f) {
-				course.y = 0.707106781186547524f;//1/route(2);
+				course.y = 0.707106781186547524f;
 			}
+			course.normalize();
 		}
-		Vector3d backupmotion;
-//				= new Vector3d(motionX,motionY,motionZ);
-//		backupmotion.normalize();
-		backupmotion = Utils.getLook2(1,this.rotationYaw,this.rotationPitch);
-		Vector3d axis = new Vector3d();
-		axis.cross(backupmotion,course);
-		axis.normalize();
-		Quat4d thisRot = new Quat4d(0,0,0,1);
-		AxisAngle4d axisyangledy = new AxisAngle4d(unitX, toRadians(this.rotationPitch)/2);
-		thisRot = handmadevehicle.Utils.quatRotateAxis(thisRot,axisyangledy);
-		AxisAngle4d axisyangledx = new AxisAngle4d(unitY, -toRadians(this.rotationYaw)/2);
-		thisRot = handmadevehicle.Utils.quatRotateAxis(thisRot,axisyangledx);
 
-		double rad = acos(backupmotion.dot(course));
-		if(toDegrees(rad)>induction_precision){
-			rad = toRadians(induction_precision);
+		// Prefer the actual motion vector as the "current heading" when it's meaningful,
+		// otherwise fall back to rotation yaw/pitch look direction.
+		Vector3d backupmotion = null;
+		double motionLen = Math.sqrt(this.motionX*this.motionX + this.motionY*this.motionY + this.motionZ*this.motionZ);
+		if (motionLen > 1e-4) {
+			backupmotion = new Vector3d(this.motionX / motionLen, this.motionY / motionLen, this.motionZ / motionLen);
+		} else {
+			// fallback to orientation-based look
+			backupmotion = Utils.getLook2(1, this.rotationYaw, this.rotationPitch);
+			// ensure normalized
+			backupmotion.normalize();
+		}
+
+		// compute rotation axis from current heading to desired course
+		Vector3d axis = new Vector3d();
+		axis.cross(backupmotion, course);
+
+		double axisLen = axis.length();
+		if (axisLen < 1e-6) {
+			// vectors nearly parallel or anti-parallel -> pick any perpendicular axis to avoid NaN
+			axis = new Vector3d(0, 1, 0);
+		} else {
+			axis.scale(1.0 / axisLen); // normalize axis
+		}
+
+		// Build a quaternion representing current orientation (from current rotation)
+		Quat4d thisRot = new Quat4d(0,0,0,1);
+		AxisAngle4d axisPitch = new AxisAngle4d(unitX, Math.toRadians(this.rotationPitch) / 2.0);
+		thisRot = handmadevehicle.Utils.quatRotateAxis(thisRot, axisPitch);
+		AxisAngle4d axisYaw = new AxisAngle4d(unitY, -Math.toRadians(this.rotationYaw) / 2.0);
+		thisRot = handmadevehicle.Utils.quatRotateAxis(thisRot, axisYaw);
+
+		// angle between current heading and desired course
+		double dot = backupmotion.dot(course);
+		// clamp numeric round-off
+		if (dot > 1.0) dot = 1.0;
+		if (dot < -1.0) dot = -1.0;
+		double rad = Math.acos(dot);
+		double angleDeg = Math.toDegrees(rad);
+
+		// cap rotation angle by induction_precision (deg). Do NOT set awayFlag here unless target is actually behind
+		double cappedRad = Math.toRadians(Math.min(angleDeg, induction_precision));
+
+		// Conservative awayFlag: only set if target is behind or angle is huge
+		if (angleDeg > 120.0 || dot < -0.1) {
 			awayFlag = true;
-		}else {
+		} else {
 			awayFlag = false;
 		}
-		AxisAngle4d axisyangledChase = new AxisAngle4d(axis, rad/4);
-		thisRot = handmadevehicle.Utils.quatRotateAxis(thisRot,axisyangledChase);
+
+		// Apply the capped rotation (use the cappedRad directly; makes missile responsive)
+		AxisAngle4d axisChase = new AxisAngle4d(axis, cappedRad);
+		thisRot = handmadevehicle.Utils.quatRotateAxis(thisRot, axisChase);
 
 		double[] xyz = handmadevehicle.Utils.eulerfromQuat(thisRot);
 		if(!Double.isNaN(xyz[0])){
-			rotationPitch = (float) -toDegrees(xyz[0]);
+			rotationPitch = (float) -Math.toDegrees(xyz[0]);
 		}
 		if (!Double.isNaN(xyz[1])) {
-			rotationYaw = (float) -toDegrees(xyz[1]);
+			rotationYaw = (float) -Math.toDegrees(xyz[1]);
 		}
 	}
+
 	private void resetLock(){
 		homingEntity = null;
 		lockedBlockPos = null;
