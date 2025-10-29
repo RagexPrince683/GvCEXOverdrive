@@ -978,24 +978,62 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 //				System.out.println("debug3" + motionVec);
 //			}
 
-		if(hasVT && accelerationDelay < ticksInAir && (homingEntity == null || awayFlag || forceVT)){
+		// --- Fixed VT proximity fuse logic ---
+		if (hasVT && accelerationDelay < ticksInAir && (homingEntity == null || awayFlag || forceVT)) {
+			double vtRangeSq = VTRange * VTRange;
+
+			// Expand AABB slightly to account for motion
 			List list = this.getEntitiesWithinAABBExcludingEntity(this,
-					this.boundingBox.expand(VTRange + abs(this.motionX), VTRange + abs(this.motionY), VTRange + abs(this.motionZ)));
-			for (int j = 0; j < list.size(); ++j) {
-				Entity entity1 = (Entity) list.get(j);
-				if (entity1.width > 1 && entity1.height > 1 && iscandamageentity(entity1) && getDistanceSqToEntity(entity1) < VTRange) {
-					Vector3d toTGT = new Vector3d(entity1.posX - this.posX, entity1.posY - this.posY, entity1.posZ - this.posZ);
-					Vector3d motion = new Vector3d(motionX, motionY, motionZ);
-					toTGT.normalize();
-					motion.normalize();
-					double angle = acos(motion.dot(toTGT));
-					if (angle < toRadians(VTWidth)) {
-						this.explode(this.posX, this.posY, this.posZ, ex, cfg_blockdestroy && canex);
-						break;
-					}
+					this.boundingBox.expand(VTRange + Math.abs(this.motionX),
+							VTRange + Math.abs(this.motionY),
+							VTRange + Math.abs(this.motionZ)));
+
+			for (int i = 0; i < list.size(); i++) {
+				Entity entity1 = (Entity) list.get(i);
+				if (entity1 == null || entity1.isDead ) continue; //|| entity1 == this.shootingEntity nah we dont need that
+
+				// Allow entities that are aircraft-like or anything damageable
+				boolean validTarget = false;
+
+				// Check class name instead of importing MCH classes
+				String cname = entity1.getClass().getSimpleName().toLowerCase();
+				if (cname.contains("mcheli") || cname.contains("heli") || cname.contains("aircraft") || cname.contains("plane") ) { //|| cname.contains("jet") not real
+					validTarget = true;
+				}
+
+				// Fallback: normal entity types that can be damaged
+				if (!validTarget && entity1.canBeCollidedWith() && iscandamageentity(entity1)) {
+					validTarget = true;
+				}
+
+				if (!validTarget) continue;
+
+				// Distance check (properly squared)
+				double distSq = this.getDistanceSqToEntity(entity1);
+				if (distSq > vtRangeSq) continue;
+
+				// Angle check — only detonate if target is within forward cone
+				Vec3 toTGT = Vec3.createVectorHelper(entity1.posX - this.posX,
+						entity1.posY - this.posY,
+						entity1.posZ - this.posZ);
+				toTGT = toTGT.normalize();
+				Vec3 motionNorm = Vec3.createVectorHelper(this.motionX, this.motionY, this.motionZ).normalize();
+
+				double angle = Math.acos(motionNorm.dotProduct(toTGT));
+				if (Double.isNaN(angle)) continue;
+
+				if (Math.toDegrees(angle) < VTWidth) {
+					// Detonate near the center of the target
+					this.explode(entity1.posX,
+							entity1.posY + entity1.height * 0.5,
+							entity1.posZ,
+							ex,
+							cfg_blockdestroy && canex);
+					break;
 				}
 			}
 		}
+
 
 		vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
 		vec31 = Vec3.createVectorHelper(this.posX + motionVec.xCoord, this.posY + motionVec.yCoord, this.posZ + motionVec.zCoord);
