@@ -994,7 +994,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 
 				// Broad class-name match (no imports)
 				String cname = entity1.getClass().getSimpleName().toLowerCase();
-				boolean looksLikeAircraft = cname.contains("mcheli") || cname.contains("heli") || cname.contains("aircraft") || cname.contains("plane") ;
+				boolean looksLikeAircraft = cname.contains("mcheli") || cname.contains("heli") || cname.contains("aircraft") || cname.contains("plane") || cname.contains("flare") ;
 
 				boolean validTarget = false;
 				if (looksLikeAircraft) validTarget = true;
