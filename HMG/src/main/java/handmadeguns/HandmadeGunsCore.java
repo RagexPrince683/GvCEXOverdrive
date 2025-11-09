@@ -842,7 +842,17 @@ public class HandmadeGunsCore {
 			}else if(cfg_ADS_Sneaking == 2) {
 				flag = entity.isSneaking();
 			}else{
-				flag = HMG_proxy.ADSClick() || entity.isSneaking();
+				ItemStack held = ((EntityPlayer) entity).getHeldItem();
+
+				// Firearm-only condition
+				boolean holdingGun = held != null && held.getItem() instanceof HMGItem_Unified_Guns;
+
+				if (holdingGun) {
+					flag = HMG_proxy.ADSClick() || entity.isSneaking();
+				} else {
+					// Not holding a firearm → no ADS
+					flag = false;
+				}
 			}
 //			System.out.println("debug" + HMG_proxy.ADSclick());
 
