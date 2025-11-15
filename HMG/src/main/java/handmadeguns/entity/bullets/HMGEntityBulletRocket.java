@@ -36,7 +36,9 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 			// Handle damage to nearby entities
 			//oh my god
 			List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this,
-					this.boundingBox.expand(exlevel, exlevel, exlevel)); // based on the actual explosion size
+					this.boundingBox.expand(this.exlevel, this.exlevel, this.exlevel)); // based on the actual explosion size
+			//could also be ex
+			//ok this is either ex or exlevel, this mod is so shit I can't tell which one it actually fucking uses in this case
 			//todo expand size to be the actual explosion size value
 
 			for (Entity target : entities) {
@@ -44,14 +46,16 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 					//float distance = (float) this.getDistanceToEntity(target);
 					//dist unused
 					//float damage = this.getDamageBasedOnDistance(distance, level); // Your method (below)
-					//todo get the fucking stupid ass fucking gunpower info or whatever the fuck we were working
+					//todone get the fucking stupid ass fucking gunpower info or whatever the fuck we were working
 					// with before the big ass error of death happened
 					System.out.println("new explosion bullshit" + Bdamege + "bdamage" + this.thrower);
+					//debug to see what this stupid shit even is
+					System.out.println("exlevel: " + exlevel + " ex:" + ex);
 					//damage = this.whateverthefuck
 					DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
 
 					// hopefully does the base damage that the projectile does as opposed to relying on the stupid fucking explosion value
-					target.attackEntityFrom(ds, Bdamege);
+					target.attackEntityFrom(ds, Bdamege); //todo Bdamege/distance from impact
 					//holy shit this is a nightmare to work with
 				}
 			}
