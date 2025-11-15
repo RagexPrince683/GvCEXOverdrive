@@ -576,50 +576,97 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	
 	@Override
 	public void setDead() {
-		if(damageRange>0){
+		if (damageRange > 0) {
 			List list = worldObj.loadedEntityList;
+
+			double maxDist = damageRange;
+			double maxDistSq = maxDist * maxDist;
+
 			for (int j = 0; j < list.size(); ++j) {
+
 				Entity entity1 = (Entity) list.get(j);
-				if ((this.isInWater() == entity1.isInWater()) && entity1.canBeCollidedWith() && (ticksInAir > 20 + accelerationDelay ||
-															(iscandamageentity(entity1)))) {
-					double f = this.getDistanceSq(entity1.posX,entity1.posY + entity1.height/2,entity1.posZ);
-					if(f < damageRange * damageRange){
-						f = damageRange * damageRange-f;
-						Vec3 vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-						Vec3 vec31 = Vec3.createVectorHelper(entity1.posX,entity1.posY + entity1.height/2,entity1.posZ);
-						MovingObjectPosition movingobjectposition = getmovingobjectPosition_forBlock(worldObj,vec3, vec31);//衝突するブロックを調べる
-						if(movingobjectposition == null){
-							int var2 = this.Bdamege;
-							if(islmmloaded&&(this.thrower instanceof LMM_EntityLittleMaid || this.thrower instanceof LMM_EntityLittleMaidAvatar || this.thrower instanceof LMM_EntityLittleMaidAvatarMP || (cfg_FriendFirePlayerToLMM && this.thrower instanceof EntityPlayer)) && HandmadeGunsCore.cfg_FriendFireLMM){
-								if (entity1 instanceof LMM_EntityLittleMaid)
-								{
-									var2 = 0;
-								}
-								if (entity1 instanceof LMM_EntityLittleMaidAvatar)
-								{
-									var2 = 0;
-								}
-								if (entity1 instanceof EntityPlayer)
-								{
-									var2 = 0;
-								}
-							}
-							if(this.thrower instanceof IFF){
-								if(((IFF) this.thrower).is_this_entity_friend(entity1)){
-									var2 = 0;
-								}
-							}
-							Vector3d accelVec = new Vector3d(entity1.posX,entity1.posY,entity1.posZ);
-							accelVec.sub(new Vector3d(this.posX,this.posY,this.posZ));
-							accelVec.normalize();
-							entity1.hurtResistantTime = 0;
-							entity1.attackEntityFrom((new EntityDamageSourceIndirect("explosion", this, this.getThrower())).setProjectile().setExplosion(), (float) (var2*f/(damageRange * damageRange)));
-							entity1.motionX -=accelVec.x *  var2/12000 * f /(damageRange * damageRange);
-							entity1.motionY -=accelVec.y *  var2/12000 * f /(damageRange * damageRange);
-							entity1.motionZ -=accelVec.z *  var2/12000 * f /(damageRange * damageRange);
+
+				// Basic filters
+				if (!entity1.canBeCollidedWith()) continue;
+				if (entity1 == this) continue;
+				if (ticksInAir <= 20 + accelerationDelay && !iscandamageentity(entity1)) continue;
+
+				// Distance
+				double distSq = this.getDistanceSq(
+						entity1.posX,
+						entity1.posY + entity1.height / 2,
+						entity1.posZ
+				);
+
+				if (distSq > maxDistSq) continue;
+
+				// Line-of-sight check
+				Vec3 start = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
+				Vec3 end = Vec3.createVectorHelper(
+						entity1.posX,
+						entity1.posY + entity1.height / 2,
+						entity1.posZ
+				);
+
+				MovingObjectPosition mop = getmovingobjectPosition_forBlock(worldObj, start, end);
+				if (mop != null) continue; // blocked by wall; no shrapnel through solid cover
+
+				// Base damage
+				float baseDmg = this.Bdamege;
+
+				// Friend-fire overrides
+				if (islmmloaded && HandmadeGunsCore.cfg_FriendFireLMM) {
+					if (this.thrower instanceof LMM_EntityLittleMaid ||
+							this.thrower instanceof LMM_EntityLittleMaidAvatar ||
+							this.thrower instanceof LMM_EntityLittleMaidAvatarMP ||
+							(cfg_FriendFirePlayerToLMM && this.thrower instanceof EntityPlayer)) {
+
+						if (entity1 instanceof LMM_EntityLittleMaid ||
+								entity1 instanceof LMM_EntityLittleMaidAvatar ||
+								entity1 instanceof EntityPlayer) {
+							baseDmg = 0;
 						}
 					}
 				}
+
+				if (this.thrower instanceof IFF) {
+					if (((IFF) this.thrower).is_this_entity_friend(entity1)) {
+						baseDmg = 0;
+					}
+				}
+
+				// Convert squared distance → real distance
+				double dist = Math.sqrt(distSq);
+
+				// ---- REALISTIC SHAPNEL FALLOFF ----
+				// 1.0 at center → 0.0 at edge
+				double falloff = 1.0 - (dist / maxDist);
+
+				if (falloff <= 0) continue;
+
+				// Apply damage
+				float finalDmg = (float)(baseDmg * falloff);
+
+				entity1.hurtResistantTime = 0;
+				entity1.attackEntityFrom(
+						(new EntityDamageSourceIndirect("explosion", this, this.getThrower()))
+								.setProjectile().setExplosion(),
+						finalDmg
+				);
+
+				// Knockback proportional to final damage
+				Vector3d knock = new Vector3d(
+						entity1.posX - this.posX,
+						entity1.posY - this.posY,
+						entity1.posZ - this.posZ
+				);
+				knock.normalize();
+
+				double knockStrength = finalDmg / 40.0; // tune this
+
+				entity1.motionX += knock.x * knockStrength;
+				entity1.motionY += knock.y * knockStrength;
+				entity1.motionZ += knock.z * knockStrength;
 			}
 		}
 
