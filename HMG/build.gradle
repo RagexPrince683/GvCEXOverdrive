@@ -67,3 +67,11 @@ dependencies {
     compile fileTree(dir: 'lib', include: '*.jar')
     compile 'javax.vecmath:vecmath:1.5.2'
 }
+
+tasks.withType(JavaExec) {
+	if (it.name == "runClient") {
+		it.jvmArgs "-Djinput.useDefaultPlugin=false"
+		it.jvmArgs "-Djinput.plugins=none"
+		it.jvmArgs "-Djinput.loglevel=OFF"
+	}
+}
