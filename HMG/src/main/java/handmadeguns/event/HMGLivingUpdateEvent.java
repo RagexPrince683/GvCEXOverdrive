@@ -25,8 +25,14 @@ public class HMGLivingUpdateEvent {
 
     @SubscribeEvent
     public void onEntityHurt(LivingHurtEvent event) {
+        DamageSource src = event.source;
         if (!(event.source.getSourceOfDamage() instanceof Entity)) return;
-        //todo && not (event.source.getSourceOfDamage() instanceof Explosion)) return; // Ignore explosion damage
+        if (event.source == DamageSource.inWall) return;
+        if (src.isExplosion()) return;
+        //ignore explosion damage
+
+        //if (event.source == DamageSource.
+        //todone && not (event.source.getSourceOfDamage() instanceof Explosion)) return; // Ignore explosion damage
 
         // Get the entity being attacked and the attacker
         EntityLivingBase entity = event.entityLiving;
