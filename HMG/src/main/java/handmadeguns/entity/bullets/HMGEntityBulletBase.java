@@ -645,7 +645,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				if (falloff <= 0) continue;
 
 				// Apply damage
-				float finalDmg = (float)(baseDmg * falloff);
+				float finalDmg = (float)(baseDmg / falloff);
 
 				entity1.hurtResistantTime = 0;
 				entity1.attackEntityFrom(
