@@ -614,7 +614,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				// Base damage
 				float baseDmg = this.Bdamege;
 
-				// random unused shit
+				// Friend-fire overrides
 				if (islmmloaded && HandmadeGunsCore.cfg_FriendFireLMM) {
 					if (this.thrower instanceof LMM_EntityLittleMaid ||
 							this.thrower instanceof LMM_EntityLittleMaidAvatar ||
@@ -640,10 +640,10 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 
 				// ---- REALISTIC SHAPNEL FALLOFF ----
 				double falloff = 1.0 - (dist / maxDist); // 1.0 at center, 0.0 at edge
-				if (falloff <= 0) return; //ideally we would want to RETURN here, not continue as the explosion ends at 0.
+				if (falloff <= 0) continue;
 
 				// Apply damage properly (multiply, not divide!)
-				float finalDmg = (float)(baseDmg / falloff * 0.5); // added extra 0.5 nerf
+				float finalDmg = (float)(baseDmg * falloff * 0.5); // added extra 0.5 nerf
 
 				if (finalDmg <= 0.1f) continue; // ignore negligible damage
 
@@ -662,12 +662,13 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				);
 				knock.normalize();
 
-				double knockStrength = finalDmg / 3.0; // higher values mean higher KB. NOT LOWER!!!
+				double knockStrength = finalDmg / 80.0; // further nerfed
 				entity1.motionX += knock.x * knockStrength;
 				entity1.motionY += knock.y * knockStrength;
 				entity1.motionZ += knock.z * knockStrength;
 			}
 		}
+
 
 
 
