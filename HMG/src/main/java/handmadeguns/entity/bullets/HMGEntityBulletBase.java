@@ -577,49 +577,44 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	@Override
 	public void setDead() {
 		if (damageRange > 0) {
-
 			List list = worldObj.loadedEntityList;
 
 			double maxDist = damageRange;
 			double maxDistSq = maxDist * maxDist;
 
-			// Global shrapnel nerf multiplier (TUNE THIS)
-			final double shrapnelMultiplier = 0.15;  // 15% of normal damage
-
-			// Hard safety cap
-			final float maxShrapnelDamage = 8.0F;    // never exceed 8 damage (~4 hearts)
-
 			for (int j = 0; j < list.size(); ++j) {
 
 				Entity entity1 = (Entity) list.get(j);
-				if (entity1 == this) continue;
+
+				// Basic filters
 				if (!entity1.canBeCollidedWith()) continue;
+				if (entity1 == this) continue;
+				if (ticksInAir <= 20 + accelerationDelay && !iscandamageentity(entity1)) continue;
 
-				if (ticksInAir <= 20 + accelerationDelay && !iscandamageentity(entity1))
-					continue;
-
-				// Distance check
+				// Distance
 				double distSq = this.getDistanceSq(
 						entity1.posX,
 						entity1.posY + entity1.height / 2,
 						entity1.posZ
 				);
+
 				if (distSq > maxDistSq) continue;
 
-				// LOS check
+				// Line-of-sight check
 				Vec3 start = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
 				Vec3 end = Vec3.createVectorHelper(
 						entity1.posX,
 						entity1.posY + entity1.height / 2,
 						entity1.posZ
 				);
-				if (getmovingobjectPosition_forBlock(worldObj, start, end) != null)
-					continue;
+
+				MovingObjectPosition mop = getmovingobjectPosition_forBlock(worldObj, start, end);
+				if (mop != null) continue; // blocked by wall; no shrapnel through solid cover
 
 				// Base damage
 				float baseDmg = this.Bdamege;
 
-				// Friend-fire checks
+				// random unused shit
 				if (islmmloaded && HandmadeGunsCore.cfg_FriendFireLMM) {
 					if (this.thrower instanceof LMM_EntityLittleMaid ||
 							this.thrower instanceof LMM_EntityLittleMaidAvatar ||
@@ -640,22 +635,18 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 					}
 				}
 
-				// Distance falloff
+				// Convert squared distance → real distance
 				double dist = Math.sqrt(distSq);
-				double falloff = 1.0 - (dist / maxDist); // linear falloff
 
-				if (falloff <= 0) continue;
+				// ---- REALISTIC SHAPNEL FALLOFF ----
+				double falloff = 1.0 - (dist / maxDist); // 1.0 at center, 0.0 at edge
+				if (falloff <= 0) return; //ideally we would want to RETURN here, not continue as the explosion ends at 0.
 
-				// FINAL DAMAGE CALC
-				float finalDmg = (float)(baseDmg * falloff * shrapnelMultiplier);
+				// Apply damage properly (multiply, not divide!)
+				float finalDmg = (float)(baseDmg / falloff * 0.5); // added extra 0.5 nerf
 
-				// Cap max damage to avoid insane values
-				if (finalDmg > maxShrapnelDamage)
-					finalDmg = maxShrapnelDamage;
+				if (finalDmg <= 0.1f) continue; // ignore negligible damage
 
-				if (finalDmg <= 0) continue;
-
-				// Apply damage
 				entity1.hurtResistantTime = 0;
 				entity1.attackEntityFrom(
 						(new EntityDamageSourceIndirect("explosion", this, this.getThrower()))
@@ -663,7 +654,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 						finalDmg
 				);
 
-				// Knockback scaled down to match weak shrapnel
+				// Knockback proportional to final damage
 				Vector3d knock = new Vector3d(
 						entity1.posX - this.posX,
 						entity1.posY - this.posY,
@@ -671,8 +662,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				);
 				knock.normalize();
 
-				double knockStrength = finalDmg * 0.02; // tiny knockback
-
+				double knockStrength = finalDmg / 3.0; // higher values mean higher KB. NOT LOWER!!!
 				entity1.motionX += knock.x * knockStrength;
 				entity1.motionY += knock.y * knockStrength;
 				entity1.motionZ += knock.z * knockStrength;

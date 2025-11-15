@@ -34,8 +34,9 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 			this.attackEntityFrom(ds1, Bdamege);
 			System.out.println("serverside damage applied");
 			// Handle damage to nearby entities
+			//oh my god
 			List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this,
-					this.boundingBox.expand(3.5D, 3.5D, 3.5D)); // ~7x7x7 damage radius (adjustable)
+					this.boundingBox.expand(exlevel, exlevel, exlevel)); // based on the actual explosion size
 			//todo expand size to be the actual explosion size value
 
 			for (Entity target : entities) {
