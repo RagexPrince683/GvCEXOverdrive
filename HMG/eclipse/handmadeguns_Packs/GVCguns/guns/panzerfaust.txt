@@ -6,7 +6,7 @@ ADS_Spread_coefficient,0.1
 BlletSpreadDiffusion,3,0,0.3,0.2,2,0.1
 Acceleration,0.5f
 accelerationFuse,20
-resistance,0.95f
+//resistance,0.95f
 Recoil,2.0d
 ReloadTime,0
 RemainingBullet,1
@@ -16,7 +16,7 @@ Zoom,1.0f,4.0f,4.0f
 ZoomRender,true
 ZoomRenderType,true,true,true
 ZoomRenderTypeTxture,false,false,false
-Explosion,4.5f
+Explosion,1.5f
 BlockDestory,false
 Texture,smaw
 GunSound,handmadeguns.smaw,handmadeguns.smaw
@@ -26,6 +26,8 @@ ObjModel,panzerfaust.mqo
 ObjTexture,panzerfaust.png
 ModelScala,0.5f
 InworldScale,1.8f
+
+damagerange,5
 
 //does nothing for some reason
 SimpleADSOffsetX,0,0,0
