@@ -740,8 +740,9 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 		worldObj.setBlockToAir(pX, pY, pZ);
 	}
 	
-	
-	public void explode(double x,double y,double z,float level,boolean candestroy)
+
+	//in HMGEntityBulletBase.java
+	public void explode(double x,double y,double z,float level,boolean candestroy, float exl)
 	{
 		//there is FUCKING MORE EXPLOSION CODE HERE JUST INCASE ALL THE OTHER SHIT WASN'T ENOUGH ALREADY!!!
 		noex = true;
@@ -1076,7 +1077,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				double toTGTlen = toTGT.lengthVector();
 				if (toTGTlen < 1e-6) {
 					// basically inside target — explode
-					this.explode(tgtX, tgtY, tgtZ, ex, cfg_blockdestroy && canex);
+					this.explode(tgtX, tgtY, tgtZ, ex, cfg_blockdestroy && canex, this.ex);
 					break;
 				}
 				toTGT = toTGT.normalize();
@@ -1094,7 +1095,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 
 				if (Math.toDegrees(angle) < VTWidth) {
 					// detonate centered on the target
-					this.explode(tgtX, tgtY, tgtZ, ex, cfg_blockdestroy && canex);
+					this.explode(tgtX, tgtY, tgtZ, ex, cfg_blockdestroy && canex, this.ex);
 					break;
 				}
 			}

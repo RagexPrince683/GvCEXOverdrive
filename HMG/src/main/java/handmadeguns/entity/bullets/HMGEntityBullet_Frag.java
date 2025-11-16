@@ -97,7 +97,7 @@ public class HMGEntityBullet_Frag extends HMGEntityBulletBase implements IEntity
 			if (!this.worldObj.isRemote)
 			{
 				if(!noex){
-					this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord,var1.hitVec.zCoord,1.0f,false);
+					this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord,var1.hitVec.zCoord,1.0f,false, this.ex);
 					hitedentity = var1.entityHit;
 				}
 				if (!this.worldObj.isRemote&& (!(var1.entityHit instanceof EntityLivingBase)||noex)) {
@@ -108,7 +108,7 @@ public class HMGEntityBullet_Frag extends HMGEntityBulletBase implements IEntity
 			if (!this.worldObj.isRemote)
 			{
 				if(!this.canbounce) this.setDead();
-				this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord,var1.hitVec.zCoord,1.0f,false);
+				this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord,var1.hitVec.zCoord,1.0f,false, this.ex);
 			}
 		}
 	}

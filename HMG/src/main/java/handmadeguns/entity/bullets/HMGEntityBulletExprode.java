@@ -146,7 +146,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 		if (var1.entityHit != null)
 		{
 			if(!noex && !canbounce){
-				this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord+0.125,var1.hitVec.zCoord, this.exlevel, this.canex && cfg_blockdestroy);
+				this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord+0.125,var1.hitVec.zCoord, this.exlevel, this.canex && cfg_blockdestroy, this.ex);
 				hitedentity = var1.entityHit;
 				hitobjectposition = var1;
 				noex = true;
@@ -160,7 +160,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 			{
 				this.setDead();
 				if(!noex){
-					this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord+0.125,var1.hitVec.zCoord, this.exlevel, this.canex && cfg_blockdestroy);
+					this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord+0.125,var1.hitVec.zCoord, this.exlevel, this.canex && cfg_blockdestroy, this.ex);
 				}
 			}
 		}

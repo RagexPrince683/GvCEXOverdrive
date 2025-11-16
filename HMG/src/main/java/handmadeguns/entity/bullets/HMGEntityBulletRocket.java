@@ -26,17 +26,19 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 	}
 
 	@Override
-	public void explode(double x, double y, double z, float level, boolean candestroy) {
+	public void explode(double x, double y, double z, float level, boolean candestroy, float exl) {
 		System.out.println("explode fired");
 		if (!worldObj.isRemote) {
 			//handle damage in range probably or something idk hopefully this works
 			DamageSource ds1 = DamageSource.causeThrownDamage(this, this.thrower);
 			this.attackEntityFrom(ds1, Bdamege);
 			System.out.println("serverside damage applied");
+			System.out.println("exlevel: " + this.exlevel + " ex:" + this.ex + "exl:" + exl);
+			//so somehow some way, some why, this is 0 for both. Great.
 			// Handle damage to nearby entities
 			//oh my god
 			List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this,
-					this.boundingBox.expand(this.exlevel, this.exlevel, this.exlevel)); // based on the actual explosion size
+					this.boundingBox.expand(exlevel, exlevel, exlevel)); // IDEALLY based on the actual explosion size
 			//could also be ex
 			//ok this is either ex or exlevel, this mod is so shit I can't tell which one it actually fucking uses in this case
 			//todo expand size to be the actual explosion size value
