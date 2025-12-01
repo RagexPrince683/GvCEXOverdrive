@@ -21,6 +21,9 @@ ObjTexture,a_pallete.png
 ModelScala,0.5f
 InworldScale,1.8f
 
+Bursts,-1
+Rates,2.665
+
 ModelEquipped,-0.5f,0.4f,-0.2f
 SimpleADSOffsetY,0.578,0.85f,0.85f
 SimpleADSOffsetX,-0.04686,0.694f,0.694f

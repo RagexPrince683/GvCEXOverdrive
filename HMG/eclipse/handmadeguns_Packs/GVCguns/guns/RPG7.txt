@@ -20,7 +20,7 @@ ReloadMat3,false
 
 ScopeTexture,rr.png,redPoint.png,scope_RPG7.png
 Explosion,0.5f
-damagerange,5
+damagerange,3
 BlockDestory,false
 Texture,RR_sample
 GunSound,handmadeguns.rpg7,handmadeguns.rpg7

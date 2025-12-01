@@ -21,6 +21,9 @@ ObjModel,mle1924.obj
 ObjTexture,a_pallete.png
 ModelScala,0.8f
 
+Bursts,-1
+Rates,2.665
+
 ModelEquipped,-0.7f,0.25f,-0.3f
 ModelHigh,1.35f,0.85f,0.85f
 ModelWidthX,0.594f,0.694f,0.694f

@@ -18,6 +18,9 @@ ObjModel,mas38.mqo
 ObjTexture,a_pallete1.png
 ModelScala,0.8f
 
+Bursts,-1
+Rates,2
+
 
 ModelEquipped,-0.7f,0.4f,0.0f
 ModelHigh,1.38f,1.29f,-0.10f
