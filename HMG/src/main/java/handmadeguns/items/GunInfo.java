@@ -49,7 +49,9 @@ public class GunInfo {
 	public int canuseclass = -1;
 	public int guntype = -1;
 	public float cycle = 1;
-	public float ex = 2.5F;
+	public float ex = 0.0F;
+	public int rpm = 600;
+	//template value
 	public boolean destroyBlock = true;
 	public String[] soundre= {"handmadeguns:handmadeguns.reload"};
 	public float soundrelevel = 1.0f;

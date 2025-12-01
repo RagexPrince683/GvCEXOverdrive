@@ -65,6 +65,10 @@ import static net.minecraft.util.MathHelper.wrapAngleTo180_float;
 import static net.minecraft.world.World.MAX_ENTITY_RADIUS;
 
 public class HMGItem_Unified_Guns extends Item {
+
+
+	//the main GUN item class.
+
 	public GunInfo gunInfo = new GunInfo();
 	public GunTemp guntemp = new GunTemp();
 	public FireTemp firetemp;
@@ -81,6 +85,8 @@ public class HMGItem_Unified_Guns extends Item {
 			String speed = String.valueOf(gunInfo.speed);
 			String bure = String.valueOf(gunInfo.spread_setting);
 			String recoil = String.valueOf(gunInfo.recoil);
+			String exp = String.valueOf(gunInfo.ex);
+			String rpm = String.valueOf(gunInfo.rpm);
 			NBTTagCompound nbt = par1ItemStack.getTagCompound();
 			int selecting = nbt.getInteger("get_selectingMagazine");
 			if (selecting >= gunInfo.reloadTimes.length) selecting = 0;
@@ -93,6 +99,10 @@ public class HMGItem_Unified_Guns extends Item {
 			par3List.add(EnumChatFormatting.WHITE + "Bullet Spread " + "+" + StatCollector.translateToLocal(bure));
 			par3List.add(EnumChatFormatting.WHITE + "Recoil " + "+" + StatCollector.translateToLocal(recoil));
 			par3List.add(EnumChatFormatting.YELLOW + "Reload Time " + "+" + StatCollector.translateToLocal(retime));
+			//todo: explosion radius and lethal radius for explosives, also RPM
+			if (gunInfo.ex > 0.0f) {
+				par3List.add(EnumChatFormatting.RED + "Explosion " + "+" + StatCollector.translateToLocal(exp));
+			}
 			// par3List.add(EnumChatFormatting.YELLOW + "MagazimeType " +
 			// StatCollector.translateToLocal("ARMagazine"));
 			if (!(gunInfo.scopezoombase == 1.0f)) {
@@ -108,6 +118,14 @@ public class HMGItem_Unified_Guns extends Item {
 			} else if (gunInfo.needfix) {
 				par3List.add(EnumChatFormatting.WHITE + "You can not shoot this gun by hand.");
 				par3List.add(EnumChatFormatting.WHITE + "You can use this gun with a vehicle.");
+			}
+
+			if (!gunInfo.rates.isEmpty() && gunInfo.rates.get(0) > 0) {
+				float delayTicks = gunInfo.rates.get(0); // primary fire mode
+				gunInfo.rpm = (int)(1200.0f / delayTicks);
+				par3List.add(EnumChatFormatting.GRAY + "RPM " + "+" + StatCollector.translateToLocal(rpm));
+			} else {
+				gunInfo.rpm = 0;
 			}
 
 		}{
