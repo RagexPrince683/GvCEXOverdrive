@@ -100,7 +100,7 @@ public class HMGItem_Unified_Guns extends Item {
 			par3List.add(EnumChatFormatting.WHITE + "Bullet Spread " + "+" + StatCollector.translateToLocal(bure));
 			par3List.add(EnumChatFormatting.WHITE + "Recoil " + "+" + StatCollector.translateToLocal(recoil));
 			par3List.add(EnumChatFormatting.YELLOW + "Reload Time " + "+" + StatCollector.translateToLocal(retime));
-			//todo: explosion radius and lethal radius for explosives, also RPM
+			//todone: explosion radius and lethal radius for explosives, also RPM
 			if (gunInfo.ex > 0.0f) {
 				par3List.add(EnumChatFormatting.RED + "Explosion " + "+" + StatCollector.translateToLocal(exp));
 			}
