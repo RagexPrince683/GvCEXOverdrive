@@ -87,6 +87,7 @@ public class HMGItem_Unified_Guns extends Item {
 			String recoil = String.valueOf(gunInfo.recoil);
 			String exp = String.valueOf(gunInfo.ex);
 			String rpm = String.valueOf(gunInfo.rpm);
+			String damagerange = String.valueOf(gunInfo.damagerange);
 			NBTTagCompound nbt = par1ItemStack.getTagCompound();
 			int selecting = nbt.getInteger("get_selectingMagazine");
 			if (selecting >= gunInfo.reloadTimes.length) selecting = 0;
@@ -102,6 +103,9 @@ public class HMGItem_Unified_Guns extends Item {
 			//todo: explosion radius and lethal radius for explosives, also RPM
 			if (gunInfo.ex > 0.0f) {
 				par3List.add(EnumChatFormatting.RED + "Explosion " + "+" + StatCollector.translateToLocal(exp));
+			}
+			if (gunInfo.damagerange > 0.0f) { //I guess this works as a non null check too idk im sure it's fine
+				par3List.add(EnumChatFormatting.RED + "Damage Range " + "+" + StatCollector.translateToLocal(damagerange));
 			}
 			// par3List.add(EnumChatFormatting.YELLOW + "MagazimeType " +
 			// StatCollector.translateToLocal("ARMagazine"));
