@@ -1,8 +1,8 @@
 BulletPower,500
 BulletSpeed,6
-BlletSpread,3.0f
+BlletSpread,1.0f
 ADS_Spread_coefficient,0.1
-BlletSpreadDiffusion,10,0,4,0.2,3,0.6
+BlletSpreadDiffusion,2,0,4,0.2,3,0.6
 Acceleration,1.5f
 accelerationFuse,20
 resistance,0.95f
@@ -19,7 +19,8 @@ ReloadMat3,false
 //???
 
 ScopeTexture,rr.png,redPoint.png,scope_RPG7.png
-Explosion7.5f
+Explosion,0.5f
+damagerange,5
 BlockDestory,false
 Texture,RR_sample
 GunSound,handmadeguns.rpg7,handmadeguns.rpg7

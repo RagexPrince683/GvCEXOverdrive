@@ -9,7 +9,9 @@ Zoom,2.0f,4.0f,8.0f
 ZoomRender,true
 ZoomRenderType,true,true,true
 ZoomRenderTypeTxture,false,false,false
-Explosion,3.5f
+Explosion,0.5f
+damagerange,3
+
 BlockDestory,false
 Texture,panzersh
 GunSound,handmadeguns.panzershrek,handmadeguns.supu

@@ -27,9 +27,12 @@ InworldScale,2f
 Cartridge,false
 CartridgeType,4
 isOneuse,true
-MaxstackSize,3
+MaxstackSize,1
 MuzzleFlash,false
 BulletNameALL,M26grenade
+
+Cartridge,false
+DropMagazine,false
 
 ModelEquipped,0f,0.7f,-0.3f
 ModelHigh,0.97f,0.85f,0.85f
@@ -64,4 +67,4 @@ Magazine,0,HandmadeGuns,null
 
 Tabname,HMG_GVCGuns
 Name,M26 Grenade
-GL,M26
+GL,M26 Frag Grenade

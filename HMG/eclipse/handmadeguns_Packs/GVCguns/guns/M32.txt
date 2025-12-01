@@ -13,7 +13,7 @@ Attacking,4.0f
 Zoom,1.1f,2.0f,4.0f
 ZoomRender,true
 ZoomRenderType,true,true,true
-ZoomRenderTypeTxture,false,false,false
+ZoomRenderTypeTxture,true,true,true
 Explosion,4
 BlockDestory,false
 Texture,GL_sample
@@ -55,7 +55,7 @@ Mat22Rotation,0f,0f,-90f
 //0307
 attachRestriction,true
 
-ScopeTexture,acog.png,acog.png,scope.png
+ScopeTexture,acog.png,acog.png,acog.png
 RenderCross,false
 Magazine,0,HandmadeGuns,bullet_gl
 MagazineItemCount,6
@@ -152,4 +152,4 @@ AddParts,mat1
 
 Tabname,HMG_GVCGuns
 
-GL,M32 MGL
+GL,M32 Milkor MGL

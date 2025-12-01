@@ -1,6 +1,6 @@
 BulletPower,200
 BulletSpeed,0.12
-BlletSpread,2.0f
+BlletSpread,1.0f
 isOneuse,true
 ADS_Spread_coefficient,0.1
 BlletSpreadDiffusion,3,0,0.3,0.2,2,0.1
@@ -26,6 +26,9 @@ ObjModel,panzerfaust.mqo
 ObjTexture,panzerfaust.png
 ModelScala,0.5f
 InworldScale,1.8f
+
+Cartridge,false
+DropMagazine,false
 
 damagerange,5
 

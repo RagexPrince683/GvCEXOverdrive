@@ -846,12 +846,14 @@ Slot1,minecraft:iron_ingot:
 Slot2,minecraft:iron_ingot:
 Slot3,minecraft:iron_block:
 Slot4,minecraft:iron_ingot:
-Slot5,HandmadeGuns:bullet_lmg_hmg_mini:
+Slot5,minecraft:iron_block:
 Slot6,minecraft:iron_ingot:
 Slot7,minecraft:emerald_block:
 Slot8,minecraft:emerald_block:
 Slot9,minecraft:emerald_block:
 CraftItem,HandmadeGuns:M134:0:1
+
+//HandmadeGuns:bullet_lmg_hmg_mini:
 
 AddRecipe
 Slot1,minecraft:iron_block:

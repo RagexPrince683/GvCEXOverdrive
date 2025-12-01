@@ -1,5 +1,5 @@
 Texture,bullet_14_5
-Stack,4
+Stack,1
 BulletRound,1
 Name,14.5x114mm BS-41 APCR Round
 

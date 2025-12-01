@@ -32,6 +32,9 @@ MuzzleFlash,false
 BulletNameALL,atgrenade
 DropMagazine,false
 
+Cartridge,false
+DropMagazine,false
+
 ModelEquipped,0f,0.7f,-0.3f
 ModelHigh,0.97f,0.85f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f

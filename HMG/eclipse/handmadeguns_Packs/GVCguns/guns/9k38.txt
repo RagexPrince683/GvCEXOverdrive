@@ -1,11 +1,12 @@
 BulletPower,200
 BulletSpeed,0.1
-BlletSpread,1f
-BulletGravity,0.485
+BlletSpread,5f
+BulletGravity,0.0485
 ADS_Spread_coefficient,0.2
 BlletSpreadDiffusion,3,0,0.3,0.2,2,0.1
 //Acceleration,0.29f
-Acceleration,0.6f
+//Acceleration,0.6f
+Acceleration,0.4f
 //resistance,0.9f
 Recoil,0.0d
 ReloadTime,0
@@ -16,8 +17,9 @@ Zoom,1.0f,1.0f,4.0f
 ZoomRender,true
 ZoomRenderType,true,true,false
 ZoomRenderTypeTxture,false,false,true
+//todo change
 ElevationOffsets,-13
-Explosion,4.0f
+Explosion,0.5f
 BlockDestory,false
 Texture,9k38
 GunSound,handmadeguns.igla,handmadeguns.igla
@@ -29,6 +31,9 @@ ObjModel,9k38.mqo
 ObjTexture,9k38.png
 ModelScala,0.5f
 InworldScale,1.5f
+
+Cartridge,false
+DropMagazine,false
 
 Motion,0.6
 
@@ -53,17 +58,17 @@ BulletNameALL,S-5
 
 ScopeTexture,scope_smaw.png,scope_smaw.png,scope_smaw.png
 RenderCross,false
-Induction_precision,6
-bulletStability,0.6
+Induction_precision,10
+bulletStability,0.35
 Canlock,true
 lock_to_Vehicle,true
-lockOn_minThrottle,2.5
-seekerSize,5
-seekerSize_bullet,90
+lockOn_minThrottle,0.0
+seekerSize,220
+seekerSize_bullet,220
 hasVT,true
-VTRange,25
-VTWidth,180
-damagerange,10
+VTRange,10
+VTWidth,4
+damagerange,8
 UnderBarrelWeapon,0
 RightType,0
 Magazine,0,HandmadeGuns,null
