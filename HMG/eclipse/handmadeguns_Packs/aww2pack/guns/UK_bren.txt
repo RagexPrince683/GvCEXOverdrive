@@ -46,7 +46,7 @@ Magazine,0,HandmadeGuns,bren30
 MagazineItemCount,1
 Tabname,HMG_WW2Guns
 Bursts,-1
-Rates,2
+Rates,2.18
 
 
 AddParts,mat1

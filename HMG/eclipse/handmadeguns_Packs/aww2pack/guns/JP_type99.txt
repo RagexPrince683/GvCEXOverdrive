@@ -22,6 +22,9 @@ ObjTexture,a_pallete.png
 ModelScala,0.5f
 InworldScale,1.8f
 
+Bursts,-1
+Rates,1.5
+
 ModelEquipped,-0.7f,0.65f,-0.2f
 ModelHigh,1.30f,0.85f,0.85f
 ModelWidthX,0.597f,0.697f,0.697f

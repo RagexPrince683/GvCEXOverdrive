@@ -13,18 +13,18 @@ ZoomRender,true
 ZoomRenderType,true,true,true
 ZoomRenderTypeTxture,false,false,false
 Cycle,1
-Texture,MG34
+Texture,mg34
 GunSound,handmadeguns.mg34,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
-ObjModel,MG34.mqo
-ObjTexture,a_pallete1.png
+ObjModel,mg42.mqo
+ObjTexture,mg42.png
 ModelScala,0.8f
 InworldScale,1.8f
 
 Bursts,-1
-Rates,1.332
-Cycle,1.9
+Rates,1
+Cycle,1
 
 ModelEquipped,-0.7f,0.2f,0.0f
 ModelHigh,1.22f,0.85f,0.85f
@@ -206,5 +206,5 @@ AddParts,Base_Sys
 			AddReloadMotionKey,91,0,0,-1.2,0,0,0,		95,0,0,0,0,0,0
 			AddReloadMotionKey,100,0,0,0,0,0,0,		100,0,0,0,0,0,0
 		BackParts
-LMG,Maschinengewehr 34 (MG34)
-Name,Maschinengewehr 34 (MG34)
+LMG,Maschinengewehr 42 (MG42)
+Name,Maschinengewehr 42 (MG42)
