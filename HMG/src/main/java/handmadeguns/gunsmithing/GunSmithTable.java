@@ -55,9 +55,9 @@ public class GunSmithTable extends BlockContainer implements ITileEntityProvider
         return true;
     }
 
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
+    //public boolean renderAsNormalBlock() {
+    //    return false;
+    //}
 
     public boolean isOpaqueCube() {
         return false;
