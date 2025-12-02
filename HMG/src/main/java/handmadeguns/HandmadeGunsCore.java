@@ -27,6 +27,7 @@ import handmadeguns.entity.bullets.*;
 import handmadeguns.event.HMGEventZoom;
 import handmadeguns.event.HMGLivingUpdateEvent;
 import handmadeguns.event.RenderTickSmoothing;
+import handmadeguns.gunsmithing.GunSmithTable;
 import handmadeguns.items.HMGItemBullet;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadevehicle.entity.EntityDummy_rider;
@@ -78,7 +79,13 @@ import static handmadeguns.HMGGunMaker.checkBeforeReadfile;
 		name	= "HandmadeGuns",
 		version	= "1.7.x-srg-1"
 )
+
+
+
 public class HandmadeGunsCore {
+
+	@Mod.Instance("HandmadeGuns")
+	public static HandmadeGunsCore instance;
 	public static float textureOffsetU;//for textureAnimation
 	public static float textureOffsetV;
 	public static float smooth = 0;
@@ -90,6 +97,8 @@ public class HandmadeGunsCore {
 	@Mod.Instance("HandmadeGuns")
 	public static HandmadeGunsCore INSTANCE;
 	//public static final KeyBinding Speedreload = new KeyBinding("Key.proceedreload", Keyboard.KEY_R, "GVCGunsPlus");
+
+	public static GunSmithTable blockGunTable;
 
 	public static boolean isDebugMessage = true;
 	public static boolean islmmloaded;
@@ -178,6 +187,10 @@ public class HandmadeGunsCore {
 		//WhizEventHandler whizHandler = new WhizEventHandler();
 		//MinecraftForge.EVENT_BUS.register(whizHandler);
 		//FMLCommonHandler.instance().bus().register(whizHandler);
+
+		GunSmithTable blockGunTable = new GunSmithTable();
+		blockGunTable.setBlockName("gun_table");
+
 
 		configFile = pEvent.getSuggestedConfigurationFile();
 		Configuration lconf = new Configuration(configFile);
