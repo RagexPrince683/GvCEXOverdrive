@@ -187,11 +187,6 @@ public class HandmadeGunsCore {
 		//WhizEventHandler whizHandler = new WhizEventHandler();
 		//MinecraftForge.EVENT_BUS.register(whizHandler);
 		//FMLCommonHandler.instance().bus().register(whizHandler);
-
-		GunSmithTable blockGunTable = new GunSmithTable();
-		blockGunTable.setBlockName("gun_table");
-
-
 		configFile = pEvent.getSuggestedConfigurationFile();
 		Configuration lconf = new Configuration(configFile);
 		lconf.load();
@@ -684,8 +679,25 @@ public class HandmadeGunsCore {
 
 		EntityRegistry.registerModEntity(HMGEntityBulletCartridge.class, "BulletCartridge_HMG", 255, this, 128, 5, true);
 		EntityRegistry.registerModEntity(PlacedGunEntity.class, "PlacedGun", 253, this, 65536, 1, true);
+
+		//GunSmithTable blockGunTable = new GunSmithTable();
+		//Block blockGunTable = blockGunTable.setBlockName("gun_table");
+
+		//GunSmithTable blockGunTable = new GunSmithTable();
+		//blockGunTable.setBlockName("gun_table");
+
+
+		Block gunSmithTable = new GunSmithTable()
+				.setBlockName("gun_table")
+				.setBlockTextureName("handmadeguns:gun_table");
+
+		GameRegistry.registerBlock(gunSmithTable, "gun_table");
+
 		Block mounter = new HMGBlockMounter(1).setBlockName("ItemHolder").setBlockTextureName("handmadeguns:camp");
 		GameRegistry.registerBlock(mounter, "ItemHolder");
+
+
+
 		//GameRegistry.addRecipe(new ItemStack(mounter, 1),
 		//		"bbb",
 		//		"bbb",

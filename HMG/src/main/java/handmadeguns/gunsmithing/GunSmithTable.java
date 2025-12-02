@@ -59,17 +59,17 @@ public class GunSmithTable extends BlockContainer implements ITileEntityProvider
     //    return false;
     //}
 
-    public boolean isOpaqueCube() {
-        return false;
-    }
+    //public boolean isOpaqueCube() {
+    //    return false;
+    //}
 
     public boolean canHarvestBlock(EntityPlayer player, int meta) {
         return true;
     }
 
-    public boolean canRenderInPass(int pass) {
-        return false;
-    }
+    //public boolean canRenderInPass(int pass) {
+    //    return false;
+    //}
 
     public int getMobilityFlag() {
         return 1;
