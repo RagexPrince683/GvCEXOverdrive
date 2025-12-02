@@ -47,9 +47,9 @@ public class GunSmithTable extends BlockContainer implements ITileEntityProvider
         return new GunSmithTableTileEntity();
     }
 
-    public TileEntity createNewTileEntity(World world) {
-        return new GunSmithTableTileEntity();
-    }
+    ///public TileEntity createNewTileEntity(World world) {
+    //    return new GunSmithTableTileEntity();
+    //}
 
     public boolean shouldSideBeRendered(IBlockAccess p_149646_1_, int p_149646_2_, int p_149646_3_, int p_149646_4_, int p_149646_5_) {
         return true;
