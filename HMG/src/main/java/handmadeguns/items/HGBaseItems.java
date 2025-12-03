@@ -6,6 +6,8 @@ import net.minecraft.init.Items;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+
 
 public class HGBaseItems {
 
@@ -68,6 +70,11 @@ public class HGBaseItems {
         GameRegistry.registerItem(springSet, "springSet");
         GameRegistry.registerItem(ironInfusedCoal, "ironInfusedCoal");
         GameRegistry.registerItem(gunOil, "gunOil");
+
+
+        // === ORE DICTIONARY REGISTRATION ===
+        OreDictionary.registerOre("ingotSteel", steelIngot);
+        OreDictionary.registerOre("ingotAluminum", aluminumIngot);
 
         // === RECIPES ===
 
