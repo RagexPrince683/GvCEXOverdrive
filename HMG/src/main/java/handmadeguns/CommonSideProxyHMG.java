@@ -9,6 +9,7 @@ import com.google.common.collect.Multimap;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import handmadeguns.event.GunSoundEvent;
+import handmadeguns.gunsmithing.GunSmithTableTileEntity;
 import handmadeguns.items.GunInfo;
 import handmadeguns.network.PacketSpawnParticle;
 import handmadeguns.tile.TileMounter;
@@ -74,6 +75,8 @@ public class CommonSideProxyHMG {
 	
 	}
 	public void registerTileEntity() {
+		//todo here
+		GameRegistry.registerTileEntity(GunSmithTableTileEntity.class, "handmadeguns_gunsmith_table");
 		GameRegistry.registerTileEntity(TileMounter.class, "TileItemMounter");
 		//GameRegistry.registerTileEntity(GVCTileEntityItemG36.class, "GVCTileEntitysample");
 	}

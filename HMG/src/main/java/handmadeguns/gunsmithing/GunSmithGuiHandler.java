@@ -9,7 +9,7 @@ public class GunSmithGuiHandler implements IGuiHandler {
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == 4) {
-            return new GunSmithingTableGui();
+            return new GunSmithingTableGui(player);
         }
         return null;
     }

@@ -29,6 +29,7 @@ import handmadeguns.event.HMGLivingUpdateEvent;
 import handmadeguns.event.RenderTickSmoothing;
 import handmadeguns.gunsmithing.GunSmithGuiHandler;
 import handmadeguns.gunsmithing.GunSmithTable;
+import handmadeguns.gunsmithing.GunSmithTableTileEntity;
 import handmadeguns.items.HGBaseItems;
 import handmadeguns.items.HMGItemBullet;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
@@ -192,6 +193,10 @@ public class HandmadeGunsCore {
 		configFile = pEvent.getSuggestedConfigurationFile();
 		Configuration lconf = new Configuration(configFile);
 		lconf.load();
+
+		//GameRegistry.registerTileEntity(GunSmithTableTileEntity.class, "GunSmithTableTileEntity");
+
+
 		cfg_FriendFireLMM	= lconf.get("LMM", "cfg_FriendFireLMM", true).getBoolean(true);
 		cfg_FriendFirePlayerToLMM	= lconf.get("LMM", "cfg_FriendFirePlayerToLMM", true).getBoolean(true);
 		cfg_RenderGunSizeLMM	= lconf.get("LMM", "cfg_RenderGunSizeLMM", false).getBoolean(false);
@@ -688,6 +693,8 @@ public class HandmadeGunsCore {
 
 		//GunSmithTable blockGunTable = new GunSmithTable();
 		//blockGunTable.setBlockName("gun_table");
+		//NetworkRegistry.INSTANCE.registerGuiHandler(HandmadeGunsCore.instance, new GunSmithGuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GunSmithGuiHandler());
 
 
 		Block gunSmithTable = new GunSmithTable()
@@ -698,6 +705,16 @@ public class HandmadeGunsCore {
 
 		Block mounter = new HMGBlockMounter(1).setBlockName("ItemHolder").setBlockTextureName("handmadeguns:camp");
 		GameRegistry.registerBlock(mounter, "ItemHolder");
+
+		//GameRegistry.registerTileEntity(
+		//		GunSmithTableTileEntity.class,
+		//		"GunSmithTableTileEntity"
+		//);
+//
+		//GameRegistry.registerTileEntity(GunSmithTableTileEntity.class, "handmadeguns_gunsmith_table");
+
+		//do not do that here.
+
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(
 				this,
