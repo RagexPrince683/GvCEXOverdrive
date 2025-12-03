@@ -51,8 +51,9 @@ public class GunSmithingCraftHandler {
     public static void handleAmmoCraft(EntityPlayer player, int recipeIndex) {
         // Build ammo recipes server-side with same heuristics
         List<GunSmithRecipeRegistry.GunRecipeEntry> ammoList = buildServerAmmoRecipes();
-
+        System.out.println("handleAmmoCraft: recipeIndex=" + recipeIndex + " ammoListSize=" + (ammoList == null ? 0 : ammoList.size()));
         if (ammoList == null || recipeIndex < 0 || recipeIndex >= ammoList.size()) return;
+
 
         GunSmithRecipeRegistry.GunRecipeEntry entry = ammoList.get(recipeIndex);
         if (entry == null) return;
@@ -95,21 +96,53 @@ public class GunSmithingCraftHandler {
         if (list == null) return out;
 
         for (Object obj : list) {
-            if (!(obj instanceof net.minecraft.item.crafting.ShapedRecipes)) continue;
-            net.minecraft.item.crafting.ShapedRecipes r = (net.minecraft.item.crafting.ShapedRecipes) obj;
-            ItemStack result = r.getRecipeOutput();
-            if (result == null) continue;
+            try {
+                net.minecraft.item.ItemStack result = null;
+                net.minecraft.item.ItemStack[] items = new net.minecraft.item.ItemStack[0];
 
-            String un = result.getUnlocalizedName();
-            if (un == null) continue;
-            String lc = un.toLowerCase();
-            if (!(lc.contains("hmg") || lc.contains("handmade") || lc.contains("mag") || lc.contains("bullet") || lc.contains("cartridge") || lc.contains("round"))) {
+                if (obj instanceof net.minecraft.item.crafting.ShapedRecipes) {
+                    net.minecraft.item.crafting.ShapedRecipes r = (net.minecraft.item.crafting.ShapedRecipes) obj;
+                    result = r.getRecipeOutput();
+                    items = (r.recipeItems == null) ? new net.minecraft.item.ItemStack[0] : r.recipeItems;
+                } else if (obj instanceof net.minecraft.item.crafting.ShapelessRecipes) {
+                    net.minecraft.item.crafting.ShapelessRecipes r = (net.minecraft.item.crafting.ShapelessRecipes) obj;
+                    result = r.getRecipeOutput();
+                    // ShapelessRecipes.recipeItems is a List<ItemStack> in 1.7.10
+                    if (r.recipeItems != null && r.recipeItems.size() > 0) {
+                        @SuppressWarnings("unchecked")
+                        java.util.List<net.minecraft.item.ItemStack> listItems = (java.util.List<net.minecraft.item.ItemStack>) r.recipeItems;
+                        items = listItems.toArray(new net.minecraft.item.ItemStack[listItems.size()]);
+                    } else {
+                        items = new net.minecraft.item.ItemStack[0];
+                    }
+                } else {
+                    continue; // skip other recipe types
+                }
+
+                if (result == null) continue;
+                // defensive unlocalized name / display name checks
+                String un = null;
+                try { un = result.getUnlocalizedName(); } catch (Throwable ignored) {}
+                if (un == null) un = "";
+                String lower = un.toLowerCase();
+                String display = "";
+                try { display = result.getDisplayName().toLowerCase(); } catch (Throwable ignored) {}
+
+                if (!(lower.contains("hmg") || lower.contains("handmade") || lower.contains("ammo") ||
+                        lower.contains("bullet") || lower.contains("cartridge") || lower.contains("round") ||
+                        display.contains("bullet") || display.contains("ammo") || display.contains("round"))) {
+                    continue;
+                }
+
+                out.add(new GunSmithRecipeRegistry.GunRecipeEntry(result, items));
+            } catch (Throwable t) {
+                // do not let one bad recipe crash the server — log and skip it
+                t.printStackTrace();
                 continue;
             }
-
-            out.add(new GunSmithRecipeRegistry.GunRecipeEntry(result, r.recipeItems));
         }
 
         return out;
     }
+
 }
