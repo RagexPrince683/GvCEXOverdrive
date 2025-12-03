@@ -29,6 +29,7 @@ import handmadeguns.event.HMGLivingUpdateEvent;
 import handmadeguns.event.RenderTickSmoothing;
 import handmadeguns.gunsmithing.GunSmithGuiHandler;
 import handmadeguns.gunsmithing.GunSmithTable;
+import handmadeguns.items.HGBaseItems;
 import handmadeguns.items.HMGItemBullet;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadevehicle.entity.EntityDummy_rider;
@@ -233,6 +234,7 @@ public class HandmadeGunsCore {
 
 
 		HMGPacketHandler.init();
+		HGBaseItems.init();
 
 	    /*
 		 * int power

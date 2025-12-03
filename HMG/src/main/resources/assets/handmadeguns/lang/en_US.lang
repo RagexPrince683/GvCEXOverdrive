@@ -1,6 +1,13 @@
 #
 item.hmg_handing.name=Gun_Rack
 item.hmg_handing2.name=Gun_Rack2
+item.steelIngot.name=Steel Ingot
+item.aluminumIngot.name=Aluminum Ingot
+item.polymerChunk.name=Polymer Chunk
+item.springSet.name=Spring Set
+item.ironInfusedCoal.name=Iron Infused Coal
+item.gunOil.name=Gun Oil
 
+itemGroup.HMGCrafting=Handmade Guns Crafting
 
 
