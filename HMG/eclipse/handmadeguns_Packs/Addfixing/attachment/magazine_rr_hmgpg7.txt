@@ -1,6 +1,6 @@
 Texture,bullet_rr
 Stack,1
 Tabname,HMG_Ammo
-Name,PG-7VL Warhead
+Name,93mm PG-7VL Warhead
 Magazine,bullet_rr_hmgrpg
 addRecipe,bullet_rr_hmgrpg,1,abc,def,000,289,265,289,289,265,289,289,289,289
