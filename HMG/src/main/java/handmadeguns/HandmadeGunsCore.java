@@ -27,6 +27,7 @@ import handmadeguns.entity.bullets.*;
 import handmadeguns.event.HMGEventZoom;
 import handmadeguns.event.HMGLivingUpdateEvent;
 import handmadeguns.event.RenderTickSmoothing;
+import handmadeguns.gunsmithing.GunSmithGuiHandler;
 import handmadeguns.gunsmithing.GunSmithTable;
 import handmadeguns.items.HMGItemBullet;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
@@ -695,6 +696,11 @@ public class HandmadeGunsCore {
 
 		Block mounter = new HMGBlockMounter(1).setBlockName("ItemHolder").setBlockTextureName("handmadeguns:camp");
 		GameRegistry.registerBlock(mounter, "ItemHolder");
+
+		NetworkRegistry.INSTANCE.registerGuiHandler(
+				this,
+				new GunSmithGuiHandler()
+		);
 
 
 
