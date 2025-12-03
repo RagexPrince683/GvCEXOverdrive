@@ -27,6 +27,8 @@ import handmadeguns.entity.bullets.*;
 import handmadeguns.event.HMGEventZoom;
 import handmadeguns.event.HMGLivingUpdateEvent;
 import handmadeguns.event.RenderTickSmoothing;
+import handmadeguns.gunsmithing.GunSmithNetwork;
+import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunSmithTable;
 import handmadeguns.gunsmithing.GunSmithTableTileEntity;
 import handmadeguns.items.HGBaseItems;
@@ -690,6 +692,7 @@ public class HandmadeGunsCore {
 		NetworkRegistry.INSTANCE.registerGuiHandler(HandmadeGunsCore.INSTANCE, new HMGGuiHandler());
 
 
+		GunSmithNetwork.init();
 
 		Block gunSmithTable = new GunSmithTable()
 				.setBlockName("gun_table")
@@ -952,6 +955,7 @@ public class HandmadeGunsCore {
 		HMG_proxy.setUpModels();
 	}
 
+	//Recipe loading
 	public void readPackRecipe(File packdir){
 
 		File[] packlist = packdir.listFiles();
@@ -981,7 +985,8 @@ public class HandmadeGunsCore {
 						File recipeFile = recipelist[count];
 
 						try {
-							HMGGunMaker.addRecipe(recipeFile);
+							HMGGunMaker.addRecipe(recipeFile); // original crafting system
+							GunSmithRecipeRegistry.registerFromFile(recipeFile); // GUI system
 							System.out.println("[HMG] Loaded recipe: " + recipeFile.getAbsolutePath());
 
 						} catch (Exception e) {

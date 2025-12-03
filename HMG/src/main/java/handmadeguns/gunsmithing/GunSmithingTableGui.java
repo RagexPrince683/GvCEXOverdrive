@@ -1,5 +1,6 @@
 package handmadeguns.gunsmithing;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,8 +21,24 @@ public class GunSmithingTableGui extends GuiScreen {
 
     private EntityPlayer player;
 
+    private GuiButton craftButton;
+
+
     public GunSmithingTableGui(EntityPlayer player) {
         this.player = player;
+    }
+
+    private boolean canCraft(GunSmithRecipeRegistry.GunRecipeEntry entry) {
+        if (entry == null) return false;
+
+        for (ItemStack req : entry.inputs) {
+            if (req == null) continue;
+
+            int owned = countInInventory(req);
+            if (owned < req.stackSize)
+                return false;
+        }
+        return true;
     }
 
     @Override
@@ -89,6 +106,9 @@ public class GunSmithingTableGui extends GuiScreen {
                 fontRendererObj.drawString(txt, x, y + 16, color);
             }
 
+            boolean canCraft = canCraft(entry);
+            craftButton.enabled = canCraft;
+
             RenderHelper.disableStandardItemLighting();
         }
 
@@ -122,6 +142,21 @@ public class GunSmithingTableGui extends GuiScreen {
             scrollOffset++;
     }
 
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        if (button.id == 0) {
+            if (selectedIndex < 0) return;
+
+            GunSmithRecipeRegistry.GunRecipeEntry entry =
+                    GunSmithRecipeRegistry.getAll().get(selectedIndex);
+
+            if (!canCraft(entry)) return;
+
+            // ✅ SEND TO SERVER (REQUIRED FOR MULTIPLAYER)
+            GunSmithNetwork.sendCraftRequestToServer(selectedIndex);
+        }
+    }
+
     // ✅ INVENTORY COUNT CHECK (B + C)
     private int countInInventory(ItemStack target) {
         if (target == null || player == null)
@@ -141,6 +176,26 @@ public class GunSmithingTableGui extends GuiScreen {
         }
 
         return count;
+    }
+
+    @Override
+    public void initGui() {
+        super.initGui();
+
+        int btnX = width / 2 + 20;
+        int btnY = height - 40;
+
+        craftButton = new GuiButton(
+                0,
+                btnX,
+                btnY,
+                80,
+                20,
+                "Create Gun"
+        );
+
+        buttonList.clear();
+        buttonList.add(craftButton);
     }
 
     @Override
