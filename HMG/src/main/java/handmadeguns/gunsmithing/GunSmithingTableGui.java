@@ -16,11 +16,18 @@ public class GunSmithingTableGui extends GuiScreen {
 
     private int selectedIndex = -1;
     private int scrollOffset = 0;
-
     private static final int LIST_X = 20;
     private static final int LIST_Y = 30;
     private static final int LIST_HEIGHT = 140;
     private static final int ENTRY_HEIGHT = 12;
+
+    // === Scrollbar ===
+    private boolean draggingScroll = false;
+
+    private static final int SCROLLBAR_X = 165;
+    private static final int SCROLLBAR_Y = LIST_Y;
+    private static final int SCROLLBAR_HEIGHT = LIST_HEIGHT;
+    private static final int SCROLLBAR_WIDTH = 8;
 
     private EntityPlayer player;
 
@@ -62,6 +69,39 @@ public class GunSmithingTableGui extends GuiScreen {
         return true;
     }
 
+    private void drawScrollbar(int totalEntries) {
+        int maxVisible = LIST_HEIGHT / ENTRY_HEIGHT;
+        if (totalEntries <= maxVisible) return;
+
+        int maxScroll = totalEntries - maxVisible;
+
+        // Scrollbar background
+        drawRect(
+                SCROLLBAR_X,
+                SCROLLBAR_Y,
+                SCROLLBAR_X + SCROLLBAR_WIDTH,
+                SCROLLBAR_Y + SCROLLBAR_HEIGHT,
+                0xFF333333
+        );
+
+        // Thumb size
+        int thumbHeight = Math.max(12,
+                (int) ((float) maxVisible / totalEntries * SCROLLBAR_HEIGHT));
+
+        int thumbY = SCROLLBAR_Y +
+                (int) ((float) scrollOffset / maxScroll * (SCROLLBAR_HEIGHT - thumbHeight));
+
+        // Thumb
+        drawRect(
+                SCROLLBAR_X,
+                thumbY,
+                SCROLLBAR_X + SCROLLBAR_WIDTH,
+                thumbY + thumbHeight,
+                0xFFAAAAAA
+        );
+    }
+
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
@@ -96,6 +136,9 @@ public class GunSmithingTableGui extends GuiScreen {
 
             fontRendererObj.drawString(name, LIST_X, y, 0xFFFFFF);
         }
+
+        drawScrollbar(recipes.size());
+
 
         if (selectedIndex < 0 || selectedIndex >= recipes.size()) return;
 
@@ -165,10 +208,17 @@ public class GunSmithingTableGui extends GuiScreen {
         }
     }
 
-    // ✅ MOUSE CLICK SELECTION
     @Override
     protected void mouseClicked(int x, int y, int btn) {
         searchBox.mouseClicked(x, y, btn);
+
+        // ✅ SCROLLBAR CLICK
+        if (x >= SCROLLBAR_X && x <= SCROLLBAR_X + SCROLLBAR_WIDTH &&
+                y >= SCROLLBAR_Y && y <= SCROLLBAR_Y + SCROLLBAR_HEIGHT) {
+
+            draggingScroll = true;
+            return;
+        }
 
         int index = (y - LIST_Y) / ENTRY_HEIGHT + scrollOffset;
         if (x >= LIST_X && x <= LIST_X + 140) {
@@ -179,6 +229,35 @@ public class GunSmithingTableGui extends GuiScreen {
 
         super.mouseClicked(x, y, btn);
     }
+
+    @Override
+    protected void mouseMovedOrUp(int mouseX, int mouseY, int state) {
+        if (state == 0) { // Left mouse released
+            draggingScroll = false;
+        }
+
+        super.mouseMovedOrUp(mouseX, mouseY, state);
+    }
+
+    @Override
+    protected void mouseClickMove(int x, int y, int btn, long time) {
+        if (draggingScroll) {
+            int total = filteredRecipes.size();
+            int maxVisible = LIST_HEIGHT / ENTRY_HEIGHT;
+
+            if (total > maxVisible) {
+                int maxScroll = total - maxVisible;
+
+                float pct = (float) (y - SCROLLBAR_Y) / SCROLLBAR_HEIGHT;
+                pct = Math.max(0F, Math.min(1F, pct));
+
+                scrollOffset = (int) (pct * maxScroll);
+            }
+        }
+
+        super.mouseClickMove(x, y, btn, time);
+    }
+
 
     // ✅ SCROLL WHEEL SUPPORT
     @Override
