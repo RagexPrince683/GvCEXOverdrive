@@ -7,6 +7,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.util.EnumChatFormatting;
+
 import java.util.List;
 
 public class GunSmithingTableGui extends GuiScreen {
@@ -23,10 +26,28 @@ public class GunSmithingTableGui extends GuiScreen {
 
     private GuiButton craftButton;
 
+    private GuiTextField searchBox;
+    private List<GunSmithRecipeRegistry.GunRecipeEntry> filteredRecipes;
+
 
     public GunSmithingTableGui(EntityPlayer player) {
         this.player = player;
     }
+
+    private void updateSearchResults() {
+        String q = searchBox.getText().toLowerCase();
+        filteredRecipes = new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
+
+        for (GunSmithRecipeRegistry.GunRecipeEntry e : GunSmithRecipeRegistry.getAll()) {
+            if (e.result.getDisplayName().toLowerCase().contains(q)) {
+                filteredRecipes.add(e);
+            }
+        }
+
+        scrollOffset = 0;
+        selectedIndex = -1;
+    }
+
 
     private boolean canCraft(GunSmithRecipeRegistry.GunRecipeEntry entry) {
         if (entry == null) return false;
@@ -115,6 +136,15 @@ public class GunSmithingTableGui extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
+    @Override
+    protected void keyTyped(char c, int key) {
+        if (searchBox.textboxKeyTyped(c, key)) {
+            updateSearchResults();
+        } else {
+            super.keyTyped(c, key);
+        }
+    }
+
     // ✅ MOUSE CLICK SELECTION
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) {
@@ -185,17 +215,23 @@ public class GunSmithingTableGui extends GuiScreen {
         int btnX = width / 2 + 20;
         int btnY = height - 40;
 
-        craftButton = new GuiButton(
-                0,
-                btnX,
-                btnY,
-                80,
+        craftButton = new GuiButton(0, btnX, btnY, 80, 20, "Create Gun");
+
+        searchBox = new GuiTextField(
+                fontRendererObj,
                 20,
-                "Create Gun"
+                15,
+                140,
+                12
         );
+
+        searchBox.setMaxStringLength(32);
+        searchBox.setFocused(false);
 
         buttonList.clear();
         buttonList.add(craftButton);
+
+        updateSearchResults(); // ✅ build initial list
     }
 
     @Override
