@@ -10,6 +10,7 @@ import org.lwjgl.input.Mouse;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.EnumChatFormatting;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GunSmithingTableGui extends GuiScreen {
@@ -19,12 +20,12 @@ public class GunSmithingTableGui extends GuiScreen {
     private static final int PAGE_AMMO = 1;
     private int currentPage = PAGE_GUNS;
 
+    // GUI buttons (kept for parity; we also render tabs ourselves)
     private GuiButton gunsTab;
     private GuiButton ammoTab;
 
-    // === AMMO CACHE ===
+    // === AMMO CACHE (client side display only) ===
     private List<GunSmithRecipeRegistry.GunRecipeEntry> ammoRecipes;
-
 
     private int selectedIndex = -1;
     private int scrollOffset = 0;
@@ -41,7 +42,7 @@ public class GunSmithingTableGui extends GuiScreen {
     private static final int SCROLLBAR_HEIGHT = LIST_HEIGHT;
     private static final int SCROLLBAR_WIDTH = 8;
 
-    private EntityPlayer player;
+    private final EntityPlayer player;
 
     private GuiButton craftButton;
 
@@ -51,15 +52,15 @@ public class GunSmithingTableGui extends GuiScreen {
 
     public GunSmithingTableGui(EntityPlayer player) {
         this.player = player;
-        // Keep currentPage default as GUNS to ensure initial page is guns
         this.currentPage = PAGE_GUNS;
     }
 
-    // ======= SEARCH / SOURCE SELECTION =======
+    // ---------- Build / filter recipes ----------
+
+    // Update the filteredRecipes list based on current page and search text.
     private void updateSearchResults() {
-        // defensive: create searchBox text if null
         String q = (searchBox == null) ? "" : searchBox.getText().toLowerCase();
-        filteredRecipes = new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
+        filteredRecipes = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
 
         List<GunSmithRecipeRegistry.GunRecipeEntry> source;
 
@@ -76,7 +77,9 @@ public class GunSmithingTableGui extends GuiScreen {
 
         for (GunSmithRecipeRegistry.GunRecipeEntry e : source) {
             if (e == null || e.result == null) continue;
-            if (q.isEmpty() || e.result.getDisplayName().toLowerCase().contains(q)) {
+            String name = e.result.getDisplayName();
+            if (name == null) continue;
+            if (q.isEmpty() || name.toLowerCase().contains(q)) {
                 filteredRecipes.add(e);
             }
         }
@@ -85,28 +88,25 @@ public class GunSmithingTableGui extends GuiScreen {
         selectedIndex = -1;
     }
 
-
-
+    // Return true if player has required items.
     private boolean canCraft(GunSmithRecipeRegistry.GunRecipeEntry entry) {
         if (entry == null || entry.inputs == null) return false;
 
         for (ItemStack req : entry.inputs) {
             if (req == null) continue;
-
             int owned = countInInventory(req);
-            if (owned < req.stackSize)
-                return false;
+            if (owned < req.stackSize) return false;
         }
         return true;
     }
 
+    // Draw visual scrollbar thumb.
     private void drawScrollbar(int totalEntries) {
         int maxVisible = LIST_HEIGHT / ENTRY_HEIGHT;
         if (totalEntries <= maxVisible) return;
 
         int maxScroll = totalEntries - maxVisible;
 
-        // Scrollbar background
         drawRect(
                 SCROLLBAR_X,
                 SCROLLBAR_Y,
@@ -115,20 +115,16 @@ public class GunSmithingTableGui extends GuiScreen {
                 0xFF333333
         );
 
-        // Thumb size
         int thumbHeight = Math.max(12,
                 (int) ((float) maxVisible / totalEntries * SCROLLBAR_HEIGHT));
 
-        // avoid division by zero
         int thumbY;
         if (maxScroll <= 0) {
             thumbY = SCROLLBAR_Y;
         } else {
-            thumbY = SCROLLBAR_Y +
-                    (int) ((float) scrollOffset / maxScroll * (SCROLLBAR_HEIGHT - thumbHeight));
+            thumbY = SCROLLBAR_Y + (int) ((float) scrollOffset / maxScroll * (SCROLLBAR_HEIGHT - thumbHeight));
         }
 
-        // Thumb
         drawRect(
                 SCROLLBAR_X,
                 thumbY,
@@ -138,10 +134,10 @@ public class GunSmithingTableGui extends GuiScreen {
         );
     }
 
-
+    // ---------- UI rendering ----------
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        // draw background first so tabs are visible on top
+        // background first
         drawDefaultBackground();
 
         // draw tabs AFTER background so they show
@@ -155,33 +151,31 @@ public class GunSmithingTableGui extends GuiScreen {
         drawRect(85, tabY, 85 + 60, tabY + 20, ammoColor);
         drawCenteredString(fontRendererObj, "Ammo", 85 + 30, tabY + 6, 0x000000);
 
-        // ensure searchBox exists before drawing
+        // search box drawn (if present)
         if (searchBox != null) searchBox.drawTextBox();
 
-        // if filtered list not initialized yet, initialize it
+        // ensure filtered list exists
         if (filteredRecipes == null) updateSearchResults();
-
         List<GunSmithRecipeRegistry.GunRecipeEntry> recipes = filteredRecipes;
-        if (recipes == null) recipes = new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
+        if (recipes == null) recipes = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
 
         String title = (currentPage == PAGE_GUNS) ? "Gun Smithing Table" : "Ammo Crafting";
         drawCenteredString(fontRendererObj, title, width / 2, 8, 0xFFFFFF);
 
-
-        // ✅ SCROLL HANDLING
+        // scroll bounds
         int maxVisible = LIST_HEIGHT / ENTRY_HEIGHT;
         int maxScroll = Math.max(0, recipes.size() - maxVisible);
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
-
         int end = Math.min(recipes.size(), scrollOffset + maxVisible);
 
-        // ✅ LEFT PANEL — RECIPE LIST
+        // left panel list
         for (int i = scrollOffset; i < end; i++) {
             GunSmithRecipeRegistry.GunRecipeEntry entry = recipes.get(i);
             if (entry == null || entry.result == null) continue;
 
             ItemStack gun = entry.result;
             String name = gun.getDisplayName();
+            if (name == null) continue;
 
             int y = LIST_Y + (i - scrollOffset) * ENTRY_HEIGHT;
 
@@ -192,71 +186,67 @@ public class GunSmithingTableGui extends GuiScreen {
             fontRendererObj.drawString(name, LIST_X, y, 0xFFFFFF);
         }
 
+        // scrollbar
         drawScrollbar(recipes.size());
 
-        // If nothing selected, don't attempt to draw right panel
+        // if no valid selection, end
         if (selectedIndex < 0 || selectedIndex >= recipes.size()) {
             super.drawScreen(mouseX, mouseY, partialTicks);
             return;
         }
 
-        // ✅ RIGHT PANEL — RECIPE + INVENTORY CHECK
-        GunSmithRecipeRegistry.GunRecipeEntry entry =
-                recipes.get(selectedIndex);
-
-        if (entry != null && entry.result != null) {
-            int previewX = width / 2 + 20;
-            int previewY = 40;
-
-            drawCenteredString(fontRendererObj,
-                    entry.result.getDisplayName(),
-                    previewX + 40, 30, 0xFFFFFF);
-
-            RenderHelper.enableGUIStandardItemLighting();
-
-            if (entry.inputs != null) {
-                for (int i = 0; i < entry.inputs.length; i++) {
-                    ItemStack stack = entry.inputs[i];
-                    if (stack == null) continue;
-
-                    int x = previewX + (i % 3) * 22;
-                    int y = previewY + (i / 3) * 22;
-
-                    itemRender.renderItemIntoGUI(fontRendererObj,
-                            mc.getTextureManager(), stack, x, y);
-
-                    // ✅ HOVER TOOLTIP
-                    if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16) {
-                        java.util.List list = stack.getTooltip(player, false);
-                        for (int t = 0; t < list.size(); t++) {
-                            if (t == 0)
-                                list.set(t, EnumChatFormatting.WHITE + (String) list.get(t));
-                            else
-                                list.set(t, EnumChatFormatting.GRAY + (String) list.get(t));
-                        }
-                        drawHoveringText(list, mouseX, mouseY, fontRendererObj);
-                    }
-
-                    int owned = countInInventory(stack);
-                    int needed = stack.stackSize;
-                    boolean missing = owned < needed;
-
-                    String txt = owned + "/" + needed;
-                    int color = missing ? 0xFF5555 : 0x55FF55; // ❌ red / ✅ green
-
-                    fontRendererObj.drawString(txt, x, y + 16, color);
-                }
-            }
-
-            // guard craftButton existence
-            if (craftButton != null) craftButton.enabled = canCraft(entry);
-
-            RenderHelper.disableStandardItemLighting();
+        // right panel: show selected recipe & inputs
+        GunSmithRecipeRegistry.GunRecipeEntry entry = recipes.get(selectedIndex);
+        if (entry == null || entry.result == null) {
+            super.drawScreen(mouseX, mouseY, partialTicks);
+            return;
         }
+
+        int previewX = width / 2 + 20;
+        int previewY = 40;
+
+        drawCenteredString(fontRendererObj, entry.result.getDisplayName(), previewX + 40, 30, 0xFFFFFF);
+
+        RenderHelper.enableGUIStandardItemLighting();
+
+        if (entry.inputs != null) {
+            for (int i = 0; i < entry.inputs.length; i++) {
+                ItemStack stack = entry.inputs[i];
+                if (stack == null) continue;
+
+                int x = previewX + (i % 3) * 22;
+                int y = previewY + (i / 3) * 22;
+
+                itemRender.renderItemIntoGUI(fontRendererObj, mc.getTextureManager(), stack, x, y);
+
+                // hover tooltip
+                if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16) {
+                    List list = stack.getTooltip(player, false);
+                    for (int t = 0; t < list.size(); t++) {
+                        if (t == 0) list.set(t, EnumChatFormatting.WHITE + (String) list.get(t));
+                        else list.set(t, EnumChatFormatting.GRAY + (String) list.get(t));
+                    }
+                    drawHoveringText(list, mouseX, mouseY, fontRendererObj);
+                }
+
+                int owned = countInInventory(stack);
+                int needed = stack.stackSize;
+                boolean missing = owned < needed;
+
+                String txt = owned + "/" + needed;
+                int color = missing ? 0xFF5555 : 0x55FF55;
+                fontRendererObj.drawString(txt, x, y + 16, color);
+            }
+        }
+
+        if (craftButton != null) craftButton.enabled = canCraft(entry);
+
+        RenderHelper.disableStandardItemLighting();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
+    // keyboard input - update search on typing
     @Override
     protected void keyTyped(char c, int key) {
         if (searchBox != null && searchBox.textboxKeyTyped(c, key)) {
@@ -266,9 +256,10 @@ public class GunSmithingTableGui extends GuiScreen {
         }
     }
 
+    // mouse clicked - tabs first, then search, then scrollbar then list
     @Override
     protected void mouseClicked(int x, int y, int btn) {
-        // tab click detection first - prevents accidental selection when clicking tabs
+        // Tab click detection first - prevents accidental selection when clicking tabs
         if (y >= height - 40 && y <= height - 20) {
             if (x >= 20 && x <= 20 + 60) { // Guns tab click
                 if (currentPage != PAGE_GUNS) {
@@ -286,18 +277,16 @@ public class GunSmithingTableGui extends GuiScreen {
             }
         }
 
-        // search box click
         if (searchBox != null) searchBox.mouseClicked(x, y, btn);
 
-        // ✅ SCROLLBAR CLICK
-        if (x >= SCROLLBAR_X && x <= SCROLLBAR_X + SCROLLBAR_WIDTH &&
-                y >= SCROLLBAR_Y && y <= SCROLLBAR_Y + SCROLLBAR_HEIGHT) {
-
+        // scrollbar click
+        if (x >= SCROLLBAR_X && x <= SCROLLBAR_X + SCROLLBAR_WIDTH
+                && y >= SCROLLBAR_Y && y <= SCROLLBAR_Y + SCROLLBAR_HEIGHT) {
             draggingScroll = true;
             return;
         }
 
-        // list selection (safe-guard filteredRecipes)
+        // list selection
         if (filteredRecipes != null) {
             int index = (y - LIST_Y) / ENTRY_HEIGHT + scrollOffset;
             if (x >= LIST_X && x <= LIST_X + 140) {
@@ -310,60 +299,52 @@ public class GunSmithingTableGui extends GuiScreen {
         super.mouseClicked(x, y, btn);
     }
 
+    // release
     @Override
     protected void mouseMovedOrUp(int mouseX, int mouseY, int state) {
-        if (state == 0) { // Left mouse released
-            draggingScroll = false;
-        }
-
+        if (state == 0) draggingScroll = false;
         super.mouseMovedOrUp(mouseX, mouseY, state);
     }
 
+    // drag
     @Override
     protected void mouseClickMove(int x, int y, int btn, long time) {
         if (draggingScroll && filteredRecipes != null) {
             int total = filteredRecipes.size();
             int maxVisible = LIST_HEIGHT / ENTRY_HEIGHT;
-
             if (total > maxVisible) {
                 int maxScroll = total - maxVisible;
-
                 float pct = (float) (y - SCROLLBAR_Y) / SCROLLBAR_HEIGHT;
                 pct = Math.max(0F, Math.min(1F, pct));
-
                 scrollOffset = (int) (pct * maxScroll);
             }
         }
-
         super.mouseClickMove(x, y, btn, time);
     }
 
-
-    // ✅ SCROLL WHEEL SUPPORT
+    // wheel
     @Override
     public void handleMouseInput() {
         super.handleMouseInput();
-
         int wheel = Mouse.getDWheel();
-        if (wheel > 0)
-            scrollOffset--;
-        else if (wheel < 0)
-            scrollOffset++;
+        if (wheel > 0) scrollOffset--;
+        else if (wheel < 0) scrollOffset++;
     }
 
+    // button presses - tab buttons also handled here
     @Override
     protected void actionPerformed(GuiButton button) {
+        if (button == null) return;
 
-        // ✅ TAB SWITCHING via buttons (keeps parity)
-        if (button.id == 1) { // Guns
+        // TAB SWITCHING via buttons (keeps parity)
+        if (button.id == 1) {
             if (currentPage != PAGE_GUNS) {
                 currentPage = PAGE_GUNS;
                 updateSearchResults();
             }
             return;
         }
-
-        if (button.id == 2) { // Ammo
+        if (button.id == 2) {
             if (currentPage != PAGE_AMMO) {
                 currentPage = PAGE_AMMO;
                 updateSearchResults();
@@ -371,11 +352,10 @@ public class GunSmithingTableGui extends GuiScreen {
             return;
         }
 
-        // ✅ CRAFT BUTTON
+        // CRAFT button
         if (button.id == 0) {
             if (filteredRecipes == null) return;
             if (selectedIndex < 0 || selectedIndex >= filteredRecipes.size()) return;
-
             GunSmithRecipeRegistry.GunRecipeEntry entry = filteredRecipes.get(selectedIndex);
             if (entry == null) return;
             if (!canCraft(entry)) return;
@@ -385,26 +365,20 @@ public class GunSmithingTableGui extends GuiScreen {
                 if (realIndex >= 0) {
                     GunSmithNetwork.sendCraftRequestToServer(realIndex);
                 }
-            } else if (currentPage == PAGE_AMMO) {
-                // For now craftAmmo is client-side quick action (non-server-safe).
-                // You asked to fix crashes and tabs; if you want server-side ammo
-                // crafting I will add a packet handler next.
-                craftAmmo(entry);
+            } else {
+                // AMMO crafting: send server-side packet (server will validate & craft)
+                GunSmithNetwork.sendAmmoCraftRequestToServer(selectedIndex);
             }
         }
-
     }
 
-    private void craftAmmo(GunSmithRecipeRegistry.GunRecipeEntry entry) {
+    // server-backed ammo craft packet will call this on client only as a fallback (shouldn't be used)
+    private void craftAmmoClientSide(GunSmithRecipeRegistry.GunRecipeEntry entry) {
         if (entry == null || !canCraft(entry)) return;
-
-        // Remove required items from player inventory
         if (entry.inputs != null) {
             for (ItemStack req : entry.inputs) {
                 if (req == null) continue;
-
                 int remaining = req.stackSize;
-
                 for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                     ItemStack slot = player.inventory.getStackInSlot(i);
                     if (slot == null) continue;
@@ -418,32 +392,50 @@ public class GunSmithingTableGui extends GuiScreen {
                 }
             }
         }
-
-        // Add result to player inventory
         if (entry.result != null) player.inventory.addItemStackToInventory(entry.result.copy());
     }
 
+    // ---------- Build ammo recipes (client display) ----------
+    // Heuristics applied so we don't load every vanilla recipe.
+    private List<GunSmithRecipeRegistry.GunRecipeEntry> buildAmmoRecipes() {
+        List<GunSmithRecipeRegistry.GunRecipeEntry> out = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
+        List list = net.minecraft.item.crafting.CraftingManager.getInstance().getRecipeList();
+        if (list == null) return out;
 
+        for (Object obj : list) {
+            if (!(obj instanceof net.minecraft.item.crafting.ShapedRecipes)) continue;
+            net.minecraft.item.crafting.ShapedRecipes r = (net.minecraft.item.crafting.ShapedRecipes) obj;
+            ItemStack result = r.getRecipeOutput();
+            if (result == null) continue;
 
+            // ---------- HEURISTIC FILTER ----------
+            // Only include results that likely belong to this mod or are ammo-like:
+            // (unlocalized name contains these substrings)
+            String un = result.getUnlocalizedName();
+            if (un == null) continue;
+            String lc = un.toLowerCase();
+            if (!(lc.contains("hmg") || lc.contains("handmade") || lc.contains("ammo") || lc.contains("bullet") || lc.contains("cartridge") || lc.contains("round"))) {
+                // skip non-ammo-looking items (prevents huge vanilla list)
+                continue;
+            }
+            // ----------------------------------------
 
-    // ✅ INVENTORY COUNT CHECK (B + C)
+            out.add(new GunSmithRecipeRegistry.GunRecipeEntry(result, r.recipeItems));
+        }
+
+        return out;
+    }
+
+    // inventory counting helper
     private int countInInventory(ItemStack target) {
-        if (target == null || player == null)
-            return 0;
-
+        if (target == null || player == null) return 0;
         int count = 0;
-
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
             ItemStack inv = player.inventory.getStackInSlot(i);
-
-            if (inv != null &&
-                    inv.getItem() == target.getItem() &&
-                    inv.getItemDamage() == target.getItemDamage()) {
-
+            if (inv != null && inv.getItem() == target.getItem() && inv.getItemDamage() == target.getItemDamage()) {
                 count += inv.stackSize;
             }
         }
-
         return count;
     }
 
@@ -455,18 +447,10 @@ public class GunSmithingTableGui extends GuiScreen {
         int btnY = height - 40;
 
         craftButton = new GuiButton(0, btnX, btnY, 80, 20, "Create");
-
         gunsTab = new GuiButton(1, 20, height - 40, 60, 20, "Guns");
         ammoTab = new GuiButton(2, 85, height - 40, 60, 20, "Ammo");
 
-        searchBox = new GuiTextField(
-                fontRendererObj,
-                20,
-                15,
-                140,
-                12
-        );
-
+        searchBox = new GuiTextField(fontRendererObj, 20, 15, 140, 12);
         searchBox.setMaxStringLength(32);
         searchBox.setFocused(false);
 
@@ -477,38 +461,6 @@ public class GunSmithingTableGui extends GuiScreen {
 
         updateSearchResults();
     }
-
-
-    private List<GunSmithRecipeRegistry.GunRecipeEntry> buildAmmoRecipes() {
-
-        List<GunSmithRecipeRegistry.GunRecipeEntry> out =
-                new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
-
-        List list = net.minecraft.item.crafting.CraftingManager
-                .getInstance()
-                .getRecipeList();
-
-        for (Object obj : list) {
-
-            if (!(obj instanceof net.minecraft.item.crafting.ShapedRecipes))
-                continue;
-
-            net.minecraft.item.crafting.ShapedRecipes r =
-                    (net.minecraft.item.crafting.ShapedRecipes) obj;
-
-            ItemStack result = r.getRecipeOutput();
-            if (result == null)
-                continue;
-
-            out.add(new GunSmithRecipeRegistry.GunRecipeEntry(
-                    result,
-                    r.recipeItems
-            ));
-        }
-
-        return out;
-    }
-
 
     @Override
     public boolean doesGuiPauseGame() {

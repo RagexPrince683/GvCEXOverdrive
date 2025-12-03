@@ -8,62 +8,58 @@ import net.minecraft.entity.player.EntityPlayerMP;
 
 public class GunSmithNetwork {
 
-    public static final SimpleNetworkWrapper CHANNEL =
-            NetworkRegistry.INSTANCE.newSimpleChannel("GunSmithNet");
+    public static final SimpleNetworkWrapper CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel("GunSmithNet");
 
-    // ✅ Call ONCE in init()
     public static void init() {
-        CHANNEL.registerMessage(
-                CraftGunMessage.Handler.class,
-                CraftGunMessage.class,
-                0,
-                Side.SERVER
-        );
+        // gun craft (server)
+        CHANNEL.registerMessage(CraftGunMessage.Handler.class, CraftGunMessage.class, 0, Side.SERVER);
+        // ammo craft (server)
+        CHANNEL.registerMessage(CraftAmmoMessage.Handler.class, CraftAmmoMessage.class, 1, Side.SERVER);
     }
 
-    // ✅ GUI → Server
+    // client -> server
     public static void sendCraftRequestToServer(int recipeIndex) {
         CHANNEL.sendToServer(new CraftGunMessage(recipeIndex));
     }
 
-    // ============================================================
-    // ✅ PACKET
-    // ============================================================
+    // ammo: client -> server
+    public static void sendAmmoCraftRequestToServer(int recipeIndex) {
+        CHANNEL.sendToServer(new CraftAmmoMessage(recipeIndex));
+    }
 
+    // ---------------- CraftGunMessage ----------------
     public static class CraftGunMessage implements IMessage {
-
         private int recipeIndex;
-
         public CraftGunMessage() {}
+        public CraftGunMessage(int recipeIndex) { this.recipeIndex = recipeIndex; }
 
-        public CraftGunMessage(int recipeIndex) {
-            this.recipeIndex = recipeIndex;
-        }
-
-        @Override
-        public void toBytes(ByteBuf buf) {
-            buf.writeInt(recipeIndex);
-        }
-
-        @Override
-        public void fromBytes(ByteBuf buf) {
-            recipeIndex = buf.readInt();
-        }
-
-        // ========================================================
-        // ✅ SERVER HANDLER — 1.7.10 CORRECT
-        // ========================================================
+        @Override public void toBytes(ByteBuf buf) { buf.writeInt(recipeIndex); }
+        @Override public void fromBytes(ByteBuf buf) { recipeIndex = buf.readInt(); }
 
         public static class Handler implements IMessageHandler<CraftGunMessage, IMessage> {
-
             @Override
             public IMessage onMessage(CraftGunMessage msg, MessageContext ctx) {
-
-                // ✅ DIRECT EXECUTION — THIS IS CORRECT FOR 1.7.10
                 EntityPlayerMP player = ctx.getServerHandler().playerEntity;
-
                 GunSmithingCraftHandler.handleCraft(player, msg.recipeIndex);
+                return null;
+            }
+        }
+    }
 
+    // ---------------- CraftAmmoMessage ----------------
+    public static class CraftAmmoMessage implements IMessage {
+        private int recipeIndex;
+        public CraftAmmoMessage() {}
+        public CraftAmmoMessage(int recipeIndex) { this.recipeIndex = recipeIndex; }
+
+        @Override public void toBytes(ByteBuf buf) { buf.writeInt(recipeIndex); }
+        @Override public void fromBytes(ByteBuf buf) { recipeIndex = buf.readInt(); }
+
+        public static class Handler implements IMessageHandler<CraftAmmoMessage, IMessage> {
+            @Override
+            public IMessage onMessage(CraftAmmoMessage msg, MessageContext ctx) {
+                EntityPlayerMP player = ctx.getServerHandler().playerEntity;
+                GunSmithingCraftHandler.handleAmmoCraft(player, msg.recipeIndex);
                 return null;
             }
         }
