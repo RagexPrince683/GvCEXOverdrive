@@ -370,30 +370,28 @@ public class GunSmithingTableGui extends GuiScreen {
     }
 
     // client-side fallback removal/give (should not be used for SMP)
-   // @SuppressWarnings("unused")
-   // private void craftAmmoClientSide(GunSmithRecipeRegistry.GunRecipeEntry entry) {
-   //     if (entry == null || !canCraft(entry)) return;
-   //     if (entry.inputs != null) {
-   //         for (ItemStack req : entry.inputs) {
-   //             if (req == null) continue;
-   //             int remaining = req.stackSize;
-   //             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-   //                 ItemStack slot = player.inventory.getStackInSlot(i);
-   //                 if (slot == null) continue;
-   //                 if (slot.getItem() == req.getItem() && slot.getItemDamage() == req.getItemDamage()) {
-   //                     int toRemove = Math.min(remaining, slot.stackSize);
-   //                     slot.stackSize -= toRemove;
-   //                     remaining -= toRemove;
-   //                     if (slot.stackSize <= 0) player.inventory.setInventorySlotContents(i, null);
-   //                     if (remaining <= 0) break;
-   //                 }
-   //             }
-   //         }
-   //     }
-   //     if (entry.result != null) player.inventory.addItemStackToInventory(entry.result.copy());
-   // }
-
-    //goodbye
+    @SuppressWarnings("unused")
+    private void craftAmmoClientSide(GunSmithRecipeRegistry.GunRecipeEntry entry) {
+        if (entry == null || !canCraft(entry)) return;
+        if (entry.inputs != null) {
+            for (ItemStack req : entry.inputs) {
+                if (req == null) continue;
+                int remaining = req.stackSize;
+                for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+                    ItemStack slot = player.inventory.getStackInSlot(i);
+                    if (slot == null) continue;
+                    if (slot.getItem() == req.getItem() && slot.getItemDamage() == req.getItemDamage()) {
+                        int toRemove = Math.min(remaining, slot.stackSize);
+                        slot.stackSize -= toRemove;
+                        remaining -= toRemove;
+                        if (slot.stackSize <= 0) player.inventory.setInventorySlotContents(i, null);
+                        if (remaining <= 0) break;
+                    }
+                }
+            }
+        }
+        if (entry.result != null) player.inventory.addItemStackToInventory(entry.result.copy());
+    }
 
     // ---------- Build ammo recipes safely ----------
     private List<GunSmithRecipeRegistry.GunRecipeEntry> buildAmmoRecipes() {

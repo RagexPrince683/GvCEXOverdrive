@@ -103,9 +103,6 @@ public class GunSmithingCraftHandler {
             String un = result.getUnlocalizedName();
             if (un == null) continue;
             String lc = un.toLowerCase();
-            //my world of spaghetti guesswork to filter out this mod's retarded ammo recipes from
-            //all crafting recipes because apparently just directly calling is heckin not possible
-            //TODO: FIX THIS DOGSHIT
             if (!(lc.contains("hmg") || lc.contains("handmade") || lc.contains("mag") || lc.contains("bullet") || lc.contains("cartridge") || lc.contains("round"))) {
                 continue;
             }

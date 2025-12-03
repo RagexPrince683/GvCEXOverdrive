@@ -20,27 +20,7 @@ public class GunSmithRecipeRegistry {
             this.result = result;
             this.inputs = inputs;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (!(obj instanceof GunRecipeEntry)) return false;
-            GunRecipeEntry other = (GunRecipeEntry) obj;
-            if (result == null || other.result == null) return false;
-            // only compare result item + meta (ignore NBT for now)
-            return result.getItem() == other.result.getItem() &&
-                    result.getItemDamage() == other.result.getItemDamage();
-        }
-
-        @Override
-        public int hashCode() {
-            int hash = 17;
-            hash = 31 * hash + (result != null ? result.getItem().hashCode() : 0);
-            hash = 31 * hash + (result != null ? result.getItemDamage() : 0);
-            return hash;
-        }
     }
-
 
     public static void registerFromFile(File recipeFile) {
         try {
