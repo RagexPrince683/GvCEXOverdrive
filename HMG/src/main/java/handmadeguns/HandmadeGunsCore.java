@@ -86,8 +86,8 @@ import static handmadeguns.HMGGunMaker.checkBeforeReadfile;
 
 public class HandmadeGunsCore {
 
-	@Mod.Instance
-	public static HandmadeGunsCore instance;
+	//@Mod.Instance
+	//public static HandmadeGunsCore instance2;
 	public static float textureOffsetU;//for textureAnimation
 	public static float textureOffsetV;
 	public static float smooth = 0;
@@ -687,7 +687,7 @@ public class HandmadeGunsCore {
 		EntityRegistry.registerModEntity(HMGEntityBulletCartridge.class, "BulletCartridge_HMG", 255, this, 128, 5, true);
 		EntityRegistry.registerModEntity(PlacedGunEntity.class, "PlacedGun", 253, this, 65536, 1, true);
 
-		NetworkRegistry.INSTANCE.registerGuiHandler(HandmadeGunsCore.instance, new HMGGuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(HandmadeGunsCore.INSTANCE, new HMGGuiHandler());
 
 
 
