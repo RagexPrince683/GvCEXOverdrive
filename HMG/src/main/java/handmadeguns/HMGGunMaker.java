@@ -1328,6 +1328,7 @@ public class HMGGunMaker {
 								itemblocki = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
 							}
 						}
+						//Generic Recipe Add thing
 						if (type[0].equals("addNewRecipe")) {
 
 							try {

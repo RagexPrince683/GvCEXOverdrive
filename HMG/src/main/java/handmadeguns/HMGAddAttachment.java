@@ -674,6 +674,7 @@ public class HMGAddAttachment
 						if(type[0].equals("ItemI") && !type[1].equals("null")){
 							itemi = GameRegistry.findItem(type[1], type[2]);
 						}
+						//'attachments' (MOST AMMO IS UNDER THIS TAB)
 						if(type[0].equals("addNewRecipe")){
 							Item additem = GameRegistry.findItem(type[1], type[2]);
 							int kazu1 = Integer.parseInt(type[3]);
