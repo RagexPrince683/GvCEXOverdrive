@@ -1328,34 +1328,53 @@ public class HMGGunMaker {
 								itemblocki = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
 							}
 						}
-						if(type[0].equals("addNewRecipe")){
-							Item additem = GameRegistry.findItem(type[1], type[2]);
-							if(additem != null) {
-								int num = parseInt(type[3]);
-								try {
-									GameRegistry.addRecipe(new ItemStack(additem, num),
-											re1,
-											re2,
-											re3,
-											'a', itema,
-											'b', itemb,
-											'c', itemc,
-											'd', itemd,
-											'e', iteme,
-											'f', itemf,
-											'g', itemg,
-											'h', itemh,
-											'i', itemi
-									);
-									itema = itemb = itemc = itemd = iteme = itemf = itemg = itemh = itemi = null;
-								} catch (Exception e) {
-									e.printStackTrace();
+						if (type[0].equals("addNewRecipe")) {
+
+							try {
+								Item additem = GameRegistry.findItem(type[1], type[2]);
+
+								if (additem == null) {
+									System.out.println("[HMG] ERROR: Item not found for recipe output -> Mod: "
+											+ type[1] + " Item: " + type[2]);
+									return;
 								}
+
+								int num = parseInt(type[3]);
+
+								GameRegistry.addRecipe(
+										new ItemStack(additem, num),
+										re1,
+										re2,
+										re3,
+										'a', itema,
+										'b', itemb,
+										'c', itemc,
+										'd', itemd,
+										'e', iteme,
+										'f', itemf,
+										'g', itemg,
+										'h', itemh,
+										'i', itemi
+								);
+
+								System.out.println("[HMG] Loaded crafting recipe for: "
+										+ type[1] + ":" + type[2] + " x" + num);
+
+								// Clear after successful register
+								itema = itemb = itemc = itemd = iteme = itemf = itemg = itemh = itemi = null;
+
+							} catch (Exception e) {
+								System.out.println("[HMG] ERROR: Failed to register crafting recipe for -> "
+										+ type[1] + ":" + type[2]);
+								e.printStackTrace();
 							}
+
+							// Always reset shape
 							re1 = "   ";
 							re2 = "   ";
 							re3 = "   ";
 						}
+
 
 
 					} // 1
