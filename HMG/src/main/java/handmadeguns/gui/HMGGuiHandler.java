@@ -25,6 +25,7 @@ public class HMGGuiHandler implements IGuiHandler
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
+		System.out.println("SERVER GUI HANDLER HIT ID = " + ID);
 		ItemStack itemstack = player.getCurrentEquippedItem();
 		if(ID == 0){
 			return new HMGContainerInventoryItem(player.inventory, itemstack);
@@ -80,10 +81,9 @@ public class HMGGuiHandler implements IGuiHandler
 				return new ContainerHolder(player.inventory, (TileMounter)tile);
 			}
 		}
-
-
-
-
+		if (ID == 4) {
+			return null; // no container needed
+		}
 		return null;
 	}
 	
@@ -94,6 +94,7 @@ public class HMGGuiHandler implements IGuiHandler
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
+		System.out.println("CLIENT GUI HANDLER HIT ID = " + ID);
 		ItemStack itemstack = player.getCurrentEquippedItem();
 		if(ID == 0 && itemstack != null && itemstack.getItem() instanceof HMGItem_Unified_Guns){
 			return new HMGGuiInventoryItem(player.inventory, itemstack);
@@ -149,8 +150,8 @@ public class HMGGuiHandler implements IGuiHandler
 				return new HMGGuiInventoryItemMountnew(player.inventory, (TileMounter)tile);
 			}
 		}
-		//todone? ID = 4 here
 		if (ID == 4) {
+			System.out.println("CLIENT GUI RETURNING GunSmithingTableGui");
 			return new GunSmithingTableGui(player);
 		}
 		return null;

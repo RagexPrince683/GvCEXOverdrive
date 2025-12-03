@@ -86,7 +86,7 @@ import static handmadeguns.HMGGunMaker.checkBeforeReadfile;
 
 public class HandmadeGunsCore {
 
-	@Mod.Instance("HandmadeGuns")
+	@Mod.Instance
 	public static HandmadeGunsCore instance;
 	public static float textureOffsetU;//for textureAnimation
 	public static float textureOffsetV;
@@ -687,14 +687,6 @@ public class HandmadeGunsCore {
 		EntityRegistry.registerModEntity(HMGEntityBulletCartridge.class, "BulletCartridge_HMG", 255, this, 128, 5, true);
 		EntityRegistry.registerModEntity(PlacedGunEntity.class, "PlacedGun", 253, this, 65536, 1, true);
 
-		//GunSmithTable blockGunTable = new GunSmithTable();
-		//Block blockGunTable = blockGunTable.setBlockName("gun_table");
-
-		//GunSmithTable blockGunTable = new GunSmithTable();
-		//blockGunTable.setBlockName("gun_table");
-		//NetworkRegistry.INSTANCE.registerGuiHandler(HandmadeGunsCore.instance, new GunSmithGuiHandler());
-		//NetworkRegistry.INSTANCE.registerGuiHandler(this, new GunSmithGuiHandler());
-
 		NetworkRegistry.INSTANCE.registerGuiHandler(HandmadeGunsCore.instance, new HMGGuiHandler());
 
 
@@ -708,35 +700,6 @@ public class HandmadeGunsCore {
 		Block mounter = new HMGBlockMounter(1).setBlockName("ItemHolder").setBlockTextureName("handmadeguns:camp");
 		GameRegistry.registerBlock(mounter, "ItemHolder");
 
-		//GameRegistry.registerTileEntity(
-		//		GunSmithTableTileEntity.class,
-		//		"GunSmithTableTileEntity"
-		//);
-//
-		//GameRegistry.registerTileEntity(GunSmithTableTileEntity.class, "handmadeguns_gunsmith_table");
-
-		//do not do that here.
-
-
-		//NetworkRegistry.INSTANCE.registerGuiHandler(
-		//		this,
-		//		new GunSmithGuiHandler()
-		//);
-
-
-
-		//GameRegistry.addRecipe(new ItemStack(mounter, 1),
-		//		"bbb",
-		//		"bbb",
-		//		"   ",
-		//		'b', new ItemStack(Blocks.wooden_slab, 1, D)
-		//);
-//		EntityRegistry.registerModEntity(HMGEntityParticles.class, "HMGEntityParticles", 267, this, 128, 5, true);
-
-		//	EntityRegistry.registerModEntity(HMGEntityTurret.class, "HMGEntityTurret", 268, this, 128, 5, true);
-		//EntityRegistry.registerModEntity(HMGEntityHand.class, "HMGEntityHand", 268, this, 128, 5, true);
-
-		//MinecraftForge.EVENT_BUS.register(new GGEventZoom());
 		if(pEvent.getSide().isClient())MinecraftForge.EVENT_BUS.register(new HMGEventZoom());
 
 		HMGLivingUpdateEvent hmgLivingUpdateEvent = new HMGLivingUpdateEvent();
@@ -747,7 +710,8 @@ public class HandmadeGunsCore {
 		FMLCommonHandler.instance().bus().register(renderTickSmoothing);
 		MinecraftForge.EVENT_BUS.register(renderTickSmoothing);
 
-		NetworkRegistry.INSTANCE.registerGuiHandler(this, new HMGGuiHandler());
+		//I don't know if this is needed. I don't know how this fucking mod works. I don't know why this isn't working. OH MY GOD JUST FUCKING WORK
+		//NetworkRegistry.INSTANCE.registerGuiHandler(this, new HMGGuiHandler());
 
 		FMLCommonHandler.instance().bus().register(this);
 		//if(pEvent.getSide().isClient())

@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -28,18 +29,16 @@ public class GunSmithTable extends BlockContainer implements ITileEntityProvider
     }
 
 
+    @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
-        if(!world.isRemote) {
-            if(!player.isSneaking()) {
-                System.out.println("test GunSmithTable OPEN GUI");
-                player.openGui(HandmadeGunsCore.instance, 4, world, x, y, z);
-            }
-            //maybe I'll add something here idk
-            //else {
-            //
-            //}
-        }
 
+        if (world.isRemote) {
+            Minecraft.getMinecraft().displayGuiScreen(new GunSmithingTableGui(player));
+        }
+        //if (!world.isRemote && !player.isSneaking()) {
+        //    System.out.println("test GunSmithTable OPEN GUI");
+        //    player.openGui(HandmadeGunsCore.instance, 4, world, x, y, z);
+        //}
         return true;
     }
 
