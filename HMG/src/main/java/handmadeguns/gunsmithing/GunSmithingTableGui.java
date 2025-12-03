@@ -66,10 +66,15 @@ public class GunSmithingTableGui extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
 
-        List<GunSmithRecipeRegistry.GunRecipeEntry> recipes =
-                GunSmithRecipeRegistry.getAll();
+        searchBox.drawTextBox();
 
-        drawCenteredString(fontRendererObj, "GunSmith Table", width / 2, 8, 0xFFFFFF);
+
+        //List<GunSmithRecipeRegistry.GunRecipeEntry> recipes =
+        //        GunSmithRecipeRegistry.getAll();
+        List<GunSmithRecipeRegistry.GunRecipeEntry> recipes = filteredRecipes;
+
+
+        drawCenteredString(fontRendererObj, "Gun Smithing Table", width / 2, 8, 0xFFFFFF);
 
         // ✅ SCROLL HANDLING
         int maxVisible = LIST_HEIGHT / ENTRY_HEIGHT;
@@ -91,6 +96,9 @@ public class GunSmithingTableGui extends GuiScreen {
 
             fontRendererObj.drawString(name, LIST_X, y, 0xFFFFFF);
         }
+
+        if (selectedIndex < 0 || selectedIndex >= recipes.size()) return;
+
 
         // ✅ RIGHT PANEL — RECIPE + INVENTORY CHECK
         if (selectedIndex >= 0 && selectedIndex < recipes.size()) {
@@ -116,6 +124,18 @@ public class GunSmithingTableGui extends GuiScreen {
 
                 itemRender.renderItemIntoGUI(fontRendererObj,
                         mc.getTextureManager(), stack, x, y);
+
+                // ✅ HOVER TOOLTIP
+                if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16) {
+                    java.util.List list = stack.getTooltip(player, false);
+                    for (int t = 0; t < list.size(); t++) {
+                        if (t == 0)
+                            list.set(t, EnumChatFormatting.WHITE + (String) list.get(t));
+                        else
+                            list.set(t, EnumChatFormatting.GRAY + (String) list.get(t));
+                    }
+                    drawHoveringText(list, mouseX, mouseY, fontRendererObj);
+                }
 
                 int owned = countInInventory(stack);
                 int needed = stack.stackSize;
@@ -147,17 +167,17 @@ public class GunSmithingTableGui extends GuiScreen {
 
     // ✅ MOUSE CLICK SELECTION
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int button) {
+    protected void mouseClicked(int x, int y, int btn) {
+        searchBox.mouseClicked(x, y, btn);
 
-        int index = (mouseY - LIST_Y) / ENTRY_HEIGHT + scrollOffset;
-
-        if (mouseX >= LIST_X && mouseX <= LIST_X + 140) {
-            if (index >= 0 && index < GunSmithRecipeRegistry.getAll().size()) {
+        int index = (y - LIST_Y) / ENTRY_HEIGHT + scrollOffset;
+        if (x >= LIST_X && x <= LIST_X + 140) {
+            if (index >= 0 && index < filteredRecipes.size()) {
                 selectedIndex = index;
             }
         }
 
-        super.mouseClicked(mouseX, mouseY, button);
+        super.mouseClicked(x, y, btn);
     }
 
     // ✅ SCROLL WHEEL SUPPORT
@@ -176,16 +196,21 @@ public class GunSmithingTableGui extends GuiScreen {
     protected void actionPerformed(GuiButton button) {
         if (button.id == 0) {
             if (selectedIndex < 0) return;
+            if (selectedIndex >= filteredRecipes.size()) return;
 
             GunSmithRecipeRegistry.GunRecipeEntry entry =
-                    GunSmithRecipeRegistry.getAll().get(selectedIndex);
+                    filteredRecipes.get(selectedIndex);
 
             if (!canCraft(entry)) return;
 
-            // ✅ SEND TO SERVER (REQUIRED FOR MULTIPLAYER)
-            GunSmithNetwork.sendCraftRequestToServer(selectedIndex);
+            // ✅ SEND THE ACTUAL RECIPE INDEX (NOT GUI INDEX)
+            int realIndex = GunSmithRecipeRegistry.getAll().indexOf(entry);
+            if (realIndex >= 0) {
+                GunSmithNetwork.sendCraftRequestToServer(realIndex);
+            }
         }
     }
+
 
     // ✅ INVENTORY COUNT CHECK (B + C)
     private int countInInventory(ItemStack target) {
