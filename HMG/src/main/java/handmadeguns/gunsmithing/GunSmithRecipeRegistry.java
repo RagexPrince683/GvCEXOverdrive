@@ -12,8 +12,6 @@ import java.util.List;
 
 public class GunSmithRecipeRegistry {
 
-    private static final List<GunRecipeEntry> AMMO_RECIPES = new ArrayList<>();
-
     public static class GunRecipeEntry {
         public final ItemStack result;
         public final ItemStack[] inputs;
@@ -31,33 +29,6 @@ public class GunSmithRecipeRegistry {
             System.out.println("[GunSmith] Failed to parse: " + recipeFile.getName());
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Register an ammo-type crafting recipe so the GUI can list it.
-     * result and inputs are stored as copies for safety.
-     */
-    public static void registerAmmoRecipe(ItemStack result, ItemStack[] inputs) {
-        if (result == null) return;
-        ItemStack resCopy = result.copy();
-        ItemStack[] normalized = inputs == null ? new ItemStack[0] : inputs.clone();
-        // clone inner stacks defensively
-        for (int i = 0; i < normalized.length; i++) {
-            if (normalized[i] != null) normalized[i] = normalized[i].copy();
-        }
-        AMMO_RECIPES.add(new GunRecipeEntry(resCopy, normalized));
-    }
-
-
-    /** Return a copy of the registered ammo recipes (so callers can't mutate internal list). */
-    public static List<GunRecipeEntry> getAmmoRecipes() {
-        return new ArrayList<GunRecipeEntry>(AMMO_RECIPES);
-    }
-
-
-    /** Clears ammo recipes (call before reloading packs if you ever support reload). */
-    public static void clearAmmoRecipes() {
-        AMMO_RECIPES.clear();
     }
 
     private static final List<GunRecipeEntry> RECIPES = new ArrayList<>();

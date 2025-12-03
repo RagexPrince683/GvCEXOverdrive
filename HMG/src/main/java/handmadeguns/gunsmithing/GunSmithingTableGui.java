@@ -393,11 +393,61 @@ public class GunSmithingTableGui extends GuiScreen {
         if (entry.result != null) player.inventory.addItemStackToInventory(entry.result.copy());
     }
 
-    // ---------- Build ammo recipes (from HMG registry) ----------
+    // ---------- Build ammo recipes safely ----------
     private List<GunSmithRecipeRegistry.GunRecipeEntry> buildAmmoRecipes() {
-        // Return a defensive copy from the registry
-        List<GunSmithRecipeRegistry.GunRecipeEntry> list = GunSmithRecipeRegistry.getAmmoRecipes();
-        return list == null ? new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>() : list;
+        List<GunSmithRecipeRegistry.GunRecipeEntry> out = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
+        List list = net.minecraft.item.crafting.CraftingManager.getInstance().getRecipeList();
+        if (list == null) return out;
+
+        for (Object obj : list) {
+            try {
+                if (!(obj instanceof net.minecraft.item.crafting.ShapedRecipes)) continue;
+                net.minecraft.item.crafting.ShapedRecipes r = (net.minecraft.item.crafting.ShapedRecipes) obj;
+                ItemStack result = r.getRecipeOutput();
+                if (result == null) continue;
+                // defensive: ensure item exists
+                Item it = result.getItem();
+                if (it == null) continue;
+
+                // Heuristic: try to include only HMG / ammo-like items to avoid huge vanilla lists
+                boolean include = false;
+                try {
+                    String un = null;
+                    try {
+                        un = result.getUnlocalizedName();
+                    } catch (Throwable t) {
+                        // fallback: try item registry name if available
+                        try {
+                            un = it.getUnlocalizedName();
+                        } catch (Throwable ignored) {}
+                    }
+                    String lower = (un == null) ? "" : un.toLowerCase();
+                    String display = "";
+                    try { display = result.getDisplayName().toLowerCase(); } catch (Throwable ignored) {}
+                    if (lower.contains("hmg") || lower.contains("handmade") || lower.contains("ammo") ||
+                            lower.contains("bullet") || lower.contains("cartridge") || lower.contains("round") ||
+                            display.contains("bullet") || display.contains("ammo") || display.contains("round")) {
+                        include = true;
+                    }
+                } catch (Throwable t) {
+                    include = false;
+                }
+
+                if (!include) continue;
+
+                // ensure recipeItems exists and isn't huge/invalid
+                ItemStack[] items = r.recipeItems;
+                if (items == null) items = new ItemStack[0];
+
+                out.add(new GunSmithRecipeRegistry.GunRecipeEntry(result, items));
+            } catch (Throwable t) {
+                // skip this recipe rather than crash the GUI
+                t.printStackTrace();
+                continue;
+            }
+        }
+
+        return out;
     }
 
     private int countInInventory(ItemStack target) {

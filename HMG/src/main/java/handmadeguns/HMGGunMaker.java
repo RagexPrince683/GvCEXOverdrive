@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
 import handmadeguns.client.render.*;
@@ -1330,7 +1329,7 @@ public class HMGGunMaker {
 							}
 						}
 						if (type[0].equals("addNewRecipe")) {
-							// ammo recipes
+
 							try {
 								Item additem = GameRegistry.findItem(type[1], type[2]);
 
@@ -1342,7 +1341,6 @@ public class HMGGunMaker {
 
 								int num = parseInt(type[3]);
 
-								// register vanilla shaped recipe with Minecraft
 								GameRegistry.addRecipe(
 										new ItemStack(additem, num),
 										re1,
@@ -1362,24 +1360,6 @@ public class HMGGunMaker {
 								System.out.println("[HMG] Loaded crafting recipe for: "
 										+ type[1] + ":" + type[2] + " x" + num);
 
-								// --- ALSO register with HMG's ammo registry for GUI (deterministic) ---
-								ItemStack output = new ItemStack(additem, num);
-
-								// inputs are mapped a..i -> positions 0..8
-								ItemStack[] inputs = new ItemStack[] {
-										itema != null ? new ItemStack(itema) : null,
-										itemb != null ? new ItemStack(itemb) : null,
-										itemc != null ? new ItemStack(itemc) : null,
-										itemd != null ? new ItemStack(itemd) : null,
-										iteme != null ? new ItemStack(iteme) : null,
-										itemf != null ? new ItemStack(itemf) : null,
-										itemg != null ? new ItemStack(itemg) : null,
-										itemh != null ? new ItemStack(itemh) : null,
-										itemi != null ? new ItemStack(itemi) : null
-								};
-
-								GunSmithRecipeRegistry.registerAmmoRecipe(output, inputs);
-
 								// Clear after successful register
 								itema = itemb = itemc = itemd = iteme = itemf = itemg = itemh = itemi = null;
 
@@ -1394,7 +1374,6 @@ public class HMGGunMaker {
 							re2 = "   ";
 							re3 = "   ";
 						}
-
 
 
 
