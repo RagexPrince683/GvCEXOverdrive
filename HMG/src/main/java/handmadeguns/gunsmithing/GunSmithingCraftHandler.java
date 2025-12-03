@@ -103,7 +103,7 @@ public class GunSmithingCraftHandler {
             String un = result.getUnlocalizedName();
             if (un == null) continue;
             String lc = un.toLowerCase();
-            if (!(lc.contains("hmg") || lc.contains("handmade") || lc.contains("ammo") || lc.contains("bullet") || lc.contains("cartridge") || lc.contains("round"))) {
+            if (!(lc.contains("hmg") || lc.contains("handmade") || lc.contains("mag") || lc.contains("bullet") || lc.contains("cartridge") || lc.contains("round"))) {
                 continue;
             }
 
