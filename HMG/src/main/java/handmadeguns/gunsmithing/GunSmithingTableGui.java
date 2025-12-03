@@ -365,7 +365,6 @@ public class GunSmithingTableGui extends GuiScreen {
                 if (ammoRecipes == null) ammoRecipes = buildAmmoRecipes();
                 int idx = (ammoRecipes == null) ? -1 : ammoRecipes.indexOf(entry);
                 if (idx >= 0) GunSmithNetwork.sendAmmoCraftRequestToServer(idx);
-
             }
         }
     }
@@ -438,16 +437,11 @@ public class GunSmithingTableGui extends GuiScreen {
 
                 if (!include) continue;
 
-                // ensure recipeItems exists and make defensive copies
+                // ensure recipeItems exists and isn't huge/invalid
                 ItemStack[] items = r.recipeItems;
                 if (items == null) items = new ItemStack[0];
-                else {
-                    for (int i = 0; i < items.length; i++) {
-                        if (items[i] != null) items[i] = items[i].copy();
-                    }
-                }
-                out.add(new GunSmithRecipeRegistry.GunRecipeEntry(result.copy(), items));
 
+                out.add(new GunSmithRecipeRegistry.GunRecipeEntry(result, items));
             } catch (Throwable t) {
                 // skip this recipe rather than crash the GUI
                 t.printStackTrace();

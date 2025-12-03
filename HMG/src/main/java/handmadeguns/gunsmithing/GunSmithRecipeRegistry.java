@@ -21,14 +21,13 @@ public class GunSmithRecipeRegistry {
             this.inputs = inputs;
         }
 
-        // --- Add this block ---
         @Override
         public boolean equals(Object obj) {
             if (this == obj) return true;
             if (!(obj instanceof GunRecipeEntry)) return false;
             GunRecipeEntry other = (GunRecipeEntry) obj;
             if (result == null || other.result == null) return false;
-            // Compare only item + meta
+            // only compare result item + meta (ignore NBT for now)
             return result.getItem() == other.result.getItem() &&
                     result.getItemDamage() == other.result.getItemDamage();
         }
@@ -40,7 +39,6 @@ public class GunSmithRecipeRegistry {
             hash = 31 * hash + (result != null ? result.getItemDamage() : 0);
             return hash;
         }
-        // --- End block ---
     }
 
 
