@@ -20,4 +20,4 @@ AddRecipe
 Slot1,minecraft:iron_ingot:
 Slot2,minecraft:gunpowder:
 Slot4,minecraft:gunpowder:
-CraftItem,HandmadeGuns:M26:0:3
+CraftItem,HandmadeGuns:M26 Frag Grenade:0:3

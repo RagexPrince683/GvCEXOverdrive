@@ -235,12 +235,12 @@ CraftItem,HandmadeGuns:M26 Mass:0:1
 
 AddRecipe
 Slot1,minecraft:iron_ingot:
-Slot2,HandmadeGuns:M26
-Slot3,HandmadeGuns:M26
-Slot4,HandmadeGuns:M26
-Slot5,HandmadeGuns:M26
-Slot6,HandmadeGuns:M26
-Slot7,HandmadeGuns:M26
+Slot2,HandmadeGuns:M26 Frag Grenade
+Slot3,HandmadeGuns:M26 Frag Grenade
+Slot4,HandmadeGuns:M26 Frag Grenade
+Slot5,HandmadeGuns:M26 Frag Grenade
+Slot6,HandmadeGuns:M26 Frag Grenade
+Slot7,HandmadeGuns:M26 Frag Grenade
 CraftItem,HandmadeGuns:Stielhandgranate Concentrated Charge:0:1
 
 AddRecipe
@@ -362,7 +362,7 @@ Slot2,minecraft:emerald:
 Slot3,minecraft:iron_ingot:
 Slot4,minecraft:iron_ingot:
 Slot6,minecraft:iron_ingot:
-CraftItem,HandmadeGuns:M32 MGL:0:1
+CraftItem,HandmadeGuns:M32 Milkor MGL:0:1
 
 AddRecipe
 Slot1,minecraft:iron_ingot:
