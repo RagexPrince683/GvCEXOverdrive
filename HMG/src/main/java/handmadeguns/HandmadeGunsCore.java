@@ -27,7 +27,6 @@ import handmadeguns.entity.bullets.*;
 import handmadeguns.event.HMGEventZoom;
 import handmadeguns.event.HMGLivingUpdateEvent;
 import handmadeguns.event.RenderTickSmoothing;
-import handmadeguns.gunsmithing.GunSmithGuiHandler;
 import handmadeguns.gunsmithing.GunSmithTable;
 import handmadeguns.gunsmithing.GunSmithTableTileEntity;
 import handmadeguns.items.HGBaseItems;
@@ -694,7 +693,10 @@ public class HandmadeGunsCore {
 		//GunSmithTable blockGunTable = new GunSmithTable();
 		//blockGunTable.setBlockName("gun_table");
 		//NetworkRegistry.INSTANCE.registerGuiHandler(HandmadeGunsCore.instance, new GunSmithGuiHandler());
-		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GunSmithGuiHandler());
+		//NetworkRegistry.INSTANCE.registerGuiHandler(this, new GunSmithGuiHandler());
+
+		NetworkRegistry.INSTANCE.registerGuiHandler(HandmadeGunsCore.instance, new HMGGuiHandler());
+
 
 
 		Block gunSmithTable = new GunSmithTable()
@@ -716,10 +718,10 @@ public class HandmadeGunsCore {
 		//do not do that here.
 
 
-		NetworkRegistry.INSTANCE.registerGuiHandler(
-				this,
-				new GunSmithGuiHandler()
-		);
+		//NetworkRegistry.INSTANCE.registerGuiHandler(
+		//		this,
+		//		new GunSmithGuiHandler()
+		//);
 
 
 
