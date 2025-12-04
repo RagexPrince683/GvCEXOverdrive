@@ -1,12 +1,41 @@
 #
 item.hmg_handing.name=Gun_Rack
 item.hmg_handing2.name=Gun_Rack2
+
 item.steelIngot.name=Steel Ingot
 item.aluminumIngot.name=Aluminum Ingot
-item.polymerChunk.name=Polymer Chunk
+item.polymer.name=Polymer
 item.springSet.name=Spring Set
 item.ironInfusedCoal.name=Iron Infused Coal
+
 item.gunOil.name=Gun Oil
+item.receiverBlank.name=Receiver Blank
+item.barrelBlank.name=Barrel Blank
+item.boltCarrier.name=Bolt Carrier
+item.firingPin.name=Firing Pin
+item.triggerAssembly.name=Trigger Assembly
+item.polymerFrame.name=Polymer Frame
+
+item.pistolSlide.name=Pistol Slide
+item.pistolBarrelKit.name=Pistol Barrel Kit
+item.pistolFrameInsert.name=Pistol Frame Insert
+item.smgReceiverBlock.name=SMG Receiver Block
+item.smgBarrelKit.name=SMG Barrel Kit
+item.smgBoltAssembly.name=SMG Bolt Assembly
+item.arUpper.name=AR Upper Receiver
+item.arLower.name=AR Lower Receiver
+item.arBarrelKit.name=AR Barrel Kit
+item.dmrHeavyBarrel.name=DMR Heavy Barrel
+item.dmrPrecisionReceiver.name=DMR Precision Receiver
+item.lmgCarrier.name=LMG Bolt Carrier
+item.lmgHeavyBarrel.name=LMG Heavy Barrel
+item.lmgFeedBlock.name=LMG Feed Block
+item.launcherTube.name=Launcher Tube
+item.launcherFiringAssembly.name=Launcher Firing Assembly
+item.launcherStabilizerHousing.name=Stabilizer Housing
+item.stockMount.name=Stock Mount
+item.opticMount.name=Optic Mount
+item.gasSystemModule.name=Gas System Module
 
 itemGroup.HMGCrafting=Handmade Guns Crafting
 

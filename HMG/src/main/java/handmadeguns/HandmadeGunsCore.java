@@ -32,6 +32,8 @@ import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunSmithTable;
 import handmadeguns.gunsmithing.GunSmithTableTileEntity;
 import handmadeguns.items.HGBaseItems;
+import handmadeguns.items.HGGunItems;
+import handmadeguns.items.HGGunRecipes;
 import handmadeguns.items.HMGItemBullet;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadevehicle.entity.EntityDummy_rider;
@@ -241,6 +243,8 @@ public class HandmadeGunsCore {
 
 		HMGPacketHandler.init();
 		HGBaseItems.init();
+		HGGunItems.init();
+		HGGunRecipes.init();
 
 	    /*
 		 * int power

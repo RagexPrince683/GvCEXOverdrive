@@ -16,7 +16,7 @@ public class HGBaseItems {
     // ===================
     public static Item steelIngot;
     public static Item aluminumIngot;
-    public static Item polymerChunk;
+    public static Item polymer;
     public static Item springSet;
     public static Item ironInfusedCoal;
     public static Item gunOil;
@@ -44,9 +44,9 @@ public class HGBaseItems {
                 .setTextureName("handmadeguns:aluminum_ingot")
                 .setCreativeTab(tabHMGCrafting);
 
-        polymerChunk = new Item()
-                .setUnlocalizedName("polymerChunk")
-                .setTextureName("handmadeguns:polymer_chunk")
+        polymer = new Item()
+                .setUnlocalizedName("polymer")
+                .setTextureName("handmadeguns:polymer")
                 .setCreativeTab(tabHMGCrafting);
 
         springSet = new Item()
@@ -66,7 +66,7 @@ public class HGBaseItems {
 
         GameRegistry.registerItem(steelIngot, "steelIngot");
         GameRegistry.registerItem(aluminumIngot, "aluminumIngot");
-        GameRegistry.registerItem(polymerChunk, "polymerChunk");
+        GameRegistry.registerItem(polymer, "polymer");
         GameRegistry.registerItem(springSet, "springSet");
         GameRegistry.registerItem(ironInfusedCoal, "ironInfusedCoal");
         GameRegistry.registerItem(gunOil, "gunOil");
@@ -93,7 +93,7 @@ public class HGBaseItems {
                 new ItemStack(Items.coal));
 
         // Polymer Chunk
-        GameRegistry.addShapelessRecipe(new ItemStack(polymerChunk),
+        GameRegistry.addShapelessRecipe(new ItemStack(polymer),
                 new ItemStack(Items.slime_ball),
                 new ItemStack(Items.reeds));
 
