@@ -49,48 +49,83 @@ public class GunSmithingCraftHandler {
 
     // ---------------- SERVER-SIDE AMMO CRAFT ----------------
     public static void handleAmmoCraft(EntityPlayer player, int recipeIndex) {
-        // Build ammo recipes server-side with same heuristics
-        List<GunSmithRecipeRegistry.GunRecipeEntry> ammoList = buildServerAmmoRecipes();
-        System.out.println("handleAmmoCraft: recipeIndex=" + recipeIndex + " ammoListSize=" + (ammoList == null ? 0 : ammoList.size()));
-        if (ammoList == null || recipeIndex < 0 || recipeIndex >= ammoList.size()) return;
 
+        // ✅ CRITICAL FIX: server must use the SAME registry list as client
+        List<GunSmithRecipeRegistry.GunRecipeEntry> ammoList =
+                GunSmithRecipeRegistry.getAmmoRecipes();
+
+        System.out.println("[GunSmith] handleAmmoCraft index=" + recipeIndex +
+                " listSize=" + (ammoList == null ? 0 : ammoList.size()));
+
+        if (ammoList == null || recipeIndex < 0 || recipeIndex >= ammoList.size()) {
+            System.out.println("[GunSmith] Invalid ammo recipe index: " + recipeIndex);
+            return;
+        }
 
         GunSmithRecipeRegistry.GunRecipeEntry entry = ammoList.get(recipeIndex);
-        if (entry == null) return;
+        if (entry == null || entry.result == null) {
+            System.out.println("[GunSmith] Null ammo entry at index: " + recipeIndex);
+            return;
+        }
 
-        // Validate player's inventory
+        // ===============================
+        // ✅ VALIDATE MATERIALS
+        // ===============================
         for (ItemStack req : entry.inputs) {
             if (req == null) continue;
+
             int owned = 0;
             for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
                 ItemStack inv = player.inventory.getStackInSlot(i);
-                if (inv != null && inv.getItem() == req.getItem() && inv.getItemDamage() == req.getItemDamage()) {
+                if (inv != null &&
+                        inv.getItem() == req.getItem() &&
+                        inv.getItemDamage() == req.getItemDamage()) {
                     owned += inv.stackSize;
                 }
             }
-            if (owned < req.stackSize) return; // abort - not enough materials
+
+            if (owned < req.stackSize) {
+                System.out.println("[GunSmith] Not enough materials for ammo craft");
+                return;
+            }
         }
 
-        // Remove materials
+        // ===============================
+        // ✅ CONSUME MATERIALS
+        // ===============================
         for (ItemStack req : entry.inputs) {
             if (req == null) continue;
+
             int remaining = req.stackSize;
+
             for (int i = 0; i < player.inventory.getSizeInventory() && remaining > 0; i++) {
                 ItemStack inv = player.inventory.getStackInSlot(i);
-                if (inv != null && inv.getItem() == req.getItem() && inv.getItemDamage() == req.getItemDamage()) {
+
+                if (inv != null &&
+                        inv.getItem() == req.getItem() &&
+                        inv.getItemDamage() == req.getItemDamage()) {
+
                     int take = Math.min(inv.stackSize, remaining);
                     inv.stackSize -= take;
                     remaining -= take;
-                    if (inv.stackSize <= 0) player.inventory.setInventorySlotContents(i, null);
+
+                    if (inv.stackSize <= 0) {
+                        player.inventory.setInventorySlotContents(i, null);
+                    }
                 }
             }
         }
 
-        // Give result
+        // ===============================
+        // ✅ GIVE RESULT
+        // ===============================
         player.inventory.addItemStackToInventory(entry.result.copy());
+
+        System.out.println("[GunSmith] Crafted ammo: " + entry.result.getDisplayName());
     }
 
-    private static List<GunSmithRecipeRegistry.GunRecipeEntry> buildServerAmmoRecipes() {
+
+    /**private static List<GunSmithRecipeRegistry.GunRecipeEntry> buildServerAmmoRecipes() {
         List<GunSmithRecipeRegistry.GunRecipeEntry> out = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
         List list = net.minecraft.item.crafting.CraftingManager.getInstance().getRecipeList();
         if (list == null) return out;
@@ -144,5 +179,6 @@ public class GunSmithingCraftHandler {
 
         return out;
     }
+     **/
 
 }

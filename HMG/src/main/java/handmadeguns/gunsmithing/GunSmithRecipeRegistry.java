@@ -60,7 +60,7 @@ public class GunSmithRecipeRegistry {
      */
 
     //this is not used
-    public static void loadRecipesFromPackDir(File packdir) {
+    /**public static void loadRecipesFromPackDir(File packdir) {
         if (packdir == null || !packdir.exists() || !packdir.isDirectory()) return;
 
         File[] packlist = packdir.listFiles();
@@ -104,6 +104,7 @@ public class GunSmithRecipeRegistry {
             }
         }
     }
+    */
 
     /**
      * Register an ammo-type crafting recipe so the GUI can list it.
@@ -128,6 +129,7 @@ public class GunSmithRecipeRegistry {
 
 
     /** Clears ammo recipes (call before reloading packs if you ever support reload). */
+    //not needed
     public static void clearAmmoRecipes() {
         AMMO_RECIPES.clear();
     }
