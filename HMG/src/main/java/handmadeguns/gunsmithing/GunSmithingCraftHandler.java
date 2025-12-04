@@ -8,7 +8,7 @@ import java.util.List;
 
 public class GunSmithingCraftHandler {
 
-    // existing gun craft handler (unchanged)
+    //gun craft handler
     public static void handleCraft(EntityPlayer player, int recipeIndex) {
         List<GunSmithRecipeRegistry.GunRecipeEntry> list = GunSmithRecipeRegistry.getAll();
         if (list == null || recipeIndex < 0 || recipeIndex >= list.size()) return;
