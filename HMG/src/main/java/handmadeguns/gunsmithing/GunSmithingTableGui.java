@@ -448,115 +448,13 @@ public class GunSmithingTableGui extends GuiScreen {
         if (entry.result != null) player.inventory.addItemStackToInventory(entry.result.copy());
     }
 
-    // ---------- Build ammo recipes safely ----------
+    // ---------- Build ammo recipes safely (client) ----------
     private List<GunSmithRecipeRegistry.GunRecipeEntry> buildAmmoRecipes() {
-        List<GunSmithRecipeRegistry.GunRecipeEntry> out = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
-
-        // 1) Start with the authoritative registry recipes (defensive copies)
-        List<GunSmithRecipeRegistry.GunRecipeEntry> reg = GunSmithRecipeRegistry.getAmmoRecipes();
-        if (reg != null) {
-            for (GunSmithRecipeRegistry.GunRecipeEntry e : reg) {
-                if (e == null || e.result == null) continue;
-                try {
-                    net.minecraft.item.ItemStack resCopy = e.result.copy();
-                    ItemStack[] inputsCopy = (e.inputs == null) ? new ItemStack[0] : e.inputs.clone();
-                    for (int i = 0; i < inputsCopy.length; i++) {
-                        if (inputsCopy[i] != null) inputsCopy[i] = inputsCopy[i].copy();
-                    }
-                    out.add(new GunSmithRecipeRegistry.GunRecipeEntry(resCopy, inputsCopy));
-                } catch (Throwable t) {
-                    // defensive: skip problematic entries
-                    t.printStackTrace();
-                }
-            }
-        }
-
-        // 2) Now scan CraftingManager for additional ammo-like recipes (shaped + shapeless)
-        List rawList = net.minecraft.item.crafting.CraftingManager.getInstance().getRecipeList();
-        if (rawList == null) return out;
-
-        for (Object obj : rawList) {
-            try {
-                net.minecraft.item.ItemStack result = null;
-                net.minecraft.item.ItemStack[] items = new net.minecraft.item.ItemStack[0];
-
-                if (obj instanceof net.minecraft.item.crafting.ShapedRecipes) {
-                    net.minecraft.item.crafting.ShapedRecipes r = (net.minecraft.item.crafting.ShapedRecipes) obj;
-                    result = r.getRecipeOutput();
-                    items = (r.recipeItems == null) ? new net.minecraft.item.ItemStack[0] : r.recipeItems;
-                } else if (obj instanceof net.minecraft.item.crafting.ShapelessRecipes) {
-                    net.minecraft.item.crafting.ShapelessRecipes r = (net.minecraft.item.crafting.ShapelessRecipes) obj;
-                    result = r.getRecipeOutput();
-                    if (r.recipeItems != null && r.recipeItems.size() > 0) {
-                        @SuppressWarnings("unchecked")
-                        java.util.List<net.minecraft.item.ItemStack> listItems = (java.util.List<net.minecraft.item.ItemStack>) r.recipeItems;
-                        items = listItems.toArray(new net.minecraft.item.ItemStack[listItems.size()]);
-                    } else {
-                        items = new net.minecraft.item.ItemStack[0];
-                    }
-                } else {
-                    // skip other recipe types
-                    continue;
-                }
-
-                if (result == null) continue;
-                Item it = result.getItem();
-                if (it == null) continue;
-
-                // Heuristic: only include ammo-like results to avoid massive vanilla lists
-                boolean include = false;
-                try {
-                    String un = null;
-                    try { un = result.getUnlocalizedName(); } catch (Throwable ignored) {}
-                    if (un == null) {
-                        try { un = it.getUnlocalizedName(); } catch (Throwable ignored) {}
-                    }
-                    String lower = (un == null) ? "" : un.toLowerCase();
-                    String display = "";
-                    try { display = result.getDisplayName().toLowerCase(); } catch (Throwable ignored) {}
-
-                    if (lower.contains("hmg") || lower.contains("handmade") || lower.contains("ammo") ||
-                            lower.contains("bullet") || lower.contains("cartridge") || lower.contains("round") ||
-                            display.contains("bullet") || display.contains("ammo") || display.contains("round")) {
-                        include = true;
-                    }
-                } catch (Throwable t) {
-                    include = false;
-                }
-
-                if (!include) continue;
-
-                // Avoid adding a recipe whose RESULT item+meta already exists in 'out'
-                boolean duplicateResult = false;
-                for (GunSmithRecipeRegistry.GunRecipeEntry existing : out) {
-                    if (existing == null || existing.result == null) continue;
-                    try {
-                        if (existing.result.getItem() == result.getItem()
-                                && existing.result.getItemDamage() == result.getItemDamage()) {
-                            duplicateResult = true;
-                            break;
-                        }
-                    } catch (Throwable ignored) {}
-                }
-                if (duplicateResult) continue;
-
-                // Defensive copy of input array and result
-                net.minecraft.item.ItemStack[] inputsCopy = (items == null) ? new net.minecraft.item.ItemStack[0] : items.clone();
-                for (int i = 0; i < inputsCopy.length; i++) {
-                    if (inputsCopy[i] != null) inputsCopy[i] = inputsCopy[i].copy();
-                }
-
-                out.add(new GunSmithRecipeRegistry.GunRecipeEntry(result.copy(), inputsCopy));
-
-            } catch (Throwable t) {
-                // don't let one bad recipe crash the whole list
-                t.printStackTrace();
-                continue;
-            }
-        }
-
-        return out;
+        // Use the shared combined recipe builder so client & server match
+        List<GunSmithRecipeRegistry.GunRecipeEntry> list = GunSmithRecipeRegistry.getCombinedAmmoRecipes();
+        return list == null ? new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>() : list;
     }
+
 
     private int countInInventory(ItemStack target) {
         if (target == null || player == null) return 0;

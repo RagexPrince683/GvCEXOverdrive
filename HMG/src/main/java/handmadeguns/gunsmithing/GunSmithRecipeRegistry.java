@@ -134,6 +134,121 @@ public class GunSmithRecipeRegistry {
         AMMO_RECIPES.clear();
     }
 
+    /**
+     * Build a combined ammo recipe list:
+     *  - Start with registered ammo recipes (AMMO_RECIPES)
+     *  - Then append ammo-like recipes discovered via CraftingManager (shaped + shapeless)
+     *  - Avoid duplicate RESULT item+meta entries (so same result doesn't appear twice)
+     *
+     * Returns defensive copies (so callers can mutate safely).
+     */
+    public static List<GunRecipeEntry> getCombinedAmmoRecipes() {
+        List<GunRecipeEntry> out = new ArrayList<GunRecipeEntry>();
+
+        // 1) Add registry recipes first (defensive copies)
+        List<GunRecipeEntry> reg = getAmmoRecipes(); // already returns a new ArrayList copy
+        if (reg != null) {
+            for (GunRecipeEntry e : reg) {
+                if (e == null || e.result == null) continue;
+                try {
+                    ItemStack resCopy = e.result.copy();
+                    ItemStack[] inputsCopy = (e.inputs == null) ? new ItemStack[0] : e.inputs.clone();
+                    for (int i = 0; i < inputsCopy.length; i++) {
+                        if (inputsCopy[i] != null) inputsCopy[i] = inputsCopy[i].copy();
+                    }
+                    out.add(new GunRecipeEntry(resCopy, inputsCopy));
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
+        }
+
+        // 2) Scan CraftingManager for shaped + shapeless ammo-like recipes
+        List rawList = net.minecraft.item.crafting.CraftingManager.getInstance().getRecipeList();
+        if (rawList == null) return out;
+
+        for (Object obj : rawList) {
+            try {
+                net.minecraft.item.ItemStack result = null;
+                net.minecraft.item.ItemStack[] items = new net.minecraft.item.ItemStack[0];
+
+                if (obj instanceof net.minecraft.item.crafting.ShapedRecipes) {
+                    net.minecraft.item.crafting.ShapedRecipes r = (net.minecraft.item.crafting.ShapedRecipes) obj;
+                    result = r.getRecipeOutput();
+                    items = (r.recipeItems == null) ? new net.minecraft.item.ItemStack[0] : r.recipeItems;
+                } else if (obj instanceof net.minecraft.item.crafting.ShapelessRecipes) {
+                    net.minecraft.item.crafting.ShapelessRecipes r = (net.minecraft.item.crafting.ShapelessRecipes) obj;
+                    result = r.getRecipeOutput();
+                    if (r.recipeItems != null && r.recipeItems.size() > 0) {
+                        @SuppressWarnings("unchecked")
+                        java.util.List<net.minecraft.item.ItemStack> listItems = (java.util.List<net.minecraft.item.ItemStack>) r.recipeItems;
+                        items = listItems.toArray(new net.minecraft.item.ItemStack[listItems.size()]);
+                    } else {
+                        items = new net.minecraft.item.ItemStack[0];
+                    }
+                } else {
+                    continue; // skip other recipe types
+                }
+
+                if (result == null) continue;
+                Item it = result.getItem();
+                if (it == null) continue;
+
+                // Heuristic: only include ammo-like results to avoid huge vanilla lists
+                boolean include = false;
+                try {
+                    String un = null;
+                    try { un = result.getUnlocalizedName(); } catch (Throwable ignored) {}
+                    if (un == null) {
+                        try { un = it.getUnlocalizedName(); } catch (Throwable ignored) {}
+                    }
+                    String lower = (un == null) ? "" : un.toLowerCase();
+                    String display = "";
+                    try { display = result.getDisplayName().toLowerCase(); } catch (Throwable ignored) {}
+
+                    if (lower.contains("hmg") || lower.contains("handmade") || lower.contains("ammo") ||
+                            lower.contains("bullet") || lower.contains("cartridge") || lower.contains("round") ||
+                            display.contains("bullet") || display.contains("ammo") || display.contains("round")) {
+                        include = true;
+                    }
+                } catch (Throwable t) {
+                    include = false;
+                }
+
+                if (!include) continue;
+
+                // Avoid duplicate RESULT item+meta entries already in 'out'
+                boolean duplicateResult = false;
+                for (GunRecipeEntry existing : out) {
+                    if (existing == null || existing.result == null) continue;
+                    try {
+                        if (existing.result.getItem() == result.getItem()
+                                && existing.result.getItemDamage() == result.getItemDamage()) {
+                            duplicateResult = true;
+                            break;
+                        }
+                    } catch (Throwable ignored) {}
+                }
+                if (duplicateResult) continue;
+
+                // Defensive copies
+                net.minecraft.item.ItemStack[] inputsCopy = (items == null) ? new net.minecraft.item.ItemStack[0] : items.clone();
+                for (int i = 0; i < inputsCopy.length; i++) {
+                    if (inputsCopy[i] != null) inputsCopy[i] = inputsCopy[i].copy();
+                }
+
+                out.add(new GunRecipeEntry(result.copy(), inputsCopy));
+
+            } catch (Throwable t) {
+                t.printStackTrace();
+                continue;
+            }
+        }
+
+        return out;
+    }
+
+
 
     //  Parse a single recipe file that follows the "AddRecipe/Slot*/CraftItem" format (based on the example you pasted).
     private static void parseAndRegisterAddRecipeFile(File recipeFile) throws IOException {
