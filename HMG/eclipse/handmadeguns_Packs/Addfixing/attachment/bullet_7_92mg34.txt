@@ -11,5 +11,6 @@ Recipe1,aaa
 Recipe2,aaa
 Recipe3,aaa
 ItemA,HandmadeGuns,7.92mm bulletclip
-//ItemB,minecraft,iron_ingot
 addNewRecipe,HandmadeGuns,7.92mm bulletmg34,1
+
+//ItemB,minecraft,iron_ingot
