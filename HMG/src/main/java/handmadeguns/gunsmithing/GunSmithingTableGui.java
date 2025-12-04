@@ -359,65 +359,69 @@ public class GunSmithingTableGui extends GuiScreen {
             if (currentPage == PAGE_GUNS) {
                 int realIndex = GunSmithRecipeRegistry.getAll().indexOf(entry);
                 if (realIndex >= 0) GunSmithNetwork.sendCraftRequestToServer(realIndex);
-            } else {
-                // send ammo craft packet (server validates and crafts)
-                // ensure ammoRecipes exists
-                if (ammoRecipes == null) ammoRecipes = buildAmmoRecipes();
-                if (ammoRecipes == null) return;
+                return;
+            }
 
-                // ===== Identity-based lookup (fixes duplicates) =====
-                int idx = -1;
+            // ========== AMMO PATH ==========
+            // ensure we have a build of ammoRecipes to search (doesn't have to be the same instances as filteredRecipes)
+            if (ammoRecipes == null) ammoRecipes = buildAmmoRecipes();
+            if (ammoRecipes == null || ammoRecipes.isEmpty()) {
+                // nothing to send; notify player for debugging
+                player.addChatMessage(new net.minecraft.util.ChatComponentText(
+                        EnumChatFormatting.RED + "No ammo recipes available."));
+                return;
+            }
+
+            // 1) try identity lookup (fast)
+            int idx = -1;
+            for (int i = 0; i < ammoRecipes.size(); i++) {
+                if (ammoRecipes.get(i) == entry) { // same instance
+                    idx = i;
+                    break;
+                }
+            }
+
+            // 2) strict match by result+inputs (robust if instances differ)
+            if (idx < 0) {
                 for (int i = 0; i < ammoRecipes.size(); i++) {
-                    if (ammoRecipes.get(i) == entry) { // identity check, not equals()
+                    GunSmithRecipeRegistry.GunRecipeEntry cand = ammoRecipes.get(i);
+                    if (cand == null) continue;
+                    if (entriesMatch(entry, cand)) {
                         idx = i;
                         break;
                     }
                 }
+            }
 
-                // Fallback: if the exact instance wasn't found (should be rare), fall back to
-                // finding by matching result item+meta but count occurrences to pick correct duplicate.
-                if (idx < 0) {
-                    ItemStack target = entry.result;
-                    if (target != null) {
-                        int occurrence = 0;
-                        for (int i = 0; i < ammoRecipes.size(); i++) {
-                            GunSmithRecipeRegistry.GunRecipeEntry e2 = ammoRecipes.get(i);
-                            if (e2 == null || e2.result == null) continue;
-                            if (e2.result.getItem() == target.getItem()
-                                    && e2.result.getItemDamage() == target.getItemDamage()) {
-                                // if it's the same instance we wanted, assign; otherwise increment occurrence
-                                if (e2 == entry) {
-                                    idx = i;
-                                    break;
-                                }
-                                occurrence++;
-                            }
+            // 3) best-effort: match by result item+meta only
+            if (idx < 0) {
+                ItemStack target = entry.result;
+                if (target != null) {
+                    for (int i = 0; i < ammoRecipes.size(); i++) {
+                        GunSmithRecipeRegistry.GunRecipeEntry cand = ammoRecipes.get(i);
+                        if (cand == null || cand.result == null) continue;
+                        if (cand.result.getItem() == target.getItem()
+                                && cand.result.getItemDamage() == target.getItemDamage()) {
+                            idx = i;
+                            break;
                         }
                     }
                 }
+            }
 
-                if (idx >= 0) {
-                    GunSmithNetwork.sendAmmoCraftRequestToServer(idx);
-                } else {
-                    // ultimate fallback: send first matching result (keeps behavior stable rather than doing nothing)
-                    // try to find first recipe with matching item/meta:
-                    ItemStack targ = entry.result;
-                    if (targ != null) {
-                        for (int i = 0; i < ammoRecipes.size(); i++) {
-                            GunSmithRecipeRegistry.GunRecipeEntry e2 = ammoRecipes.get(i);
-                            if (e2 != null && e2.result != null
-                                    && e2.result.getItem() == targ.getItem()
-                                    && e2.result.getItemDamage() == targ.getItemDamage()) {
-                                GunSmithNetwork.sendAmmoCraftRequestToServer(i);
-                                return;
-                            }
-                        }
-                    }
-                    // if all else fails, do nothing (or you could show a chat message)
-                }
+            if (idx >= 0) {
+                GunSmithNetwork.sendAmmoCraftRequestToServer(idx);
+            } else {
+                // final fallback: user-visible debug so it's not silently failing
+                player.addChatMessage(new net.minecraft.util.ChatComponentText(
+                        EnumChatFormatting.RED + "Failed to locate ammo recipe to craft."));
+                // optionally: log to console
+                System.out.println("[GunSmith] actionPerformed: failed to find ammo index for selected recipe: " +
+                        (entry.result == null ? "null" : entry.result.getDisplayName()));
             }
         }
     }
+
 
 
     // client-side fallback removal/give (should not be used for SMP)
@@ -565,6 +569,45 @@ public class GunSmithingTableGui extends GuiScreen {
         }
         return count;
     }
+
+    /**
+     * Returns true if two recipe entries represent the same recipe:
+     * - same result item, meta and count
+     * - same inputs length and every slot matches item+meta+stackSize
+     *
+     * This is an order-sensitive comparison for inputs (shapeless recipes that rely on order won't match;
+     * if you need shapeless comparison, we can normalize/sort input signatures).
+     */
+    private boolean entriesMatch(GunSmithRecipeRegistry.GunRecipeEntry a, GunSmithRecipeRegistry.GunRecipeEntry b) {
+        if (a == null || b == null) return false;
+        if (a.result == null || b.result == null) return false;
+
+        try {
+            if (a.result.getItem() != b.result.getItem()) return false;
+            if (a.result.getItemDamage() != b.result.getItemDamage()) return false;
+            if (a.result.stackSize != b.result.stackSize) return false;
+        } catch (Throwable ignored) {
+            return false;
+        }
+
+        ItemStack[] inA = a.inputs == null ? new ItemStack[0] : a.inputs;
+        ItemStack[] inB = b.inputs == null ? new ItemStack[0] : b.inputs;
+
+        if (inA.length != inB.length) return false;
+
+        for (int i = 0; i < inA.length; i++) {
+            ItemStack sa = inA[i];
+            ItemStack sb = inB[i];
+            if (sa == null && sb == null) continue;
+            if (sa == null || sb == null) return false;
+            if (sa.getItem() != sb.getItem()) return false;
+            if (sa.getItemDamage() != sb.getItemDamage()) return false;
+            if (sa.stackSize != sb.stackSize) return false;
+        }
+
+        return true;
+    }
+
 
     @Override
     public void initGui() {
