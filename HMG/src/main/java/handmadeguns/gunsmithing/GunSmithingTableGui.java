@@ -361,13 +361,64 @@ public class GunSmithingTableGui extends GuiScreen {
                 if (realIndex >= 0) GunSmithNetwork.sendCraftRequestToServer(realIndex);
             } else {
                 // send ammo craft packet (server validates and crafts)
-                // send the selectedIndex relative to ammoRecipes (server will rebuild the same list)
+                // ensure ammoRecipes exists
                 if (ammoRecipes == null) ammoRecipes = buildAmmoRecipes();
-                int idx = (ammoRecipes == null) ? -1 : ammoRecipes.indexOf(entry);
-                if (idx >= 0) GunSmithNetwork.sendAmmoCraftRequestToServer(idx);
+                if (ammoRecipes == null) return;
+
+                // ===== Identity-based lookup (fixes duplicates) =====
+                int idx = -1;
+                for (int i = 0; i < ammoRecipes.size(); i++) {
+                    if (ammoRecipes.get(i) == entry) { // identity check, not equals()
+                        idx = i;
+                        break;
+                    }
+                }
+
+                // Fallback: if the exact instance wasn't found (should be rare), fall back to
+                // finding by matching result item+meta but count occurrences to pick correct duplicate.
+                if (idx < 0) {
+                    ItemStack target = entry.result;
+                    if (target != null) {
+                        int occurrence = 0;
+                        for (int i = 0; i < ammoRecipes.size(); i++) {
+                            GunSmithRecipeRegistry.GunRecipeEntry e2 = ammoRecipes.get(i);
+                            if (e2 == null || e2.result == null) continue;
+                            if (e2.result.getItem() == target.getItem()
+                                    && e2.result.getItemDamage() == target.getItemDamage()) {
+                                // if it's the same instance we wanted, assign; otherwise increment occurrence
+                                if (e2 == entry) {
+                                    idx = i;
+                                    break;
+                                }
+                                occurrence++;
+                            }
+                        }
+                    }
+                }
+
+                if (idx >= 0) {
+                    GunSmithNetwork.sendAmmoCraftRequestToServer(idx);
+                } else {
+                    // ultimate fallback: send first matching result (keeps behavior stable rather than doing nothing)
+                    // try to find first recipe with matching item/meta:
+                    ItemStack targ = entry.result;
+                    if (targ != null) {
+                        for (int i = 0; i < ammoRecipes.size(); i++) {
+                            GunSmithRecipeRegistry.GunRecipeEntry e2 = ammoRecipes.get(i);
+                            if (e2 != null && e2.result != null
+                                    && e2.result.getItem() == targ.getItem()
+                                    && e2.result.getItemDamage() == targ.getItemDamage()) {
+                                GunSmithNetwork.sendAmmoCraftRequestToServer(i);
+                                return;
+                            }
+                        }
+                    }
+                    // if all else fails, do nothing (or you could show a chat message)
+                }
             }
         }
     }
+
 
     // client-side fallback removal/give (should not be used for SMP)
     @SuppressWarnings("unused")
@@ -395,9 +446,112 @@ public class GunSmithingTableGui extends GuiScreen {
 
     // ---------- Build ammo recipes safely ----------
     private List<GunSmithRecipeRegistry.GunRecipeEntry> buildAmmoRecipes() {
-        // Return a defensive copy from the registry
-        List<GunSmithRecipeRegistry.GunRecipeEntry> list = GunSmithRecipeRegistry.getAmmoRecipes();
-        return list == null ? new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>() : list;
+        List<GunSmithRecipeRegistry.GunRecipeEntry> out = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
+
+        // 1) Start with the authoritative registry recipes (defensive copies)
+        List<GunSmithRecipeRegistry.GunRecipeEntry> reg = GunSmithRecipeRegistry.getAmmoRecipes();
+        if (reg != null) {
+            for (GunSmithRecipeRegistry.GunRecipeEntry e : reg) {
+                if (e == null || e.result == null) continue;
+                try {
+                    net.minecraft.item.ItemStack resCopy = e.result.copy();
+                    ItemStack[] inputsCopy = (e.inputs == null) ? new ItemStack[0] : e.inputs.clone();
+                    for (int i = 0; i < inputsCopy.length; i++) {
+                        if (inputsCopy[i] != null) inputsCopy[i] = inputsCopy[i].copy();
+                    }
+                    out.add(new GunSmithRecipeRegistry.GunRecipeEntry(resCopy, inputsCopy));
+                } catch (Throwable t) {
+                    // defensive: skip problematic entries
+                    t.printStackTrace();
+                }
+            }
+        }
+
+        // 2) Now scan CraftingManager for additional ammo-like recipes (shaped + shapeless)
+        List rawList = net.minecraft.item.crafting.CraftingManager.getInstance().getRecipeList();
+        if (rawList == null) return out;
+
+        for (Object obj : rawList) {
+            try {
+                net.minecraft.item.ItemStack result = null;
+                net.minecraft.item.ItemStack[] items = new net.minecraft.item.ItemStack[0];
+
+                if (obj instanceof net.minecraft.item.crafting.ShapedRecipes) {
+                    net.minecraft.item.crafting.ShapedRecipes r = (net.minecraft.item.crafting.ShapedRecipes) obj;
+                    result = r.getRecipeOutput();
+                    items = (r.recipeItems == null) ? new net.minecraft.item.ItemStack[0] : r.recipeItems;
+                } else if (obj instanceof net.minecraft.item.crafting.ShapelessRecipes) {
+                    net.minecraft.item.crafting.ShapelessRecipes r = (net.minecraft.item.crafting.ShapelessRecipes) obj;
+                    result = r.getRecipeOutput();
+                    if (r.recipeItems != null && r.recipeItems.size() > 0) {
+                        @SuppressWarnings("unchecked")
+                        java.util.List<net.minecraft.item.ItemStack> listItems = (java.util.List<net.minecraft.item.ItemStack>) r.recipeItems;
+                        items = listItems.toArray(new net.minecraft.item.ItemStack[listItems.size()]);
+                    } else {
+                        items = new net.minecraft.item.ItemStack[0];
+                    }
+                } else {
+                    // skip other recipe types
+                    continue;
+                }
+
+                if (result == null) continue;
+                Item it = result.getItem();
+                if (it == null) continue;
+
+                // Heuristic: only include ammo-like results to avoid massive vanilla lists
+                boolean include = false;
+                try {
+                    String un = null;
+                    try { un = result.getUnlocalizedName(); } catch (Throwable ignored) {}
+                    if (un == null) {
+                        try { un = it.getUnlocalizedName(); } catch (Throwable ignored) {}
+                    }
+                    String lower = (un == null) ? "" : un.toLowerCase();
+                    String display = "";
+                    try { display = result.getDisplayName().toLowerCase(); } catch (Throwable ignored) {}
+
+                    if (lower.contains("hmg") || lower.contains("handmade") || lower.contains("ammo") ||
+                            lower.contains("bullet") || lower.contains("cartridge") || lower.contains("round") ||
+                            display.contains("bullet") || display.contains("ammo") || display.contains("round")) {
+                        include = true;
+                    }
+                } catch (Throwable t) {
+                    include = false;
+                }
+
+                if (!include) continue;
+
+                // Avoid adding a recipe whose RESULT item+meta already exists in 'out'
+                boolean duplicateResult = false;
+                for (GunSmithRecipeRegistry.GunRecipeEntry existing : out) {
+                    if (existing == null || existing.result == null) continue;
+                    try {
+                        if (existing.result.getItem() == result.getItem()
+                                && existing.result.getItemDamage() == result.getItemDamage()) {
+                            duplicateResult = true;
+                            break;
+                        }
+                    } catch (Throwable ignored) {}
+                }
+                if (duplicateResult) continue;
+
+                // Defensive copy of input array and result
+                net.minecraft.item.ItemStack[] inputsCopy = (items == null) ? new net.minecraft.item.ItemStack[0] : items.clone();
+                for (int i = 0; i < inputsCopy.length; i++) {
+                    if (inputsCopy[i] != null) inputsCopy[i] = inputsCopy[i].copy();
+                }
+
+                out.add(new GunSmithRecipeRegistry.GunRecipeEntry(result.copy(), inputsCopy));
+
+            } catch (Throwable t) {
+                // don't let one bad recipe crash the whole list
+                t.printStackTrace();
+                continue;
+            }
+        }
+
+        return out;
     }
 
     private int countInInventory(ItemStack target) {

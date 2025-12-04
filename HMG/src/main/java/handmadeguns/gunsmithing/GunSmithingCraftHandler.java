@@ -50,15 +50,13 @@ public class GunSmithingCraftHandler {
     // ---------------- SERVER-SIDE AMMO CRAFT ----------------
     public static void handleAmmoCraft(EntityPlayer player, int recipeIndex) {
 
-        // ✅ CRITICAL FIX: server must use the SAME registry list as client
+        // ✅ SERVER MUST USE SAME LIST AS CLIENT
         List<GunSmithRecipeRegistry.GunRecipeEntry> ammoList =
                 GunSmithRecipeRegistry.getAmmoRecipes();
 
-        System.out.println("[GunSmith] handleAmmoCraft index=" + recipeIndex +
-                " listSize=" + (ammoList == null ? 0 : ammoList.size()));
-
         if (ammoList == null || recipeIndex < 0 || recipeIndex >= ammoList.size()) {
-            System.out.println("[GunSmith] Invalid ammo recipe index: " + recipeIndex);
+            System.out.println("[GunSmith] invalid ammo recipe index: " + recipeIndex +
+                    " size=" + (ammoList == null ? 0 : ammoList.size()));
             return;
         }
 
