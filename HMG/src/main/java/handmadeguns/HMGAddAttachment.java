@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.items.*;
 import handmadeguns.client.render.HMGRenderItemCustom;
 import net.minecraft.item.Item;
@@ -17,6 +18,7 @@ import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 import static handmadeguns.HandmadeGunsCore.tabshmg;
+import static java.lang.Integer.parseInt;
 
 public class HMGAddAttachment
 {
@@ -675,33 +677,69 @@ public class HMGAddAttachment
 							itemi = GameRegistry.findItem(type[1], type[2]);
 						}
 						//'attachments' (MOST AMMO IS UNDER THIS TAB)
-						if(type[0].equals("addNewRecipe")){
-							Item additem = GameRegistry.findItem(type[1], type[2]);
-							int kazu1 = Integer.parseInt(type[3]);
-							GameRegistry.addRecipe(new ItemStack(additem, kazu1),
-									re1,
-									re2,
-									re3,
-									'a',itema,
-									'b',itemb,
-									'c',itemc,
-									'd',itemd,
-									'e',iteme,
-									'f',itemf,
-									'g',itemg,
-									'h',itemh,
-									'i',itemi
-							);
+						if (type[0].equals("addNewRecipe")) {
 
-							itema =null;
-							itemb =null;
-							itemc =null;
-							itemd =null;
-							iteme =null;
-							itemf =null;
-							itemg =null;
-							itemh =null;
-							itemi =null;
+							try {
+								Item additem = GameRegistry.findItem(type[1], type[2]);
+
+								if (additem == null) {
+									System.out.println("[HMG] ERROR: Item not found for recipe output -> Mod: "
+											+ type[1] + " Item: " + type[2]);
+									return;
+								}
+
+								int kazu1  = parseInt(type[3]);
+
+								GameRegistry.addRecipe(
+										new ItemStack(additem, kazu1),
+										re1,
+										re2,
+										re3,
+										'a', itema,
+										'b', itemb,
+										'c', itemc,
+										'd', itemd,
+										'e', iteme,
+										'f', itemf,
+										'g', itemg,
+										'h', itemh,
+										'i', itemi
+								);
+
+								System.out.println("[HMG] Loaded crafting recipe for: "
+										+ type[1] + ":" + type[2] + " x" + kazu1);
+
+								// --- ALSO register with HMG's ammo registry for GUI (deterministic) ---
+								ItemStack output = new ItemStack(additem, kazu1);
+
+								// inputs are mapped a..i -> positions 0..8
+								ItemStack[] inputs = new ItemStack[] {
+										itema != null ? new ItemStack(itema) : null,
+										itemb != null ? new ItemStack(itemb) : null,
+										itemc != null ? new ItemStack(itemc) : null,
+										itemd != null ? new ItemStack(itemd) : null,
+										iteme != null ? new ItemStack(iteme) : null,
+										itemf != null ? new ItemStack(itemf) : null,
+										itemg != null ? new ItemStack(itemg) : null,
+										itemh != null ? new ItemStack(itemh) : null,
+										itemi != null ? new ItemStack(itemi) : null
+								};
+
+								GunSmithRecipeRegistry.registerAmmoRecipe(output, inputs);
+
+								// Clear after successful register
+								itema = itemb = itemc = itemd = iteme = itemf = itemg = itemh = itemi = null;
+
+							} catch (Exception e) {
+								System.out.println("[HMG] ERROR: Failed to register crafting recipe for -> "
+										+ type[1] + ":" + type[2]);
+								e.printStackTrace();
+							}
+
+							// Always reset shape
+							re1 = "   ";
+							re2 = "   ";
+							re3 = "   ";
 						}
 
 
