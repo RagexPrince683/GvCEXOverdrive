@@ -49,64 +49,6 @@ public class GunSmithRecipeRegistry {
     }
 
     /**
-     * Load all recipes from the given pack directory.
-     * This mirrors the behavior of your readPackRecipe: it searches subdirectories,
-     * finds files with "addpackrecipe" in their name, sorts them, and parses each.
-     *
-     * Call this from your main mod postInit (after items have been registered).
-     *
-     * Example:
-     *   GunSmithRecipeRegistry.loadRecipesFromPackDir(new File(modBaseDir, "packs"));
-     */
-
-    //this is not used
-    /**public static void loadRecipesFromPackDir(File packdir) {
-        if (packdir == null || !packdir.exists() || !packdir.isDirectory()) return;
-
-        File[] packlist = packdir.listFiles();
-        if (packlist == null) return;
-
-        Arrays.sort(packlist, new Comparator<File>() {
-            @Override
-            public int compare(File f1, File f2) {
-                return f1.getName().compareTo(f2.getName());
-            }
-        });
-
-        for (File aPack : packlist) {
-            if (!aPack.isDirectory()) continue;
-
-            // find files with "addpackrecipe" in the name (same as your getFileList lookup)
-            File[] recipelist = aPack.listFiles(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.toLowerCase().contains("addpackrecipe");
-                }
-            });
-
-            if (recipelist == null || recipelist.length == 0) continue;
-
-            Arrays.sort(recipelist, new Comparator<File>() {
-                @Override
-                public int compare(File f1, File f2) {
-                    return f1.getName().compareTo(f2.getName());
-                }
-            });
-
-            for (File recipeFile : recipelist) {
-                try {
-                    parseAndRegisterAddRecipeFile(recipeFile);
-                    System.out.println("[HMG] Loaded recipe: " + recipeFile.getAbsolutePath());
-                } catch (Exception e) {
-                    System.out.println("[HMG] ERROR: Failed to load recipe: " + recipeFile.getAbsolutePath());
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-    */
-
-    /**
      * Register an ammo-type crafting recipe so the GUI can list it.
      * result and inputs are stored as copies for safety.
      */
@@ -250,7 +192,7 @@ public class GunSmithRecipeRegistry {
 
 
 
-    //  Parse a single recipe file that follows the "AddRecipe/Slot*/CraftItem" format (based on the example you pasted).
+    //  Parse a single recipe file that follows the "AddRecipe/Slot*/CraftItem" format (based on the example provided).
     private static void parseAndRegisterAddRecipeFile(File recipeFile) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(recipeFile), "UTF-8"));
         try {
