@@ -151,8 +151,8 @@ public class HMGGuiHandler implements IGuiHandler
 			}
 		}
 		if (ID == 4) {
-			System.out.println("CLIENT GUI RETURNING GunSmithingTableGui");
-			return new GunSmithingTableGui(player);
+			// instantiate the client Gui (must be client-only class)
+			return new handmadeguns.gunsmithing.GunSmithingTableGui(player);
 		}
 		return null;
 	}

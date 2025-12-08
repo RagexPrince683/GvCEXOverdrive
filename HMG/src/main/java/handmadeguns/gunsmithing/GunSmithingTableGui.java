@@ -4,6 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -17,7 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class GunSmithingTableGui extends GuiScreen {
+public class GunSmithingTableGui extends GuiContainer {
+    //was GuiScreen 
 
     // === PAGE SYSTEM ===
     private static final int PAGE_GUNS = 0;
@@ -54,6 +56,7 @@ public class GunSmithingTableGui extends GuiScreen {
 
 
     public GunSmithingTableGui(EntityPlayer player) {
+        super(new ContainerGunSmith(player.inventory));
         this.player = player;
         this.currentPage = PAGE_GUNS;
     }
