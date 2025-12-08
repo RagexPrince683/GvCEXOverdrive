@@ -30,15 +30,14 @@ public class GunSmithTable extends BlockContainer implements ITileEntityProvider
 
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int par6, float par7, float par8, float par9) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player,
+                                    int par6, float par7, float par8, float par9) {
 
-        if (world.isRemote) {
-            Minecraft.getMinecraft().displayGuiScreen(new GunSmithingTableGui(player));
+        // only request GUI from server side — this triggers the client-side handler to show GUI
+        if (!world.isRemote) {
+            // HandmadeGunsCore.instance should be your mod main instance used for registerGuiHandler
+            player.openGui(HandmadeGunsCore.INSTANCE, 4, world, x, y, z);
         }
-        //if (!world.isRemote && !player.isSneaking()) {
-        //    System.out.println("test GunSmithTable OPEN GUI");
-        //    player.openGui(HandmadeGunsCore.instance, 4, world, x, y, z);
-        //}
         return true;
     }
 
