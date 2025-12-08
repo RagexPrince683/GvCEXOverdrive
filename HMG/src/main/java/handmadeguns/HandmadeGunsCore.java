@@ -102,8 +102,6 @@ public class HandmadeGunsCore {
 	public static final String MOD_ID = "HandmadeGuns";
 	@Mod.Instance("HandmadeGuns")
 	public static HandmadeGunsCore INSTANCE;
-
-	@SidedProxy(clientSide = "handmadeguns.ClientProxy", serverSide = "handmadeguns.CommonProxy")
 	//public static CommonProxy proxy;
 
 

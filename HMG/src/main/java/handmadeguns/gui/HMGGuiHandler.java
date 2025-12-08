@@ -5,6 +5,7 @@ import java.util.List;
 import cpw.mods.fml.common.network.IGuiHandler;
 import handmadeguns.entity.HMGEntityItemMount;
 import handmadeguns.entity.HMGEntityItemMount2;
+import handmadeguns.gunsmithing.ContainerGunSmith;
 import handmadeguns.gunsmithing.GunSmithingTableGui;
 import handmadeguns.inventory.ContainerHolder;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
@@ -82,7 +83,7 @@ public class HMGGuiHandler implements IGuiHandler
 			}
 		}
 		if (ID == 4) {
-			return null; // no container needed
+			return new ContainerGunSmith(player.inventory);
 		}
 		return null;
 	}
@@ -151,8 +152,7 @@ public class HMGGuiHandler implements IGuiHandler
 			}
 		}
 		if (ID == 4) {
-			// instantiate the client Gui (must be client-only class)
-			return new handmadeguns.gunsmithing.GunSmithingTableGui(player);
+			return new GunSmithingTableGui(player);
 		}
 		return null;
 	}

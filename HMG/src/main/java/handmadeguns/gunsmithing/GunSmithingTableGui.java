@@ -3,11 +3,9 @@ package handmadeguns.gunsmithing;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Mouse;
 
@@ -19,8 +17,6 @@ import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class GunSmithingTableGui extends GuiContainer {
-    //was GuiScreen 
-
     // === PAGE SYSTEM ===
     private static final int PAGE_GUNS = 0;
     private static final int PAGE_AMMO = 1;
@@ -34,7 +30,7 @@ public class GunSmithingTableGui extends GuiContainer {
 
     private int selectedIndex = -1;
     private int scrollOffset = 0;
-    private static final int LIST_X = 20;
+    private static final int LIST_X = 20;       // offset inside GUI
     private static final int LIST_Y = 30;
     private static final int LIST_HEIGHT = 140;
     private static final int ENTRY_HEIGHT = 12;
@@ -42,7 +38,7 @@ public class GunSmithingTableGui extends GuiContainer {
     // === Scrollbar ===
     private boolean draggingScroll = false;
 
-    private static final int SCROLLBAR_X = 165;
+    private static final int SCROLLBAR_X = 165; // offset inside GUI
     private static final int SCROLLBAR_Y = LIST_Y;
     private static final int SCROLLBAR_HEIGHT = LIST_HEIGHT;
     private static final int SCROLLBAR_WIDTH = 8;
@@ -54,15 +50,18 @@ public class GunSmithingTableGui extends GuiContainer {
     private GuiTextField searchBox;
     private List<GunSmithRecipeRegistry.GunRecipeEntry> filteredRecipes;
 
-
+    // choose GUI size large enough for list + preview
     public GunSmithingTableGui(EntityPlayer player) {
-        super(new ContainerGunSmith(player.inventory));
+        super(new ContainerGunSmith(player.inventory)); // adjust if your container constructor differs
         this.player = player;
         this.currentPage = PAGE_GUNS;
+
+        // set a GUI size that fits your layout (adjust if needed)
+        this.xSize = 330;
+        this.ySize = 220;
     }
 
     // ---------- Build / filter recipes ----------
-
     private void updateSearchResults() {
         String q = (searchBox == null) ? "" : searchBox.getText().toLowerCase();
         filteredRecipes = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
@@ -118,11 +117,12 @@ public class GunSmithingTableGui extends GuiContainer {
 
         int maxScroll = totalEntries - maxVisible;
 
+        // draw track
         drawRect(
-                SCROLLBAR_X,
-                SCROLLBAR_Y,
-                SCROLLBAR_X + SCROLLBAR_WIDTH,
-                SCROLLBAR_Y + SCROLLBAR_HEIGHT,
+                this.guiLeft + SCROLLBAR_X,
+                this.guiTop + SCROLLBAR_Y,
+                this.guiLeft + SCROLLBAR_X + SCROLLBAR_WIDTH,
+                this.guiTop + SCROLLBAR_Y + SCROLLBAR_HEIGHT,
                 0xFF333333
         );
 
@@ -131,16 +131,17 @@ public class GunSmithingTableGui extends GuiContainer {
 
         int thumbY;
         if (maxScroll <= 0) {
-            thumbY = SCROLLBAR_Y;
+            thumbY = this.guiTop + SCROLLBAR_Y;
         } else {
-            thumbY = SCROLLBAR_Y +
+            thumbY = this.guiTop + SCROLLBAR_Y +
                     (int) ((float) scrollOffset / maxScroll * (SCROLLBAR_HEIGHT - thumbHeight));
         }
 
+        // draw thumb
         drawRect(
-                SCROLLBAR_X,
+                this.guiLeft + SCROLLBAR_X,
                 thumbY,
-                SCROLLBAR_X + SCROLLBAR_WIDTH,
+                this.guiLeft + SCROLLBAR_X + SCROLLBAR_WIDTH,
                 thumbY + thumbHeight,
                 0xFFAAAAAA
         );
@@ -149,19 +150,11 @@ public class GunSmithingTableGui extends GuiContainer {
     // ---------- UI rendering ----------
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        // draw background and container (slots, background) first
         drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
 
-        // tabs (draw after background)
-        int tabY = height - 40;
-        int gunsColor = (currentPage == PAGE_GUNS) ? 0xFFAAAAAA : 0xFF555555;
-        int ammoColor = (currentPage == PAGE_AMMO) ? 0xFFAAAAAA : 0xFF555555;
-
-        drawRect(20, tabY, 20 + 60, tabY + 20, gunsColor);
-        drawCenteredString(fontRendererObj, "Guns", 20 + 30, tabY + 6, 0x000000);
-
-        drawRect(85, tabY, 85 + 60, tabY + 20, ammoColor);
-        drawCenteredString(fontRendererObj, "Ammo", 85 + 30, tabY + 6, 0x000000);
-
+        // then draw our overlay UI on top, using guiLeft/guiTop as origin
         if (searchBox != null) searchBox.drawTextBox();
         if (filteredRecipes == null) updateSearchResults();
 
@@ -169,14 +162,25 @@ public class GunSmithingTableGui extends GuiContainer {
         if (recipes == null) recipes = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
 
         String title = (currentPage == PAGE_GUNS) ? "Gun Smithing Table" : "Ammo Crafting";
-        drawCenteredString(fontRendererObj, title, width / 2, 8, 0xFFFFFF);
+        drawCenteredString(fontRendererObj, title, this.guiLeft + this.xSize / 2, this.guiTop + 8, 0xFFFFFF);
 
+        // tabs (draw after header)
+        int tabY = this.guiTop + this.ySize - 40;
+        int gunsColor = (currentPage == PAGE_GUNS) ? 0xFFAAAAAA : 0xFF555555;
+        int ammoColor = (currentPage == PAGE_AMMO) ? 0xFFAAAAAA : 0xFF555555;
+
+        drawRect(this.guiLeft + 20, tabY, this.guiLeft + 20 + 60, tabY + 20, gunsColor);
+        drawCenteredString(fontRendererObj, "Guns", this.guiLeft + 20 + 30, tabY + 6, 0x000000);
+
+        drawRect(this.guiLeft + 85, tabY, this.guiLeft + 85 + 60, tabY + 20, ammoColor);
+        drawCenteredString(fontRendererObj, "Ammo", this.guiLeft + 85 + 30, tabY + 6, 0x000000);
+
+        // left list
         int maxVisible = LIST_HEIGHT / ENTRY_HEIGHT;
         int maxScroll = Math.max(0, recipes.size() - maxVisible);
         scrollOffset = Math.max(0, Math.min(scrollOffset, maxScroll));
         int end = Math.min(recipes.size(), scrollOffset + maxVisible);
 
-        // left panel list
         for (int i = scrollOffset; i < end; i++) {
             GunSmithRecipeRegistry.GunRecipeEntry entry = recipes.get(i);
             if (entry == null || entry.result == null) continue;
@@ -189,34 +193,32 @@ public class GunSmithingTableGui extends GuiContainer {
             }
             if (name == null) continue;
 
-            int y = LIST_Y + (i - scrollOffset) * ENTRY_HEIGHT;
+            int y = this.guiTop + LIST_Y + (i - scrollOffset) * ENTRY_HEIGHT;
 
             if (i == selectedIndex) {
-                drawRect(LIST_X - 2, y - 2, LIST_X + 140, y + 10, 0x8800AAFF);
+                drawRect(this.guiLeft + LIST_X - 2, y - 2, this.guiLeft + LIST_X + 140, y + 10, 0x8800AAFF);
             }
 
-            fontRendererObj.drawString(name, LIST_X, y, 0xFFFFFF);
+            fontRendererObj.drawString(name, this.guiLeft + LIST_X, y, 0xFFFFFF);
         }
 
         drawScrollbar(recipes.size());
 
         if (selectedIndex < 0 || selectedIndex >= recipes.size()) {
-            super.drawScreen(mouseX, mouseY, partialTicks);
-            return;
+            return; // nothing selected — we've already drawn container and list
         }
 
-        // right panel
+        // right panel preview
         GunSmithRecipeRegistry.GunRecipeEntry entry = recipes.get(selectedIndex);
         if (entry == null || entry.result == null) {
-            super.drawScreen(mouseX, mouseY, partialTicks);
             return;
         }
 
-        int previewX = width / 2 + 20;
-        int previewY = 40;
+        int previewX = this.guiLeft + this.xSize / 2 + 20;
+        int previewY = this.guiTop + 40;
 
         try {
-            drawCenteredString(fontRendererObj, entry.result.getDisplayName(), previewX + 40, 30, 0xFFFFFF);
+            drawCenteredString(fontRendererObj, entry.result.getDisplayName(), previewX + 40, this.guiTop + 30, 0xFFFFFF);
         } catch (Throwable ignored) {}
 
         RenderHelper.enableGUIStandardItemLighting();
@@ -233,6 +235,7 @@ public class GunSmithingTableGui extends GuiContainer {
                     itemRender.renderItemIntoGUI(fontRendererObj, mc.getTextureManager(), stack, x, y);
                 } catch (Throwable ignored) {}
 
+                // tooltip
                 if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16) {
                     List list = stack.getTooltip(player, false);
                     for (int t = 0; t < list.size(); t++) {
@@ -255,8 +258,12 @@ public class GunSmithingTableGui extends GuiContainer {
         if (craftButton != null) craftButton.enabled = canCraft(entry);
 
         RenderHelper.disableStandardItemLighting();
+    }
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
+        // draw background color
+        drawRect(this.guiLeft, this.guiTop, this.guiLeft + this.xSize, this.guiTop + this.ySize, 0xFF222222);
     }
 
     @Override
@@ -270,16 +277,16 @@ public class GunSmithingTableGui extends GuiContainer {
 
     @Override
     protected void mouseClicked(int x, int y, int btn) {
-        // tab clicks first
-        if (y >= height - 40 && y <= height - 20) {
-            if (x >= 20 && x <= 20 + 60) {
+        // translate tab hitboxes and list hitboxes to screen coords using guiLeft/guiTop
+        if (y >= this.guiTop + this.ySize - 40 && y <= this.guiTop + this.ySize - 20) {
+            if (x >= this.guiLeft + 20 && x <= this.guiLeft + 20 + 60) {
                 if (currentPage != PAGE_GUNS) {
                     currentPage = PAGE_GUNS;
                     updateSearchResults();
                 }
                 return;
             }
-            if (x >= 85 && x <= 85 + 60) {
+            if (x >= this.guiLeft + 85 && x <= this.guiLeft + 85 + 60) {
                 if (currentPage != PAGE_AMMO) {
                     currentPage = PAGE_AMMO;
                     updateSearchResults();
@@ -291,15 +298,15 @@ public class GunSmithingTableGui extends GuiContainer {
         if (searchBox != null) searchBox.mouseClicked(x, y, btn);
 
         // scrollbar
-        if (x >= SCROLLBAR_X && x <= SCROLLBAR_X + SCROLLBAR_WIDTH
-                && y >= SCROLLBAR_Y && y <= SCROLLBAR_Y + SCROLLBAR_HEIGHT) {
+        if (x >= this.guiLeft + SCROLLBAR_X && x <= this.guiLeft + SCROLLBAR_X + SCROLLBAR_WIDTH
+                && y >= this.guiTop + SCROLLBAR_Y && y <= this.guiTop + SCROLLBAR_Y + SCROLLBAR_HEIGHT) {
             draggingScroll = true;
             return;
         }
 
         if (filteredRecipes != null) {
-            int index = (y - LIST_Y) / ENTRY_HEIGHT + scrollOffset;
-            if (x >= LIST_X && x <= LIST_X + 140) {
+            int index = (y - (this.guiTop + LIST_Y)) / ENTRY_HEIGHT + scrollOffset;
+            if (x >= this.guiLeft + LIST_X && x <= this.guiLeft + LIST_X + 140) {
                 if (index >= 0 && index < filteredRecipes.size()) selectedIndex = index;
             }
         }
@@ -320,7 +327,7 @@ public class GunSmithingTableGui extends GuiContainer {
             int maxVisible = LIST_HEIGHT / ENTRY_HEIGHT;
             if (total > maxVisible) {
                 int maxScroll = total - maxVisible;
-                float pct = (float) (y - SCROLLBAR_Y) / SCROLLBAR_HEIGHT;
+                float pct = (float) (y - (this.guiTop + SCROLLBAR_Y)) / SCROLLBAR_HEIGHT;
                 pct = Math.max(0F, Math.min(1F, pct));
                 scrollOffset = (int) (pct * maxScroll);
             }
@@ -340,14 +347,14 @@ public class GunSmithingTableGui extends GuiContainer {
     protected void actionPerformed(GuiButton button) {
         if (button == null) return;
 
-        if (button.id == 1) {
+        if (button.id == 1) { // guns tab
             if (currentPage != PAGE_GUNS) {
                 currentPage = PAGE_GUNS;
                 updateSearchResults();
             }
             return;
         }
-        if (button.id == 2) {
+        if (button.id == 2) { // ammo tab
             if (currentPage != PAGE_AMMO) {
                 currentPage = PAGE_AMMO;
                 updateSearchResults();
@@ -355,7 +362,7 @@ public class GunSmithingTableGui extends GuiContainer {
             return;
         }
 
-        if (button.id == 0) {
+        if (button.id == 0) { // craft
             if (filteredRecipes == null) return;
             if (selectedIndex < 0 || selectedIndex >= filteredRecipes.size()) return;
             GunSmithRecipeRegistry.GunRecipeEntry entry = filteredRecipes.get(selectedIndex);
@@ -369,10 +376,8 @@ public class GunSmithingTableGui extends GuiContainer {
             }
 
             // ========== AMMO PATH ==========
-            // ensure we have a build of ammoRecipes to search (doesn't have to be the same instances as filteredRecipes)
             if (ammoRecipes == null) ammoRecipes = buildAmmoRecipes();
             if (ammoRecipes == null || ammoRecipes.isEmpty()) {
-                // nothing to send; notify player for debugging
                 player.addChatMessage(new net.minecraft.util.ChatComponentText(
                         EnumChatFormatting.RED + "No ammo recipes available."));
                 return;
@@ -381,13 +386,13 @@ public class GunSmithingTableGui extends GuiContainer {
             // 1) try identity lookup (fast)
             int idx = -1;
             for (int i = 0; i < ammoRecipes.size(); i++) {
-                if (ammoRecipes.get(i) == entry) { // same instance
+                if (ammoRecipes.get(i) == entry) {
                     idx = i;
                     break;
                 }
             }
 
-            // 2) strict match by result+inputs (robust if instances differ)
+            // 2) strict match by result+inputs
             if (idx < 0) {
                 for (int i = 0; i < ammoRecipes.size(); i++) {
                     GunSmithRecipeRegistry.GunRecipeEntry cand = ammoRecipes.get(i);
@@ -399,7 +404,7 @@ public class GunSmithingTableGui extends GuiContainer {
                 }
             }
 
-            // 3) best-effort: match by result item+meta only
+            // 3) match by result item+meta only
             if (idx < 0) {
                 ItemStack target = entry.result;
                 if (target != null) {
@@ -418,50 +423,19 @@ public class GunSmithingTableGui extends GuiContainer {
             if (idx >= 0) {
                 GunSmithNetwork.sendAmmoCraftRequestToServer(idx);
             } else {
-                // final fallback: user-visible debug so it's not silently failing
                 player.addChatMessage(new net.minecraft.util.ChatComponentText(
                         EnumChatFormatting.RED + "Failed to locate ammo recipe to craft."));
-                // optionally: log to console
                 System.out.println("[GunSmith] actionPerformed: failed to find ammo index for selected recipe: " +
                         (entry.result == null ? "null" : entry.result.getDisplayName()));
             }
         }
     }
 
-
-
-    // client-side fallback removal/give (should not be used for SMP)
-    //so remove this?
-    @SuppressWarnings("unused")
-    //private void craftAmmoClientSide(GunSmithRecipeRegistry.GunRecipeEntry entry) {
-    //    if (entry == null || !canCraft(entry)) return;
-    //    if (entry.inputs != null) {
-    //        for (ItemStack req : entry.inputs) {
-    //            if (req == null) continue;
-    //            int remaining = req.stackSize;
-    //            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-    //                ItemStack slot = player.inventory.getStackInSlot(i);
-    //                if (slot == null) continue;
-    //                if (slot.getItem() == req.getItem() && slot.getItemDamage() == req.getItemDamage()) {
-    //                    int toRemove = Math.min(remaining, slot.stackSize);
-    //                    slot.stackSize -= toRemove;
-    //                    remaining -= toRemove;
-    //                    if (slot.stackSize <= 0) player.inventory.setInventorySlotContents(i, null);
-    //                    if (remaining <= 0) break;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    if (entry.result != null) player.inventory.addItemStackToInventory(entry.result.copy());
-    //}
-
     // ---------- Build ammo recipes safely (client) ----------
     private List<GunSmithRecipeRegistry.GunRecipeEntry> buildAmmoRecipes() {
-        // Use the shared combined recipe builder so client & server match
         List<GunSmithRecipeRegistry.GunRecipeEntry> list = GunSmithRecipeRegistry.getCombinedAmmoRecipes();
         return list == null ? new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>() : list;
     }
-
 
     private int countInInventory(ItemStack target) {
         if (target == null || player == null) return 0;
@@ -475,14 +449,6 @@ public class GunSmithingTableGui extends GuiContainer {
         return count;
     }
 
-    /**
-     * Returns true if two recipe entries represent the same recipe:
-     * - same result item, meta and count
-     * - same inputs length and every slot matches item+meta+stackSize
-     *
-     * This is an order-sensitive comparison for inputs (shapeless recipes that rely on order won't match;
-     * if you need shapeless comparison, we can normalize/sort input signatures).
-     */
     private boolean entriesMatch(GunSmithRecipeRegistry.GunRecipeEntry a, GunSmithRecipeRegistry.GunRecipeEntry b) {
         if (a == null || b == null) return false;
         if (a.result == null || b.result == null) return false;
@@ -513,19 +479,19 @@ public class GunSmithingTableGui extends GuiContainer {
         return true;
     }
 
-
     @Override
     public void initGui() {
         super.initGui();
 
-        int btnX = width / 2 + 20;
-        int btnY = height - 40;
+        // create controls positioned relative to guiLeft/guiTop
+        int btnX = this.guiLeft + this.xSize / 2 + 20;
+        int btnY = this.guiTop + this.ySize - 40;
 
         craftButton = new GuiButton(0, btnX, btnY, 80, 20, "Create");
-        gunsTab = new GuiButton(1, 20, height - 40, 60, 20, "Guns");
-        ammoTab = new GuiButton(2, 85, height - 40, 60, 20, "Ammo");
+        gunsTab = new GuiButton(1, this.guiLeft + 20, this.guiTop + this.ySize - 40, 60, 20, "Guns");
+        ammoTab = new GuiButton(2, this.guiLeft + 85, this.guiTop + this.ySize - 40, 60, 20, "Ammo");
 
-        searchBox = new GuiTextField(fontRendererObj, 20, 15, 140, 12);
+        searchBox = new GuiTextField(fontRendererObj, this.guiLeft + 20, this.guiTop + 15, 140, 12);
         searchBox.setMaxStringLength(32);
         searchBox.setFocused(false);
 
