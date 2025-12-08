@@ -84,6 +84,60 @@ public class GunSmithRecipeRegistry {
      *
      * Returns defensive copies (so callers can mutate safely).
      */
+    // Helper: build counts map and sample map from an ItemStack[] (condenses repeated slots)
+    private static java.util.Map<String, Integer> buildCountMap(net.minecraft.item.ItemStack[] arr,
+                                                                java.util.Map<String, net.minecraft.item.ItemStack> sampleMap) {
+        java.util.Map<String, Integer> counts = new java.util.HashMap<String, Integer>();
+        if (arr == null) return counts;
+        for (net.minecraft.item.ItemStack s : arr) {
+            if (s == null) continue;
+            String key;
+            try {
+                String nbt = (s.hasTagCompound() && s.getTagCompound() != null) ? s.getTagCompound().toString() : "";
+                int id = 0;
+                try {
+                    id = net.minecraft.item.Item.getIdFromItem(s.getItem());
+                } catch (Throwable tt) {
+                    // fallback to unlocalized name if getIdFromItem isn't available
+                }
+                if (id != 0) {
+                    key = id + ":" + s.getItemDamage() + ":" + nbt;
+                } else {
+                    key = (s.getItem() == null ? "null" : s.getItem().getUnlocalizedName()) + ":" + s.getItemDamage() + ":" + nbt;
+                }
+            } catch (Throwable t) {
+                // very defensive fallback
+                key = (s.getItem() == null ? "null" : s.getItem().toString()) + ":" + s.getItemDamage();
+            }
+            int prev = counts.containsKey(key) ? counts.get(key) : 0;
+            counts.put(key, prev + s.stackSize);
+            if (!sampleMap.containsKey(key)) {
+                try {
+                    sampleMap.put(key, s.copy());
+                } catch (Throwable ignored) {
+                    sampleMap.put(key, s);
+                }
+            }
+        }
+        return counts;
+    }
+
+    // Helper: make an ItemStack[] from counts + sampleMap (sets stackSize to aggregated count)
+    private static net.minecraft.item.ItemStack[] makeInputsFromMaps(java.util.Map<String, Integer> counts,
+                                                                     java.util.Map<String, net.minecraft.item.ItemStack> sampleMap) {
+        java.util.List<net.minecraft.item.ItemStack> list = new java.util.ArrayList<net.minecraft.item.ItemStack>();
+        for (java.util.Map.Entry<String, Integer> e : counts.entrySet()) {
+            String key = e.getKey();
+            int cnt = e.getValue();
+            net.minecraft.item.ItemStack sample = sampleMap.get(key);
+            if (sample == null) continue;
+            net.minecraft.item.ItemStack s = sample.copy();
+            s.stackSize = cnt;
+            list.add(s);
+        }
+        return list.toArray(new net.minecraft.item.ItemStack[list.size()]);
+    }
+
     public static List<GunRecipeEntry> getCombinedAmmoRecipes() {
         List<GunRecipeEntry> out = new ArrayList<GunRecipeEntry>();
 
@@ -93,12 +147,18 @@ public class GunSmithRecipeRegistry {
             for (GunRecipeEntry e : reg) {
                 if (e == null || e.result == null) continue;
                 try {
-                    ItemStack resCopy = e.result.copy();
-                    ItemStack[] inputsCopy = (e.inputs == null) ? new ItemStack[0] : e.inputs.clone();
+                    net.minecraft.item.ItemStack resCopy = e.result.copy();
+                    net.minecraft.item.ItemStack[] inputsCopy = (e.inputs == null) ? new net.minecraft.item.ItemStack[0] : e.inputs.clone();
                     for (int i = 0; i < inputsCopy.length; i++) {
                         if (inputsCopy[i] != null) inputsCopy[i] = inputsCopy[i].copy();
                     }
-                    out.add(new GunRecipeEntry(resCopy, inputsCopy));
+
+                    // Canonicalize registry entry inputs (condense repeated slots)
+                    java.util.Map<String, net.minecraft.item.ItemStack> sampleMap = new java.util.HashMap<String, net.minecraft.item.ItemStack>();
+                    java.util.Map<String, Integer> counts = buildCountMap(inputsCopy, sampleMap);
+                    net.minecraft.item.ItemStack[] canonicalInputs = makeInputsFromMaps(counts, sampleMap);
+
+                    out.add(new GunRecipeEntry(resCopy, canonicalInputs));
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
@@ -159,27 +219,62 @@ public class GunSmithRecipeRegistry {
 
                 if (!include) continue;
 
-                // Avoid duplicate RESULT item+meta entries already in 'out'
-                boolean duplicateResult = false;
-                for (GunRecipeEntry existing : out) {
+                // Canonicalize incoming recipe inputs (condense repeated slots)
+                java.util.Map<String, net.minecraft.item.ItemStack> newSample = new java.util.HashMap<String, net.minecraft.item.ItemStack>();
+                java.util.Map<String, Integer> newCounts = buildCountMap(items, newSample);
+
+                // search for duplicate result in 'out'
+                int dupIndex = -1;
+                for (int i = 0; i < out.size(); i++) {
+                    GunRecipeEntry existing = out.get(i);
                     if (existing == null || existing.result == null) continue;
                     try {
                         if (existing.result.getItem() == result.getItem()
                                 && existing.result.getItemDamage() == result.getItemDamage()) {
-                            duplicateResult = true;
+                            dupIndex = i;
                             break;
                         }
                     } catch (Throwable ignored) {}
                 }
-                if (duplicateResult) continue;
 
-                // Defensive copies
-                net.minecraft.item.ItemStack[] inputsCopy = (items == null) ? new net.minecraft.item.ItemStack[0] : items.clone();
-                for (int i = 0; i < inputsCopy.length; i++) {
-                    if (inputsCopy[i] != null) inputsCopy[i] = inputsCopy[i].copy();
+                if (dupIndex != -1) {
+                    // Merge with existing entry: take MAX per-key so shaped 3xA overrides 1xA stub
+                    GunRecipeEntry existingEntry = out.get(dupIndex);
+                    java.util.Map<String, net.minecraft.item.ItemStack> existingSample = new java.util.HashMap<String, net.minecraft.item.ItemStack>();
+                    java.util.Map<String, Integer> existingCounts = buildCountMap(existingEntry.inputs, existingSample);
+
+                    java.util.Map<String, Integer> mergedCounts = new java.util.HashMap<String, Integer>();
+                    java.util.Map<String, net.minecraft.item.ItemStack> mergedSample = new java.util.HashMap<String, net.minecraft.item.ItemStack>();
+
+                    java.util.Set<String> keys = new java.util.HashSet<String>();
+                    keys.addAll(existingCounts.keySet());
+                    keys.addAll(newCounts.keySet());
+
+                    for (String k : keys) {
+                        int ex = existingCounts.containsKey(k) ? existingCounts.get(k) : 0;
+                        int nw = newCounts.containsKey(k) ? newCounts.get(k) : 0;
+                        int use = Math.max(ex, nw);
+                        mergedCounts.put(k, use);
+
+                        // prefer sample from the new recipe if available, otherwise existing
+                        if (newSample.containsKey(k)) {
+                            mergedSample.put(k, newSample.get(k));
+                        } else if (existingSample.containsKey(k)) {
+                            mergedSample.put(k, existingSample.get(k));
+                        }
+                    }
+
+                    net.minecraft.item.ItemStack[] mergedInputs = makeInputsFromMaps(mergedCounts, mergedSample);
+
+                    // replace existing entry with merged (defensive copy of result)
+                    out.set(dupIndex, new GunRecipeEntry(result.copy(), mergedInputs));
+                    // do not add a second entry
+                    continue;
                 }
 
-                out.add(new GunRecipeEntry(result.copy(), inputsCopy));
+                // No duplicate found — add canonicalized incoming recipe
+                net.minecraft.item.ItemStack[] canonicalInputs = makeInputsFromMaps(newCounts, newSample);
+                out.add(new GunRecipeEntry(result.copy(), canonicalInputs));
 
             } catch (Throwable t) {
                 t.printStackTrace();
@@ -189,6 +284,7 @@ public class GunSmithRecipeRegistry {
 
         return out;
     }
+
 
 
 
