@@ -1,5 +1,5 @@
 BulletPower,15
-BulletSpeed,15.4f
+BulletSpeed,14.8f
 BulletSpread,0.3f
 ADS_Spread_coefficient,0.6
 BlletSpreadDiffusion,8,0,0.2,0,2,0.05
@@ -7,7 +7,7 @@ Recoil,0.9d
 ReloadTime,100
 RemainingBullet,50
 Attacking,4.0f
-Motion,0.2d
+Motion,0.22d
 Zoom,1.0f,2.0f,4.0f
 ZoomRender,true
 ZoomRenderType,true,true,true

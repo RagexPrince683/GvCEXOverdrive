@@ -1,5 +1,5 @@
-BulletPower,15
-BulletSpeed,17.0f
+BulletPower,7
+BulletSpeed,12.1f
 BulletSpread,0.5f
 Recoil,5.0d
 ReloadTime,50
@@ -39,7 +39,7 @@ ModelArmOffsetL,0.2f,0.6f,-0.2f
 ScopeTexture,ironsight.png,reddot.png,scope.png
 RenderCross,false
 Automatic,true
-Magazine,0,HandmadeGuns,7.62x63mm bulletclip
+Magazine,0,HandmadeGuns,carbine15
 MagazineItemCount,1
 Tabname,HMG_WW2Guns
 

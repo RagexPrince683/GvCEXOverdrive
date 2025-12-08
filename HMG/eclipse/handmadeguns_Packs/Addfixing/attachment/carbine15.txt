@@ -1,0 +1,7 @@
+Texture,carbine15
+Stack,3
+Tabname,HMG_Ammo
+BulletRound,15
+Name,15 Rnd .30 Carbine Magazine
+Magazine,carbine15
+addRecipe,carbine15,2,a00,0e0,000,265,289,289,289,289,289,289,289,289

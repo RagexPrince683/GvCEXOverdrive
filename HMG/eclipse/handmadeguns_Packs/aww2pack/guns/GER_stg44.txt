@@ -1,5 +1,5 @@
-BulletPower,10
-BulletSpeed,14.3
+BulletPower,9
+BulletSpeed,13.7
 BulletGravity,0.485
 
 BlletSpread,0.6f
@@ -64,8 +64,8 @@ SoundSpeed,1f
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false
 
-//Magazine,0,HandmadeGuns,7.62mm magazine 30Round
-MultiMagazine,HandmadeGuns:7.62mm magazine 30Round,HandmadeGuns:7.62mm long magazine,HandmadeGuns:7.62mm magazine 20Round,HandmadeGuns:7.62mm drum 50Round,HandmadeGuns:7.62mm drum 75Round
+Magazine,0,HandmadeGuns,stg4430
+//MultiMagazine,HandmadeGuns:7.62mm magazine 30Round,HandmadeGuns:7.62mm long magazine,HandmadeGuns:7.62mm magazine 20Round,HandmadeGuns:7.62mm drum 50Round,HandmadeGuns:7.62mm drum 75Round
 
 MagazineSG,0,HandmadeGuns,bullet_shell_hmg
 MagazineGL,0,HandmadeGuns,bullet_rr_hmg
