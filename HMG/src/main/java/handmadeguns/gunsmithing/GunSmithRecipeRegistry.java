@@ -139,6 +139,14 @@ public class GunSmithRecipeRegistry {
     //    return list.toArray(new net.minecraft.item.ItemStack[list.size()]);
     //}
 
+    // helper: count non-null slots in a 3x3 grid
+    private static int countFilledSlots(net.minecraft.item.ItemStack[] grid) {
+        if (grid == null) return 0;
+        int c = 0;
+        for (net.minecraft.item.ItemStack s : grid) if (s != null) c++;
+        return c;
+    }
+
     public static List<GunRecipeEntry> getCombinedAmmoRecipes() {
         List<GunRecipeEntry> out = new ArrayList<GunRecipeEntry>();
 
@@ -148,7 +156,8 @@ public class GunSmithRecipeRegistry {
             for (GunRecipeEntry e : reg) {
                 if (e == null || e.result == null) continue;
 
-                ItemStack[] grid = new ItemStack[9];
+                // copy into a strict 3x3 grid
+                net.minecraft.item.ItemStack[] grid = new net.minecraft.item.ItemStack[9];
                 if (e.inputs != null) {
                     for (int i = 0; i < Math.min(9, e.inputs.length); i++) {
                         if (e.inputs[i] != null) grid[i] = e.inputs[i].copy();
@@ -165,8 +174,8 @@ public class GunSmithRecipeRegistry {
 
         for (Object obj : rawList) {
             try {
-                ItemStack result = null;
-                ItemStack[] grid = new ItemStack[9];
+                net.minecraft.item.ItemStack result = null;
+                net.minecraft.item.ItemStack[] grid = new net.minecraft.item.ItemStack[9];
 
                 if (obj instanceof net.minecraft.item.crafting.ShapedRecipes) {
                     net.minecraft.item.crafting.ShapedRecipes r =
@@ -175,15 +184,17 @@ public class GunSmithRecipeRegistry {
                     result = r.getRecipeOutput();
                     if (result == null) continue;
 
-                    ItemStack[] src = r.recipeItems;
+                    net.minecraft.item.ItemStack[] src = r.recipeItems;
                     if (src != null) {
+                        // place recipe items into the 3x3 grid starting at index 0 (top-left),
+                        // copying at most 9 slots. This preserves shape placement as used elsewhere.
                         for (int i = 0; i < Math.min(9, src.length); i++) {
                             if (src[i] != null) grid[i] = src[i].copy();
                         }
                     }
 
                 } else if (obj instanceof net.minecraft.item.crafting.ShapelessRecipes) {
-                    // Shapeless has NO grid → lay items left-to-right like vanilla preview
+                    // Shapeless -> lay items left-to-right like vanilla preview
                     net.minecraft.item.crafting.ShapelessRecipes r =
                             (net.minecraft.item.crafting.ShapelessRecipes) obj;
 
@@ -192,18 +203,19 @@ public class GunSmithRecipeRegistry {
 
                     int idx = 0;
                     for (Object o : r.recipeItems) {
-                        if (!(o instanceof ItemStack)) continue;
                         if (idx >= 9) break;
-                        grid[idx++] = ((ItemStack) o).copy();
+                        if (o instanceof net.minecraft.item.ItemStack) {
+                            grid[idx++] = ((net.minecraft.item.ItemStack) o).copy();
+                        }
                     }
                 } else {
-                    continue;
+                    continue; // skip other recipe types
                 }
 
-                Item it = result.getItem();
+                net.minecraft.item.Item it = result.getItem();
                 if (it == null) continue;
 
-                // Ammo heuristic
+                // Ammo heuristic (same as you had)
                 String name = "";
                 try { name = result.getDisplayName().toLowerCase(); } catch (Throwable ignored) {}
                 String un = "";
@@ -215,17 +227,35 @@ public class GunSmithRecipeRegistry {
                     continue;
                 }
 
-                // 3) Avoid duplicate RESULT item+meta
-                boolean exists = false;
-                for (GunRecipeEntry e : out) {
-                    if (e.result.getItem() == result.getItem()
-                            && e.result.getItemDamage() == result.getItemDamage()) {
-                        exists = true;
-                        break;
-                    }
+                // 3) Avoid duplicate RESULT item+meta BUT prefer the recipe that fills more grid slots
+                int foundIndex = -1;
+                for (int i = 0; i < out.size(); i++) {
+                    GunRecipeEntry e = out.get(i);
+                    if (e == null || e.result == null) continue;
+                    try {
+                        if (e.result.getItem() == result.getItem()
+                                && e.result.getItemDamage() == result.getItemDamage()) {
+                            foundIndex = i;
+                            break;
+                        }
+                    } catch (Throwable ignored) {}
                 }
-                if (exists) continue;
 
+                if (foundIndex != -1) {
+                    // Decide whether to replace existing entry with this one
+                    GunRecipeEntry existing = out.get(foundIndex);
+                    int existingFilled = countFilledSlots(existing.inputs);
+                    int newFilled = countFilledSlots(grid);
+
+                    // Replace only if the new recipe fills strictly more slots (so shaped 3x3 wins)
+                    if (newFilled > existingFilled) {
+                        out.set(foundIndex, new GunRecipeEntry(result.copy(), grid));
+                    }
+                    // otherwise keep existing (do not add a second entry)
+                    continue;
+                }
+
+                // Not found yet -> add the new recipe (defensive copy already done)
                 out.add(new GunRecipeEntry(result.copy(), grid));
 
             } catch (Throwable t) {
@@ -235,6 +265,7 @@ public class GunSmithRecipeRegistry {
 
         return out;
     }
+
 
 
 
