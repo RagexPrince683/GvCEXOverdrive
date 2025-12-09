@@ -5,7 +5,8 @@ BulletGravity,0.485
 BlletSpread,0.1f
 ADS_Spread_coefficient,0.15
 BlletSpreadDiffusion,10,0,1.8,0.2,3,0.6
-Cycle,2
+Cycle,1.6
+
 
 Motion,0.88
 
@@ -23,7 +24,7 @@ ZoomRender,true
 ZoomRenderType,true,true,false
 ZoomRenderTypeTxture,false,false,true
 
-Texture,M110
+Texture,m1c
 GunSound,handmadeguns.M14,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
@@ -32,12 +33,12 @@ ObjTexture,m14.png
 ModelScala,0.5f
 InworldScale,1.65f
 CustomFlash,arrow,1
-Bursts,1,0
-Rates,1,1
+Bursts,1,-1,0
+Rates,1.6,1.6,1.6
 attachRestriction,true
 allowattach,Bullet_AT
 
-ModelEquipped,-0.7f,0.7077f,-0.7f
+ModelEquipped,-0.7f,0.5077f,-0.7f
 ModelHigh,0.93F,0.93F,0.93F
 ModelWidthX,0.6945f,0.6945f,0.6945f
 ModelWidthZ,0.3f,0.3f,0.3f

@@ -144,5 +144,8 @@
   "handmadeguns.mosinnag": {"category" : "neutral", "sounds": ["mosinnag"]},
   "handmadeguns.tokarev": {"category" : "neutral", "sounds": ["tokarev"]},
   "handmadeguns.svt40": {"category" : "neutral", "sounds": ["svt40"]},
+  "handmadeguns.m1carbine": {"category" : "neutral", "sounds": ["m1carbine"]},
+  "handmadeguns.mg42": {"category" : "neutral", "sounds": ["mg42"]},
+  "handmadeguns.stg44": {"category" : "neutral", "sounds": ["stg44"]},
   "handmadeguns.VSS": {"category": "neutral", "sounds": ["VSS"]}
 }

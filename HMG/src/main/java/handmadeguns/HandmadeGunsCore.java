@@ -617,6 +617,12 @@ public class HandmadeGunsCore {
 	@EventHandler
 	public void init(FMLInitializationEvent pEvent) {
 		int D = Short.MAX_VALUE;
+
+		blockGunTable = new GunSmithTable();
+		blockGunTable.setBlockName("gun_table");
+		blockGunTable.setBlockTextureName("handmadeguns:gun_table");
+
+		GameRegistry.registerBlock(blockGunTable, "gun_table");
 		/*
 		GameRegistry.addRecipe(new ItemStack(hmg_bullet_hg, 2),
 				"i ",
@@ -650,6 +656,14 @@ public class HandmadeGunsCore {
 				'g', Items.gunpowder
 			);
 		*/
+
+		GameRegistry.addRecipe(new ItemStack(blockGunTable, 1),
+				"gig",
+				"gxg",
+				'i', Blocks.iron_block,
+				'x', Blocks.crafting_table,
+				'g', Items.iron_ingot
+		);
 
 		//GameRegistry.addRecipe(new ItemStack(hmg_handing, 1),
 		//		"  s",
@@ -701,11 +715,12 @@ public class HandmadeGunsCore {
 
 		GunSmithNetwork.init();
 
-		Block gunSmithTable = new GunSmithTable()
-				.setBlockName("gun_table")
-				.setBlockTextureName("handmadeguns:gun_table");
+		//blockGunTable = new GunSmithTable()
+		//		.setBlockName("gun_table")
+		//		.setBlockTextureName("handmadeguns:gun_table");
+//
+		//GameRegistry.registerBlock(blockGunTable, "gun_table");
 
-		GameRegistry.registerBlock(gunSmithTable, "gun_table");
 
 		Block mounter = new HMGBlockMounter(1).setBlockName("ItemHolder").setBlockTextureName("handmadeguns:camp");
 		GameRegistry.registerBlock(mounter, "ItemHolder");
@@ -748,6 +763,10 @@ public class HandmadeGunsCore {
 		HMG_proxy.InitRendering();
 		HMG_proxy.getEntityPlayerInstance();
 	}
+
+	//public static void registerBlocks() {
+
+	//}
 
 
 	static Field keyBind_pressed;

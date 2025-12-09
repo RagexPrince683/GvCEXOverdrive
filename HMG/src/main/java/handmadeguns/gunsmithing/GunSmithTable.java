@@ -13,12 +13,22 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import java.util.Random;
 
 public class GunSmithTable extends BlockContainer implements ITileEntityProvider {
+
+    @SideOnly(Side.CLIENT)
+    private IIcon iconTop;
+    @SideOnly(Side.CLIENT)
+    private IIcon iconBottom;
+    @SideOnly(Side.CLIENT)
+    private IIcon iconSide;
+    @SideOnly(Side.CLIENT)
+    private IIcon iconFront;
 
 
     public GunSmithTable() {
@@ -27,6 +37,24 @@ public class GunSmithTable extends BlockContainer implements ITileEntityProvider
         this.setHardness(0.2F);
 
     }
+
+    @Override
+    public boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest) {
+        if (willHarvest) {
+            // delay removal so drops happen
+            return true;
+        }
+        return super.removedByPlayer(world, player, x, y, z, false);
+    }
+
+    @Override
+    public void harvestBlock(World world, EntityPlayer player, int x, int y, int z, int meta) {
+        super.harvestBlock(world, player, x, y, z, meta);
+        world.setBlockToAir(x, y, z);
+    }
+
+
+
 
 
     @Override
@@ -65,6 +93,7 @@ public class GunSmithTable extends BlockContainer implements ITileEntityProvider
         return true;
     }
 
+
     //public boolean canRenderInPass(int pass) {
     //    return false;
     //}
@@ -75,13 +104,32 @@ public class GunSmithTable extends BlockContainer implements ITileEntityProvider
 
 
     @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister par1IconRegister) {
-        super.blockIcon = par1IconRegister.registerIcon("hmg:gun_table");
+    @Override
+    public void registerBlockIcons(IIconRegister reg) {
+        this.iconTop    = reg.registerIcon("handmadeguns:gunsmithing_table_top");
+        this.iconBottom = reg.registerIcon("handmadeguns:gunsmithing_table_bottom");
+        this.iconSide   = reg.registerIcon("handmadeguns:gunsmithing_table_side");
+        this.iconFront  = reg.registerIcon("handmadeguns:gunsmithing_table_front");
     }
 
-    public void registerIcons(IIconRegister par1IconRegister) {
-        super.blockIcon = par1IconRegister.registerIcon("hmg:gun_table");
+    @Override
+    @SideOnly(Side.CLIENT)
+    public IIcon getIcon(int side, int meta) {
+        switch (side) {
+            case 0: return iconBottom; // bottom
+            case 1: return iconTop;    // top
+            case 2:                     // north
+            case 3:                     // south
+            case 4:                     // west
+            case 5:                     // east
+            default:
+                return iconSide;
+        }
     }
+
+    //public void registerIcons(IIconRegister par1IconRegister) {
+    //    super.blockIcon = par1IconRegister.registerIcon("hmg:gun_table");
+    //}
 
     public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_) {
         return Item.getItemFromBlock(HandmadeGunsCore.blockGunTable);

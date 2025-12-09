@@ -1,4 +1,4 @@
-Texture,carbine15
+Texture,556bullet20
 Stack,3
 Tabname,HMG_Ammo
 BulletRound,15

@@ -16,6 +16,9 @@ item.firingPin.name=Firing Pin
 item.triggerAssembly.name=Trigger Assembly
 item.polymerFrame.name=Polymer Frame
 
+tile.gun_table.name=Gun Smithing Table
+
+
 item.pistolSlide.name=Pistol Slide
 item.pistolBarrelKit.name=Pistol Barrel Kit
 item.pistolFrameInsert.name=Pistol Frame Insert

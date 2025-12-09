@@ -15,8 +15,8 @@ Motion,0.93
 Cartridge,true
 Texture,m1c
 //SoundSpeed,1.2f
-GunSound,handmadeguns.garand3006,handmadeguns.supu
-GunSoundReload,handmadeguns.a_clip
+GunSound,handmadeguns.m1carbine,handmadeguns.supu
+GunSoundReload,handmadeguns.reload
 GunSoundCooking,handmadeguns.a_cock
 CanObj,true
 ObjModel,m1c.mqo
@@ -39,7 +39,8 @@ ModelArmOffsetL,0.2f,0.6f,-0.2f
 ScopeTexture,ironsight.png,reddot.png,scope.png
 RenderCross,false
 Automatic,true
-Magazine,0,HandmadeGuns,carbine15
+//Magazine,0,HandmadeGuns,carbine15
+MultiMagazine,HandmadeGuns:carbine15,HandmadeGuns:carbine30
 MagazineItemCount,1
 Tabname,HMG_WW2Guns
 
@@ -90,6 +91,32 @@ AddParts,mat1
 		AddReloadMotionKey,41,-0.5,0.75,0.4,0,0,0,	45,-0.5,0.75,1,0,0,0
 		AddReloadMotionKey,45,-0.5,0.75,1,0,0,0,	48,0,0,0,0,0,0
 		AddReloadMotionKey,48,0,0,0,0,0,0,		50,0,0,0,0,0,0
+	BackParts
+	AddChildParts,mat3
+		    AddPartsRotationCenterAndRotationAmount,0,0,0.0,0,0,0
+		    RenderOnNormal
+		    AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+		    AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+		    AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+		    AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+		    NeedDraw_Current_Magazine_ID_List,true,false,false,false,false
+		    AddReloadMotionKey,0,0,0,0,0,0,0,           5,0,-5,-1,0,0,0
+		    AddReloadMotionKey,5,false,          10
+		    AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      30,0,0,0,0,0,0
+		    AddReloadMotionKey,30,0,0,0,0,0,0,          50,0,0,0,0,0,0
+	BackParts
+	AddChildParts,thirty
+		    AddPartsRotationCenterAndRotationAmount,0,0,0.0,0,0,0
+		    RenderOnNormal
+		    AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+		    AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+		    AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+		    AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+		    NeedDraw_Current_Magazine_ID_List,false,true,false,false,false
+		    AddReloadMotionKey,0,0,0,0,0,0,0,           5,0,-5,-1,0,0,0
+		    AddReloadMotionKey,5,false,          10
+		    AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      30,0,0,0,0,0,0
+		    AddReloadMotionKey,30,0,0,0,0,0,0,          50,0,0,0,0,0,0
 	BackParts
 	AddChildParts,mat9
 		AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
