@@ -1,34 +1,63 @@
 import org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory
 
-//should also be incremented TODO
-project.version = "Overdrive2.7"
+// ===========================
+// VERSION HANDLING (FIXED)
+// ===========================
 
-// A little hack to fix codechicken's crazy maven structure (at least in 1.7.10)
-eclipse.classpath.file.whenMerged { cp ->
-	// Find all codechicken source jars
-	def srcent = cp.entries.findAll { entry -> entry.path.contains("codechicken") && entry.path.endsWith("-src.jar") }
+// version storage file
+def versionFile = file('version.properties')
+def currentVersion = '2.7.0'
 
-	// Remove them from classpath
-	cp.entries.removeAll srcent
+// read existing version
+if (versionFile.exists()) {
+	currentVersion = versionFile.text.trim()
+}
 
-	// Map the source entries to their dev counterparts based on basename
-	Map<String, File> srcmap = new HashMap<String, File>()
-	srcent.forEach { entry ->
-		def file = new File(entry.path)
-		srcmap.put(file.getName().replace("-src.jar", "-dev.jar"), file)
-	}
+// increment patch
+def parts = currentVersion.tokenize('.')
+def patch = parts[2].toInteger() + 1
+def newVersion = "${parts[0]}.${parts[1]}.${patch}"
 
-	// Create file reference factory
-	def fileref = new FileReferenceFactory()
+// tell Gradle the version (USED BY JAR NAME)
+project.version = newVersion
 
-	// Find all codechicken development jars
-	cp.entries.findAll { entry -> entry.path.contains("codechicken") && entry.path.endsWith("-dev.jar") }.forEach { entry ->
-		File srcmapping = new File(entry.path) // Initialize the srcmapping from the dev jar path
-		srcmapping = srcmap.get(srcmapping.getName()) // Transform it using the sourcemap
-		entry.sourcePath = fileref.fromFile(srcmapping) // Set the source path
+// persist version
+task updateVersion {
+	doLast {
+		versionFile.text = newVersion
+		println "Version bumped to $newVersion"
 	}
 }
 
+// ===========================
+// ECLIPSE CLASSPATH FIX
+// ===========================
+eclipse.classpath.file.whenMerged { cp ->
+	def srcent = cp.entries.findAll {
+		it.path.contains("codechicken") && it.path.endsWith("-src.jar")
+	}
+
+	cp.entries.removeAll(srcent)
+
+	Map<String, File> srcmap = new HashMap<>()
+	srcent.each {
+		def file = new File(it.path)
+		srcmap.put(file.name.replace("-src.jar", "-dev.jar"), file)
+	}
+
+	def fileref = new FileReferenceFactory()
+
+	cp.entries.findAll {
+		it.path.contains("codechicken") && it.path.endsWith("-dev.jar")
+	}.each {
+		File srcmapping = srcmap.get(new File(it.path).name)
+		it.sourcePath = fileref.fromFile(srcmapping)
+	}
+}
+
+// ===========================
+// REPOSITORIES
+// ===========================
 repositories {
 	maven {
 		name = 'ModMaven'
@@ -38,69 +67,65 @@ repositories {
 		name = "gt"
 		url = "https://gregtech.mechaenetia.com/"
 	}
-	//maven {
-	//	name = "CurseForge"
-	//	url = "https://minecraft.curseforge.com/api/maven/"
-	//}
 }
 
+// ===========================
+// DEPENDENCIES
+// ===========================
 dependencies {
 	implementation 'codechicken:CodeChickenCore:1.7.10-1.0.4.29:dev'
-	compileOnly 'codechicken:CodeChickenCore:1.7.10-1.0.4.29:src'
+	compileOnly   'codechicken:CodeChickenCore:1.7.10-1.0.4.29:src'
 
 	implementation 'codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev'
-	compileOnly 'codechicken:CodeChickenLib:1.7.10-1.1.3.140:src'
+	compileOnly   'codechicken:CodeChickenLib:1.7.10-1.1.3.140:src'
 
 	implementation 'codechicken:NotEnoughItems:1.7.10-1.0.3.74:dev'
-	compileOnly 'codechicken:NotEnoughItems:1.7.10-1.0.3.74:src'
+	compileOnly   'codechicken:NotEnoughItems:1.7.10-1.0.3.74:src'
 
 	compileOnly "inventorytweaks:InventoryTweaks:1.59-dev:deobf"
-
 	implementation "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
+
+	compile project(':depend')
+	compile fileTree(dir: 'lib', include: '*.jar')
+	compile 'javax.vecmath:vecmath:1.5.2'
 }
 
-// Version increment logic
-def versionFile = file('version.properties')
-def currentVersion = '2.7.0' // Default version
+// ===========================
+// RESOURCE PROCESSING
+// (THIS IS THE ACTUAL FIX)
+// ===========================
+processResources.dependsOn updateVersion
 
-if (versionFile.exists()) {
-	currentVersion = versionFile.text.trim()
-}
+processResources {
+	inputs.property "version", project.version
 
-def versionParts = currentVersion.tokenize('.')
-def patch = versionParts[2].toInteger() + 1
-def newVersion = "${versionParts[0]}.${versionParts[1]}.${patch}"
-
-// Update the version in the build.gradle file
-version newVersion
-
-// Write the new version back to the version.txt file
-task updateVersion {
-	doLast {
-		versionFile.text = newVersion
-		println "Version updated to $newVersion"
+	filesMatching('mcmod.info') {
+		expand version: project.version
 	}
 }
 
-// Ensure the version is updated before building
-afterEvaluate {
-	build.dependsOn updateVersion
+// ===========================
+// JAR CONFIG
+// ===========================
+jar {
+	archiveBaseName.set('HandmadeGuns')
+	archiveVersion.set(project.version)
 }
 
-tasks.withType(Jar) {
-    compileJava.options.encoding = 'UTF-8'
-    compileApiJava.options.encoding = 'UTF-8'
-}
-dependencies {
-    compile project(':depend')
-    compile fileTree(dir: 'lib', include: '*.jar')
-    compile 'javax.vecmath:vecmath:1.5.2'
+// ===========================
+// ENCODING FIX
+// ===========================
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
 }
 
+// ===========================
+// RUNCLIENT JVM FIX
+// ===========================
 tasks.withType(JavaExec) {
-	if (it.name == "runClient") {
-		it.jvmArgs "-Djinput.useDefaultPlugin=false"
-		it.jvmArgs "-Djinput.plugins=none"
-		it.jvmArgs "-Djinput.loglevel=OFF"
+	if (name == "runClient") {
+		jvmArgs "-Djinput.useDefaultPlugin=false"
+		jvmArgs "-Djinput.plugins=none"
+		jvmArgs "-Djinput.loglevel=OFF"
 	}
 }
