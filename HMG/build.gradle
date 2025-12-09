@@ -108,9 +108,10 @@ processResources {
 // JAR CONFIG
 // ===========================
 jar {
-	archiveBaseName.set('HandmadeGuns')
-	archiveVersion.set(project.version)
+	baseName = 'HandmadeGuns'
+	version = project.version
 }
+
 
 // ===========================
 // ENCODING FIX
