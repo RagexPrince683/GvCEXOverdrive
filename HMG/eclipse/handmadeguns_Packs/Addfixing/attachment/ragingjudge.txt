@@ -1,0 +1,16 @@
+Texture,762rbullet
+Stack,16
+Name,.454 Casull Bullet
+//BulletRound,7
+//BulletRound,1
+
+Tabname,HMG_Ammo
+
+CustomMagazine,ragingjudgeblt
+
+Recipe1,ab 
+Recipe2,bb 
+Recipe3,   
+ItemA,minecraft,iron_ingot
+ItemB,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,ragingjudgeblt,3

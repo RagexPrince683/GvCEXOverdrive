@@ -1,0 +1,7 @@
+Texture,mac10mag
+Stack,1
+Tabname,HMG_Ammo
+BulletRound,7
+Name,7 Rnd .50 Action Express Detachable Box Magazine
+Magazine,deaglemag
+addRecipe,deaglemag,1,a00,0e0,000,265,289,289,289,289,289,289,289,289
