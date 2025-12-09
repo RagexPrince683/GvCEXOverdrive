@@ -25,10 +25,10 @@ Texture,M1895Nagant
 GunSound,handmadeguns.nagantrevolver,handmadeguns.supu
 GunSoundLV,4,4
 GunSoundReload,handmadeguns.reload
-CanObj,true
+//CanObj,true
 ObjModel,raging_judge.mqo
 ObjTexture,raging_judge.png
-ModelScala,0.05f
+ModelScala,0.5f
 InworldScale,3f
 Gunparts_offsetScale,10
 CustomFlash,arrow,1

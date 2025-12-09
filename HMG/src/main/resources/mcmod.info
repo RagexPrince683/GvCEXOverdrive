@@ -1,17 +1,18 @@
 [
-{
-  "modid": "${modid}",
-  "name": "HandMadeGunsOverdrive",
-  "description": "The Addable Gun & Vehicle Mod",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "https://forum.civa.jp/viewtopic.php?p=2010&sid=a1c278931a77c747dce60926f516c0a8#p2010",
-  "updateUrl": "https://www.curseforge.com/minecraft/mc-mods/handmadegunsmodex",
-  "authorList": ["frou01"],
-  "credits": "[original mod & Based Models author:SCOPE_MG36] , [AK-47,KORD,M2HB:nicoemon2] , [pistolet makarova:YouwoSugokusuki] , [RPG-7,Su-57,F-5A:_ryoma489_]
-   , [BMP-1,T-90,(unused)WZ-10,TOYOTA:SHCshanghaigani] , [Type74:VISTA_analog] , [MiG-29:999tyousoku] , [MiG-31,2k22 :Crni]",
-  "logoFile": "logo.png",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "HandmadeGuns",
+    "name": "HandMadeGunsOverdrive",
+    "description": "Gun mod for Minecraft 1.7.10, designed with Mcheli Overdrive in mind!",
+    "version": "${version}",
+    "mcversion": "1.7.10",
+    "url": "https://forum.civa.jp/viewtopic.php?p=2010&sid=a1c278931a77c747dce60926f516c0a8#p2010",
+    "updateUrl": "https://www.curseforge.com/minecraft/mc-mods/handmadegunsmodex",
+    "authorList": [
+      "frou01"
+    ],
+    "credits": "Original mod & base models: SCOPE_MG36 | AK-47, KORD, M2HB: nicoemon2 | Pistolet Makarova: YouwoSugokusuki | RPG-7, Su-57, F-5A: _ryoma489_ | HMGO contributors: RagexPrince683, Zealot | HMG Reborn models: KILL-D0ZER | BMP-1, T-90, WZ-10 (unused), TOYOTA: SHCshanghaigani | Type 74: VISTA_analog | MiG-29: 999tyousoku | MiG-31, 2K22: Crni",
+    "logoFile": "logo.png",
+    "screenshots": [],
+    "dependencies": []
+  }
 ]

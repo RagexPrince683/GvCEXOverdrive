@@ -42,12 +42,12 @@ Rates,1.411,1.411,1.411
 
 
 //ModelEquipped,-0.7f,0.7f,-0.4f
-ModelEquipped,-0.7f,0.2f,-0.5f
+ModelEquipped,-0.7f,0.5f,-0.3f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetZ,0.62,0.62,0.62
 //SimpleADSOffsetY,4,4,4
 
-ModelHigh,0.945,0.945,0.945
+ModelHigh,1,1,1
 //ModelWidthX,0.697f,0.697f,0.697f
 //ModelWidthZ,0.8f,0.8f,0.8f
 ModelRotationX,180f,180f,180f
@@ -56,9 +56,9 @@ ModelRotationZ,180f,180f,180f
 
 ModelArm,true
 ModelArmRotationR,-1.07f,-0.63f,-1.57f
-ModelArmOffsetR,-0.1f,0.25f,0.1f
+ModelArmOffsetR,-0.1f,0.25f,0.2f
 ModelArmRotationL,-0.0f,-2.35f,2.0f
-ModelArmOffsetL,0.23f,0.41f,-0.5f
+ModelArmOffsetL,0.23f,0.41f,-0.2f
 
 SprintingPoint,0.8f,0.2f,0.5f
 SprintingRotation,20f,60f,0f

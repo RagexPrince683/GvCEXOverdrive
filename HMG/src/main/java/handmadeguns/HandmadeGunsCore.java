@@ -81,9 +81,10 @@ import static handmadeguns.HMGGunMaker.checkBeforeReadfile;
 
 
 @Mod(
-		modid	= "HandmadeGuns",
-		name	= "HandmadeGuns",
-		version	= "1.7.x-srg-1"
+		modid   = "HandmadeGuns",        // MUST be lowercase, no spaces
+		name    = "HandMadeGunsOverdrive",
+		version = "1.0.0",               // placeholder value OK when useMetadata=true
+		useMetadata = true
 )
 
 
