@@ -1,5 +1,5 @@
-BulletPower,15
-BulletSpeed,17
+BulletPower,8
+BulletSpeed,18.3
 BulletGravity,0.485
 
 BlletSpread,0.0F
@@ -77,7 +77,9 @@ RenderCross,false
 
 //Magazine,0,HandmadeGuns,bullet_lmg_hmg_7_62_WP
 
-MultiMagazine,HandmadeGuns:bullet_lmg_hmg_7_62_WP,HandmadeGuns:bullet_lmg_hmg_7_62_WP100,HandmadeGuns:bullet_lmg_hmg_7_62_WP250
+//MultiMagazine,HandmadeGuns:bullet_lmg_hmg_7_62_WP,HandmadeGuns:bullet_lmg_hmg_7_62_WP100,HandmadeGuns:bullet_lmg_hmg_7_62_WP250
+
+MultiMagazine,HandmadeGuns:bullet_lmg_hmg_5_56,HandmadeGuns:5.56mm magazine
 
 
 MagazineSG,0,HandmadeGuns,bullet_shell_hmg
@@ -177,7 +179,8 @@ AddParts,Base_Sys
 			BackParts
 		BackParts
 		AddChildParts,mat3
-			NeedDraw_Current_Magazine_ID_List,true,false,false
+			//NeedDraw_Current_Magazine_ID_List,true,false,false
+			NeedDraw_Current_Magazine_ID_List,true,false
 			AddPartsRotationCenterAndRotationAmount,0.06375,1.308,0.0,0,0,0
 			RenderOnNormal
 			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
@@ -191,7 +194,8 @@ AddParts,Base_Sys
 			AddReloadMotionKey,40,0,0,0,0,0,0,	  	100,0,0,0,0,0,0
 	
 			AddChildParts,mat31
-				NeedDraw_Current_Magazine_ID_List,true,true,true
+				//NeedDraw_Current_Magazine_ID_List,true,true
+				NeedDraw_Current_Magazine_ID_List,true,true
 				AddPartsRotationCenterAndRotationAmount,0,0.95,0,0,0,0
 				RenderOnNormal
 				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
@@ -207,7 +211,8 @@ AddParts,Base_Sys
 		BackParts
 
 		AddChildParts,belt
-			NeedDraw_Current_Magazine_ID_List,false,true,false
+			//NeedDraw_Current_Magazine_ID_List,false,true,false
+			NeedDraw_Current_Magazine_ID_List,false,true
 			AddPartsRotationCenterAndRotationAmount,0.06375,1.308,0.0,0,0,0
 			RenderOnNormal
 			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
@@ -221,20 +226,20 @@ AddParts,Base_Sys
 			AddReloadMotionKey,40,0,0,0,0,0,0,	  	100,0,0,0,0,0,0
 		BackParts
 
-		AddChildParts,bigbox
-			NeedDraw_Current_Magazine_ID_List,false,false,true
-			AddPartsRotationCenterAndRotationAmount,0.06375,1.308,0.0,0,0,0
-			RenderOnNormal
-			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+		//AddChildParts,bigbox
+		//	NeedDraw_Current_Magazine_ID_List,false,false,true
+		//	AddPartsRotationCenterAndRotationAmount,0.06375,1.308,0.0,0,0,0
+		//	RenderOnNormal
+		//	AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+		//	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+		//	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+		//	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 	
-			AddReloadMotionKey,0,0,0,0,0,0,0,		   5,0,-5,-1,0,0,-180
-			AddReloadMotionKey,5,false,		  	30
-			AddReloadMotionKey,30,0,-2,0,0,0,0,		40,0,0,0,0,0,0
-			AddReloadMotionKey,40,0,0,0,0,0,0,	  	100,0,0,0,0,0,0
-		BackParts
+		//	AddReloadMotionKey,0,0,0,0,0,0,0,		   5,0,-5,-1,0,0,-180
+		//	AddReloadMotionKey,5,false,		  	30
+		//	AddReloadMotionKey,30,0,-2,0,0,0,0,		40,0,0,0,0,0,0
+		//	AddReloadMotionKey,40,0,0,0,0,0,0,	  	100,0,0,0,0,0,0
+		//BackParts
 
 		AddChildParts,mat21
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
@@ -248,7 +253,7 @@ AddParts,Base_Sys
 
 BulletNameALL,byfrou01_GreenTracer
 Tabname,HMG_GVCGuns
-Name,IMI Negev
-LMG,IMI Negev
+Name,IWI Negev
+LMG,IWI Negev
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280
