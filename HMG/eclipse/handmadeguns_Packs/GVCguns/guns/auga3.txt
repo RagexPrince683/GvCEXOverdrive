@@ -1,5 +1,6 @@
 BulletPower,8
-BulletSpeed,18
+//BulletSpeed,19.4
+BulletSpeed,19.4
 BulletGravity,0.485
 
 BlletSpread,0.25f
@@ -248,7 +249,7 @@ AddParts,Sys_Zero_in
 		BackParts
 
 Tabname,HMG_GVCGuns
-Name,AUG A3
-AR,AUG A3
+Name,Steyr AUG A3 (9mm)
+AR,Steyr AUG A3 (9mm)
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280
