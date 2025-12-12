@@ -1,5 +1,6 @@
 Texture,bullet_shell_bird2
 Stack,16
+BulletRound,1
 Tabname,HMG_Ammo
 BulletPower,4
 BlletSpread,0.2f

@@ -11,7 +11,7 @@ Acceleration,0.5f
 //resistance,0.9f
 Recoil,0.0d
 ReloadTime,120
-RemainingBullet,1
+//RemainingBullet,1
 //isOneuse,true
 Attacking,4.0f
 Zoom,1.0f,1.0f,4.0f

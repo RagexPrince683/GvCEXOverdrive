@@ -2,17 +2,17 @@ BulletPower,8
 BulletSpeed,18.3
 BulletGravity,0.485
 
-BlletSpread,0.0F
-ADS_Spread_coefficient,0.0
-BlletSpreadDiffusion,4,0,1.5,0.1,2,0.7
+BlletSpread,0.6F
+ADS_Spread_coefficient,0.3
+BlletSpreadDiffusion,7,0,1.5,0.1,2,0.7
 ElevationOffsets,0.0 , -0.41326548428118903 , -0.8264879726717109 , -1.239624496114448 , -1.652632139177531 , -2.065468066762447 , -2.4780895506870877 , -2.8904539961025835
 elevationOffsets_info,0 , 20m  ,40m  ,60m ,80m ,100m ,120m , 140m
 
 
-Motion,0.65
+Motion,0.75
 
-Recoil,5
-Recoil_sneaking,2
+Recoil,3.2
+Recoil_sneaking,2.8
 
 ReloadTime,100
 
@@ -35,8 +35,11 @@ ModelScala,0.5f
 InworldScale,1.8f
 CustomFlash,arrow,1
 Cycle,2
-Bursts,-1,1
-Rates,1.5,1.5
+Bursts,-1,-1,-1,1
+Rates,1.5,1.411,1.1428,1.1428
+
+//Bursts,1
+//Rates,1
 
 attachRestriction,true
 //allowattach,reddot
@@ -51,10 +54,10 @@ OnEntity_Yoffset,0.27
 OnEntity_RotationPitchPoint,0,-0.27,0.600
 OnEntity_BarrelPoint,0,0.1,0.6
 
-ModelEquipped,-0.7f,0.35f,-0.6f
+ModelEquipped,-0.7f,0.55f,-0.2f
 SimpleADSOffsetX,0,0,0
-SimpleADSOffsetY,0.995,0.995,0.995
-SimpleADSOffsetZ,0,0,0
+SimpleADSOffsetY,0.745,0.745,0.745
+SimpleADSOffsetZ,0.8,0.8,0.8
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f
@@ -63,11 +66,11 @@ OnEntity_PlayerPosOffset,0,0,3
 
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-ModelArmOffsetR,0.4f,0.2f,0.2f
+ModelArmOffsetR,0.4f,0.38f,0.45f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
-ModelArmOffsetL,0.25f,0.3f,-0.4f
+ModelArmOffsetL,0.6f,1.2f,-0.2f
 
-SprintingPoint,0.5f,0.0f,0.5f
+SprintingPoint,0.5f,-0.2f,0.5f
 SprintingRotation,20f,60f,0f
 
 SoundSpeed,0.8f
@@ -156,7 +159,7 @@ AddParts,Base_Sys
 			AddReloadMotionKey,98,0,0,0,0,0,0,		   100,0,0,0,0,0,0
 		BackParts
 		AddChildParts,mat22
-			AddPartsRotationCenterAndRotationAmount,0,1.400,2.650,0,0,0
+			AddPartsRotationCenterAndRotationAmount,0,1.400,1.650,0,0,0
 			RenderOnNormal
 			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
@@ -210,7 +213,7 @@ AddParts,Base_Sys
 			BackParts
 		BackParts
 
-		AddChildParts,belt
+		AddChildParts,box
 			//NeedDraw_Current_Magazine_ID_List,false,true,false
 			NeedDraw_Current_Magazine_ID_List,false,true
 			AddPartsRotationCenterAndRotationAmount,0.06375,1.308,0.0,0,0,0

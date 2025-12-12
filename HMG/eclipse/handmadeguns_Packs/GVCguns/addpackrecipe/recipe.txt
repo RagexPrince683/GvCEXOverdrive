@@ -126,7 +126,6 @@ Slot2,minecraft:iron_ingot:
 Slot3,minecraft:iron_ingot:
 Slot4,minecraft:emerald:
 Slot6,minecraft:planks:
-Slot9,HandmadeGuns:bullet_hg_hmg
 CraftItem,HandmadeGuns:Pistolet_Makarova:0:1
 
 
@@ -776,7 +775,7 @@ CraftItem,HandmadeGuns:M320:0:1
 //CraftItem,HandmadeGuns:M32:0:1
 
 AddRecipe
-Slot1,HandmadeGuns:bullet_rr_hmg:
+Slot1,minecraft:iron_ingot:
 Slot2,minecraft:iron_ingot:
 Slot3,minecraft:iron_ingot:
 Slot5,minecraft:planks:
@@ -788,7 +787,7 @@ CraftItem,HandmadeGuns:RPG7:0:1
 AddRecipe
 Slot1,minecraft:iron_ingot:
 Slot2,minecraft:iron_ingot:
-Slot3,HandmadeGuns:missile:
+Slot3,minecraft:iron_ingot:
 Slot5,HandmadeGuns:Prastic
 Slot7,minecraft:emerald:
 Slot8,minecraft:emerald:
@@ -810,15 +809,15 @@ Slot8,minecraft:emerald:
 Slot9,minecraft:emerald:
 CraftItem,HandmadeGuns:panzerfaust:0:1
 
-AddRecipe
-Slot1,minecraft:redstone:
-Slot2,minecraft:iron_ingot:
-Slot3,HandmadeGuns:Prastic
-Slot5,minecraft:gunpowder:
-Slot6,minecraft:gunpowder:
-Slot8,minecraft:gunpowder:
-Slot9,minecraft:gunpowder:
-CraftItem,HandmadeGuns:missile:0:1
+//AddRecipe
+//Slot1,minecraft:redstone:
+//Slot2,minecraft:iron_ingot:
+//Slot3,HandmadeGuns:Prastic
+//Slot5,minecraft:gunpowder:
+//Slot6,minecraft:gunpowder:
+//Slot8,minecraft:gunpowder:
+//Slot9,minecraft:gunpowder:
+//CraftItem,HandmadeGuns:missile:0:1
 
 
 AddRecipe
