@@ -608,7 +608,7 @@ Slot5,HandmadeGuns:Prastic
 Slot6,HandmadeGuns:Prastic
 Slot7,minecraft:emerald:
 Slot8,minecraft:emerald:
-CraftItem,HandmadeGuns:M249:0:1
+CraftItem,HandmadeGuns:FN M249 (Minimi):0:1
 
 AddRecipe
 Slot1,minecraft:iron_block:

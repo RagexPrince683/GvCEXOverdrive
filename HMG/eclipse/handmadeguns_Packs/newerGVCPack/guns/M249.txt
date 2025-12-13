@@ -187,6 +187,15 @@ AddParts,Base_Sys
 			NeedDraw_Current_Magazine_ID_List,false,true
 	BackParts
 
+	AddChildParts,556ejector
+				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+				RenderOnNormal
+				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+	BackParts
+
 		AddChildParts,mat22
 			AddPartsRotationCenterAndRotationAmount,0,1.700,2.100,0,0,0
 			RenderOnNormal
@@ -250,5 +259,5 @@ AddParts,Base_Sys
 
 BulletNameALL,byfrou01_PinkTracer
 Tabname,HMG_GVCGuns
-Name,M249
-LMG,M249
+Name,FN M249 (Minimi)
+LMG,FN M249 (Minimi)
