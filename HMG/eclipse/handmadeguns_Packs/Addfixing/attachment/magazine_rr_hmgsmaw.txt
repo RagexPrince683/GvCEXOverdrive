@@ -1,5 +1,6 @@
 Texture,bullet_rrsmaw
 Stack,1
+BulletRound,1
 Tabname,HMG_Ammo
 Name,83mm MK 6 MOD 0 HEAA Warhead
 Magazine,bullet_rr_hmgsmaw

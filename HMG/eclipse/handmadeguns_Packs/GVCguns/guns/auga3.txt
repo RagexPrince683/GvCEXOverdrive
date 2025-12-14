@@ -75,7 +75,7 @@ RenderCross,false
 //Magazine,0,HandmadeGuns,7.62mm magazine 30Round
 //MultiMagazine,HandmadeGuns:7.62mm magazine 30Round,HandmadeGuns:7.62mm long magazine,HandmadeGuns:7.62mm magazine 20Round,HandmadeGuns:7.62mm drum 50Round,HandmadeGuns:7.62mm drum 75Round
 
-MultiMagazine,HandmadeGuns:5.56mm magazine,HandmadeGuns:bullet_lmg_hmg_CMag,HandmadeGuns:5.56mm magazine20
+MultiMagazine,HandmadeGuns:augbullet_hg_9mm32rnd,HandmadeGuns:augbullet_hg_9mm25rnd
 
 
 
@@ -194,21 +194,23 @@ AddParts,Sys_Zero_in
 		    AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 		    AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 		    AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-		    NeedDraw_Current_Magazine_ID_List,true,false,false
+		    NeedDraw_Current_Magazine_ID_List,true,false
+			//,false
 		    AddReloadMotionKey,0,0,0,0,0,0,0,           5,0,-5,-1,0,0,0
 		    AddReloadMotionKey,5,false,          10
 		    AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      30,0,0,0,0,0,0
 		    AddReloadMotionKey,30,0,0,0,0,0,0,          50,0,0,0,0,0,0
 		BackParts
 
-		AddChildParts,Cmag
+		AddChildParts,25rnd
 		    AddPartsRotationCenterAndRotationAmount,0,0,0.0,0,0,0
 		    RenderOnNormal
 		    AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
 		    AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 		    AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 		    AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-		    NeedDraw_Current_Magazine_ID_List,false,true,false
+		    NeedDraw_Current_Magazine_ID_List,false,true
+			//,false
 		    AddReloadMotionKey,0,0,0,0,0,0,0,           5,0,-5,-1,0,0,0
 		    AddReloadMotionKey,5,false,          10
 		    AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      30,0,0,0,0,0,0
@@ -216,19 +218,19 @@ AddParts,Sys_Zero_in
 		BackParts
 
 
-		AddChildParts,twenty
-		    AddPartsRotationCenterAndRotationAmount,0,0,0.0,0,0,0
-		    RenderOnNormal
-		    AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-		    AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-		    AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-		    AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-		    NeedDraw_Current_Magazine_ID_List,false,false,true
-		    AddReloadMotionKey,0,0,0,0,0,0,0,           5,0,-5,-1,0,0,0
-		    AddReloadMotionKey,5,false,          10
-		    AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      30,0,0,0,0,0,0
-		    AddReloadMotionKey,30,0,0,0,0,0,0,          50,0,0,0,0,0,0
-		BackParts
+		//AddChildParts,twenty
+		//    AddPartsRotationCenterAndRotationAmount,0,0,0.0,0,0,0
+		//    RenderOnNormal
+		//    AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+		//    AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+		//    AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+		//    AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+		//    NeedDraw_Current_Magazine_ID_List,false,false,true
+		//    AddReloadMotionKey,0,0,0,0,0,0,0,           5,0,-5,-1,0,0,0
+		//    AddReloadMotionKey,5,false,          10
+		//    AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      30,0,0,0,0,0,0
+		//    AddReloadMotionKey,30,0,0,0,0,0,0,          50,0,0,0,0,0,0
+		//BackParts
 
 
 		AddChildParts,mat2
