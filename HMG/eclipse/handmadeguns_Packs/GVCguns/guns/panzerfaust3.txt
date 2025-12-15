@@ -1,11 +1,12 @@
-BulletPower,600
-BulletSpeed,5.8
-BlletSpread,1.2f
+BulletPower,700
+BulletSpeed,3.2
+BlletSpread,0.2f
 isOneuse,true
 ADS_Spread_coefficient,0.1
-BlletSpreadDiffusion,4,0,0.3,0.2,2,0.1
+BlletSpreadDiffusion,2,0,0.3,0.2,2,0.1
 Acceleration,1.5f
 accelerationFuse,20
+//drag coefficient basically, not actual resistance
 resistance,0.95f
 Recoil,2.0d
 ReloadTime,0
@@ -33,7 +34,7 @@ DropMagazine,false
 
 Motion,0.6
 
-ModelEquipped,-0.7f,0.0f,-0.15f
+ModelEquipped,-0.7f,0.2f,-0.15f
 ModelHigh,0.775f,0.50f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f
 ModelWidthZ,0.8f,0.8f,0.8f
@@ -45,8 +46,8 @@ ModelArm,true
 ModelArmRotationR,-1.57f,-0.1,-1.57f
 ModelArmOffsetR,0.2f,0.25f,0.3f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
-ModelArmOffsetL,0.1f,0.2f,-0.3f
-SprintingPoint,0.2f,0.1f,0.1f
+ModelArmOffsetL,0.1f,0.7f,-0.2f
+SprintingPoint,0.2f,-0.1f,0.6f
 SprintingRotation,20f,60f,0f
 
 BulletNameALL,byfrou01_Rocket

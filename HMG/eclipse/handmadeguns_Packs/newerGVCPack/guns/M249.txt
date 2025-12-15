@@ -196,6 +196,24 @@ AddParts,Base_Sys
 				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 	BackParts
 
+	AddChildParts,249stock
+				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+				RenderOnNormal
+				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+	BackParts
+
+	AddChildParts,249barrel
+				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+				RenderOnNormal
+				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+	BackParts
+
 		AddChildParts,mat22
 			AddPartsRotationCenterAndRotationAmount,0,1.700,2.100,0,0,0
 			RenderOnNormal

@@ -1,8 +1,8 @@
-BulletPower,500
-BulletSpeed,6
+BulletPower,750
+BulletSpeed,5.6
 BlletSpread,1.0f
 ADS_Spread_coefficient,0.1
-BlletSpreadDiffusion,2,0,4,0.2,3,0.6
+BlletSpreadDiffusion,1,0,4,0.2,3,0.6
 Acceleration,1.5f
 accelerationFuse,20
 resistance,0.95f
@@ -29,11 +29,11 @@ CanObj,true
 ObjModel,ussr_rpg-29.mqo
 ObjTexture,ussr_rpg-29.png
 ModelScala,0.5f
-InworldScale,1.8f
+InworldScale,1.55f
 
 Motion,0.6
 
-ModelEquipped,-0.7f,0.4f,0.55f
+ModelEquipped,-0.7f,0.4f,0.65f
 ModelHigh,0.775f,0.50f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f
 ModelWidthZ,1.2f,1.2f,1.2f

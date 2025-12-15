@@ -1,14 +1,18 @@
-BulletPower,127
-BulletSpeed,1.64f
-BlletSpread,3.0f
+BulletPower,280
+BulletSpeed,2f
+BlletSpread,1.0f
 Recoil,2.0d
 ReloadTime,70
 RemainingBullet,1
 Attacking,4.0f
-Zoom,2.0f,4.0f,8.0f
+Zoom,4.0f,4.0f,4.0f
 ZoomRender,true
-ZoomRenderType,true,true,true
-ZoomRenderTypeTxture,false,false,false
+ZoomRenderType,false,false,false
+ZoomRenderTypeTxture,true,true,true
+
+ScopeTexture,scope_smaw.png,scope_smaw.png,scope_smaw.png
+RenderCross,false
+
 Explosion,0.5f
 damagerange,2
 BlockDestory,false
@@ -19,8 +23,8 @@ CanObj,true
 ObjModel,us_m20a1_super_bazooka.mqo
 ObjTexture,us_m20a1_super_bazooka.png
 ModelScala,0.5f
-InworldScale,1.8f
-Motion,0.3d
+InworldScale,1.2f
+Motion,0.5d
 
 ModelEquipped,-0.5f,0.5f,-0.2f
 ModelHigh,1.10f,0.85f,0.85f
@@ -37,7 +41,7 @@ ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
 ModelArmOffsetR,0.3f,0.3f,0.5f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
-ModelArmOffsetL,-0.2f,0.2f,-0.2f
+ModelArmOffsetL,0.2f,0.5f,-0.2f
 
 ScopeTexture,rr.png,rr.png,scope.png
 RenderCross,false
