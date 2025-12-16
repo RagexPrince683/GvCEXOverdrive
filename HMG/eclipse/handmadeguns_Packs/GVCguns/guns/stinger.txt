@@ -4,13 +4,13 @@ BulletSpeed,0.3
 BlletSpread,3f
 BulletGravity,0.0485
 ADS_Spread_coefficient,0.2
-BlletSpreadDiffusion,3,0,0.3,0.2,2,0.1
+BlletSpreadDiffusion,5,0.6,0.3,0.2,2,0.1
 //Acceleration,0.49f
 //Acceleration,0.8f
 Acceleration,0.5f
-//resistance,0.9f
+resistance,0.9f
 Recoil,0.0d
-ReloadTime,120
+ReloadTime,190
 //RemainingBullet,1
 //isOneuse,true
 Attacking,4.0f
