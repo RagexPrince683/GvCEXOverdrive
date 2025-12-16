@@ -196,7 +196,7 @@ AddParts,Sys_Zero_in
 		    AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 		    AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 		    AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-		    NeedDraw_Current_Magazine_ID_List,true,false
+		    NeedDraw_Current_Magazine_ID_List,true
 			//,false
 		    AddReloadMotionKey,0,0,0,0,0,0,0,           5,0,-5,-1,0,0,0
 		    AddReloadMotionKey,5,false,          10
@@ -204,20 +204,20 @@ AddParts,Sys_Zero_in
 		    AddReloadMotionKey,30,0,0,0,0,0,0,          50,0,0,0,0,0,0
 		BackParts
 
-		AddChildParts,25rnd
-		    AddPartsRotationCenterAndRotationAmount,0,0,0.0,0,0,0
-		    RenderOnNormal
-		    AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-		    AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-		    AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-		    AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-		    NeedDraw_Current_Magazine_ID_List,false,true
-			//,false
-		    AddReloadMotionKey,0,0,0,0,0,0,0,           5,0,-5,-1,0,0,0
-		    AddReloadMotionKey,5,false,          10
-		    AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      30,0,0,0,0,0,0
-		    AddReloadMotionKey,30,0,0,0,0,0,0,          50,0,0,0,0,0,0
-		BackParts
+		//AddChildParts,25rnd
+		//    AddPartsRotationCenterAndRotationAmount,0,0,0.0,0,0,0
+		//    RenderOnNormal
+		//    AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+		//    AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+		//    AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+		//    AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+		//    NeedDraw_Current_Magazine_ID_List,false,true
+		//	//,false
+		//    AddReloadMotionKey,0,0,0,0,0,0,0,           5,0,-5,-1,0,0,0
+		//    AddReloadMotionKey,5,false,          10
+		//    AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      30,0,0,0,0,0,0
+		//    AddReloadMotionKey,30,0,0,0,0,0,0,          50,0,0,0,0,0,0
+		//BackParts
 
 
 		//AddChildParts,twenty
