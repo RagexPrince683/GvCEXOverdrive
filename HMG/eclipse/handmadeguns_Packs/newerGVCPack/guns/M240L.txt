@@ -1,18 +1,16 @@
 BulletPower,15
-BulletSpeed,18.5
+BulletSpeed,17
 BulletGravity,0.485
 
-BlletSpread,0.3F
+BlletSpread,0.0F
 ADS_Spread_coefficient,0.1
 BlletSpreadDiffusion,6,0,1.5,0.1,2,0.7
-Cycle,1.5
+Cycle,1.32
 
-//Motion,0.75
+Motion,0.81
 
-Motion,0.83
-
-Recoil,3.8
-Recoil_sneaking,2.7
+Recoil,4.2
+Recoil_sneaking,3.2
 
 ReloadTime,100
 
@@ -25,21 +23,17 @@ ZoomRender,true
 ZoomRenderType,true,true,false
 ZoomRenderTypeTxture,false,false,true
 
-Texture,M249
-GunSound,handmadeguns.m249,handmadeguns.supu
+Texture,M240B
+GunSound,handmadeguns.m240b,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
-ObjModel,m249.mqo
-ObjTexture,m249.png
+ObjModel,m240l.mqo
+ObjTexture,m240.png
 ModelScala,0.5f
 InworldScale,1.8f
 CustomFlash,arrow,1
-Bursts,-1,-1,-1,-1
-//Rates,1.411,1.262,1.043,2
-
-Rates,2,1.714,1.6,1.411
-
-//600-700, 750-850
+Bursts,-1,-1,-1,1
+Rates,1.845,1.411,1.262,2
 
 attachRestriction,true
 //allowattach,reddot
@@ -50,42 +44,39 @@ Canfix,true
 FixAsEntity,true
 OnEntity_PlayerPosOffset,0,0,3
 
-//ModelEquipped,-0.7f,0.7f,0.0f
 ModelEquipped,-0.5f,0.5f,-0.7f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,1.075,1.075,1.075
-SimpleADSOffsetZ,0.6,0.6,0.6
+SimpleADSOffsetZ,0.5,0.5,0.5
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f
 
+
 OnEntity_PlayerPosOffset,0,0,3
 
-OnEntity_Yoffset,0.195
-OnEntity_RotationPitchPoint,0,-0.195,0.46
+OnEntity_Yoffset,0.23
+OnEntity_RotationPitchPoint,0,-0.23,0.680
 OnEntity_BarrelPoint,0,0.145,0.6
 
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-//ModelArmOffsetR,0.4f,0.3f,0.5f
-//ModelArmRotationL,-0.0f,-2.3f,2.0f
-//ModelArmOffsetL,0.1f,0.3f,-1.2f
-
 ModelArmOffsetR,0.4f,0.1f,0.2f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
-ModelArmOffsetL,0.5f,0.4f,-0.3f
+ModelArmOffsetL,0.1f,0.3f,-0.4f
 
-//SprintingPoint,0.5f,0.0f,0.5f
 SprintingPoint,0.5f,-0.2f,0.3f
 SprintingRotation,20f,60f,0f
 
-SoundSpeed,1.2f
+SoundSpeed,0.8F
 
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false
 
-//Magazine,0,HandmadeGuns,bullet_lmg_hmg_5_56
+//Magazine,0,HandmadeGuns,bullet_lmg_hmg_7_62_NATO
+
 MultiMagazine,HandmadeGuns:bullet_lmg_hmg_7_62_NATO,HandmadeGuns:bullet_lmg_hmg_7_62_NATOsack
+
 MagazineSG,0,HandmadeGuns,bullet_shell_hmg
 MagazineGL,0,HandmadeGuns,bullet_rr_hmg
 
@@ -98,20 +89,8 @@ AddParts,Base_Sys
 	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 	AddYawInfoKey,-360,0,0,0,0,-360,0		,360,0,0,0,0,360,0
-
-//AddChildParts,SYS_CMAG_Branch
-//		AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-//		AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-//		RenderOnNormal
-//		AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-//		AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-//		AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-//		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-//		NeedDraw_Current_Magazine_ID_List,false,true
-
-
-	AddChildParts,minimi
-		AddPartsRotationCenterAndRotationAmount,0,-1.95,4.60,0,0,0
+	AddChildParts,mat1
+		AddPartsRotationCenterAndRotationAmount,0,-0.23,6.80,0,0,0
 		RenderOnNormal
 		AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
 		AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
@@ -126,8 +105,6 @@ AddParts,Base_Sys
 		AddReloadMotionKey,80,0,0,0,0,0,-10,		  84,0,0,0,0,0,0
 		AddReloadMotionKey,84,0,0,0,0,0,0,		   95,0,0,0,0,0,0
 		AddReloadMotionKey,95,0,0,0,0,0,0,		   100,0,0,0,0,0,0
-
-
 	
 		AddChildParts,Larm
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
@@ -169,31 +146,58 @@ AddParts,Base_Sys
 			AddReloadMotionKey,95,-0.5,0.75,2,0,0,0,	 98,0,0,0,0,0,0
 			AddReloadMotionKey,98,0,0,0,0,0,0,		   100,0,0,0,0,0,0
 		BackParts
-
-	//	AddChildParts,Cmag
-	//		AddPartsRotationCenterAndRotationAmount,0,0,0.0,0,0,0
-	//		RenderOnNormal
-	//		AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-	//		AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-	//		AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-	//		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-	//			
-	//		AddReloadMotionKey,0,0,0,0,0,0,0,           10,0,-5,-1,0,0,0
-	//		AddReloadMotionKey,10,false,          30
-	//		AddReloadMotionKey,30,0,-2,-0.5,0,0,0,      60,0,0,0,0,0,0
-	//		AddReloadMotionKey,60,0,0,0,0,0,0,          75,0,0,0,0,0,0
-	//	BackParts
+		AddChildParts,mat22
+			AddPartsRotationCenterAndRotationAmount,0,1.700,3.100,0,0,0
+			RenderOnNormal
+			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 	
-	AddChildParts,sac
-			SetAsNormalParts
-			AddReloadMotionKey,0,0,0,0,0,0,0,		   5,0,-5,-1,0,0,0
-			AddReloadMotionKey,5,false,		  10
-			AddReloadMotionKey,30,0,-2,-0.5,0,0,0,	  40,0,0,0,0,0,0
-			AddReloadMotionKey,40,0,0,0,0,0,0,		  75,0,0,0,0,0,0
-			NeedDraw_Current_Magazine_ID_List,false,true
-	BackParts
+			AddReloadMotionKey,0,0,0,0,0,0,0,			5,0,0,0,0,0,0
+			AddReloadMotionKey,5,0,0,0,0,0,0,			15,0,0,0,90,0,0
+			AddReloadMotionKey,12,0,0,0,90,0,0,			65,0,0,0,90,0,0
+			AddReloadMotionKey,65,0,0,0,90,0,0,			80,0,0,0,0,0,0
+			AddReloadMotionKey,80,0,0,0,0,0,0,			100,0,0,0,0,0,0
+	
+		BackParts
+		AddChildParts,mat20
+			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+			RenderOnNormal
+			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+		BackParts
+		AddChildParts,mat3
+			AddPartsRotationCenterAndRotationAmount,0.3425,2.150,0.0,0,0,0
+			RenderOnNormal
+			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+			NeedDraw_Current_Magazine_ID_List,true,false
+			AddReloadMotionKey,0,0,0,0,0,0,0,		   5,0,-5,-1,0,0,-180
+			AddReloadMotionKey,5,false,		  	30
+			AddReloadMotionKey,30,0,-2,0,0,0,0,		40,0,0,0,0,0,0
+			AddReloadMotionKey,40,0,0,0,0,0,0,	  	100,0,0,0,0,0,0
+	
+			AddChildParts,mat31
+				AddPartsRotationCenterAndRotationAmount,0.2000,1.300,0,0,0,0
+				RenderOnNormal
+				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+				AddReloadMotionKey,0,false,			30
+				AddReloadMotionKey,30,0,0,0,0,0,-90,	42,0,0,0,0,0,-90
+				AddReloadMotionKey,42,0,0,0,0,0,-90,	55,0,0,0,0,0,-5
+				AddReloadMotionKey,55,0,0,0,0,0,-5,	60,0,0,0,0,0,0
+				AddReloadMotionKey,60,0,0,0,0,0,0,	100,0,0,0,0,0,0
+			BackParts
+		BackParts
 
-	AddChildParts,RENDERTHEFUCKINGBOX
+		AddChildParts,RENDERTHEFUCKINGBOX
 					NeedDraw_Current_Magazine_ID_List,false,true
 					AddPartsRotationCenterAndRotationAmount,0.2000,1.300,0,0,0,0
 					RenderOnNormal
@@ -208,7 +212,7 @@ AddParts,Base_Sys
 					AddReloadMotionKey,60,0,0,0,0,0,0,	100,0,0,0,0,0,0
 		BackParts
 
-		AddChildParts,sac
+		AddChildParts,obj1
 			NeedDraw_Current_Magazine_ID_List,false,true
 			AddPartsRotationCenterAndRotationAmount,0.2000,1.300,0,0,0,0
 			RenderOnNormal
@@ -224,7 +228,7 @@ AddParts,Base_Sys
 		BackParts
 
 
-		AddChildParts,762nut
+		AddChildParts,nutsack
 			AddPartsRotationCenterAndRotationAmount,0.3425,2.150,0.0,0,0,0
 			RenderOnNormal
 			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
@@ -237,7 +241,7 @@ AddParts,Base_Sys
 			AddReloadMotionKey,30,0,-2,0,0,0,0,		40,0,0,0,0,0,0
 			AddReloadMotionKey,40,0,0,0,0,0,0,	  	100,0,0,0,0,0,0
 			
-			AddChildParts,sac
+			AddChildParts,obj1
 				NeedDraw_Current_Magazine_ID_List,false,true
 				AddPartsRotationCenterAndRotationAmount,0.2000,1.300,0,0,0,0
 				RenderOnNormal
@@ -282,67 +286,7 @@ AddParts,Base_Sys
 			BackParts
 		BackParts
 
-	AddChildParts,762ejector
-				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-				RenderOnNormal
-				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-	BackParts
-
-		AddChildParts,mat22minimi
-			AddPartsRotationCenterAndRotationAmount,0,1.700,2.100,0,0,0
-			RenderOnNormal
-			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-	
-			AddReloadMotionKey,0,0,0,0,0,0,0,			5,0,0,0,0,0,0
-			AddReloadMotionKey,5,0,0,0,0,0,0,			15,0,0,0,90,0,0
-			AddReloadMotionKey,12,0,0,0,90,0,0,			65,0,0,0,90,0,0
-			AddReloadMotionKey,65,0,0,0,90,0,0,			80,0,0,0,0,0,0
-			AddReloadMotionKey,80,0,0,0,0,0,0,			100,0,0,0,0,0,0
-	
-			AddChildParts,minimimat20
-				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-				RenderOnNormal
-				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-			BackParts
-		BackParts
-		AddChildParts,762
-			AddPartsRotationCenterAndRotationAmount,0.3425,2.150,0.0,0,0,0
-			RenderOnNormal
-			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-			NeedDraw_Current_Magazine_ID_List,true,false
-			AddReloadMotionKey,0,0,0,0,0,0,0,		   5,0,-5,-1,0,0,-180
-			AddReloadMotionKey,5,false,		  	30
-			AddReloadMotionKey,30,0,-2,0,0,0,0,		40,0,0,0,0,0,0
-			AddReloadMotionKey,40,0,0,0,0,0,0,	  	100,0,0,0,0,0,0
-	
-			AddChildParts,mat31
-				AddPartsRotationCenterAndRotationAmount,0.2000,1.300,0,0,0,0
-				RenderOnNormal
-				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-				AddReloadMotionKey,0,false,			30
-				AddReloadMotionKey,30,0,0,0,0,0,-90,	42,0,0,0,0,0,-90
-				AddReloadMotionKey,42,0,0,0,0,0,-90,	55,0,0,0,0,0,-5
-				AddReloadMotionKey,55,0,0,0,0,0,-5,	60,0,0,0,0,0,0
-				AddReloadMotionKey,60,0,0,0,0,0,0,	100,0,0,0,0,0,0
-			BackParts
-		BackParts
-
-		AddChildParts,mat21minimi
+		AddChildParts,mat21
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 			RenderOnNormal
 			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
@@ -351,8 +295,7 @@ AddParts,Base_Sys
 			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 		BackParts
 
-
 BulletNameALL,byfrou01_PinkTracer
 Tabname,HMG_GVCGuns
-Name,FN Minimi (7.62)
-LMG,FN Minimi (7.62)
+Name,M240L
+LMG,M240L
