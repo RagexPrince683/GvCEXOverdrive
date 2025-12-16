@@ -1,6 +1,6 @@
-BulletPower,6
-//BulletSpeed,19.4
-BulletSpeed,8
+BulletPower,8
+BulletSpeed,19.4
+
 BulletGravity,0.485
 
 BlletSpread,0.25f
@@ -30,14 +30,14 @@ Texture,auga3
 GunSound,handmadeguns.FN2000,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
-ObjModel,auga3.mqo
+ObjModel,auga3norm.mqo
 ObjTexture,auga3.png
 ModelScala,0.5f
 InworldScale,1.8f
 CustomFlash,arrow,1
 Bursts,-1,1,0
 //Rates,1.411,1.411,1.411
-Rates,1.666,1.666,1.666
+Rates,1.6,1.6,1.6
 //1.86 - 645
 //1.85 - 648
 //1.84 - 652
@@ -76,9 +76,9 @@ RenderCross,false
 //Magazine,0,HandmadeGuns,7.62mm magazine 30Round
 //MultiMagazine,HandmadeGuns:7.62mm magazine 30Round,HandmadeGuns:7.62mm long magazine,HandmadeGuns:7.62mm magazine 20Round,HandmadeGuns:7.62mm drum 50Round,HandmadeGuns:7.62mm drum 75Round
 
-MultiMagazine,HandmadeGuns:augbullet_hg_9mm32rnd,HandmadeGuns:augbullet_hg_9mm25rnd
-
-
+MultiMagazine,HandmadeGuns:augmag
+//,HandmadeGuns:augbullet_hg_9mm25rnd
+//fuck your waffle mags not adding
 
 
 MagazineSG,0,HandmadeGuns,bullet_shell_hmg
@@ -253,7 +253,7 @@ AddParts,Sys_Zero_in
 		BackParts
 
 Tabname,HMG_GVCGuns
-Name,Steyr AUG A3 9mm XS
-AR,Steyr AUG A3 (9mm)
+Name,Steyr AUG A3
+AR,Steyr AUG A3
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280

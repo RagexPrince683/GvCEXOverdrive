@@ -1,6 +1,6 @@
 Texture,1270bullet5
 Stack,1
-Name,5 Rnd Propietary LYNX .50 BMG Magazine
+Name,5 Rnd Proprietary LYNX .50 BMG Magazine
 BulletRound,5
 
 Tabname,HMG_Ammo

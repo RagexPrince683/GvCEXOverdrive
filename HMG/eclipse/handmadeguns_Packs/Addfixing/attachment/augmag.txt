@@ -1,0 +1,7 @@
+Texture,556bullet
+Stack,2
+Tabname,HMG_Ammo
+BulletRound,30
+Name,30 Rnd 5.56x45mm Proprietary AUG Mag
+Magazine,augmag
+addRecipe,augmag,2,a00,0e0,000,265,289,289,289,289,289,289,289,289
