@@ -35,7 +35,7 @@ ModelScala,0.5f
 InworldScale,1.8f
 CustomFlash,arrow,1
 Bursts,-1,3,1,0
-Rates,1.411,1.411,1.411
+Rates,1.2,1.2,1.2
 //1.86 - 645
 //1.85 - 648
 //1.84 - 652
