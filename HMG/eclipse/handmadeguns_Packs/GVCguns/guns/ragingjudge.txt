@@ -8,7 +8,7 @@ BlletSpreadDiffusion,5,0,4,0.5,4,2
 Cycle,10
 
 Recoil,13
-Recoil_sneaking,7
+Recoil_sneaking,9
 
 
 
@@ -77,7 +77,7 @@ DropMagazine,false
 MagazineSG,0,HandmadeGuns,bullet_shell_hmg
 MagazineGL,0,HandmadeGuns,bullet_rr_hmg
 
-MuzzleJump,3
+MuzzleJump,-3
 
 ReloadTime,280
 

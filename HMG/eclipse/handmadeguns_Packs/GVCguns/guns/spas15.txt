@@ -4,8 +4,8 @@ BlletSpread,2.2f
 BlletSpreadDiffusion,3,0,1,0.5,4,0.5
 BulletGravity,0.485
 Class,1
-Recoil,4.0d
-Recoil_sneaking,2.8
+Recoil,3.2d
+Recoil_sneaking,2.2
 ReloadTime,50
 //RemainingBullet,5
 Attacking,6.0f

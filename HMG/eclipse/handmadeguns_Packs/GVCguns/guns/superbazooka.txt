@@ -26,6 +26,9 @@ ModelScala,0.5f
 InworldScale,1.2f
 Motion,0.5d
 
+Cartridge,false
+DropMagazine,false
+
 ModelEquipped,-0.5f,0.5f,-0.2f
 ModelHigh,1.10f,0.85f,0.85f
 
@@ -47,7 +50,7 @@ ScopeTexture,rr.png,rr.png,scope.png
 RenderCross,false
 UnderBarrelWeapon,0
 RightType,0
-Magazine,0,HandmadeGuns,bullet_rr_hmgbaz
+Magazine,0,HandmadeGuns,bullet_rr_hmgsbaz
 Tabname,HMG_GVCGuns
 
 RR,M20A1 Super Bazooka

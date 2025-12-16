@@ -36,6 +36,9 @@ ModelArmOffsetR,0.4f,0.3f,0.5f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.1f,0.1f,-0.2f
 
+Cartridge,false
+DropMagazine,false
+
 SprintingPoint,0.4f,-0.2f,-0.0f
 
 
