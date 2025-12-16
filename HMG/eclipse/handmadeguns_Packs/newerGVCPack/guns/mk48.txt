@@ -33,7 +33,10 @@ ModelScala,0.5f
 InworldScale,1.8f
 CustomFlash,arrow,1
 Bursts,-1,-1,-1,1
-Rates,1.411,1.262,1.043,2
+//Rates,1.411,1.262,1.043,2
+
+Rates,2,1.846,1.714,1.5
+//600-650, 700-800
 
 attachRestriction,true
 //allowattach,reddot
@@ -376,5 +379,5 @@ AddParts,Base_Sys
 
 BulletNameALL,byfrou01_PinkTracer
 Tabname,HMG_GVCGuns
-Name,Mk48 LWMG
-LMG,Mk48 LWMG
+Name,Mk48 Mod 1 LWMG
+LMG,Mk48 Mod 1 LWMG

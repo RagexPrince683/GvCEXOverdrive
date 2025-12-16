@@ -33,7 +33,11 @@ ModelScala,0.5f
 InworldScale,1.8f
 CustomFlash,arrow,1
 Bursts,-1,-1,-1,1
-Rates,1.411,1.262,1.043,2
+
+//Rates,1.411,1.262,1.043,2
+
+Rates,1.714,1.5,1.411,1.263
+//700-800, 850-950
 
 attachRestriction,true
 //allowattach,reddot
