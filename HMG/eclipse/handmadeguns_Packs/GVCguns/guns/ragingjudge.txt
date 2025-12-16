@@ -33,7 +33,7 @@ InworldScale,2f
 Gunparts_offsetScale,1
 //was 10
 CustomFlash,arrow,1
-Rates,10
+//Rates,10
 Bursts,1
 
 attachRestriction,true

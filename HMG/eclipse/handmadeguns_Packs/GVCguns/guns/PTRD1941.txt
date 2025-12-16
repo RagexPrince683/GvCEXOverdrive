@@ -31,7 +31,7 @@ ModelScala,0.5f
 InworldScale,1.5f
 CustomFlash,CannonMuzzleFlash,4,3
 Bursts,1
-Rates,1
+//Rates,1
 attachRestriction,true
 allowattach,Bullet_Frag
 allowattach,Bullet_AP

@@ -36,7 +36,7 @@ ModelScala,0.5f
 InworldScale,2f
 MuzzleFlash,false
 Bursts,-1
-Rates,1
+Rates,1.33
 
 attachRestriction,true
 

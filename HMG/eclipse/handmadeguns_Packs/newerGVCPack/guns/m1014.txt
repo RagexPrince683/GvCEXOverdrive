@@ -24,7 +24,7 @@ ModelScala,0.5f
 InworldScale,1.8f
 bulletFuse,16
 Bursts,1
-Rates,3
+//Rates,3
 Motion,0.95
 
 attachRestriction,true

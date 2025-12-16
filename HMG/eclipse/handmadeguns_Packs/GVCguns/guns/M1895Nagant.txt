@@ -32,7 +32,7 @@ ModelScala,0.05f
 InworldScale,3f
 Gunparts_offsetScale,10
 CustomFlash,arrow,1
-Rates,10
+//Rates,10
 Bursts,1
 
 attachRestriction,true

@@ -34,7 +34,7 @@ InworldScale,2f
 
 CustomFlash,arrow,1
 Bursts,1
-Rates,1
+//Rates,1
 
 attachRestriction,true
 allowattach,Suppressor
