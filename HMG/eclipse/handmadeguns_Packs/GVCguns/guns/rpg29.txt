@@ -34,8 +34,13 @@ InworldScale,1.55f
 Motion,0.6
 
 ModelEquipped,-0.7f,0.4f,0.05f
-ModelHigh,0.775f,0.50f,0.85f
-ModelWidthX,0.694f,0.694f,0.694f
+//ModelHigh,0.575f,0.575f,0.575f
+
+SimpleADSOffsetX,0.18,0.18,0.18
+SimpleADSOffsetY,1.275f,1.275f,1.275f
+SimpleADSOffsetZ,0.57,0.57,0.57
+
+//ModelWidthX,0.694f,0.694f,0.694f
 ModelWidthZ,1.2f,1.2f,1.2f
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45

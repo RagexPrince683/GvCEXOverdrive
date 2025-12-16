@@ -35,7 +35,7 @@ InworldScale,1.5f
 Cartridge,false
 DropMagazine,false
 
-Magazine,0,HandmadeGuns,bullet_rr_hmgstinger
+Magazine,0,HandmadeGuns,bullet_rr_hmgstingerjp
 
 Motion,0.8
 

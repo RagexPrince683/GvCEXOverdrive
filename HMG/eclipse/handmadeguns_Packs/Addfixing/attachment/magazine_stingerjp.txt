@@ -2,8 +2,8 @@ Texture,missile
 Stack,1
 Tabname,HMG_Ammo
 BulletRound,1
-Name,70mm FIM-92 Stinger Anti Air Missile
-Magazine,bullet_rr_hmgstinger
+Name,80mm Type 91 Anti Air Missile
+Magazine,bullet_rr_hmgstingerjp
 //addRecipe,bullet_rr_hmgstinger,2,abc,def,000,289,265,289,289,265,289,289,289,289
 
 //AddRecipe
@@ -23,4 +23,4 @@ ItemA,minecraft,redstone
 ItemB,minecraft,iron_ingot
 ItemC,HandmadeGuns,Prastic
 ItemD,minecraft,gunpowder
-addNewRecipe,HandmadeGuns,bullet_rr_hmgstinger,1
+addNewRecipe,HandmadeGuns,bullet_rr_hmgstingerjp,1
