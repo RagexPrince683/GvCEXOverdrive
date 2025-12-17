@@ -1,4 +1,4 @@
-Texture,bullet_hg
+Texture,762rbullet
 Stack,64
 Tabname,HMG_Ammo
 BulletRound,1
