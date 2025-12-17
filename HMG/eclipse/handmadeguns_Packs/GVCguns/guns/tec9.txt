@@ -22,7 +22,7 @@ ZoomRenderType,true,true,true
 ZoomRenderTypeTxture,false,false,false
 
 Texture,G17
-GunSound,handmadeguns.UMP45,handmadeguns.supu
+GunSound,handmadeguns.tec9,handmadeguns.supu
 GunSoundLV,4,4
 GunSoundReload,handmadeguns.reload
 CanObj,true

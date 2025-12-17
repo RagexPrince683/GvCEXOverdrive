@@ -17,7 +17,7 @@ Explosion,0.5f
 damagerange,2
 BlockDestory,false
 Texture,bazooka
-GunSound,handmadeguns.panzershrek,handmadeguns.supu
+GunSound,handmadeguns.m20a1,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,us_m20a1_super_bazooka.mqo

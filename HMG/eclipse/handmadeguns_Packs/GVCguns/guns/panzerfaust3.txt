@@ -21,7 +21,7 @@ Explosion,0.5f
 damagerange,2
 BlockDestory,false
 Texture,smaw
-GunSound,handmadeguns.smaw,handmadeguns.smaw
+GunSound,handmadeguns.panzerfaust3,handmadeguns.panzerfaust3
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,panzerfaust_3.mqo

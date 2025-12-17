@@ -23,7 +23,7 @@ Explosion,0.5f
 damagerange,3
 BlockDestory,false
 Texture,RR_sample
-GunSound,handmadeguns.rpg7,handmadeguns.rpg7
+GunSound,handmadeguns.rpg29,handmadeguns.rpg29
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,ussr_rpg-29.mqo

@@ -26,7 +26,7 @@ ZoomRenderType,true,true,false
 ZoomRenderTypeTxture,false,false,true
 
 Texture,famas
-GunSound,handmadeguns.FN2000,handmadeguns.supu
+GunSound,handmadeguns.famas,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,famas.mqo

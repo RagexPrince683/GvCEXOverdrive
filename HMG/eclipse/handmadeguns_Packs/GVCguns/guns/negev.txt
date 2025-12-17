@@ -26,7 +26,7 @@ ZoomRenderType,true,true,false
 ZoomRenderTypeTxture,false,false,true
 
 Texture,PKM
-GunSound,handmadeguns.PKP,handmadeguns.supu
+GunSound,handmadeguns.negev556,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,negev.mqo

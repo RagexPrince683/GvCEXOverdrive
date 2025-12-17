@@ -27,7 +27,7 @@ ZoomRenderType,true,true,false
 ZoomRenderTypeTxture,false,false,true
 
 Texture,auga3
-GunSound,handmadeguns.FN2000,handmadeguns.supu
+GunSound,handmadeguns.auga3,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,auga3norm.mqo

@@ -26,7 +26,7 @@ ZoomRenderType,true,true,false
 ZoomRenderTypeTxture,false,false,true
 
 Texture,M249
-GunSound,handmadeguns.m249,handmadeguns.supu
+GunSound,handmadeguns.minimi762,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,m249.mqo

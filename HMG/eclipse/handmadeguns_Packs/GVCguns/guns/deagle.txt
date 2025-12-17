@@ -23,7 +23,7 @@ ZoomRenderType,true,true,true
 ZoomRenderTypeTxture,false,false,false
 
 Texture,deagle
-GunSound,handmadeguns.1911,handmadeguns.supu
+GunSound,handmadeguns.deagle,handmadeguns.supu
 GunSoundLV,4,4
 GunSoundReload,handmadeguns.reload
 CanObj,true
