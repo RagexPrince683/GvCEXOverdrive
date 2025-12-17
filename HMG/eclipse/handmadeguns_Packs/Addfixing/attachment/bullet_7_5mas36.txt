@@ -1,4 +1,4 @@
-Texture,75bullet
+Texture,223bulletclip
 Stack,2
 Name,5 Rnd 7.5x54mm French Clip
 BulletRound,5

@@ -1,4 +1,4 @@
-Texture,762rbullet
+Texture,dp28mag
 Stack,1
 Name,47 Rnd 7.62x54mmR Pan Magazine
 BulletRound,47

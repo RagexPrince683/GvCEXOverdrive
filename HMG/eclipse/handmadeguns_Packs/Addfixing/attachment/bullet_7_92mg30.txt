@@ -1,4 +1,4 @@
-Texture,223bulletclip
+Texture,556bullet
 Stack,2
 Name,30 Rnd 7.92x57mm Mauser Box Magazine
 BulletRound,30

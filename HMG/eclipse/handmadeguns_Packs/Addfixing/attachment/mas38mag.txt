@@ -1,7 +1,7 @@
-Texture,bullet_hg
-Stack,3
+Texture,longue33
+Stack,1
 Tabname,HMG_Ammo
 Name,33 Rnd 7.65x20mm Longue Magazine
 BulletRound,33
 Magazine,mas38mag
-addRecipe,mas38mag,3,aa0,ee0,000,265,289,289,289,289,289,289,289,289
+addRecipe,mas38mag,1,aa0,ee0,000,265,289,289,289,289,289,289,289,289

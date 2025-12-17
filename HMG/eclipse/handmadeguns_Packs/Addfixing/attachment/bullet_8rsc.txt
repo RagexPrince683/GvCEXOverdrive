@@ -1,4 +1,4 @@
-Texture,8bullet
+Texture,762bulletclip
 Stack,3
 Name,5 Rnd 8x50mmR Lebel Clip
 BulletRound,5

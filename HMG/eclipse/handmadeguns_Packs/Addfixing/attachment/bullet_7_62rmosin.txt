@@ -1,4 +1,4 @@
-Texture,762rbullet
+Texture,762bulletclip
 Stack,2
 Name,5 Rnd 7.62x54mmR Stripper Clip
 BulletRound,5

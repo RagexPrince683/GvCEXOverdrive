@@ -1,5 +1,5 @@
-Texture,223bulletclip
-Stack,2
+Texture,chinamag2
+Stack,1
 Name,50 Rnd 7.92x57mm Mauser Drum Magazine
 BulletRound,50
 

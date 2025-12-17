@@ -1,4 +1,4 @@
-Texture,223bulletclip
+Texture,303british30rnd
 Stack,1
 Name,30 Rnd .303 British Curved Magazine
 BulletRound,30

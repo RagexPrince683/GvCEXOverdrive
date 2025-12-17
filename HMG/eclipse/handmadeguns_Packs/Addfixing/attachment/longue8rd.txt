@@ -1,4 +1,4 @@
-Texture,bullet_hg
+Texture,longue
 Stack,4
 Tabname,HMG_Ammo
 Name,8 Rnd 7.65x20mm Longue Magazine

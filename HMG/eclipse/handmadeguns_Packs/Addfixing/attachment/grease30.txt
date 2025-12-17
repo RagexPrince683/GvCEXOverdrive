@@ -1,4 +1,4 @@
-Texture,bullet_hg1911slong
+Texture,mac10mag
 Stack,2
 BulletRound,30
 Tabname,HMG_Ammo

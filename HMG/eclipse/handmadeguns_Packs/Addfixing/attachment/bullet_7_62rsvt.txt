@@ -1,4 +1,4 @@
-Texture,762rbullet
+Texture,barmag
 Stack,2
 Name,10 Rnd 7.62x54mmR Box Magazine
 BulletRound,10

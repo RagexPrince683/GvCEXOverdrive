@@ -1,4 +1,4 @@
-Texture,bullet_14_5
+Texture,bigclip
 Stack,1
 BulletRound,5
 Name,5 Rnd 14.5x114mm BS-41 APCR Round Clip

@@ -1,4 +1,4 @@
-Texture,75bullet
+Texture,20mmMagazine
 Stack,1
 Name,25 Rnd 7.5x54mm French Bullet Detachable Box Magazine
 BulletRound,25

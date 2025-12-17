@@ -1,4 +1,4 @@
-Texture,223bulletclip
+Texture,303brit10
 Stack,2
 Name,10 Rnd .303 British Magaizne
 BulletRound,10
