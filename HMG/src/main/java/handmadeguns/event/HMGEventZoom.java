@@ -338,6 +338,7 @@ public class HMGEventZoom {
 
 							//if (entityplayer.isSneaking())
 
+							//TODO problematic code block
 							if (firstPerson_ADSState && prevADSState) {
 								if (itemstackSight != null) {
 									if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
@@ -390,7 +391,9 @@ public class HMGEventZoom {
 								}
 								if (gunItem.gunInfo.renderHMGcross && spreadDiffusion > gunItem.gunInfo.spreadDiffusionmin)
 									this.renderCrossHair(minecraft, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(), bure);
-							} else {
+							}
+							//end of problematic code block
+							else {
 								// GuiIngameForge.renderCrosshairs = true;
 								if (gunItem.gunInfo.renderMCcross) {
 									GuiIngameForge.renderCrosshairs = true;
