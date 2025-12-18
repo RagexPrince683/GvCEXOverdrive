@@ -80,131 +80,163 @@ public class HMGEventZoom {
 	@SubscribeEvent
 	public void renderfov(FOVUpdateEvent event)
 	{
-		//Minecraft minecraft = FMLClientHandler.instance().getClient();
-		//EntityPlayer entityPlayer = minecraft.thePlayer;
 		EntityPlayer entityPlayer = event.entity;
 
+		// --- Movement-based FOV (compute once) ---
 		IAttributeInstance iattributeinstance = entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+		iattributeinstance = entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+		double value = computeMoveSpeed_WithoutGunModifier((ModifiableAttributeInstance) iattributeinstance);
 
-//		System.out.println("speedModify_\t" + iattributeinstance.getAttributeValue());
-//		System.out.println("debug_FOV\t\t" + event.newfov);
-
+		float baseFov = 1.0F;
+		if (entityPlayer.capabilities.isFlying)
 		{
-//			System.out.println("modify\t\t" + HMG_proxy.getCurrentAttributeModifier());
-//			System.out.println("speedModify\t\t" + iattributeinstance.getAttributeValue());
+			baseFov *= 1.1F;
+		}
 
-//			if(HMG_proxy.getCurrentAttributeModifier() != null){
-//				flag = true;
-//				if (entityPlayer.getEquipmentInSlot(0) != null && entityPlayer.getEquipmentInSlot(0).getItem() instanceof HMGItem_Unified_Guns){
-//					resetApply = true;
-//				}
-//				entityPlayer.getAttributeMap().removeAttributeModifiers(HMG_proxy.getCurrentAttributeModifier());
-//			}
+		baseFov = (float)((double)baseFov * ((value / (double)entityPlayer.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
+
+		if (entityPlayer.capabilities.getWalkSpeed() == 0.0F || Float.isNaN(baseFov) || Float.isInfinite(baseFov))
+		{
+			baseFov = 1.0F;
+		}
+
+		if (entityPlayer.isUsingItem() && entityPlayer.getItemInUse() != null && entityPlayer.getItemInUse().getItem() == Items.bow)
+		{
+			int i = entityPlayer.getItemInUseDuration();
+			float f1 = (float)i / 20.0F;
+
+			if (f1 > 1.0F)
 			{
-				iattributeinstance = entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
-				double value = computeMoveSpeed_WithoutGunModifier((ModifiableAttributeInstance) iattributeinstance);
-//				System.out.println("changed\t\t\t" + value);
-				float f = 1.0F;
+				f1 = 1.0F;
+			}
+			else
+			{
+				f1 *= f1;
+			}
 
-				if (entityPlayer.capabilities.isFlying)
+			baseFov *= 1.0F - f1 * 0.15F;
+		}
+
+		// Start with baseFov as computed
+		float finalFov = baseFov;
+
+		// --- Handle gun / scope zoom (apply once) ---
+		ItemStack itemstack = entityPlayer.getCurrentEquippedItem();
+		Entity ridingEntity = entityPlayer.ridingEntity;
+		if (ridingEntity instanceof PlacedGunEntity)
+		{
+			PlacedGunEntity pge = (PlacedGunEntity) ridingEntity;
+			if (pge.gunStack != null && pge.gunStack.getItem() instanceof HMGItem_Unified_Guns)
+			{
+				itemstack = pge.gunStack;
+			}
+		}
+
+		float zoomFactor = 1.0F;
+		float newZoomLevel = 1.0F;
+
+		if (itemstack != null && itemstack.getItem() instanceof HMGItem_Unified_Guns)
+		{
+			HMGItem_Unified_Guns gunbase = (HMGItem_Unified_Guns) itemstack.getItem();
+
+			// Only apply scope zoom when ADS is active and previous ADS state is true
+			if (firstPerson_ADSState && prevADSState)
+			{
+				// if the player is sprinting, skip scope zoom to prevent oscillation
+				if (!entityPlayer.isSprinting())
 				{
-					f *= 1.1F;
-				}
-
-				f = (float)((double)f * ((value / (double)entityPlayer.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
-
-				if (entityPlayer.capabilities.getWalkSpeed() == 0.0F || Float.isNaN(f) || Float.isInfinite(f))
-				{
-					f = 1.0F;
-				}
-
-				if (entityPlayer.isUsingItem() && entityPlayer.getItemInUse().getItem() == Items.bow)
-				{
-					int i = entityPlayer.getItemInUseDuration();
-					float f1 = (float)i / 20.0F;
-
-					if (f1 > 1.0F)
+					// Guard NBT/tag access
+					ItemStack itemstackSight = null;
+					if (itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("Items"))
 					{
-						f1 = 1.0F;
+						NBTTagList tags = (NBTTagList) itemstack.getTagCompound().getTag("Items");
+						if (tags != null)
+						{
+							// read into a small array safely
+							ItemStack[] items = new ItemStack[6];
+							int loopCount = Math.min(tags.tagCount(), 7); // avoid index issues
+							for (int i = 0; i < loopCount; i++)
+							{
+								NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
+								int slot = tagCompound.getByte("Slot");
+								if (slot >= 0 && slot < items.length)
+								{
+									items[slot] = ItemStack.loadItemStackFromNBT(tagCompound);
+								}
+							}
+							itemstackSight = items[1];
+						}
+					}
+
+					// choose zoom factor based on sight type
+					if (itemstackSight != null)
+					{
+						if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot)
+						{
+							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomrer)
+							{
+								zoomFactor = gunbase.gunInfo.scopezoomred;
+								newZoomLevel = gunbase.gunInfo.scopezoomred;
+							}
+						}
+						else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope)
+						{
+							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres)
+							{
+								zoomFactor = gunbase.gunInfo.scopezoomscope;
+								newZoomLevel = gunbase.gunInfo.scopezoomscope;
+							}
+						}
+						else if (itemstackSight.getItem() instanceof HMGItemSightBase)
+						{
+							if (gunbase.gunInfo.canobj && !((HMGItemSightBase) itemstackSight.getItem()).scopeonly)
+							{
+								zoomFactor = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
+								newZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
+							}
+						}
+						else
+						{
+							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren)
+							{
+								zoomFactor = gunbase.gunInfo.scopezoombase;
+								newZoomLevel = gunbase.gunInfo.scopezoombase;
+							}
+						}
 					}
 					else
 					{
-						f1 *= f1;
-					}
-
-					f *= 1.0F - f1 * 0.15F;
-				}
-				event.newfov = f;
-			}
-
-			ItemStack itemstack = entityPlayer.getCurrentEquippedItem();
-			Entity ridingEntity = entityPlayer.ridingEntity;
-			if(ridingEntity instanceof PlacedGunEntity){
-				if(((PlacedGunEntity) ridingEntity).gunStack != null  && ((PlacedGunEntity) ridingEntity).gunStack.getItem() instanceof HMGItem_Unified_Guns){
-					itemstack = ((PlacedGunEntity) ridingEntity).gunStack;
-				}
-			}
-			if (itemstack != null && itemstack.getItem() instanceof HMGItem_Unified_Guns) {
-				HMGItem_Unified_Guns gunbase = (HMGItem_Unified_Guns) itemstack.getItem();
-				if (firstPerson_ADSState && prevADSState)
-				{
-					((HMGItem_Unified_Guns) itemstack.getItem()).checkTags(itemstack);
-					ItemStack[] items = new ItemStack[6];
-					ItemStack itemstackSight =null;
-					NBTTagList tags = (NBTTagList) itemstack.getTagCompound().getTag("Items");
-					if (tags != null) {
-						for (int i = 0; i < 7; i++)//133
+						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren)
 						{
-							NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
-							int slot = tagCompound.getByte("Slot");
-							if (slot >= 0 && slot < items.length) {
-								items[slot] = ItemStack.loadItemStackFromNBT(tagCompound);
-//                    if(items[slot] != null) {
-//                        System.out.println(""+ i + "" + items[slot].getItem().getUnlocalizedName());
-//                    }
-							}
+							zoomFactor = gunbase.gunInfo.scopezoombase;
+							newZoomLevel = gunbase.gunInfo.scopezoombase;
 						}
 					}
-					itemstackSight = items[1];
-					if(itemstackSight != null) {
-						if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
-							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomrer) {
-								event.newfov = event.newfov / gunbase.gunInfo.scopezoomred;
-								currentZoomLevel = gunbase.gunInfo.scopezoomred;
-							}
-						} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
-							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres) {
-								event.newfov = event.newfov / gunbase.gunInfo.scopezoomscope;
-								currentZoomLevel = gunbase.gunInfo.scopezoomscope;
-							}
-						} else if (itemstackSight.getItem() instanceof HMGItemSightBase) {
-							if (gunbase.gunInfo.canobj && !((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
-								event.newfov = event.newfov / ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
-								currentZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
-							}
-						}else {
-							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) {
-								event.newfov = event.newfov / gunbase.gunInfo.scopezoombase;
-								currentZoomLevel = gunbase.gunInfo.scopezoombase;
-							}
-						}
-					} else {
-						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) {
-							event.newfov = event.newfov / gunbase.gunInfo.scopezoombase;
-							currentZoomLevel = gunbase.gunInfo.scopezoombase;
-						}
-					}
-				}
-				if(entityPlayer.capabilities.isFlying){
-					event.newfov /=1.1F;
-				}
-//				System.out.println(entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue());
-//				if(isSlowdowned3)event.newfov /= ((gunbase.motion <= 0 ? 0 : gunbase.motion) + 1 )/2;
-//				premotion = gunbase.motion;
+				} // end !isSprinting()
+			} // end ADS check
+
+			// when flying, compensate (keep old behaviour)
+			if (entityPlayer.capabilities.isFlying)
+			{
+				finalFov /= 1.1F;
 			}
+		} // end itemstack != null
+
+		// apply zoom factor once (protect against division by zero)
+		if (zoomFactor <= 0.00001F) zoomFactor = 1.0F;
+		finalFov = finalFov / zoomFactor;
+
+		// update event once
+		event.newfov = finalFov;
+
+		// update currentZoomLevel only when changed
+		if (newZoomLevel != currentZoomLevel)
+		{
+			currentZoomLevel = newZoomLevel;
 		}
 	}
-//todo onRenderTickStartでマウス感度を下げ、onRenderTickEndで復帰させればズーム時の照準が楽になるだろう
+
+	//todo onRenderTickStartでマウス感度を下げ、onRenderTickEndで復帰させればズーム時の照準が楽になるだろう
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void displayHUD(RenderGameOverlayEvent.Post event) {
