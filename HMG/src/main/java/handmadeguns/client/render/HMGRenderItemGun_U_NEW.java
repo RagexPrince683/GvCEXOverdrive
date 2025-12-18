@@ -338,22 +338,22 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					ItemStack itemstackSight = items[1];
 					if (firstPerson_ADSState && prevADSState) {
 						if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase) {
-							if (((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
+							if (((HMGItemSightBase) itemstackSight.getItem()).scopeonly  && !isentitysprinting(entity)) {
 								GL11.glPopMatrix();//glend1
 								break;
 							} else if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
-								if (!gunitem.gunInfo.zoomrer) {
+								if (!gunitem.gunInfo.zoomrer && !isentitysprinting(entity)) {
 									GL11.glPopMatrix();//glend1
 									break;
 								}
 							} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
-								if (!gunitem.gunInfo.zoomres) {
+								if (!gunitem.gunInfo.zoomres && !isentitysprinting(entity)) {
 									GL11.glPopMatrix();//glend1
 									break;
 								}
 							}
 						} else {
-							if (!gunitem.gunInfo.zoomren) {
+							if (!gunitem.gunInfo.zoomren && !isentitysprinting(entity)) {
 								GL11.glPopMatrix();//glend1
 								break;
 							}
