@@ -179,13 +179,13 @@ public class HMGEventZoom {
 					{
 						if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot)
 						{
-							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomrer)
+							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomrer && !isentitysprinting(entityPlayer))
 							{
 								zoomFactor = gunbase.gunInfo.scopezoomred;
 								newZoomLevel = gunbase.gunInfo.scopezoomred;
 							}
 						}
-						else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope)
+						else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope && !isentitysprinting(entityPlayer))
 						{
 							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres)
 							{
@@ -193,9 +193,9 @@ public class HMGEventZoom {
 								newZoomLevel = gunbase.gunInfo.scopezoomscope;
 							}
 						}
-						else if (itemstackSight.getItem() instanceof HMGItemSightBase)
+						else if (itemstackSight.getItem() instanceof HMGItemSightBase && !isentitysprinting(entityPlayer))
 						{
-							if (gunbase.gunInfo.canobj && !((HMGItemSightBase) itemstackSight.getItem()).scopeonly)
+							if (gunbase.gunInfo.canobj && !((HMGItemSightBase) itemstackSight.getItem()).scopeonly && !isentitysprinting(entityPlayer))
 							{
 								zoomFactor = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
 								newZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
@@ -203,7 +203,7 @@ public class HMGEventZoom {
 						}
 						else
 						{
-							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren)
+							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren && !isentitysprinting(entityPlayer))
 							{
 								zoomFactor = gunbase.gunInfo.scopezoombase;
 								newZoomLevel = gunbase.gunInfo.scopezoombase;
@@ -212,7 +212,7 @@ public class HMGEventZoom {
 					}
 					else
 					{
-						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren)
+						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren && !isentitysprinting(entityPlayer))
 						{
 							zoomFactor = gunbase.gunInfo.scopezoombase;
 							newZoomLevel = gunbase.gunInfo.scopezoombase;
@@ -362,7 +362,7 @@ public class HMGEventZoom {
 											renderPumpkinBlur(minecraft, adss);
 										}
 									} else if (itemstackSight.getItem() instanceof HMGItemSightBase) {
-										if (!gunItem.gunInfo.canobj || ((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
+										if (!gunItem.gunInfo.canobj || ((HMGItemSightBase) itemstackSight.getItem()).scopeonly && !isentitysprinting(entityplayer)) {
 											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 													((HMGItemSightBase) itemstackSight.getItem()).zoomlevel, "cameraZoom", "field_78503_V");
 											currentZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
@@ -1087,7 +1087,7 @@ public class HMGEventZoom {
 					}
 					else if (sight.getItem() instanceof HMGItemSightBase)
 					{
-						if (gunbase.gunInfo.canobj && !((HMGItemSightBase) sight.getItem()).scopeonly)
+						if (gunbase.gunInfo.canobj && !((HMGItemSightBase) sight.getItem()).scopeonly && !isentitysprinting(entityPlayer))
 						{
 							zoomFactor = ((HMGItemSightBase) sight.getItem()).zoomlevel;
 							newZoomLevel = ((HMGItemSightBase) sight.getItem()).zoomlevel;
