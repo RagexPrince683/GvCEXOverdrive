@@ -187,7 +187,7 @@ public class HMGEventZoom {
 						}
 						else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope && !isentitysprinting(entityPlayer))
 						{
-							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres)
+							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres && !isentitysprinting(entityPlayer))
 							{
 								zoomFactor = gunbase.gunInfo.scopezoomscope;
 								newZoomLevel = gunbase.gunInfo.scopezoomscope;
@@ -342,7 +342,7 @@ public class HMGEventZoom {
 							if (firstPerson_ADSState && prevADSState) {
 								if (itemstackSight != null) {
 									if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
-										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer) {
+										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer && !isentitysprinting(entityplayer)) {
 											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 													gunItem.gunInfo.scopezoomred, "cameraZoom", "field_78503_V");
 											currentZoomLevel = gunItem.gunInfo.scopezoomred;
@@ -352,7 +352,7 @@ public class HMGEventZoom {
 											renderPumpkinBlur(minecraft, adsr);
 										}
 									} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
-										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomres) {
+										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomres && !isentitysprinting(entityplayer)) {
 											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 													gunItem.gunInfo.scopezoomscope, "cameraZoom", "field_78503_V");
 											currentZoomLevel = gunItem.gunInfo.scopezoomscope;
@@ -373,7 +373,7 @@ public class HMGEventZoom {
 										}
 									}
 								} else {
-									if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomren) {
+									if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomren && !isentitysprinting(entityplayer)) {
 										ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 												gunItem.gunInfo.scopezoombase, "cameraZoom", "field_78503_V");
 										currentZoomLevel = gunItem.gunInfo.scopezoombase;
@@ -1079,11 +1079,16 @@ public class HMGEventZoom {
 				{
 					if (sight.getItem() instanceof HMGItemAttachment_reddot)
 					{
-						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomrer) { zoomFactor = gunbase.gunInfo.scopezoomred; newZoomLevel = gunbase.gunInfo.scopezoomred; }
+						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomrer && !isentitysprinting(entityPlayer)) {
+							zoomFactor = gunbase.gunInfo.scopezoomred;
+							newZoomLevel = gunbase.gunInfo.scopezoomred; }
 					}
 					else if (sight.getItem() instanceof HMGItemAttachment_scope)
 					{
-						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres) { zoomFactor = gunbase.gunInfo.scopezoomscope; newZoomLevel = gunbase.gunInfo.scopezoomscope; }
+						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres && !isentitysprinting(entityPlayer)) {
+							zoomFactor = gunbase.gunInfo.scopezoomscope;
+							newZoomLevel = gunbase.gunInfo.scopezoomscope;
+						}
 					}
 					else if (sight.getItem() instanceof HMGItemSightBase)
 					{
@@ -1095,12 +1100,18 @@ public class HMGEventZoom {
 					}
 					else
 					{
-						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) { zoomFactor = gunbase.gunInfo.scopezoombase; newZoomLevel = gunbase.gunInfo.scopezoombase; }
+						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren && !isentitysprinting(entityPlayer)) {
+
+							zoomFactor = gunbase.gunInfo.scopezoombase;
+							newZoomLevel = gunbase.gunInfo.scopezoombase;
+						}
 					}
 				}
 				else
 				{
-					if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) { zoomFactor = gunbase.gunInfo.scopezoombase; newZoomLevel = gunbase.gunInfo.scopezoombase; }
+					if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren && !isentitysprinting(entityPlayer)) {
+						zoomFactor = gunbase.gunInfo.scopezoombase;
+						newZoomLevel = gunbase.gunInfo.scopezoombase; }
 				}
 			} // end ADS check
 

@@ -18,6 +18,7 @@ import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 import static handmadeguns.HandmadeGunsCore.tabshmg;
+import static handmadeguns.client.render.HMGRenderItemGun_U_NEW.isentitysprinting;
 import static java.lang.Integer.parseInt;
 
 public class HMGAddAttachment
@@ -254,7 +255,9 @@ public class HMGAddAttachment
 							((HMGItemSightBase)newitem).needgunoffset = needgunoffset;
 							((HMGItemSightBase)newitem).gunoffset = gunoffset;
 							((HMGItemSightBase)newitem).gunrotation = gunrotation;
-							((HMGItemSightBase)newitem).zoomlevel = zoom;
+							//if (!isentitysprinting() ) {
+								((HMGItemSightBase) newitem).zoomlevel = zoom;
+							//}
 							((HMGItemSightBase)newitem).isnightvision = isnightvision;
 
 							if(hud != null)((HMGItemSightBase)newitem).scopetexture = new ResourceLocation("handmadeguns:textures/misc/" + hud);
