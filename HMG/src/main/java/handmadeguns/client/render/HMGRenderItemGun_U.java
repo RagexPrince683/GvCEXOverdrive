@@ -550,7 +550,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 							}
 						}
 					}
-					if (HandmadeGunsCore.Key_ADS(entityplayer)) {
+					if (HandmadeGunsCore.Key_ADS(entityplayer)) { //todo, blame maybe?
 						if (getremainingbullet(item)<=0) {
 							if (!reloadanim)
 								glMatrixForRenderInEquipped_reload();
@@ -570,7 +570,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 						}
 
 					} else {
-						if (isentitysprinting(entityplayer) || (gun.gunInfo.needfix && !nbt.getBoolean("HMGfixed"))) {
+						if (isentitysprinting(entityplayer) || (gun.gunInfo.needfix && !nbt.getBoolean("HMGfixed")) && !HandmadeGunsCore.Key_ADS(entityplayer)) {
 							glMatrixForRenderInEquipped(0);
 					/*if(item.getItem() instanceof HMGItemGun_HG){
 					GL11.glRotatef(-60F, 1.0F, 0.0F, 0.0F);
@@ -885,7 +885,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 							}
 							GL11.glPopMatrix();
 							GL11.glPushMatrix();
-							if (isentitysprinting(entityplayer) || (gun.gunInfo.needfix && !nbt.getBoolean("HMGfixed"))) {
+							if (isentitysprinting(entityplayer) || (gun.gunInfo.needfix && !nbt.getBoolean("HMGfixed")) && !HandmadeGunsCore.Key_ADS(entityplayer)) { //TODO IF NOT ADS ALSO TODO: CHECK ALL SPRINTING CHECKS FOR SCOPED WEAPONS
 								glMatrixForRenderInEquipped(0);
 								GL11.glRotatef(Sprintrotationx, 1.0F, 0.0F, 0.0F);
 								GL11.glRotatef(Sprintrotationy, 0.0F, 1.0F, 0.0F);
@@ -1063,7 +1063,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 						}
 
 					} else {
-						if (isentitysprinting(entityplayer) || (gun.gunInfo.needfix && !nbt.getBoolean("HMGfixed"))) {
+						if (isentitysprinting(entityplayer) || (gun.gunInfo.needfix && !nbt.getBoolean("HMGfixed")) && !HandmadeGunsCore.Key_ADS(entityplayer)) {
 							glMatrixForRenderInEquipped(0);
 							GL11.glRotatef(Sprintrotationx, 1.0F, 0.0F, 0.0F);
 							GL11.glRotatef(Sprintrotationy, 0.0F, 1.0F, 0.0F);
@@ -2180,7 +2180,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 		return entity instanceof EntityPlayer;
 	}
 	public boolean isentitysprinting(Entity entity){
-		return entity.isSprinting() && !nbt.getBoolean("set_up");
+		return entity.isSprinting() && !nbt.getBoolean("set_up") && !HandmadeGunsCore.Key_ADS(entity);
 	}
 	public boolean isentitysneaking(Entity entity){
 		return entity.isSneaking();

@@ -210,6 +210,7 @@ public class HandmadeGunsCore {
 		cfg_RenderGunAttachmentLMM	= lconf.get("LMM", "cfg_RenderGunAttachmentLMM", false).getBoolean(false);
 		cfg_ZoomRender	= lconf.get("Render", "cfg_ZoomRender", true).getBoolean(true);
 		cfg_FOV	= lconf.get("Render", "cfg_FOV", 70).getInt(70);
+		//I made ALL MY GUNS USING 95 FUCKING FOV, THIS MOD IS SO FUCKING RETARDED
 		cfg_RenderPlayer	= lconf.get("Render", "cfg_RenderPlayer", false).getBoolean(false);
 		cfgRender_useStencil = lconf.get("Render", "cfg_useStencil", false).getBoolean(false);
 		cfg_canEjectCartridge	= lconf.get("Cartridge", "cfg_canEjectCartridge", true).getBoolean(true);
@@ -347,6 +348,11 @@ public class HandmadeGunsCore {
 			}
 		}
 		//END
+
+		//hopefully will fix model loading issues on first start (it randomly doesnt load models on first start sometimes)
+		HMG_proxy.setUpModels();
+
+
 
 	}
 	public void readPackResource(File packdir,boolean isClient){
