@@ -11,6 +11,8 @@ import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.EXTFramebufferObject;
 
@@ -169,43 +171,77 @@ public class RenderTickSmoothing {
 	@SubscribeEvent
 	public void clientTickEvent(TickEvent.ClientTickEvent event)
 	{
-		switch(event.phase)
+		if (event.phase != TickEvent.Phase.START) return;
+
+		if (HMG_proxy.getEntityPlayerInstance() == null) return;
+		EntityPlayer entityPlayer = HMG_proxy.getEntityPlayerInstance();
+
+		// --- Reload state (safe NBT checks) ---
+		prevReloadState = firstPerson_ReloadState;
+		firstPerson_ReloadState = false;
+		ItemStack held = entityPlayer.getCurrentEquippedItem();
+		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns)
 		{
-			case START :
-				if(HMG_proxy.getEntityPlayerInstance() != null) {
-					EntityPlayer entityPlayer = HMG_proxy.getEntityPlayerInstance();
-					prevReloadState = firstPerson_ReloadState;
-					if(entityPlayer.getCurrentEquippedItem() != null &&
-							entityPlayer.getHeldItem().getItem() instanceof HMGItem_Unified_Guns){
-						((HMGItem_Unified_Guns) entityPlayer.getHeldItem().getItem()).checkTags(entityPlayer.getHeldItem());
-						firstPerson_ReloadState = entityPlayer.getHeldItem().getTagCompound().getBoolean("IsReloading");
-					}
-					prevSprintState = firstPerson_SprintState;
-					if(!firstPerson_ReloadState)firstPerson_SprintState = isentitysprinting(entityPlayer);
-					else firstPerson_SprintState = false;
-
-//                    System.out.println("debug" + firstPerson_ADSState);
-					prevADSState = firstPerson_ADSState;
-					if(!firstPerson_SprintState)
-						firstPerson_ADSState = HandmadeGunsCore.Key_ADS((entityPlayer));
-					else
-						firstPerson_ADSState = false;
-//                    System.out.println("debug" + firstPerson_ADSState);
-
-					if(firstPerson_ADSState && cfg_Sneak_ByADSKey){
-						if(HMG_proxy.getEntityPlayerInstance() == entityPlayer &&
-								entityPlayer.ridingEntity == null &&
-								((EntityPlayer) entityPlayer).getHeldItem() != null &&
-								((EntityPlayer) entityPlayer).getHeldItem().getItem() instanceof HMGItem_Unified_Guns &&
-								!isentitysprinting(HMG_proxy.getEntityPlayerInstance()))
-							((EntityClientPlayerMP) HMG_proxy.getEntityPlayerInstance()).movementInput.sneak = true;
-					}
-
-					HMV_Proxy.zoomclick();
+			// safe tag handling
+			if (held.hasTagCompound())
+			{
+				((HMGItem_Unified_Guns) held.getItem()).checkTags(held);
+				NBTTagCompound tag = held.getTagCompound();
+				if (tag != null && tag.hasKey("IsReloading"))
+				{
+					firstPerson_ReloadState = tag.getBoolean("IsReloading");
 				}
-				break;
-			case END :
-				break;
+			}
+		}
+
+		// --- Sprint state ---
+		prevSprintState = firstPerson_SprintState;
+		if (!firstPerson_ReloadState)
+		{
+			firstPerson_SprintState = isentitysprinting(entityPlayer);
+		}
+		else
+		{
+			firstPerson_SprintState = false;
+		}
+
+		// --- ADS state: compute from key but do NOT call zoom handler every tick ---
+		prevADSState = firstPerson_ADSState;
+
+		// Only allow ADS if not sprinting and not reloading
+		boolean desiredADS = false;
+		if (!firstPerson_SprintState && !firstPerson_ReloadState)
+		{
+			desiredADS = HandmadeGunsCore.Key_ADS(entityPlayer);
+		}
+		firstPerson_ADSState = desiredADS;
+
+		// Trigger zoom action only on the *press* edge (false -> true).
+		// This prevents repeated toggling while the key is held or while sprint/ADS flip rapidly.
+		if (firstPerson_ADSState && !prevADSState)
+		{
+			HMV_Proxy.zoomclick();
+		}
+
+		// If you have a separate "release" handler for zoom, call it on the opposite edge:
+		// if (!firstPerson_ADSState && prevADSState) { HMV_Proxy.zoomRelease(); }
+		// (uncomment if you implement a release method)
+
+		// --- optionally set sneak while ADS is active (do not force sprint changes) ---
+		if (firstPerson_ADSState && cfg_Sneak_ByADSKey)
+		{
+			if (entityPlayer == HMG_proxy.getEntityPlayerInstance()
+					&& entityPlayer.ridingEntity == null
+					&& held != null
+					&& ((ItemStack) held).getItem() instanceof HMGItem_Unified_Guns
+					&& !isentitysprinting(entityPlayer))
+			{
+				if (entityPlayer instanceof EntityClientPlayerMP)
+				{
+					((EntityClientPlayerMP) entityPlayer).movementInput.sneak = true;
+				}
+			}
 		}
 	}
+
 }
