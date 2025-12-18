@@ -338,58 +338,94 @@ public class HMGEventZoom {
 
 							//if (entityplayer.isSneaking())
 
-							if (firstPerson_ADSState && prevADSState) {
+							boolean adsNow = firstPerson_ADSState && prevADSState;
+
+// --------------------
+// ADS ENTER (latch)
+// --------------------
+							if (adsNow && !hmg_zoomLatched) {
+
+								double zoomToApply = 1.0D;
+
 								if (itemstackSight != null) {
 									if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
-										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer) {
-											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-													gunItem.gunInfo.scopezoomred, "cameraZoom", "field_78503_V");
-											currentZoomLevel = gunItem.gunInfo.scopezoomred;
-											needreset = true;
-										}
-										if (gunItem.gunInfo.zoomrert) {
-											renderPumpkinBlur(minecraft, adsr);
-										}
+										zoomToApply = gunItem.gunInfo.scopezoomred;
 									} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
-										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomres) {
-											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-													gunItem.gunInfo.scopezoomscope, "cameraZoom", "field_78503_V");
-											currentZoomLevel = gunItem.gunInfo.scopezoomscope;
-											needreset = true;
-										}
-										if (gunItem.gunInfo.zoomrest) {
-											renderPumpkinBlur(minecraft, adss);
-										}
+										zoomToApply = gunItem.gunInfo.scopezoomscope;
 									} else if (itemstackSight.getItem() instanceof HMGItemSightBase) {
-										if (!gunItem.gunInfo.canobj || ((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
-											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-													((HMGItemSightBase) itemstackSight.getItem()).zoomlevel, "cameraZoom", "field_78503_V");
-											currentZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
-											needreset = true;
-										}
-										if (((HMGItemSightBase) itemstackSight.getItem()).scopetexture != null) {
-											renderPumpkinBlur(minecraft, ((HMGItemSightBase) itemstackSight.getItem()).scopetexture);
-										}
+										zoomToApply = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
 									}
 								} else {
-									if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomren) {
-										ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-												gunItem.gunInfo.scopezoombase, "cameraZoom", "field_78503_V");
-										currentZoomLevel = gunItem.gunInfo.scopezoombase;
-										needreset = true;
-									}
-									if (gunItem.gunInfo.zoomrent) {
-										renderPumpkinBlur(minecraft, ads);
+									zoomToApply = gunItem.gunInfo.scopezoombase;
+								}
+
+								ObfuscationReflectionHelper.setPrivateValue(
+										EntityRenderer.class,
+										minecraft.entityRenderer,
+										zoomToApply,
+										"cameraZoom",
+										"field_78503_V"
+								);
+
+								hmg_latchedZoom = zoomToApply;
+								currentZoomLevel = (int) zoomToApply;
+								hmg_zoomLatched = true;
+								needreset = true;
+							}
+
+// --------------------
+// ADS HOLD (DO NOTHING)
+// --------------------
+							if (adsNow && hmg_zoomLatched) {
+								// Intentionally empty
+								// This is what stops sprint conflicts
+							}
+
+// --------------------
+// ADS EXIT (release)
+// --------------------
+							if (!adsNow && hmg_zoomLatched) {
+
+								ObfuscationReflectionHelper.setPrivateValue(
+										EntityRenderer.class,
+										minecraft.entityRenderer,
+										1.0D,
+										"cameraZoom",
+										"field_78503_V"
+								);
+
+								currentZoomLevel = 1;
+								hmg_zoomLatched = false;
+								hmg_latchedZoom = 1.0D;
+								needreset = false;
+							}
+
+// --------------------
+// Scope textures & crosshair (SAFE)
+// --------------------
+							if (adsNow) {
+								if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase) {
+									HMGItemSightBase s = (HMGItemSightBase) itemstackSight.getItem();
+									if (s.scopetexture != null) {
+										renderPumpkinBlur(minecraft, s.scopetexture);
 									}
 								}
-								if (gunItem.gunInfo.renderMCcross) {
-									GuiIngameForge.renderCrosshairs = true;
-								} else {
-									GuiIngameForge.renderCrosshairs = false;
-									GL11.glEnable(GL11.GL_BLEND);
-								}
-								if (gunItem.gunInfo.renderHMGcross && spreadDiffusion > gunItem.gunInfo.spreadDiffusionmin)
-									this.renderCrossHair(minecraft, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(), bure);
+							}
+
+							if (gunItem.gunInfo.renderMCcross) {
+								GuiIngameForge.renderCrosshairs = true;
+							} else {
+								GuiIngameForge.renderCrosshairs = false;
+								GL11.glEnable(GL11.GL_BLEND);
+							}
+
+							if (gunItem.gunInfo.renderHMGcross && spreadDiffusion > gunItem.gunInfo.spreadDiffusionmin) {
+								this.renderCrossHair(
+										minecraft,
+										scaledresolution.getScaledWidth(),
+										scaledresolution.getScaledHeight(),
+										bure
+								);
 							} else {
 								// GuiIngameForge.renderCrosshairs = true;
 								if (gunItem.gunInfo.renderMCcross) {
