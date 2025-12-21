@@ -209,7 +209,7 @@ public class HandmadeGunsCore {
 		cfg_RenderGunSizeLMM	= lconf.get("LMM", "cfg_RenderGunSizeLMM", false).getBoolean(false);
 		cfg_RenderGunAttachmentLMM	= lconf.get("LMM", "cfg_RenderGunAttachmentLMM", false).getBoolean(false);
 		cfg_ZoomRender	= lconf.get("Render", "cfg_ZoomRender", true).getBoolean(true);
-		cfg_FOV	= lconf.get("Render", "cfg_FOV", 70).getInt(70);
+		cfg_FOV	= lconf.get("Render", "cfg_FOV", 70).getInt(70); //TODO: multiply all render offset crap by the player's actual FOV setting. That way we aren't locking people to a specific FOV for proper display.
 		//I made ALL MY GUNS USING 95 FUCKING FOV, THIS MOD IS SO FUCKING RETARDED
 		cfg_RenderPlayer	= lconf.get("Render", "cfg_RenderPlayer", false).getBoolean(false);
 		cfgRender_useStencil = lconf.get("Render", "cfg_useStencil", false).getBoolean(false);
