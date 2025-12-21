@@ -35,9 +35,46 @@ public class PlacedGun_Render extends Render {
 
         // ADS visibility checks (keeps original behavior but safe against NPEs)
         if (entity.riddenByEntity == FMLClientHandler.instance().getClientPlayerEntity() && entity.gunStack != null && entity.gunItem != null) {
-            ItemStack itemstackSight = getSightSafe(entity.gunStack, entity.gunItem);
+            ItemStack[] items = new ItemStack[6];
+            NBTTagCompound nbt = entity.gunStack.getTagCompound();
+            if (nbt == null) {
+                try {
+                    entity.gunItem.checkTags(entity.gunStack);
+                } catch (Throwable ignored) {
+                    // keep going — checkTags is best-effort
+                }
+            }
+            nbt = entity.gunStack.getTagCompound();
 
-            if (HandmadeGunsCore.Key_ADS(entity.riddenByEntity) && (entity.riddenByEntity == null || !entity.riddenByEntity.isSprinting())) {
+            // default nulls (matching your original code)
+            items[0] = null;
+            items[1] = null;//サイト (sight)
+            items[2] = null;//レーザーサイト他
+            items[3] = null;//マズルアタッチメント
+            items[4] = null;//アンダーバレル
+            items[5] = null;//マガジン
+
+            if (nbt != null && nbt.hasKey("Items")) {
+                NBTTagList tags = (NBTTagList) nbt.getTag("Items");
+                if (tags != null) {
+                    for (int i = 0; i < tags.tagCount(); i++) {
+                        NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
+                        if (tagCompound == null) continue;
+                        int slot = tagCompound.getByte("Slot");
+                        if (slot >= 0 && slot < items.length) {
+                            try {
+                                items[slot] = ItemStack.loadItemStackFromNBT(tagCompound);
+                            } catch (Throwable ignored) { }
+                        }
+                    }
+                }
+            }
+
+            ItemStack itemstackSight = items[1];
+            // IMPORTANT: use the **rider's** sprint state rather than entity.isSprinting()
+            boolean riderSprinting = entity.riddenByEntity != null && entity.riddenByEntity.isSprinting();
+
+            if (HandmadeGunsCore.Key_ADS(entity.riddenByEntity) && !riderSprinting) {
                 if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase) {
                     HMGItemSightBase sight = (HMGItemSightBase) itemstackSight.getItem();
                     if (sight.scopeonly) {
@@ -67,32 +104,56 @@ public class PlacedGun_Render extends Render {
             IItemRenderer gunrender = MinecraftForgeClient.getItemRenderer(entity.gunStack, IItemRenderer.ItemRenderType.EQUIPPED);
 
             if (gunrender instanceof HMGRenderItemGun_U_NEW) {
-                // keep original rotations/flag behaviour exactly
-                GL11.glRotatef(-(entity.rotationYaw), 0.0F, 1.0F, 0.0F);
-
-                HMGRenderItemGun_U_NEW.isPlacedGun = true;
-                HMGRenderItemGun_U_NEW.turretYaw = wrapAngleTo180_float(entity.rotationYaw - (entity.prevrotationYawGun + (entity.rotationYawGun - entity.prevrotationYawGun) * smooth));
-                HMGRenderItemGun_U_NEW.turretPitch = wrapAngleTo180_float((entity.prevRotationPitch + wrapAngleTo180_float(entity.rotationPitch - entity.prevRotationPitch) * smooth));
-
-                GL11.glScalef(0.5f, 0.5f, 0.5f);
+                /*
+                 * Critical: save previous static values, set our values, render, then restore
+                 * and isolate GL transforms so nothing leaks to other draws.
+                 */
+                GL11.glPushMatrix();
                 try {
-                    gunrender.renderItem(IItemRenderer.ItemRenderType.ENTITY, entity.gunStack);
-                } catch (Throwable t) {
-                    // fail-safe: avoid breaking the game if a custom renderer throws
-                    t.printStackTrace();
+                    GL11.glRotatef(-(entity.rotationYaw), 0.0F, 1.0F, 0.0F);
+
+                    // Save old static state
+                    synchronized (HMGRenderItemGun_U_NEW.class) {
+                        boolean oldIsPlaced = HMGRenderItemGun_U_NEW.isPlacedGun;
+                        float oldYaw = HMGRenderItemGun_U_NEW.turretYaw;
+                        float oldPitch = HMGRenderItemGun_U_NEW.turretPitch;
+
+                        try {
+                            HMGRenderItemGun_U_NEW.isPlacedGun = true;
+                            HMGRenderItemGun_U_NEW.turretYaw = wrapAngleTo180_float(entity.rotationYaw - (entity.prevrotationYawGun + (entity.rotationYawGun - entity.prevrotationYawGun) * smooth));
+                            HMGRenderItemGun_U_NEW.turretPitch = wrapAngleTo180_float((entity.prevRotationPitch + wrapAngleTo180_float(entity.rotationPitch - entity.prevRotationPitch) * smooth));
+
+                            GL11.glScalef(0.5f, 0.5f, 0.5f);
+                            try {
+                                gunrender.renderItem(IItemRenderer.ItemRenderType.ENTITY, entity.gunStack);
+                            } catch (Throwable t) {
+                                // fail-safe: avoid breaking the game if a custom renderer throws
+                                t.printStackTrace();
+                            }
+                        } finally {
+                            // restore previous static state (no matter what)
+                            HMGRenderItemGun_U_NEW.isPlacedGun = oldIsPlaced;
+                            HMGRenderItemGun_U_NEW.turretYaw = oldYaw;
+                            HMGRenderItemGun_U_NEW.turretPitch = oldPitch;
+                        }
+                    } // synchronized
                 } finally {
-                    HMGRenderItemGun_U_NEW.isPlacedGun = false;
+                    GL11.glPopMatrix();
                 }
             } else if (gunrender instanceof HMGRenderItemGun_U) {
-                // base は matbase を利用してそれらしく描画可能
-                GL11.glRotatef(-(entity.prevrotationYawGun + (entity.rotationYawGun - entity.prevrotationYawGun) * smooth), 0.0F, 1.0F, 0.0F);
-                GL11.glRotatef(-(-entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * smooth), 1.0F, 0.0F, 0.0F);
-                GL11.glScalef(0.5f, 0.5f, 0.5f);
+                GL11.glPushMatrix();
                 try {
-                    gunrender.renderItem(IItemRenderer.ItemRenderType.ENTITY, entity.gunStack);
-                } catch (Throwable t) {
-                    // fail-safe: avoid breaking the game if a custom renderer throws
-                    t.printStackTrace();
+                    // base は matbase を利用してそれらしく描画可能
+                    GL11.glRotatef(-(entity.prevrotationYawGun + (entity.rotationYawGun - entity.prevrotationYawGun) * smooth), 0.0F, 1.0F, 0.0F);
+                    GL11.glRotatef(-(-entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * smooth), 1.0F, 0.0F, 0.0F);
+                    GL11.glScalef(0.5f, 0.5f, 0.5f);
+                    try {
+                        gunrender.renderItem(IItemRenderer.ItemRenderType.ENTITY, entity.gunStack);
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                } finally {
+                    GL11.glPopMatrix();
                 }
             }
 
@@ -101,60 +162,6 @@ public class PlacedGun_Render extends Render {
 
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)lastBrightnessX, (float)lastBrightnessY);
         GL11.glPopMatrix();
-    }
-
-    /**
-     * Safely attempt to retrieve sight (slot 1) from the gun stack's NBT.
-     * If NBT is missing, attempt to let the gunItem initialize tags (original behaviour),
-     * then re-check. Returns null when no sight found or on any missing data.
-     */
-    private ItemStack getSightSafe(ItemStack gunStack, net.minecraft.item.Item gunItemGeneric) {
-        if (gunStack == null) return null;
-
-        NBTTagCompound nbt = gunStack.getTagCompound();
-        if (nbt == null) {
-            // original code calls checkTags on gunItem; only call if the item actually has that method.
-            try {
-                // try calling checkTags(Object) via the expected gunItem type if available
-                // many of your gunItem classes implement checkTags(ItemStack), so keep the original behavior:
-                if (gunItemGeneric instanceof handmadeguns.items.guns.HMGItem_Unified_Guns) {
-                    ((handmadeguns.items.guns.HMGItem_Unified_Guns) gunItemGeneric).checkTags(gunStack);
-                } else {
-                    // fallback: attempt reflection if your actual item class is different
-                    // avoid throwing if method not present
-                    try {
-                        java.lang.reflect.Method m = gunItemGeneric.getClass().getMethod("checkTags", ItemStack.class);
-                        m.invoke(gunItemGeneric, gunStack);
-                    } catch (NoSuchMethodException ignored) {
-                        // nothing we can do; continue
-                    }
-                }
-            } catch (Throwable ignored) {
-                // ignore any errors from checkTags
-            }
-            nbt = gunStack.getTagCompound();
-        }
-
-        if (nbt == null) return null;
-
-        // original code used nbt.getTag("Items") and casted to NBTTagList; guard against null
-        if (!nbt.hasKey("Items")) return null;
-        NBTTagList tags = (NBTTagList) nbt.getTag("Items");
-        if (tags == null) return null;
-
-        for (int i = 0; i < tags.tagCount(); i++) {
-            NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
-            if (tagCompound == null) continue;
-            int slot = tagCompound.getByte("Slot");
-            if (slot == 1) { // sight slot
-                try {
-                    return ItemStack.loadItemStackFromNBT(tagCompound);
-                } catch (Throwable ignored) {
-                    // if load fails, continue searching
-                }
-            }
-        }
-        return null;
     }
 
     @Override
