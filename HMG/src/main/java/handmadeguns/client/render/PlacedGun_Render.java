@@ -37,7 +37,7 @@ public class PlacedGun_Render extends Render {
         if (entity.riddenByEntity == FMLClientHandler.instance().getClientPlayerEntity() && entity.gunStack != null && entity.gunItem != null) {
             ItemStack itemstackSight = getSightSafe(entity.gunStack, entity.gunItem);
 
-            if (HandmadeGunsCore.Key_ADS(entity.riddenByEntity) && !entity.isSprinting()) {
+            if (HandmadeGunsCore.Key_ADS(entity.riddenByEntity) && (entity.riddenByEntity == null || !entity.riddenByEntity.isSprinting())) {
                 if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase) {
                     HMGItemSightBase sight = (HMGItemSightBase) itemstackSight.getItem();
                     if (sight.scopeonly) {
