@@ -22,6 +22,8 @@ import static handmadeguns.HandmadeGunsCore.smooth;
 import static net.minecraft.util.MathHelper.wrapAngleTo180_float;
 
 public class PlacedGun_Render extends Render {
+
+    //TODO: UNFUCK THIS ENTIRE GODDAMN CLASS HOLY FUCKING SHIT ITS SO ASS
     @Override
     public void doRender(Entity p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
         doRender((PlacedGunEntity)p_76986_1_,p_76986_2_,p_76986_4_,p_76986_6_,p_76986_8_,p_76986_9_);
@@ -52,7 +54,7 @@ public class PlacedGun_Render extends Render {
                 }
             }
             ItemStack itemstackSight = items[1];
-            if (HandmadeGunsCore.Key_ADS(entity.riddenByEntity)) {
+            if (HandmadeGunsCore.Key_ADS(entity.riddenByEntity) && !entity.isSprinting()) {
                 if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase) {
                     if (((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
                         return;
