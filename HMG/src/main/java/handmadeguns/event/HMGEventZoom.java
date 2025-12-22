@@ -373,14 +373,11 @@ public class HMGEventZoom {
 										}
 									}
 								} else {
-									if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomren && !isentitysprinting(entityplayer)) {
-										ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-												gunItem.gunInfo.scopezoombase, "cameraZoom", "field_78503_V");
-										currentZoomLevel = gunItem.gunInfo.scopezoombase;
-										needreset = true;
-									}
-									if (gunItem.gunInfo.zoomrent && !isentitysprinting(entityplayer)) {
-										renderPumpkinBlur(minecraft, ads);
+									if (!isentitysprinting(entityplayer)) {
+										// FOV zoom is handled in FOVUpdateEvent
+										if (gunItem.gunInfo.zoomrent) {
+											renderPumpkinBlur(minecraft, ads);
+										}
 									}
 								}
 								if (gunItem.gunInfo.renderMCcross) {
