@@ -15,6 +15,7 @@ public class HGBaseItems {
     // ITEMS
     // ===================
     public static Item steelIngot;
+    public static Item copperIngot;
     public static Item aluminumIngot;
     public static Item polymer;
     public static Item springSet;
@@ -37,6 +38,11 @@ public class HGBaseItems {
         steelIngot = new Item()
                 .setUnlocalizedName("steelIngot")
                 .setTextureName("handmadeguns:steel_ingot")
+                .setCreativeTab(tabHMGCrafting);
+
+        copperIngot = new Item()
+                .setUnlocalizedName("copperIngot")
+                .setTextureName("handmadeguns:copper_ingot")
                 .setCreativeTab(tabHMGCrafting);
 
         aluminumIngot = new Item()
@@ -65,6 +71,7 @@ public class HGBaseItems {
                 .setCreativeTab(tabHMGCrafting);
 
         GameRegistry.registerItem(steelIngot, "steelIngot");
+        GameRegistry.registerItem(copperIngot, "copperIngot");
         GameRegistry.registerItem(aluminumIngot, "aluminumIngot");
         GameRegistry.registerItem(polymer, "polymer");
         GameRegistry.registerItem(springSet, "springSet");
@@ -75,6 +82,7 @@ public class HGBaseItems {
         // === ORE DICTIONARY REGISTRATION ===
         OreDictionary.registerOre("ingotSteel", steelIngot);
         OreDictionary.registerOre("ingotAluminum", aluminumIngot);
+        OreDictionary.registerOre("ingotCopper", copperIngot);
 
         // === RECIPES ===
 
