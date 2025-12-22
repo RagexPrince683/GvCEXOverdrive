@@ -4,7 +4,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import handmadeguns.HandmadeGunsCore;
-import handmadeguns.items.HMGItemSightBase;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -18,38 +17,23 @@ public class HMGFovHandler {
         if (!(event.entity instanceof EntityPlayer)) return;
 
         EntityPlayer player = (EntityPlayer) event.entity;
-
-        if (!HandmadeGunsCore.Key_ADS(player)) return;
-        if (player.isSprinting()) return;
-
         ItemStack held = player.getHeldItem();
         if (held == null) return;
+
         if (!(held.getItem() instanceof HMGItem_Unified_Guns)) return;
 
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
 
-        float zoom = 1.0f;
+        // ADS only
+        if (!HandmadeGunsCore.Key_ADS(player)) return;
 
-        // Base gun zoom
-        if (!gun.gunInfo.canobj && gun.gunInfo.scopezoombase > 0f) {
-            zoom = gun.gunInfo.scopezoombase;
-        }
+        // Sprinting cancels zoom
+        if (player.isSprinting()) return;
 
-        // Sight override
-        ItemStack sight = gun(held); // however you resolve this
-        if (sight != null && sight.getItem() instanceof HMGItemSightBase) {
-            HMGItem_Unified_Guns sightItem = (HMGItem_Unified_Guns) sight.getItem();
+        // Apply zoom safely
+        float zoom = gun.gunInfo.scopezoombase;
+        if (zoom <= 0f) return;
 
-            if (!gun.gunInfo.canobj || sightItem.scopeonly) {
-                if (sightItem.zoomlevel > 0f) {
-                    zoom = sightItem.zoomlevel;
-                }
-            }
-        }
-
-        if (zoom > 0f) {
-            event.newfov /= zoom;
-        }
+        event.newfov /= zoom;
     }
 }
-
