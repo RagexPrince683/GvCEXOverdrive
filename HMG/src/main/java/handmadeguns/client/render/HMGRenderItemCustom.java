@@ -72,6 +72,8 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 				break;
 			case EQUIPPED_FIRST_PERSON://first
 			{
+				//TODO adjust based on player FOV setting
+
 //					boolean cocking = nbt.getBoolean("Cocking");
 				GL11.glPushMatrix();
 				GL11.glRotatef(180F, 1.0F, 0.0F, 0.0F);
@@ -132,9 +134,9 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 
 
 		if(cfgRender_useStencil && pass==1){
-			//INSERT : ƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚É•`‰æŠJn
-			//       : •ÛŒ¯‚ÅMatrix‚ğˆê‘w[‚­
-			//       : e‚ÌƒeƒNƒXƒ`ƒƒ‚ğÄbind
+			//INSERT : ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½oï¿½bï¿½tï¿½@ï¿½É•`ï¿½ï¿½Jï¿½n
+			//       : ï¿½ÛŒï¿½ï¿½ï¿½Matrixï¿½ï¿½ï¿½ï¿½wï¿½[ï¿½ï¿½
+			//       : ï¿½eï¿½Ìƒeï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½bind
 //			FBO.start();
 //			GL11.glPushMatrix();
 			FMLClientHandler.instance().getClient().getTextureManager().bindTexture(this.texture);
@@ -188,7 +190,7 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 			glAlphaFunc(GL_GREATER, 0);
 			GL11.glDepthMask(false);
 
-			GL11.glDepthFunc(GL11.GL_ALWAYS);//‹­§•`‰æ
+			GL11.glDepthFunc(GL11.GL_ALWAYS);//ï¿½ï¿½ï¿½ï¿½ï¿½`ï¿½ï¿½
 			GL11.glDisable(GL11.GL_LIGHTING);
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
 			modeling.renderPart("reticle_light");
@@ -201,11 +203,11 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 
 
 
-//			//INSET : Matrix‚ğã‘w‚Ö•œŒ³
-//			//      : FBO‚©‚çƒeƒNƒXƒ`ƒƒID‚ğæ“¾
-//			//      : ‰æ–Ê‚Éo—Í‚Å‚«‚é‚æ‚¤‚ÉMatrix‚ğ•Û‘¶‚µ‰Šú‰»
-//			//      : ƒeƒNƒXƒ`ƒƒ‚ğViwerPort‚Éo—Í
-//			//      : •Û‘¶‚µ‚½Matrix‚ğŒÄ‚Ñ–ß‚·
+//			//INSET : Matrixï¿½ï¿½ï¿½ï¿½wï¿½Ö•ï¿½ï¿½ï¿½
+//			//      : FBOï¿½ï¿½ï¿½ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½IDï¿½ï¿½ï¿½æ“¾
+//			//      : ï¿½ï¿½Ê‚Éoï¿½Í‚Å‚ï¿½ï¿½ï¿½æ‚¤ï¿½ï¿½Matrixï¿½ï¿½Û‘ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//			//      : ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½ï¿½ViwerPortï¿½Éoï¿½ï¿½
+//			//      : ï¿½Û‘ï¿½ï¿½ï¿½ï¿½ï¿½Matrixï¿½ï¿½ï¿½Ä‚Ñ–ß‚ï¿½
 //			GL11.glPopMatrix();
 //			int tex = FBO.end();
 //
