@@ -30,6 +30,11 @@ public class HMGFovHandler {
         // Sprinting cancels zoom
         if (player.isSprinting()) return;
 
+        //todo grab the following as well:
+        // gunItem.gunInfo.scopezoomscope
+        // ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel
+        // gunItem.gunInfo.scopezoomred
+
         // Apply zoom safely
         float zoom = gun.gunInfo.scopezoombase;
         if (zoom <= 0f) return;
