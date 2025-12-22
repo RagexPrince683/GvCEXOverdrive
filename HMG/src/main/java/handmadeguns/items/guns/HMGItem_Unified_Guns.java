@@ -110,6 +110,7 @@ public class HMGItem_Unified_Guns extends Item {
 			// par3List.add(EnumChatFormatting.YELLOW + "MagazimeType " +
 			// StatCollector.translateToLocal("ARMagazine"));
 			if (!(gunInfo.scopezoombase == 1.0f)) {
+				//todo: traceback
 				String scopezoom = String.valueOf(gunInfo.scopezoombase);
 				par3List.add(EnumChatFormatting.WHITE + "Scope Zoom " + "x" + StatCollector.translateToLocal(scopezoom));
 			}

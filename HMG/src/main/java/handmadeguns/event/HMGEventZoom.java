@@ -379,7 +379,7 @@ public class HMGEventZoom {
 										currentZoomLevel = gunItem.gunInfo.scopezoombase;
 										needreset = true;
 									}
-									if (gunItem.gunInfo.zoomrent) {
+									if (gunItem.gunInfo.zoomrent && !isentitysprinting(entityplayer)) {
 										renderPumpkinBlur(minecraft, ads);
 									}
 								}
