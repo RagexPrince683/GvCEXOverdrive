@@ -141,8 +141,26 @@ public class CommonSideProxyHMG {
 		return null;
 	}
 
-	public float getFOVModifier(Minecraft mc,float p_78481_1_, boolean p_78481_2_) {
-		return 0;
+	public float getFOVModifier(Minecraft mc, float partialTicks, boolean useZoom) {
+		// Base FOV authored at 95
+		float baseFOV = 95.0F;
+
+		// Get player's current FOV setting
+		float playerFOV = mc.gameSettings.fovSetting;
+
+		// Simple scale relative to authored FOV
+		float fovScale = playerFOV / baseFOV;
+
+		// Optional clamp to avoid extreme distortion
+		fovScale = Math.max(0.7F, Math.min(1.3F, fovScale));
+
+		// If you want, zooming can further scale down FOV
+		if (useZoom) {
+			// Example: halve FOV when zooming
+			fovScale *= 0.5F;
+		}
+
+		return fovScale * baseFOV;
 	}
 
 	public ItemStack[] getPrevEquippedItems(EntityLivingBase entityLivingBase){

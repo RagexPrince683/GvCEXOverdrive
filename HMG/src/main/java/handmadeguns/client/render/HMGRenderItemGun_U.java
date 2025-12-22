@@ -464,14 +464,26 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 					setUp3DView(Minecraft.getMinecraft(),smoothing);
 
 					EntityPlayer entityplayer = (EntityPlayer)Minecraft.getMinecraft().thePlayer;
+
+					// --- FOV scaling ---
+					float baseFOV = 95.0F;
+					float playerFOV = Minecraft.getMinecraft().gameSettings.fovSetting;
+					float fovScale = Math.max(0.7F, Math.min(1.3F, playerFOV / baseFOV));
+
 					float f1 = entityplayer.distanceWalkedModified - entityplayer.prevDistanceWalkedModified;
-					float f2 = -(entityplayer.distanceWalkedModified + f1 * smoothing);
-					float f3 = entityplayer.prevCameraYaw + (entityplayer.cameraYaw - entityplayer.prevCameraYaw) * smoothing;
-					float f4 = entityplayer.prevCameraPitch + (entityplayer.cameraPitch - entityplayer.prevCameraPitch) * smoothing;
+					float f2 = -(entityplayer.distanceWalkedModified + f1 * smoothing) * fovScale;
+					float f3 = (entityplayer.prevCameraYaw + (entityplayer.cameraYaw - entityplayer.prevCameraYaw) * smoothing) * fovScale;
+					float f4 = (entityplayer.prevCameraPitch + (entityplayer.cameraPitch - entityplayer.prevCameraPitch) * smoothing);
 					GL11.glTranslatef(MathHelper.sin(f2 * (float)Math.PI) * f3 * 0.5F, -Math.abs(MathHelper.cos(f2 * (float)Math.PI) * f3), 0.0F);
 					GL11.glRotatef(MathHelper.sin(f2 * (float)Math.PI) * f3 * 3.0F, 0.0F, 0.0F, 1.0F);
 					GL11.glRotatef(Math.abs(MathHelper.cos(f2 * (float)Math.PI - 0.2F) * f3) * 5.0F, 1.0F, 0.0F, 0.0F);
 					GL11.glRotatef(f4, 1.0F, 0.0F, 0.0F);
+
+					// --- model offsets ---
+					modelx *= fovScale;
+					modely *= fovScale;
+					modelz *= fovScale;
+
 //					boolean cocking = nbt.getBoolean("Cocking");
 					float cockingtime = nbt.getInteger("CockingTime") + smoothing - 1;
 					boolean recoiled = nbt.getBoolean("Recoiled");
