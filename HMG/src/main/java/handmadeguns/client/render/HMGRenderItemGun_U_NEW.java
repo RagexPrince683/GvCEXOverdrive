@@ -370,44 +370,76 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			case INVENTORY:
 				glMatrixForRenderInInventory();
 				break;
-			case EQUIPPED_FIRST_PERSON://first
+			case EQUIPPED_FIRST_PERSON: // first
 			{
-
-				for(pass = 0;pass<2;pass++) {
+				for (pass = 0; pass < 2; pass++)
+				{
 					partsRender_gun.pass = pass;
 					isfirstperson = true;
+
 					EntityLivingBase entity = (EntityLivingBase) data[1];
 					PartsRender_Gun.curretnEntity = entity;
-					Minecraft.getMinecraft().renderEngine.bindTexture(guntexture);
+
+					Minecraft mc = Minecraft.getMinecraft();
+					mc.renderEngine.bindTexture(guntexture);
+
 					GL11.glPushMatrix();
+
+					/* =========================================================
+					 * FOV COMPENSATION
+					 * Authored at vanilla 95 FOV
+					 * Apply ONCE, before any transforms
+					 * ========================================================= */
+					float playerFov = mc.gameSettings.fovSetting;
+					float fovScale = playerFov / 95.0F;
+					fovScale = Math.max(0.7F, Math.min(1.3F, fovScale));
+					GL11.glScalef(fovScale, fovScale, fovScale);
+					/* ========================================================= */
+
 					ItemStack itemstackSight = items[1];
-					if (firstPerson_ADSState && prevADSState) {
-						if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase) {
-							if (((HMGItemSightBase) itemstackSight.getItem()).scopeonly  && !isentitysprinting(entity)) {
-								GL11.glPopMatrix();//glend1
+
+					if (firstPerson_ADSState && prevADSState)
+					{
+						if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase)
+						{
+							if (((HMGItemSightBase) itemstackSight.getItem()).scopeonly && !isentitysprinting(entity))
+							{
+								GL11.glPopMatrix();
 								break;
-							} else if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
-								if (!gunitem.gunInfo.zoomrer && !isentitysprinting(entity)) {
-									GL11.glPopMatrix();//glend1
-									break;
-								}
-							} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
-								if (!gunitem.gunInfo.zoomres && !isentitysprinting(entity)) {
-									GL11.glPopMatrix();//glend1
+							}
+							else if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot)
+							{
+								if (!gunitem.gunInfo.zoomrer && !isentitysprinting(entity))
+								{
+									GL11.glPopMatrix();
 									break;
 								}
 							}
-						} else {
-							if (!gunitem.gunInfo.zoomren && !isentitysprinting(entity)) {
-								GL11.glPopMatrix();//glend1
+							else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope)
+							{
+								if (!gunitem.gunInfo.zoomres && !isentitysprinting(entity))
+								{
+									GL11.glPopMatrix();
+									break;
+								}
+							}
+						}
+						else
+						{
+							if (!gunitem.gunInfo.zoomren && !isentitysprinting(entity))
+							{
+								GL11.glPopMatrix();
 								break;
 							}
 						}
 					}
+
 					thirdmodelPosX = thirdmodelPosX_Normal;
 					thirdmodelPosY = thirdmodelPosY_Normal;
 					thirdmodelPosZ = thirdmodelPosZ_Normal;
-					if (itemstackSight == null) {
+
+					if (itemstackSight == null)
+					{
 						modelPosX = modelPosX_Normal;
 						modelPosY = modelPosY_Normal;
 						modelPosZ = modelPosZ_Normal;
@@ -423,99 +455,115 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 						onads_modelRotationX = onads_modelRotationX_Normal;
 						onads_modelRotationY = onads_modelRotationY_Normal;
 						onads_modelRotationZ = onads_modelRotationZ_Normal;
-					} else {
-						if (itemstackSight.getItem() instanceof HMGItemSightBase && ((HMGItemSightBase) itemstackSight.getItem()).needgunoffset) {
-							modelPosX = modelPosX_Normal - ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[0] * scala / 2;
-							modelPosY = modelPosY_Normal - ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[1] * scala / 2;
-							modelPosZ = modelPosZ_Normal - ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[2] * scala / 2;
-
-							modelRotationX = modelRotationX_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[0];
-							modelRotationY = modelRotationY_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[1];
-							modelRotationZ = modelRotationZ_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[2];
-//
-//						onads_modelPosX = onads_modelPosX_Normal - ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[0]*scala/2;
-//						onads_modelPosY = onads_modelPosY_Normal - ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[1]*scala/2;
-//						onads_modelPosZ = onads_modelPosZ_Normal - ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[2]*scala/2;
-							onads_modelPosX = -(partsRender_gun.sightattachoffset[0] + ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[0]) * scala;
-							onads_modelPosY = -(partsRender_gun.sightattachoffset[1] + ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[1]) * scala;
-							onads_modelPosZ = -(partsRender_gun.sightattachoffset[2] + ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[2]) * scala;
-							onads_modelRotationX = onads_modelRotationX_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[0];
-							onads_modelRotationY = onads_modelRotationY_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[1];
-							onads_modelRotationZ = onads_modelRotationZ_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[2];
-						} else if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
-							modelPosX = modelPosX_Red;
-							modelPosY = modelPosY_Red;
-							modelPosZ = modelPosZ_Red;
-
-							modelRotationX = modelRotationX_Red;
-							modelRotationY = modelRotationY_Red;
-							modelRotationZ = modelRotationZ_Red;
-
-							onads_modelPosX = onads_modelPosX_Red;
-							onads_modelPosY = onads_modelPosY_Red;
-							onads_modelPosZ = onads_modelPosZ_Red;
-
-							onads_modelRotationX = onads_modelRotationX_Red;
-							onads_modelRotationY = onads_modelRotationY_Red;
-							onads_modelRotationZ = onads_modelRotationZ_Red;
-						} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
-							modelPosX = modelPosX_Scope;
-							modelPosY = modelPosY_Scope;
-							modelPosZ = modelPosZ_Scope;
-
-							modelRotationX = modelRotationX_Scope;
-							modelRotationY = modelRotationY_Scope;
-							modelRotationZ = modelRotationZ_Scope;
-
-							onads_modelPosX = onads_modelPosX_Scope;
-							onads_modelPosY = onads_modelPosY_Scope;
-							onads_modelPosZ = onads_modelPosZ_Scope;
-
-							onads_modelRotationX = onads_modelRotationX_Scope;
-							onads_modelRotationY = onads_modelRotationY_Scope;
-							onads_modelRotationZ = onads_modelRotationZ_Scope;
-						}
 					}
-					setUp3DView(Minecraft.getMinecraft(),smoothing);
-					GL11.glScalef(0.1f,0.1f,0.1f);
+					else if (itemstackSight.getItem() instanceof HMGItemSightBase
+							&& ((HMGItemSightBase) itemstackSight.getItem()).needgunoffset)
+					{
+						modelPosX = modelPosX_Normal - ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[0] * scala / 2;
+						modelPosY = modelPosY_Normal - ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[1] * scala / 2;
+						modelPosZ = modelPosZ_Normal - ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[2] * scala / 2;
+
+						modelRotationX = modelRotationX_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[0];
+						modelRotationY = modelRotationY_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[1];
+						modelRotationZ = modelRotationZ_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[2];
+
+						onads_modelPosX = -(partsRender_gun.sightattachoffset[0]
+								+ ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[0]) * scala;
+						onads_modelPosY = -(partsRender_gun.sightattachoffset[1]
+								+ ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[1]) * scala;
+						onads_modelPosZ = -(partsRender_gun.sightattachoffset[2]
+								+ ((HMGItemSightBase) itemstackSight.getItem()).gunoffset[2]) * scala;
+
+						onads_modelRotationX = onads_modelRotationX_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[0];
+						onads_modelRotationY = onads_modelRotationY_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[1];
+						onads_modelRotationZ = onads_modelRotationZ_Normal + ((HMGItemSightBase) itemstackSight.getItem()).gunrotation[2];
+					}
+					else if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot)
+					{
+						modelPosX = modelPosX_Red;
+						modelPosY = modelPosY_Red;
+						modelPosZ = modelPosZ_Red;
+
+						modelRotationX = modelRotationX_Red;
+						modelRotationY = modelRotationY_Red;
+						modelRotationZ = modelRotationZ_Red;
+
+						onads_modelPosX = onads_modelPosX_Red;
+						onads_modelPosY = onads_modelPosY_Red;
+						onads_modelPosZ = onads_modelPosZ_Red;
+
+						onads_modelRotationX = onads_modelRotationX_Red;
+						onads_modelRotationY = onads_modelRotationY_Red;
+						onads_modelRotationZ = onads_modelRotationZ_Red;
+					}
+					else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope)
+					{
+						modelPosX = modelPosX_Scope;
+						modelPosY = modelPosY_Scope;
+						modelPosZ = modelPosZ_Scope;
+
+						modelRotationX = modelRotationX_Scope;
+						modelRotationY = modelRotationY_Scope;
+						modelRotationZ = modelRotationZ_Scope;
+
+						onads_modelPosX = onads_modelPosX_Scope;
+						onads_modelPosY = onads_modelPosY_Scope;
+						onads_modelPosZ = onads_modelPosZ_Scope;
+
+						onads_modelRotationX = onads_modelRotationX_Scope;
+						onads_modelRotationY = onads_modelRotationY_Scope;
+						onads_modelRotationZ = onads_modelRotationZ_Scope;
+					}
+
+					setUp3DView(mc, smoothing);
+
+					GL11.glScalef(0.1F, 0.1F, 0.1F);
 					GL11.glClearDepth(0);
 
-					EntityPlayer entityplayer = (EntityPlayer)Minecraft.getMinecraft().thePlayer;
+					EntityPlayer entityplayer = mc.thePlayer;
 					float f1 = entityplayer.distanceWalkedModified - entityplayer.prevDistanceWalkedModified;
 					float f2 = -(entityplayer.distanceWalkedModified + f1 * smoothing);
 					float f3 = entityplayer.prevCameraYaw + (entityplayer.cameraYaw - entityplayer.prevCameraYaw) * smoothing;
 					float f4 = entityplayer.prevCameraPitch + (entityplayer.cameraPitch - entityplayer.prevCameraPitch) * smoothing;
-					GL11.glTranslatef(MathHelper.sin(f2 * (float)Math.PI) * f3 * 0.5F, -Math.abs(MathHelper.cos(f2 * (float)Math.PI) * f3), 0.0F);
-					GL11.glRotatef(MathHelper.sin(f2 * (float)Math.PI) * f3 * 3.0F, 0.0F, 0.0F, 1.0F);
-					GL11.glRotatef(Math.abs(MathHelper.cos(f2 * (float)Math.PI - 0.2F) * f3) * 5.0F, 1.0F, 0.0F, 0.0F);
+
+					GL11.glTranslatef(MathHelper.sin(f2 * (float) Math.PI) * f3 * 0.5F,
+							-Math.abs(MathHelper.cos(f2 * (float) Math.PI) * f3),
+							0.0F);
+					GL11.glRotatef(MathHelper.sin(f2 * (float) Math.PI) * f3 * 3.0F, 0.0F, 0.0F, 1.0F);
+					GL11.glRotatef(Math.abs(MathHelper.cos(f2 * (float) Math.PI - 0.2F) * f3) * 5.0F, 1.0F, 0.0F, 0.0F);
 					GL11.glRotatef(f4, 1.0F, 0.0F, 0.0F);
 
-					boolean isreloading = this.getbooleanfromnbt("IsReloading");
-					if(firstPerson_ReloadState) {
-						if (prevReloadState) {//リロード中
-							this.setUpGunPos_equipe(0);
-						} else if (prevSprintState) {//スプリント中にリロード開始
-							this.setUpGunPos_equipe_sprint(0,1 - smoothing);
-						} else if (prevADSState) {//ADS中にリロード開始
-							this.setUpGunPos_ADS(-1.4f, 1 - smoothing);
-						}else this.setUpGunPos_equipe(0);
-					}else if (firstPerson_ADSState && prevADSState) {//リロードは初期位置で行っているのでリロード終了時移動の必要は無し
-						this.setUpGunPos_ADS(-1.4f);
-					} else if(firstPerson_ADSState){//走り始め
-						this.setUpGunPos_ADS(-1.4f,smoothing);
-					} else if(prevADSState){//走り終わり
-						this.setUpGunPos_ADS(-1.4f,1-smoothing);
-					}else if (firstPerson_SprintState && prevSprintState) {
-						this.setUpGunPos_equipe_sprint(0,1);
-					} else if(firstPerson_SprintState){//走り始め
-						this.setUpGunPos_equipe_sprint(0,smoothing);
-					} else if(prevSprintState){//走り終わり
-						this.setUpGunPos_equipe_sprint(0,1-smoothing);
-					}else {
-						this.setUpGunPos_equipe(0);
+					//boolean isreloading = this.getbooleanfromnbt("IsReloading");
+					//ununused?
+					if (firstPerson_ReloadState)
+					{
+						if (prevReloadState)
+							setUpGunPos_equipe(0);
+						else if (prevSprintState)
+							setUpGunPos_equipe_sprint(0, 1 - smoothing);
+						else if (prevADSState)
+							setUpGunPos_ADS(-1.4F, 1 - smoothing);
+						else
+							setUpGunPos_equipe(0);
 					}
+					else if (firstPerson_ADSState && prevADSState)
+						setUpGunPos_ADS(-1.4F);
+					else if (firstPerson_ADSState)
+						setUpGunPos_ADS(-1.4F, smoothing);
+					else if (prevADSState)
+						setUpGunPos_ADS(-1.4F, 1 - smoothing);
+					else if (firstPerson_SprintState && prevSprintState)
+						setUpGunPos_equipe_sprint(0, 1);
+					else if (firstPerson_SprintState)
+						setUpGunPos_equipe_sprint(0, smoothing);
+					else if (prevSprintState)
+						setUpGunPos_equipe_sprint(0, 1 - smoothing);
+					else
+						setUpGunPos_equipe(0);
+
 					GL11.glScalef(this.modelscala, this.modelscala, this.modelscala);
-					rendering_situation(gunstack,entity);
+					rendering_situation(gunstack, entity);
+
 					GL11.glPopMatrix();
 					isfirstperson = false;
 				}
@@ -1307,21 +1355,28 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 	}
 
 	public void setEqippedOffset_Normal(float x, float y, float z){
-		modelPosX = x;
-		modelPosY = y;
-		modelPosZ = z;
-		modelPosX_Normal = x;
-		modelPosY_Normal = y;
-		modelPosZ_Normal = z;
+		Minecraft mc = Minecraft.getMinecraft();
+		float fovScale = mc.gameSettings.fovSetting / 95.0F;
+		fovScale = Math.max(0.7F, Math.min(1.3F, fovScale)); // optional clamp
 
-		modelPosX_Red = x;
-		modelPosY_Red = y;
-		modelPosZ_Red = z;
+		// Apply FOV scaling to all first-person offsets
+		modelPosX = x * fovScale;
+		modelPosY = y * fovScale;
+		modelPosZ = z * fovScale;
 
-		modelPosX_Scope = x;
-		modelPosY_Scope = y;
-		modelPosZ_Scope = z;
+		modelPosX_Normal = x * fovScale;
+		modelPosY_Normal = y * fovScale;
+		modelPosZ_Normal = z * fovScale;
+
+		modelPosX_Red = x * fovScale;
+		modelPosY_Red = y * fovScale;
+		modelPosZ_Red = z * fovScale;
+
+		modelPosX_Scope = x * fovScale;
+		modelPosY_Scope = y * fovScale;
+		modelPosZ_Scope = z * fovScale;
 	}
+
 	public void setEqippedOffset_Third(float x, float y, float z){
 		thirdmodelPosX = x;
 		thirdmodelPosY = y;
