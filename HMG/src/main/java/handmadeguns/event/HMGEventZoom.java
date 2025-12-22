@@ -362,11 +362,14 @@ public class HMGEventZoom {
 											renderPumpkinBlur(minecraft, adss);
 										}
 									} else if (itemstackSight.getItem() instanceof HMGItemSightBase) {
-										if (!gunItem.gunInfo.canobj || ((HMGItemSightBase) itemstackSight.getItem()).scopeonly && !isentitysprinting(entityplayer)) {
-											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-													((HMGItemSightBase) itemstackSight.getItem()).zoomlevel, "cameraZoom", "field_78503_V");
+										if (!gunItem.gunInfo.canobj || ((HMGItemSightBase) itemstackSight.getItem()).scopeonly ) {
+											//&& !isentitysprinting(entityplayer)
+											//ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+											//		((HMGItemSightBase) itemstackSight.getItem()).zoomlevel, "cameraZoom", "field_78503_V");
+											//do not fucking do that
 											currentZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
-											needreset = true;
+											//needreset = true;
+											//or that
 										}
 										if (((HMGItemSightBase) itemstackSight.getItem()).scopetexture != null) {
 											renderPumpkinBlur(minecraft, ((HMGItemSightBase) itemstackSight.getItem()).scopetexture);

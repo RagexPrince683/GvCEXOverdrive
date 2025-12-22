@@ -13,6 +13,7 @@ import handmadeguns.client.audio.ReloadSoundHMG;
 import handmadeguns.client.modelLoader.emb_modelloader.MQO_ModelLoader;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
+import handmadeguns.event.HMGFovHandler;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadeguns.network.PacketSpawnParticle;
 import handmadeguns.client.render.*;
@@ -191,6 +192,7 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		ClientRegistry.registerKeyBinding(SeekerOpen_Close.keyBinding);
 		ClientRegistry.registerKeyBinding(Mode.keyBinding);
 		MinecraftForge.EVENT_BUS.register(new HMGParticles());
+		MinecraftForge.EVENT_BUS.register(new HMGFovHandler());
 
 		try {
 			RenderingRegistry.registerEntityRenderingHandler(HMGEntityItemMount.class, new HMGRenderItemMount());
