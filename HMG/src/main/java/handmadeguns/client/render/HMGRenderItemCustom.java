@@ -13,6 +13,9 @@ import net.minecraftforge.client.model.IModelCustom;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.util.MathHelper;
+
+
 import java.nio.FloatBuffer;
 
 import static handmadeguns.HandmadeGunsCore.cfgRender_useStencil;
@@ -70,19 +73,32 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 		switch (type) {
 			case INVENTORY:
 				break;
-			case EQUIPPED_FIRST_PERSON://first
+			case EQUIPPED_FIRST_PERSON:
 			{
-				//TODO adjust based on player FOV setting
+				Minecraft mc = Minecraft.getMinecraft();
 
-//					boolean cocking = nbt.getBoolean("Cocking");
+				// Player-configured FOV (vanilla default is 95)
+				float playerFov = mc.gameSettings.fovSetting;
+
+				// Authored at vanilla 95 FOV
+				float fovScale = playerFov / 95.0f;
+
+				// Clamp to avoid insanity
+				fovScale = Math.max(0.7F, Math.min(1.3F, fovScale));
+
 				GL11.glPushMatrix();
+
+				// FOV compensation (ONE LINE FIX)
+				GL11.glScalef(fovScale, fovScale, fovScale);
+
 				GL11.glRotatef(180F, 1.0F, 0.0F, 0.0F);
 				GL11.glRotatef(50F, 0.0F, 1.0F, 0.0F);
 				GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-				Minecraft.getMinecraft().renderEngine.bindTexture(texture);
-				GL11.glScalef(1, 1, 1);
+
+				mc.renderEngine.bindTexture(texture);
 				modeling.renderAll();
-				GL11.glPopMatrix();//glend2
+
+				GL11.glPopMatrix();
 				break;
 			}
 			case EQUIPPED://thrid
