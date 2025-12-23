@@ -7,12 +7,8 @@ import net.minecraft.creativetab.CreativeTabs;
 public class HGGunItems {
 
     // === Core gun parts ===
-    public static Item receiverBlank;
-    public static Item barrelBlank;
-    public static Item boltCarrier;
     public static Item firingPin;
     public static Item triggerAssembly;
-    public static Item polymerFrame;
 
     // === Weapon-family / category parts ===
     // Pistol
@@ -29,10 +25,11 @@ public class HGGunItems {
     public static Item arUpper;
     public static Item arLower;
     public static Item arBarrelKit;
+    public static Item arBoltCarrierGroup;
 
     // DMR
     public static Item dmrHeavyBarrel;
-    public static Item dmrPrecisionReceiver;
+    public static Item dmrPrecisionLower;
 
     // LMG
     public static Item lmgCarrier;
@@ -54,18 +51,6 @@ public class HGGunItems {
 
     public static void init() {
         // === Core gun parts ===
-        receiverBlank = new Item()
-                .setUnlocalizedName("receiverBlank")
-                .setTextureName("handmadeguns:receiver_blank")
-                .setCreativeTab(TAB);
-        barrelBlank = new Item()
-                .setUnlocalizedName("barrelBlank")
-                .setTextureName("handmadeguns:barrel_blank")
-                .setCreativeTab(TAB);
-        boltCarrier = new Item()
-                .setUnlocalizedName("boltCarrier")
-                .setTextureName("handmadeguns:bolt_carrier")
-                .setCreativeTab(TAB);
         firingPin = new Item()
                 .setUnlocalizedName("firingPin")
                 .setTextureName("handmadeguns:firing_pin")
@@ -73,10 +58,6 @@ public class HGGunItems {
         triggerAssembly = new Item()
                 .setUnlocalizedName("triggerAssembly")
                 .setTextureName("handmadeguns:trigger_assembly")
-                .setCreativeTab(TAB);
-        polymerFrame = new Item()
-                .setUnlocalizedName("polymerFrame")
-                .setTextureName("handmadeguns:polymer_frame")
                 .setCreativeTab(TAB);
 
         // === Pistol family ===
@@ -116,6 +97,10 @@ public class HGGunItems {
                 .setUnlocalizedName("arLower")
                 .setTextureName("handmadeguns:ar_lower")
                 .setCreativeTab(TAB);
+        arBoltCarrierGroup = new Item()
+                .setUnlocalizedName("arBoltCarrierGroup")
+                .setTextureName("handmadeguns:ar_bolt_carrier_group")
+                .setCreativeTab(TAB);
         arBarrelKit = new Item()
                 .setUnlocalizedName("arBarrelKit")
                 .setTextureName("handmadeguns:ar_barrel_kit")
@@ -126,9 +111,9 @@ public class HGGunItems {
                 .setUnlocalizedName("dmrHeavyBarrel")
                 .setTextureName("handmadeguns:dmr_heavy_barrel")
                 .setCreativeTab(TAB);
-        dmrPrecisionReceiver = new Item()
-                .setUnlocalizedName("dmrPrecisionReceiver")
-                .setTextureName("handmadeguns:dmr_precision_receiver")
+        dmrPrecisionLower = new Item()
+                .setUnlocalizedName("dmrPrecisionLower")
+                .setTextureName("handmadeguns:dmr_precision_lower")
                 .setCreativeTab(TAB);
 
         // === LMG family ===
@@ -174,12 +159,9 @@ public class HGGunItems {
                 .setCreativeTab(TAB);
 
         // === Registration ===
-        GameRegistry.registerItem(receiverBlank, "receiverBlank");
-        GameRegistry.registerItem(barrelBlank, "barrelBlank");
-        GameRegistry.registerItem(boltCarrier, "boltCarrier");
+        GameRegistry.registerItem(arBoltCarrierGroup, "arBoltCarrierGroup");
         GameRegistry.registerItem(firingPin, "firingPin");
         GameRegistry.registerItem(triggerAssembly, "triggerAssembly");
-        GameRegistry.registerItem(polymerFrame, "polymerFrame");
 
         GameRegistry.registerItem(pistolSlide, "pistolSlide");
         GameRegistry.registerItem(pistolBarrelKit, "pistolBarrelKit");
@@ -194,7 +176,7 @@ public class HGGunItems {
         GameRegistry.registerItem(arBarrelKit, "arBarrelKit");
 
         GameRegistry.registerItem(dmrHeavyBarrel, "dmrHeavyBarrel");
-        GameRegistry.registerItem(dmrPrecisionReceiver, "dmrPrecisionReceiver");
+        GameRegistry.registerItem(dmrPrecisionLower, "dmrPrecisionLower");
 
         GameRegistry.registerItem(lmgCarrier, "lmgCarrier");
         GameRegistry.registerItem(lmgHeavyBarrel, "lmgHeavyBarrel");

@@ -13,32 +13,6 @@ public class HGGunRecipes {
 
         // ===== CORE GUN PARTS =====
 
-        // Receiver Blank (basically a steel block with shaping)
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.receiverBlank),
-                "SIS",
-                "S S",
-                "SIS",
-                'S', HGBaseItems.steelIngot,
-                'I', Items.iron_ingot
-        );
-
-        // Barrel Blank (steel + coal for carbonizing)
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.barrelBlank),
-                " S ",
-                "SCS",
-                " S ",
-                'S', HGBaseItems.steelIngot,
-                'C', Items.coal
-        );
-
-        // Bolt Carrier (steel + springs)
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.boltCarrier),
-                "SSS",
-                " S ",
-                " S ",
-                'S', HGBaseItems.steelIngot
-        );
-
         // Firing Pin (steel + iron)
         GameRegistry.addRecipe(new ItemStack(HGGunItems.firingPin, 2),
                 " S ",
@@ -58,15 +32,6 @@ public class HGGunRecipes {
                 'R', Items.redstone
         );
 
-        // Polymer Frame (polymer + steel support)
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.polymerFrame),
-                "PPP",
-                "PSP",
-                "PPP",
-                'P', HGBaseItems.polymer,
-                'S', HGBaseItems.steelIngot
-        );
-
 
         // ===== PISTOL PARTS =====
 
@@ -78,10 +43,9 @@ public class HGGunRecipes {
         );
 
         GameRegistry.addRecipe(new ItemStack(HGGunItems.pistolBarrelKit),
-                " B ",
+                "   ",
                 " S ",
                 " I ",
-                'B', HGGunItems.barrelBlank,
                 'S', HGBaseItems.steelIngot,
                 'I', Items.iron_ingot
         );
@@ -106,10 +70,9 @@ public class HGGunRecipes {
         );
 
         GameRegistry.addRecipe(new ItemStack(HGGunItems.smgBarrelKit),
-                " B ",
+                "   ",
                 " S ",
                 " S ",
-                'B', HGGunItems.barrelBlank,
                 'S', HGBaseItems.steelIngot
         );
 
@@ -139,11 +102,17 @@ public class HGGunRecipes {
                 'S', HGBaseItems.steelIngot
         );
 
+        GameRegistry.addRecipe(new ItemStack(HGGunItems.arBoltCarrierGroup),
+                "SSS",
+                " S ",
+                " S ",
+                'S', HGBaseItems.steelIngot
+        );
+
         GameRegistry.addRecipe(new ItemStack(HGGunItems.arBarrelKit),
-                " B ",
+                "   ",
                 " A ",
                 " S ",
-                'B', HGGunItems.barrelBlank,
                 'A', HGBaseItems.aluminumIngot,
                 'S', HGBaseItems.steelIngot
         );
@@ -152,14 +121,13 @@ public class HGGunRecipes {
         // ===== DMR FAMILY =====
 
         GameRegistry.addRecipe(new ItemStack(HGGunItems.dmrHeavyBarrel),
-                " B ",
+                "   ",
                 " S ",
                 " S ",
-                'B', HGGunItems.barrelBlank,
                 'S', HGBaseItems.steelIngot
         );
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.dmrPrecisionReceiver),
+        GameRegistry.addRecipe(new ItemStack(HGGunItems.dmrPrecisionLower),
                 "SAS",
                 "R R",
                 "SAS",
@@ -179,10 +147,9 @@ public class HGGunRecipes {
         );
 
         GameRegistry.addRecipe(new ItemStack(HGGunItems.lmgHeavyBarrel),
-                " B ",
+                "   ",
                 " S ",
                 " S ",
-                'B', HGGunItems.barrelBlank,
                 'S', HGBaseItems.steelIngot
         );
 
