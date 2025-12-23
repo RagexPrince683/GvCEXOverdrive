@@ -39,7 +39,7 @@ public class HGGunItems {
     // Launcher / RPG
     public static Item launcherTube;
     public static Item launcherFiringAssembly;
-    public static Item launcherStabilizerHousing;
+    public static Item launcherGripFrame;
 
     // === Universal mounts / modules ===
     public static Item stockMount;
@@ -139,9 +139,9 @@ public class HGGunItems {
                 .setUnlocalizedName("launcherFiringAssembly")
                 .setTextureName("handmadeguns:launcher_firing_assembly")
                 .setCreativeTab(TAB);
-        launcherStabilizerHousing = new Item()
-                .setUnlocalizedName("launcherStabilizerHousing")
-                .setTextureName("handmadeguns:launcher_stabilizer_housing")
+        launcherGripFrame = new Item()
+                .setUnlocalizedName("launcherGripFrame")
+                .setTextureName("handmadeguns:launcher_grip_frame")
                 .setCreativeTab(TAB);
 
         // === Universal mounts / modules ===
@@ -184,7 +184,7 @@ public class HGGunItems {
 
         GameRegistry.registerItem(launcherTube, "launcherTube");
         GameRegistry.registerItem(launcherFiringAssembly, "launcherFiringAssembly");
-        GameRegistry.registerItem(launcherStabilizerHousing, "launcherStabilizerHousing");
+        GameRegistry.registerItem(launcherGripFrame, "launcherGripFrame");
 
         GameRegistry.registerItem(stockMount, "stockMount");
         GameRegistry.registerItem(opticMount, "opticMount");

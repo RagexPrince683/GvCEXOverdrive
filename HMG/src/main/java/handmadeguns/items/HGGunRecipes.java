@@ -180,7 +180,7 @@ public class HGGunRecipes {
                 'I', Items.iron_ingot
         );
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.launcherStabilizerHousing),
+        GameRegistry.addRecipe(new ItemStack(HGGunItems.launcherGripFrame),
                 " A ",
                 "ASA",
                 " A ",
