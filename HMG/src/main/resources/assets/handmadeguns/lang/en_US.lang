@@ -2,9 +2,12 @@
 item.hmg_handing.name=Gun_Rack
 item.hmg_handing2.name=Gun_Rack2
 
+tile.copperOre.name=Copper Ore
+tile.aluminumOre.name=Aluminum Ore
 item.steelIngot.name=Steel Ingot
 item.copperIngot.name=Copper Ingot
 item.aluminumIngot.name=Aluminum Ingot
+
 item.polymer.name=Polymer
 item.springSet.name=Spring Set
 item.ironInfusedCoal.name=Iron Infused Coal
