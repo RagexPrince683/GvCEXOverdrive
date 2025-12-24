@@ -1,11 +1,9 @@
 package handmadeguns.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import handmadeguns.items.HGBaseItems;
-import handmadeguns.items.HGGunItems;
 import net.minecraft.init.Items;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class HGGunRecipes {
 
@@ -13,206 +11,227 @@ public class HGGunRecipes {
 
         // ===== CORE GUN PARTS =====
 
-        // Firing Pin (steel + iron)
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.firingPin, 2),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.firingPin, 2),
                 " S ",
                 " I ",
                 " S ",
-                'S', HGBaseItems.steelIngot,
-                'I', Items.iron_ingot
-        );
+                'S', "ingotSteel",
+                'I', "ingotIron"
+        ));
 
-        // Trigger Assembly (steel + redstone for sear/trigger interaction)
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.triggerAssembly),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.triggerAssembly),
                 " S ",
                 "RIR",
                 " S ",
-                'S', HGBaseItems.steelIngot,
-                'I', Items.iron_ingot,
+                'S', "ingotSteel",
+                'I', "ingotIron",
                 'R', Items.redstone
-        );
+        ));
 
 
         // ===== PISTOL PARTS =====
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.pistolSlide),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.pistolSlide),
                 "SSS",
                 " S ",
                 "   ",
-                'S', HGBaseItems.steelIngot
-        );
+                'S', "ingotSteel"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.pistolBarrelKit),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.pistolBarrelKit),
                 "   ",
                 " S ",
                 " I ",
-                'S', HGBaseItems.steelIngot,
-                'I', Items.iron_ingot
-        );
+                'S', "ingotSteel",
+                'I', "ingotIron"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.pistolFrameInsert),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.pistolFrameInsert),
                 " P ",
                 "PSP",
                 " P ",
                 'P', HGBaseItems.polymer,
-                'S', HGBaseItems.steelIngot
-        );
+                'S', "ingotSteel"
+        ));
 
 
         // ===== SMG PARTS =====
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.smgReceiverBlock),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.smgReceiverBlock),
                 "SSS",
                 "SI ",
                 "SSS",
-                'S', HGBaseItems.steelIngot,
-                'I', Items.iron_ingot
-        );
+                'S', "ingotSteel",
+                'I', "ingotIron"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.smgBarrelKit),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.smgBarrelKit),
                 "   ",
                 " S ",
                 " S ",
-                'S', HGBaseItems.steelIngot
-        );
+                'S', "ingotSteel"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.smgBoltAssembly),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.smgBoltAssembly),
                 "SS ",
                 " S ",
                 " S ",
-                'S', HGBaseItems.steelIngot
-        );
+                'S', "ingotSteel"
+        ));
 
 
         // ===== AR FAMILY =====
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.arUpper),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.arUpper),
                 "SAS",
                 "S S",
                 "SSS",
-                'S', HGBaseItems.steelIngot,
-                'A', HGBaseItems.aluminumIngot
-        );
+                'S', "ingotSteel",
+                'A', "ingotAluminum"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.arLower),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.arLower),
                 "A A",
                 "AAA",
                 "ASA",
-                'A', HGBaseItems.aluminumIngot,
-                'S', HGBaseItems.steelIngot
-        );
+                'A', "ingotAluminum",
+                'S', "ingotSteel"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.arBoltCarrierGroup),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.arBoltCarrierGroup),
                 "SSS",
                 " S ",
                 " S ",
-                'S', HGBaseItems.steelIngot
-        );
+                'S', "ingotSteel"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.arBarrelKit),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.arBarrelKit),
                 "   ",
                 " A ",
                 " S ",
-                'A', HGBaseItems.aluminumIngot,
-                'S', HGBaseItems.steelIngot
-        );
+                'A', "ingotAluminum",
+                'S', "ingotSteel"
+        ));
 
 
         // ===== DMR FAMILY =====
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.dmrHeavyBarrel),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.dmrHeavyBarrel),
                 "   ",
                 " S ",
                 " S ",
-                'S', HGBaseItems.steelIngot
-        );
+                'S', "ingotSteel"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.dmrPrecisionLower),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.dmrPrecisionLower),
                 "SAS",
                 "R R",
                 "SAS",
-                'S', HGBaseItems.steelIngot,
-                'A', HGBaseItems.aluminumIngot,
+                'S', "ingotSteel",
+                'A', "ingotAluminum",
                 'R', Items.redstone
-        );
+        ));
 
 
         // ===== LMG FAMILY =====
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.lmgCarrier),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.lmgCarrier),
                 "SSS",
                 "SSS",
                 " S ",
-                'S', HGBaseItems.steelIngot
-        );
+                'S', "ingotSteel"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.lmgHeavyBarrel),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.lmgHeavyBarrel),
                 "   ",
                 " S ",
                 " S ",
-                'S', HGBaseItems.steelIngot
-        );
+                'S', "ingotSteel"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.lmgFeedBlock),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.lmgFeedBlock),
                 "ISI",
                 "S S",
                 "ISI",
-                'S', HGBaseItems.steelIngot,
-                'I', Items.iron_ingot
-        );
+                'S', "ingotSteel",
+                'I', "ingotIron"
+        ));
 
 
         // ===== LAUNCHER / RPG PARTS =====
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.launcherTube),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.launcherTube),
                 "III",
                 "I I",
                 "III",
-                'I', Items.iron_ingot
-        );
+                'I', "ingotIron"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.launcherFiringAssembly),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.launcherFiringAssembly),
                 "SRS",
                 " I ",
                 "S S",
-                'S', HGBaseItems.steelIngot,
+                'S', "ingotSteel",
                 'R', Items.redstone,
-                'I', Items.iron_ingot
-        );
+                'I', "ingotIron"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.launcherGripFrame),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.launcherGripFrame),
                 " A ",
                 "ASA",
                 " A ",
-                'A', HGBaseItems.aluminumIngot,
-                'S', HGBaseItems.steelIngot
-        );
+                'A', "ingotAluminum",
+                'S', "ingotSteel"
+        ));
 
 
         // ===== UNIVERSAL MOUNTS / MODULES =====
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.stockMount),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.stockMount),
                 "S S",
                 "SSS",
                 "S S",
-                'S', HGBaseItems.steelIngot
-        );
+                'S', "ingotSteel"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.opticMount),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.opticMount),
                 " A ",
                 "ASA",
                 " A ",
-                'A', HGBaseItems.aluminumIngot,
-                'S', HGBaseItems.steelIngot
-        );
+                'A', "ingotAluminum",
+                'S', "ingotSteel"
+        ));
 
-        GameRegistry.addRecipe(new ItemStack(HGGunItems.gasSystemModule),
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.gasSystemModule),
                 " S ",
                 "SRS",
                 " S ",
-                'S', HGBaseItems.steelIngot,
+                'S', "ingotSteel",
                 'R', Items.redstone
-        );
+        ));
     }
 }
 

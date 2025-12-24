@@ -31,11 +31,10 @@ import handmadeguns.gunsmithing.GunSmithNetwork;
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunSmithTable;
 import handmadeguns.gunsmithing.GunSmithTableTileEntity;
-import handmadeguns.items.HGBaseItems;
-import handmadeguns.items.HGGunItems;
-import handmadeguns.items.HGGunRecipes;
-import handmadeguns.items.HMGItemBullet;
+import handmadeguns.items.*;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
+import handmadeguns.world.HGWorldGen;
+import handmadeguns.world.HGWorldGenConfig;
 import handmadevehicle.entity.EntityDummy_rider;
 import littleMaidMobX.LMM_EntityLittleMaid;
 import net.minecraft.block.Block;
@@ -250,8 +249,9 @@ public class HandmadeGunsCore {
 
 		HMGPacketHandler.init();
 		HGBaseItems.init();
+		HGMetalItems.init(HGBaseItems.tabHMGCrafting);
 		HGGunItems.init();
-		HGGunRecipes.init();
+		HGMetalBlocks.init();
 
 	    /*
 		 * int power
@@ -625,6 +625,10 @@ public class HandmadeGunsCore {
 
 	@EventHandler
 	public void init(FMLInitializationEvent pEvent) {
+
+		HGGunRecipes.init();
+		GameRegistry.registerWorldGenerator(new HGWorldGen(), 0);
+
 		int D = Short.MAX_VALUE;
 
 		blockGunTable = new GunSmithTable();
@@ -963,6 +967,8 @@ public class HandmadeGunsCore {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
+		HGMetalRecipes.init();
+		HGWorldGenConfig.init();
 //		System.out.println("debug");
 		islmmloaded = Loader.isModLoaded("lmmx");
 		isgvcloaded = Loader.isModLoaded("GVCMob");
