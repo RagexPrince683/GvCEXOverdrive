@@ -29,32 +29,38 @@ public class HGWorldGen implements IWorldGenerator {
     }
 
     private void generateCopper(Random rand, int x, int z, World world) {
-        int veins = 12;
+        int veinsPerChunk = 12;
         int veinSize = 9;
-        int maxY = 60;
+        int minY = 20;
+        int maxY = 64;
 
-        for (int i = 0; i < veins; i++) {
+        for (int i = 0; i < veinsPerChunk; i++) {
+            int y = minY + rand.nextInt(maxY - minY);
+
             new WorldGenMinable(HGMetalBlocks.copperOre, veinSize).generate(
                     world,
                     rand,
                     x + rand.nextInt(16),
-                    rand.nextInt(maxY),
+                    y,
                     z + rand.nextInt(16)
             );
         }
     }
 
     private void generateAluminum(Random rand, int x, int z, World world) {
-        int veins = 9;
+        int veinsPerChunk = 9;
         int veinSize = 7;
-        int maxY = 80;
+        int minY = 32;
+        int maxY = 96;
 
-        for (int i = 0; i < veins; i++) {
+        for (int i = 0; i < veinsPerChunk; i++) {
+            int y = minY + rand.nextInt(maxY - minY);
+
             new WorldGenMinable(HGMetalBlocks.aluminumOre, veinSize).generate(
                     world,
                     rand,
                     x + rand.nextInt(16),
-                    rand.nextInt(maxY),
+                    y,
                     z + rand.nextInt(16)
             );
         }
