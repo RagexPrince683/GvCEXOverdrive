@@ -279,7 +279,7 @@ public class GunSmithingTableGui extends GuiContainer {
             if (gunRenderer instanceof HMGRenderItemGun_U || gunRenderer instanceof HMGRenderItemGun_U_NEW) {
                 // calculate the center for the model inside the preview area
                 int modelCenterX = previewX + 40; // same x used for display name centering
-                int modelCenterY = previewY + 80; // tune vertically to taste
+                int modelCenterY = previewY + 120; // tune vertically to taste
 
                 float modelScale = 40.0F; // tune scale to taste (smaller than full GUI preview)
 
