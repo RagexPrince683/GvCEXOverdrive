@@ -53,8 +53,9 @@ public class HMGGuiInventoryItem extends GuiContainer
         GL11.glTranslatef((float)centerX, (float)centerY, 50.0F);
         GL11.glScalef((float)(-scale), (float)scale, (float)scale);
 
-        // orientation same as vanilla drawEntityOnScreen
+        // DO NOT CHANGE THE FUCKING ROTATION. THE ROTATION IS FINE RETARDED ASS AI
         GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+        GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
 
         RenderHelper.enableStandardItemLighting();
