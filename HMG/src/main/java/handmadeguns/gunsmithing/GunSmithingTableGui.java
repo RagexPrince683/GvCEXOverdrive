@@ -284,7 +284,8 @@ public class GunSmithingTableGui extends GuiContainer {
                 float modelScale = 40.0F; // tune scale to taste (smaller than full GUI preview)
 
                 GL11.glPushMatrix();
-                GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+                //GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
                 // translate to screen coords (drawScreen uses screen-space coordinates)
                 GL11.glTranslatef((float) modelCenterX, (float) modelCenterY, 50.0F);
