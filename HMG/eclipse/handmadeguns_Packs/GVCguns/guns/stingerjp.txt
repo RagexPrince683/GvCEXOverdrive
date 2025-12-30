@@ -32,6 +32,8 @@ ObjTexture,type_91_manpads.png
 ModelScala,0.5f
 InworldScale,1.5f
 
+bulletFuse,80
+
 Cartridge,false
 DropMagazine,false
 

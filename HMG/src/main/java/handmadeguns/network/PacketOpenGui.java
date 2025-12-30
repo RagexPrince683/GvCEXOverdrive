@@ -4,6 +4,8 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
 
 public class PacketOpenGui implements IMessage {
+
+    //attachment gui?
     public int guiID;
     public int entityID;
     public PacketOpenGui(){

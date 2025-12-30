@@ -27,6 +27,8 @@ public class MessageCatcher_OpenGui implements IMessageHandler<PacketOpenGui, IM
                 Entity opener = world.getEntityByID(message.entityID);
                 if(opener != null && opener instanceof EntityPlayer && ((EntityPlayer) opener).getHeldItem() != null && ((EntityPlayer) opener).getHeldItem().getItem() instanceof HMGItem_Unified_Guns) {
                     ((EntityPlayer) opener).openGui(HandmadeGunsCore.INSTANCE, message.guiID, opener.worldObj, (int)opener.posX, (int)opener.posY, (int)opener.posZ);
+                    //System.out.println("test");
+                    //this is the attachment gui apparently...? Actually it might just be any gun gui...?
                 }
             }
 //        bullet = message.bullet.setdata(bullet);

@@ -99,6 +99,7 @@ public class HMGGuiHandler implements IGuiHandler
 		ItemStack itemstack = player.getCurrentEquippedItem();
 		if(ID == 0 && itemstack != null && itemstack.getItem() instanceof HMGItem_Unified_Guns){
 			return new HMGGuiInventoryItem(player.inventory, itemstack);
+			//this is where the attachment gui is opened
 		}
 		if(ID == 1){
 			HMGEntityItemMount entity = null;
