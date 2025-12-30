@@ -2,15 +2,21 @@ package handmadeguns.gunsmithing;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import handmadeguns.client.render.HMGRenderItemGun_U;
+import handmadeguns.client.render.HMGRenderItemGun_U_NEW;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -221,6 +227,7 @@ public class GunSmithingTableGui extends GuiContainer {
             drawCenteredString(fontRendererObj, entry.result.getDisplayName(), previewX + 40, this.guiTop + 30, 0xFFFFFF);
         } catch (Throwable ignored) {}
 
+        // --- draw 2D input icons (unchanged) ---
         RenderHelper.enableGUIStandardItemLighting();
 
         if (entry.inputs != null) {
@@ -255,10 +262,74 @@ public class GunSmithingTableGui extends GuiContainer {
             }
         }
 
+        // --- 3D gun preview (ONLY if this item has the gun renderer) ---
+        try {
+            // copy so we don't mutate the original recipe ItemStack
+            ItemStack previewStack = entry.result.copy();
+
+            // ensure NBT exists (some renderers expect it)
+            if (previewStack.getTagCompound() == null) {
+                previewStack.setTagCompound(new net.minecraft.nbt.NBTTagCompound());
+            }
+
+            // find the EQUIPPED renderer for this stack
+            IItemRenderer gunRenderer = MinecraftForgeClient.getItemRenderer(previewStack, IItemRenderer.ItemRenderType.EQUIPPED);
+
+            // only render if it's one of our custom gun renderers (so "only for guns")
+            if (gunRenderer instanceof HMGRenderItemGun_U || gunRenderer instanceof HMGRenderItemGun_U_NEW) {
+                // calculate the center for the model inside the preview area
+                int modelCenterX = previewX + 40; // same x used for display name centering
+                int modelCenterY = previewY + 80; // tune vertically to taste
+
+                float modelScale = 40.0F; // tune scale to taste (smaller than full GUI preview)
+
+                GL11.glPushMatrix();
+                GL11.glEnable(GL11.GL_COLOR_MATERIAL);
+
+                // translate to screen coords (drawScreen uses screen-space coordinates)
+                GL11.glTranslatef((float) modelCenterX, (float) modelCenterY, 50.0F);
+
+                // apply scale/flip to match your other renders (keeps orientation you used earlier)
+                GL11.glScalef(-modelScale, modelScale, modelScale);
+
+                // keep your rotations exactly as before
+                GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+                GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+                GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
+                RenderHelper.enableStandardItemLighting();
+                GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
+
+                // stabilize and render
+                float prevViewY = net.minecraft.client.renderer.entity.RenderManager.instance.playerViewY;
+                net.minecraft.client.renderer.entity.RenderManager.instance.playerViewY = 180.0F;
+
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+                GL11.glDepthFunc(GL11.GL_LEQUAL);
+                GL11.glDepthMask(true);
+                GL11.glEnable(GL11.GL_CULL_FACE);
+
+                GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+                gunRenderer.renderItem(IItemRenderer.ItemRenderType.ENTITY, previewStack);
+                GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+
+                // restore
+                net.minecraft.client.renderer.entity.RenderManager.instance.playerViewY = prevViewY;
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+                GL11.glPopMatrix();
+                RenderHelper.disableStandardItemLighting();
+            }
+        } catch (Throwable t) {
+            // rendering failed — do not break the GUI. Log for debug.
+            System.out.println("[GunSmith] 3D preview render failed: " + t.getMessage());
+            t.printStackTrace();
+        }
+
         if (craftButton != null) craftButton.enabled = canCraft(entry);
 
         RenderHelper.disableStandardItemLighting();
     }
+
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int p_146976_2_, int p_146976_3_) {
