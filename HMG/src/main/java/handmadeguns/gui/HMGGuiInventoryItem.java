@@ -35,70 +35,95 @@ public class HMGGuiInventoryItem extends GuiContainer
         ChestとかInventoryとか文字を描画する
      */
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int p_146979_2_)
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
     {
-    	
-        //描画する文字, X, Y, 色
+        // Text
         this.fontRendererObj.drawString("Attachments", 8, 6, 4210752);
         this.fontRendererObj.drawString("Inventory", 8, this.ySize - 96 + 2, 4210752);
         this.fontRendererObj.drawString("Sight/Support/Muzzle/Under/SP bullets", 8, 24, 4210752);
-    
-        int k = this.guiLeft;
-        int l = this.guiTop;
-        float posX = k + -80;
-        float posY =  l + 100;
-        float scale =  60;
+
+        // === STABLE CENTER ANCHOR ===
+        int centerX = this.guiLeft + this.xSize / 2;
+        int centerY = this.guiTop + this.ySize / 2;
+
+        float posX = centerX;
+        float posY = centerY + 30; // intentional vertical offset
+        float scale = 60.0F;
+
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glPushMatrix();
-        GL11.glTranslatef((float)posX, (float)posY, 120.0F);
-        GL11.glScalef((float)(-scale), (float)scale, (float)scale);
+
+        GL11.glTranslatef(posX, posY, 120.0F);
+        GL11.glScalef(-scale, scale, scale);
+
+        // rotations (unchanged behavior)
         GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
+
         RenderHelper.enableStandardItemLighting();
+
         GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
+
+        // save + override view angle to prevent jitter
+        float prevViewY = RenderManager.instance.playerViewY;
         RenderManager.instance.playerViewY = 180.0F;
-    
-    
+
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
         GL11.glDepthMask(true);
         GL11.glEnable(GL11.GL_CULL_FACE);
+
         ItemStack currentItem = ((HMGContainerInventoryItem)inventorySlots).inventory.currentItem;
+
+        if (currentItem != null && currentItem.getTagCompound() != null)
         {
+            // rebuild attachment NBT for renderer
             NBTTagList tagList = new NBTTagList();
-            for(int i = 0; i < ((HMGContainerInventoryItem)inventorySlots).inventory.items.length; i++)
+            for (int i = 0; i < ((HMGContainerInventoryItem)inventorySlots).inventory.items.length; i++)
             {
-                if(((HMGContainerInventoryItem)inventorySlots).inventory.items[i] != null)
+                ItemStack stack = ((HMGContainerInventoryItem)inventorySlots).inventory.items[i];
+                if (stack != null)
                 {
                     NBTTagCompound compound = new NBTTagCompound();
                     compound.setByte("Slot", (byte)i);
-                    ((HMGContainerInventoryItem)inventorySlots).inventory.items[i].writeToNBT(compound);
+                    stack.writeToNBT(compound);
                     tagList.appendTag(compound);
                 }
             }
             currentItem.getTagCompound().setTag("Items", tagList);
+
             GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-            IItemRenderer gunrender = MinecraftForgeClient.getItemRenderer(currentItem, IItemRenderer.ItemRenderType.EQUIPPED);
-            if (gunrender instanceof HMGRenderItemGun_U_NEW) {
-                gunrender.renderItem(IItemRenderer.ItemRenderType.ENTITY, currentItem);
-            } else if (gunrender instanceof HMGRenderItemGun_U) {
+
+            IItemRenderer gunrender = MinecraftForgeClient.getItemRenderer(
+                    currentItem, IItemRenderer.ItemRenderType.EQUIPPED);
+
+            if (gunrender instanceof HMGRenderItemGun_U_NEW ||
+                    gunrender instanceof HMGRenderItemGun_U)
+            {
                 gunrender.renderItem(IItemRenderer.ItemRenderType.ENTITY, currentItem);
             }
+
             GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         }
+
+        // restore render state
+        RenderManager.instance.playerViewY = prevViewY;
+
         GL11.glDepthMask(false);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        
+
         GL11.glPopMatrix();
+
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+
         OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
-        
     }
- 
+
+
     /*
         背景の描画
      */
