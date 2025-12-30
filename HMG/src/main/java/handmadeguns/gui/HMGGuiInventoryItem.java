@@ -2,6 +2,7 @@ package handmadeguns.gui;
  
 import handmadeguns.client.render.HMGRenderItemGun_U;
 import handmadeguns.client.render.HMGRenderItemGun_U_NEW;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
@@ -42,18 +43,25 @@ public class HMGGuiInventoryItem extends GuiContainer
         this.fontRendererObj.drawString("Inventory", 8, this.ySize - 96 + 2, 4210752);
         this.fontRendererObj.drawString("Sight/Support/Muzzle/Under/SP bullets", 8, 24, 4210752);
 
-        int centerX = this.guiLeft + this.xSize / 2;
-        int centerY = this.guiTop + this.ySize / 2 + 30; // small vertical offset if desired
-        int scale = 60; // same idea as before
+        // ===== compute true screen center, convert to GUI-local coords =====
+        ScaledResolution sr = new ScaledResolution(this.mc, this.mc.displayWidth, this.mc.displayHeight);
+        int screenCenterX = sr.getScaledWidth() / 2;
+        int screenCenterY = sr.getScaledHeight() / 2;
+
+        // convert screen center into coordinates relative to the GUI origin (what foreground expects)
+        float posX = (float)screenCenterX - (float)this.guiLeft;
+        float posY = (float)screenCenterY - (float)this.guiTop;
+
+        float scale = 60.0F;
 
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glPushMatrix();
 
-        // translate to the point we want and scale *after* translating like vanilla does
-        GL11.glTranslatef((float)centerX, (float)centerY, 50.0F);
-        GL11.glScalef((float)(-scale), (float)scale, (float)scale);
+        // translate to the GUI-local position that matches screen center, then scale/rotate
+        GL11.glTranslatef(posX, posY, 120.0F);
+        GL11.glScalef(-scale, scale, scale);
 
-        // DO NOT CHANGE THE FUCKING ROTATION. THE ROTATION IS FINE RETARDED ASS AI
+        // KEEP YOUR ROTATIONS (unchanged)
         GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
@@ -61,7 +69,7 @@ public class HMGGuiInventoryItem extends GuiContainer
         RenderHelper.enableStandardItemLighting();
         GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
 
-        // temporarily force view to stable angle and keep a copy to restore
+        // stabilize view and save/restore
         float prevViewY = RenderManager.instance.playerViewY;
         RenderManager.instance.playerViewY = 180.0F;
 
@@ -71,8 +79,12 @@ public class HMGGuiInventoryItem extends GuiContainer
         GL11.glEnable(GL11.GL_CULL_FACE);
 
         ItemStack currentItem = ((HMGContainerInventoryItem)inventorySlots).inventory.currentItem;
-        if (currentItem != null && currentItem.getTagCompound() != null)
+        if (currentItem != null)
         {
+            // ensure tag compound exists so we don't NPE
+            if (currentItem.getTagCompound() == null)
+                currentItem.setTagCompound(new NBTTagCompound());
+
             // rebuild attachment NBT
             NBTTagList tagList = new NBTTagList();
             for (int i = 0; i < ((HMGContainerInventoryItem)inventorySlots).inventory.items.length; i++)
@@ -116,6 +128,7 @@ public class HMGGuiInventoryItem extends GuiContainer
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
+
 
 
     /*
