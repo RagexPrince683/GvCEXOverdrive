@@ -1,16 +1,19 @@
 BulletPower,800
 BulletSpeed,6
-BlletSpread,1.0f
-ADS_Spread_coefficient,0.1
-BlletSpreadDiffusion,1,0,4,0.2,3,0.6
-Acceleration,0.2f
+BlletSpread,5.0f
+ADS_Spread_coefficient,0.2
+BlletSpreadDiffusion,3,0,0.3,0.2,2,0.1
+//ADS_Spread_coefficient,20
+//BlletSpreadDiffusion,10,0,8,10.2,8,8.6
+Acceleration,1.1f
 accelerationFuse,20
 resistance,0.95f
 Recoil,2.0d
 ReloadTime,100
 RemainingBullet,1
 Attacking,4.0f
-ElevationOffsets,-13
+ElevationOffsets,-5
+//does not work properly, induces a spiral or something
 Zoom,10.0f,1.0f,4.0f
 ZoomRender,true
 ZoomRenderType,false,false,false
@@ -31,7 +34,7 @@ ObjTexture,fgm148.png
 ModelScala,0.5f
 InworldScale,1.55f
 
-Motion,0.6
+Motion,0.3
 
 ModelEquipped,-0.7f,0.4f,0.05f
 //ModelHigh,0.575f,0.575f,0.575f
@@ -58,9 +61,9 @@ SprintingRotation,30f,45,0f
 
 BulletNameALL,byfrou01_Rocket
 //0307
-BulletGravity,0.485
+//BulletGravity,0.0485
 RenderCross,false
-Induction_precision,0.25
+//Induction_precision,10
 //Canlock,true
 UnderBarrelWeapon,0
 RightType,0
@@ -83,8 +86,8 @@ BulletNameALL,S-5
 lockSound_entity,handmadeguns:handmadeguns.missileLockOn
 lockSound_NoStop,true
 
-Induction_precision,30
-bulletStability,0.2
+//Induction_precision,30
+//bulletStability,0.0002
 SACLOS_Homing,true
 
 
