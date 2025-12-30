@@ -37,6 +37,8 @@ DropMagazine,false
 
 Motion,0.6
 
+bulletFuse,88
+
 ModelEquipped,-0.7f,1.5f,-1.8f
 ThirdModelEquipped,0.5,1,-1.5
 SimpleADSOffsetX,0.4266,0.4266,0.4266

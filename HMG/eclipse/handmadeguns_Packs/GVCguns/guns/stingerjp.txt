@@ -32,7 +32,10 @@ ObjTexture,type_91_manpads.png
 ModelScala,0.5f
 InworldScale,1.5f
 
-bulletFuse,80
+bulletFuse,78
+//3800 meters for base stinger (effective range, engagement)
+//3100 for this one
+//let's divide by 40 just for balancing purposes
 
 Cartridge,false
 DropMagazine,false

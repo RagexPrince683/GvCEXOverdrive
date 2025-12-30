@@ -78,6 +78,10 @@ UnderBarrelWeapon,0
 RightType,0
 //Magazine,0,HandmadeGuns,null
 
+bulletFuse,95
+//3800 meters for base stinger (effective range, engagement)
+//let's divide by 40 just for balancing purposes
+
 
 
 AddParts,mat1
