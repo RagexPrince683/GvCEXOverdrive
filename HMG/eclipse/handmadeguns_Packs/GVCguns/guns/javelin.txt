@@ -1,24 +1,24 @@
 BulletPower,800
-BulletSpeed,5.6
+BulletSpeed,6
 BlletSpread,1.0f
 ADS_Spread_coefficient,0.1
 BlletSpreadDiffusion,1,0,4,0.2,3,0.6
-Acceleration,1.5f
+Acceleration,0.2f
 accelerationFuse,20
 resistance,0.95f
 Recoil,2.0d
 ReloadTime,100
 RemainingBullet,1
 Attacking,4.0f
-ElevationOffsets,-0
-Zoom,1.0f,1.0f,4.0f
+ElevationOffsets,-13
+Zoom,10.0f,1.0f,4.0f
 ZoomRender,true
-ZoomRenderType,true,true,false
-ZoomRenderTypeTxture,false,true,true
+ZoomRenderType,false,false,false
+ZoomRenderTypeTxture,true,true,true
 ReloadMat3,false
 //???
 
-ScopeTexture,rr.png,redPoint.png,scope_RPG7.png
+ScopeTexture,javfix.png,redPoint.png,scope_RPG7.png
 Explosion,0.5f
 damagerange,3
 BlockDestory,false
@@ -68,14 +68,24 @@ Magazine,0,HandmadeGuns,bullet_rr_hmgrpg29
 Cartridge,false
 DropMagazine,false
 
-ReloadMotion
-{
-0,      0f,0f,0f,-0.3f, 0.3f, 0f  , 0f, 0f,0f,-0.2f, 1.2f , -1.8f, 0f, -1.27f,0f,0f,0f,0f,0f,0f,0f,0f,0f, -2f, 2f, 0f, 0f, 0f, 0f, 0f, 0f
-1,     10f,0f,0f,-0.3f, 0.3f, 0f  , 0f, 0f,0f,-0.2f, 0.4f , -1.8f, 0f, -1.27f,0f,0f,0f,0f,0f,0f,0f,0f,0f, -1f, 2f, 0f, 0f, 0f, 0f, 0f, 0f
-2,     20f,0f,0f,-0.3f, 0.3f, -20f, 0f, 0f,0f,0f   , -1.75f, -5f , 0f, -1.27f,0f,0f,0f,0f,0f,0f,0f,0f,0f, 0f , 6f, 0f, 0f, 0f, 0f, 0f, 0f
-3,     40f,0f,0f,-0.3f, 0.3f, -20f, 0f, 0f,0f,0f   , -0.4f, -1.7f, 0f, -1.27f,0f,0f,0f,0f,0f,0f,0f,0f,0f, 0f , 0f, 0f, 0f, 0f, 0f, 0f, 0f
-4,     50f,0f,0f,-0.3f, 0.3f, 0f  , 0f, 0f,0f,0f   , 0f   , 0f   , 0f, 0f    ,0f,0f,0f,0f,0f,0f,0f,0f,0f, 0f , 0f, 0f, 0f, 0f, 0f, 0f, 0f
-}
+//ReloadMotion
+//{
+//0,      0f,0f,0f,-0.3f, 0.3f, 0f  , 0f, 0f,0f,-0.2f, 1.2f , -1.8f, 0f, -1.27f,0f,0f,0f,0f,0f,0f,0f,0f,0f, -2f, 2f, 0f, 0f, 0f, 0f, 0f, 0f
+//1,     10f,0f,0f,-0.3f, 0.3f, 0f  , 0f, 0f,0f,-0.2f, 0.4f , -1.8f, 0f, -1.27f,0f,0f,0f,0f,0f,0f,0f,0f,0f, -1f, 2f, 0f, 0f, 0f, 0f, 0f, 0f
+//2,     20f,0f,0f,-0.3f, 0.3f, -20f, 0f, 0f,0f,0f   , -1.75f, -5f , 0f, -1.27f,0f,0f,0f,0f,0f,0f,0f,0f,0f, 0f , 6f, 0f, 0f, 0f, 0f, 0f, 0f
+//3,     40f,0f,0f,-0.3f, 0.3f, -20f, 0f, 0f,0f,0f   , -0.4f, -1.7f, 0f, -1.27f,0f,0f,0f,0f,0f,0f,0f,0f,0f, 0f , 0f, 0f, 0f, 0f, 0f, 0f, 0f
+//4,     50f,0f,0f,-0.3f, 0.3f, 0f  , 0f, 0f,0f,0f   , 0f   , 0f   , 0f, 0f    ,0f,0f,0f,0f,0f,0f,0f,0f,0f, 0f , 0f, 0f, 0f, 0f, 0f, 0f, 0f
+//}
+
+seekerSize,10
+BulletNameALL,S-5
+
+lockSound_entity,handmadeguns:handmadeguns.missileLockOn
+lockSound_NoStop,true
+
+Induction_precision,30
+bulletStability,0.2
+SACLOS_Homing,true
 
 
 Tabname,HMG_GVCGuns
