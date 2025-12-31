@@ -2072,6 +2072,9 @@ public class HMGGunMaker {
 			case "Texture":
 				gunInfo.texture = type[1];
 				break;
+			case "UseModelIcon": //todo new
+				gunInfo.useModelAsIcon = Boolean.parseBoolean(type[1]);
+				break;
 			case "GunSound":
 				gunInfo.soundbase = "handmadeguns:" + type[1];
 				gunInfo.soundsu = "handmadeguns:" + type[2];

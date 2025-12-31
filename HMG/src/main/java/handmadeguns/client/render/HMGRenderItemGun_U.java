@@ -298,6 +298,25 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 
 		this.armoffsetscale = armoffsetscalein;
 	}
+
+	//@Override
+	//public void renderItem(ItemRenderType type, ItemStack stack, Object... data) {
+	//	GunInfo info = GunInfo.getGunInfo(stack);
+//
+	//	if (type == ItemRenderType.INVENTORY) {
+	//		if (info.useModelAsIcon && info.model != null) {
+	//			renderGunModelAsIcon(info);
+	//		} else {
+	//			render2DIcon(info);
+	//		}
+	//		return;
+	//	}
+//
+	//	// everything else (equipped, entity, etc)
+	//	renderGunModel(info);
+	//}
+	//TODO none of this is real/erroring, we need to either add these methods somehow
+	// or do different logic to add 3d model rendering for gun item icons
 	
 	public void setSomeParam(IModelCustom modelgun, ResourceLocation texture, float scala, float high, float high1,
 	                          float high2, float widthx0, float widthx1, float widthx2, float widthz0, float widthz1, float widthz2, float rotax0
