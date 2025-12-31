@@ -359,9 +359,9 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					GL11.glColor4f(1f, 1f, 1f, 1f);
 
 					//flip
-					//GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+					GL11.glRotatef(90.0F, 1.0F, 0.0F, 0.0F);
 					//GL11.glRotatef(180.0F, 1.0F, 0.0F, 0.0F);
-					GL11.glRotatef(180.0F, 0.0F, 1.0F, 0.0F);
+					//GL11.glRotatef(180.0F, 0.0F, 1.0F, 0.0F);
 
 					//todo integrate
 					//ModelRotationX,180f,180f,180f
@@ -376,7 +376,8 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					GL11.glTranslatef(-9.5F, -15.5F, -5.5F);
 
 					// flip/scale to match your usual model orientation in GUI
-					float iconScale = 2 / (modelscala / gunitem.gunInfo.inworldScale); //Math.max(1.0f, this.modelscala / 2.0f); // you can tune this
+					//modelscala /
+					float iconScale = (4 * modelscala) * gunitem.gunInfo.inworldScale; //Math.max(1.0f, this.modelscala / 2.0f); // you can tune this
 					//I'm sure its fine cope emoji
 					//gun.ModelScala / gun.InworldScale
 					GL11.glScalef(-iconScale, iconScale, iconScale);
