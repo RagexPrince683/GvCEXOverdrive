@@ -346,6 +346,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		}
 
 
+		// NEW GUN RENDER because we have 2 ways to render guns because why the FUCK NOT!!!
 		// If the gun explicitly requests the model to be used as the inventory icon,
 		// and we actually have a loaded model (setSomeParam was called), render it here.
 		if (type == ItemRenderType.INVENTORY) {
@@ -362,13 +363,21 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					//GL11.glRotatef(180.0F, 1.0F, 0.0F, 0.0F);
 					GL11.glRotatef(180.0F, 0.0F, 1.0F, 0.0F);
 
+					//todo integrate
+					//ModelRotationX,180f,180f,180f
+					//ModelRotationY,45f,45f,45
+					//ModelRotationZ,180f,180f,180f
+					//ModelWidthZ,1.2f,1.2f,1.2f
+
+
 					// move into the inventory-slot space (tweak the translate/scale to taste)
 					// common slot center offsets (Minecraft tends to place item origin at top-left of slot)
 					// these values are a safe starting point; you can tweak translate/scale for perfect fit
 					GL11.glTranslatef(-9.5F, -15.5F, -5.5F);
 
 					// flip/scale to match your usual model orientation in GUI
-					float iconScale = 5.0F ; //Math.max(1.0f, this.modelscala / 2.0f); // you can tune this
+					float iconScale = modelscala / gunitem.gunInfo.inworldScale; //Math.max(1.0f, this.modelscala / 2.0f); // you can tune this
+					//I'm sure its fine cope emoji
 					//gun.ModelScala / gun.InworldScale
 					GL11.glScalef(-iconScale, iconScale, iconScale);
 
