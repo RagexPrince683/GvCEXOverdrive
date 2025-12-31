@@ -32,7 +32,7 @@ CanObj,true
 ObjModel,fgm148.mqo
 ObjTexture,fgm148.png
 ModelScala,0.5f
-InworldScale,1.55f
+InworldScale,2.3f
 
 Motion,0.3
 

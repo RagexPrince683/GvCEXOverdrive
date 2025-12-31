@@ -373,7 +373,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					// move into the inventory-slot space (tweak the translate/scale to taste)
 					// common slot center offsets (Minecraft tends to place item origin at top-left of slot)
 					// these values are a safe starting point; you can tweak translate/scale for perfect fit
-					GL11.glTranslatef(9.5F, 5.5F, -5.5F);
+					GL11.glTranslatef(9.5F, 0.5F, 5.5F);
 
 					// flip/scale to match your usual model orientation in GUI
 					//modelscala /
