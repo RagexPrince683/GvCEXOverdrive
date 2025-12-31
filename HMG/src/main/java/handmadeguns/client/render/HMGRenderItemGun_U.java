@@ -36,6 +36,9 @@ import static net.minecraftforge.client.IItemRenderer.ItemRenderType.EQUIPPED_FI
 import static org.lwjgl.opengl.GL11.*;
 
 public class HMGRenderItemGun_U implements IItemRenderer {
+	//this is the bad renderer type, it's really buggy and SHIT and only used for things like shotguns and anti tank weapons for some reason.
+	//it breaks when you don't have any ammo and go to ADS.
+
 	public IModelCustom modeling;
 	public ResourceLocation guntexture;
 	public static float smoothing;
@@ -394,8 +397,6 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 	}
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-		//this is the bad renderer type, it's really buggy and SHIT and only used for things like shotguns and anti tank weapons for some reason.
-		//it breaks when you don't have any ammo and go to ADS.
 
 		switch (type) {
 			case INVENTORY:
