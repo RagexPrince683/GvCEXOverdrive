@@ -72,9 +72,9 @@ public class PlacedGun_Render extends Render {
 
             ItemStack itemstackSight = items[1];
             // IMPORTANT: use the **rider's** sprint state rather than entity.isSprinting()
-            boolean riderSprinting = entity.riddenByEntity != null && entity.riddenByEntity.isSprinting();
+            //boolean riderSprinting = entity.riddenByEntity != null && entity.riddenByEntity.isSprinting();
 
-            if (HandmadeGunsCore.Key_ADS(entity.riddenByEntity) && !riderSprinting) {
+            if (HandmadeGunsCore.Key_ADS(entity.riddenByEntity)) { // && !riderSprinting
                 if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase) {
                     HMGItemSightBase sight = (HMGItemSightBase) itemstackSight.getItem();
                     if (sight.scopeonly) {

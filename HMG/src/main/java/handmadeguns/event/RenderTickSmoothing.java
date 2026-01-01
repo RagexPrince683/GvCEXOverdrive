@@ -209,8 +209,18 @@ public class RenderTickSmoothing {
 		prevADSState = firstPerson_ADSState;
 
 		// Only allow ADS if not sprinting and not reloading
+		//boolean desiredADS = false;
+		//if (!firstPerson_SprintState && !firstPerson_ReloadState)
+		//{
+		//	desiredADS = HandmadeGunsCore.Key_ADS(entityPlayer);
+		//}
+		//firstPerson_ADSState = desiredADS;
+		//NO DO NOT DO THAT.
+
+		//csgo style rendering above, enable if you hate god
+
 		boolean desiredADS = false;
-		if (!firstPerson_SprintState && !firstPerson_ReloadState)
+		if (!firstPerson_ReloadState)
 		{
 			desiredADS = HandmadeGunsCore.Key_ADS(entityPlayer);
 		}
