@@ -1,6 +1,7 @@
 package handmadeguns.client.render;
 
 import handmadeguns.HandmadeGunsCore;
+import handmadeguns.gui.HMGContainerInventoryItem;
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
 import net.minecraft.client.Minecraft;
@@ -350,77 +351,62 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		// If the gun explicitly requests the model to be used as the inventory icon,
 		// and we actually have a loaded model (setSomeParam was called), render it here.
 		if (type == ItemRenderType.INVENTORY) {
-			try {
-				if (gunitem != null && gunitem.gunInfo != null && gunitem.gunInfo.useModelAsIcon && this.model != null) {
-					GL11.glPushMatrix();
+			// If we want a 3D icon, do it HERE and EXIT
+			if (gunitem.gunInfo != null && gunitem.gunInfo.useModelAsIcon && this.model != null) {
+				ItemStack previewStack = gunstack.copy();
 
-					// avoid leftover GUI color tinting
-					GL11.glDisable(GL11.GL_COLOR_MATERIAL);
-					GL11.glColor4f(1f, 1f, 1f, 1f);
+				// Ensure NBT exists
+				if (previewStack.getTagCompound() == null) {
+					previewStack.setTagCompound(new NBTTagCompound());
+				}
 
-					//flip
-					GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
-					//GL11.glRotatef(180.0F, 1.0F, 0.0F, 0.0F);
-					//GL11.glRotatef(180.0F, 0.0F, 1.0F, 0.0F);
+				// If GUI passed container inventory, rebuild attachment NBT
+				if (data != null && data.length > 0 && data[0] instanceof HMGContainerInventoryItem) {
+					HMGContainerInventoryItem guiInv = (HMGContainerInventoryItem) data[0];
 
-					//todo integrate
-					//ModelRotationX,180f,180f,180f
-					//ModelRotationY,45f,45f,45
-					//ModelRotationZ,180f,180f,180f
-					//ModelWidthZ,1.2f,1.2f,1.2f
-
-
-					// move into the inventory-slot space (tweak the translate/scale to taste)
-					// common slot center offsets (Minecraft tends to place item origin at top-left of slot)
-					// these values are a safe starting point; you can tweak translate/scale for perfect fit
-					GL11.glTranslatef(9.5F, 0.5F, 5.5F);
-
-					// flip/scale to match your usual model orientation in GUI
-					//modelscala /
-					float iconScale = (4 * modelscala) * gunitem.gunInfo.inworldScale; //Math.max(1.0f, this.modelscala / 2.0f); // you can tune this
-					//I'm sure its fine cope emoji
-					//gun.ModelScala / gun.InworldScale
-					GL11.glScalef(-iconScale, iconScale, iconScale);
-
-					// use the same inventory matrix you already had (keeps orientation familiar)
-					try {
-						glMatrixForRenderInInventory();
-					} catch (Throwable ignored) {}
-
-					// make sure lighting and normals are set up and color is white
-					RenderHelper.enableStandardItemLighting();
-					GL11.glDisable(GL11.GL_COLOR_MATERIAL);
-					GL11.glColor4f(1f, 1f, 1f, 1f);
-
-					// bind the model texture if available
-					try {
-						if (this.guntexture != null) {
-							Minecraft.getMinecraft().getTextureManager().bindTexture(this.guntexture);
+					NBTTagList tagList = new NBTTagList();
+					for (int i = 0; i < guiInv.inventory.items.length; i++) {
+						ItemStack s = guiInv.inventory.items[i];
+						if (s != null) {
+							NBTTagCompound c = new NBTTagCompound();
+							c.setByte("Slot", (byte) i);
+							s.writeToNBT(c);
+							tagList.appendTag(c);
 						}
-					} catch (Throwable ignored) {}
-
-					// render the model
-					GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-					try {
-						this.model.renderAll();
-					} catch (Throwable t) {
-						// fallback: do nothing - don't crash the GUI
-						System.out.println("[HMG] model-as-icon render failed: " + t.getMessage());
 					}
-					GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+					previewStack.getTagCompound().setTag("Items", tagList);
+				}
 
-					RenderHelper.disableStandardItemLighting();
+				GL11.glPushMatrix();
 
-					GL11.glPopMatrix();
-					// done — we handled the inventory draw
-					return;
-				} // else: fall through and let vanilla draw the 2D texture (handleRenderType returned false previously)
-			} catch (Throwable t) {
-				// if anything goes wrong we don't want to break the GUI
-				System.out.println("[HMG] Inventory 3D icon render exception: " + t.getMessage());
-				t.printStackTrace();
-				// fallthrough to let vanilla draw the 2D icon
+				// State hygiene
+				GL11.glDisable(GL11.GL_COLOR_MATERIAL);
+				GL11.glColor4f(1f, 1f, 1f, 1f);
+
+				// Inventory orientation
+				GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
+				GL11.glTranslatef(9.5F, 0.5F, 5.5F);
+
+				float iconScale = (gunitem.gunInfo.inventoryscale * 8 * modelscala) * gunitem.gunInfo.inworldScale;
+				GL11.glScalef(-iconScale, iconScale, iconScale);
+
+				try { glMatrixForRenderInInventory(); } catch (Throwable ignored) {}
+
+				RenderHelper.enableStandardItemLighting();
+				GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+
+				// *** CRITICAL ***
+				// Call the NORMAL gun renderer ONCE
+				rendering(ItemRenderType.ENTITY, previewStack, data);
+
+				GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+				RenderHelper.disableStandardItemLighting();
+				GL11.glPopMatrix();
+
+				return; // STOP vanilla rendering
 			}
+
+			return; // fallback to vanilla 2D
 		}
 
 	}

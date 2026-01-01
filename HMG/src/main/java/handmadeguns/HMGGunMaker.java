@@ -2144,6 +2144,9 @@ public class HMGGunMaker {
 			case "InworldScale":
 				gunInfo.inworldScale = parseFloat(type[1]);
 				break;
+			case "InventoryScale":
+				gunInfo.inventoryscale = parseFloat(type[1]);
+				break;
 			case "CockingTime":
 				gunInfo.cocktime = parseInt(type[1]);
 				gunInfo.needcock = true;

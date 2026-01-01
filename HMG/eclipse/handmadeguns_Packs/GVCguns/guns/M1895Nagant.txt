@@ -30,6 +30,9 @@ ObjModel,M1895Nagant.mqo
 ObjTexture,M1895Nagant.png
 ModelScala,0.05f
 InworldScale,3f
+
+InventoryScale,6f
+
 Gunparts_offsetScale,10
 CustomFlash,arrow,1
 //Rates,10

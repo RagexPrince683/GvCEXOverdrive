@@ -143,6 +143,8 @@ public class GunInfo {
 	public float onunderrotationz;
 	public float modelscale = 1;
 	public float inworldScale = 1;
+
+	public float inventoryscale = 1;
 	public boolean hascustombulletmodel = false;
 	public boolean hascustomcartridgemodel = false;
 	public boolean hascustommagemodel = false;
