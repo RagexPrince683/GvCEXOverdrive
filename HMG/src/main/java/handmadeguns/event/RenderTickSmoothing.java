@@ -178,74 +178,84 @@ public class RenderTickSmoothing {
 		if (HMG_proxy.getEntityPlayerInstance() == null) return;
 		EntityPlayer entityPlayer = HMG_proxy.getEntityPlayerInstance();
 
-		// --- Reload state (safe NBT checks) ---
+		ItemStack held = entityPlayer.getCurrentEquippedItem();
+
+		// --------------------------------------------------
+		// Reload state
+		// --------------------------------------------------
 		prevReloadState = firstPerson_ReloadState;
 		firstPerson_ReloadState = false;
-		ItemStack held = entityPlayer.getCurrentEquippedItem();
-		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns)
+
+		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns && held.hasTagCompound())
 		{
-			// safe tag handling
-			if (held.hasTagCompound())
+			((HMGItem_Unified_Guns) held.getItem()).checkTags(held);
+			NBTTagCompound tag = held.getTagCompound();
+			if (tag != null && tag.hasKey("IsReloading"))
 			{
-				((HMGItem_Unified_Guns) held.getItem()).checkTags(held);
-				NBTTagCompound tag = held.getTagCompound();
-				if (tag != null && tag.hasKey("IsReloading"))
-				{
-					firstPerson_ReloadState = tag.getBoolean("IsReloading");
-				}
+				firstPerson_ReloadState = tag.getBoolean("IsReloading");
 			}
 		}
 
-		// --- Sprint state ---
-		prevSprintState = firstPerson_SprintState;
-		if (!firstPerson_ReloadState)
+		// --------------------------------------------------
+		// Firing / trigger state (authoritative)
+		// --------------------------------------------------
+		boolean isTriggered = false;
+
+		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns && held.hasTagCompound())
 		{
-			firstPerson_SprintState = isentitysprinting(entityPlayer);
+			NBTTagCompound tag = held.getTagCompound();
+			if (tag != null && tag.hasKey("IsTriggered"))
+			{
+				isTriggered = tag.getBoolean("IsTriggered");
+			}
+		}
+
+		// --------------------------------------------------
+		// Sprint state (HARD gated by reload + trigger)
+		// --------------------------------------------------
+		prevSprintState = firstPerson_SprintState;
+
+		if (!firstPerson_ReloadState && !isTriggered)
+		{
+			firstPerson_SprintState = isentitysprinting(entityPlayer) && !nbt.getBoolean("IsTriggered");
 		}
 		else
 		{
 			firstPerson_SprintState = false;
+
+			// prevent sticky sprint while firing or reloading
+			entityPlayer.setSprinting(false);
 		}
 
-		// --- ADS state: compute from key but do NOT call zoom handler every tick ---
+		// --------------------------------------------------
+		// ADS state (TOGGLE — edge triggered)
+		// --------------------------------------------------
 		prevADSState = firstPerson_ADSState;
 
-		// Only allow ADS if not sprinting and not reloading
-		//boolean desiredADS = false;
-		//if (!firstPerson_SprintState && !firstPerson_ReloadState)
-		//{
-		//	desiredADS = HandmadeGunsCore.Key_ADS(entityPlayer);
-		//}
-		//firstPerson_ADSState = desiredADS;
-		//NO DO NOT DO THAT.
-
-		//csgo style rendering above, enable if you hate god
-
 		boolean desiredADS = false;
+
+		// ADS allowed unless reloading (trigger does NOT force ADS off)
 		if (!firstPerson_ReloadState)
 		{
 			desiredADS = HandmadeGunsCore.Key_ADS(entityPlayer);
 		}
+
 		firstPerson_ADSState = desiredADS;
 
-		// Trigger zoom action only on the *press* edge (false -> true).
-		// This prevents repeated toggling while the key is held or while sprint/ADS flip rapidly.
+		// Toggle zoom ONLY on press edge
 		if (firstPerson_ADSState && !prevADSState)
 		{
 			HMV_Proxy.zoomclick();
 		}
 
-		// If you have a separate "release" handler for zoom, call it on the opposite edge:
-		// if (!firstPerson_ADSState && prevADSState) { HMV_Proxy.zoomRelease(); }
-		// (uncomment if you implement a release method)
-
-		// --- optionally set sneak while ADS is active (do not force sprint changes) ---
+		// --------------------------------------------------
+		// Optional: sneak while ADS (no sprint forcing)
+		// --------------------------------------------------
 		if (firstPerson_ADSState && cfg_Sneak_ByADSKey)
 		{
-			if (entityPlayer == HMG_proxy.getEntityPlayerInstance()
-					&& entityPlayer.ridingEntity == null
+			if (entityPlayer.ridingEntity == null
 					&& held != null
-					&& ((ItemStack) held).getItem() instanceof HMGItem_Unified_Guns
+					&& held.getItem() instanceof HMGItem_Unified_Guns
 					&& !isentitysprinting(entityPlayer))
 			{
 				if (entityPlayer instanceof EntityClientPlayerMP)
@@ -255,5 +265,6 @@ public class RenderTickSmoothing {
 			}
 		}
 	}
+
 
 }

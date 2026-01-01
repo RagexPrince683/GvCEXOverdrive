@@ -901,7 +901,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		if(nbt == null){
 			if(entity.getHeldItem() != null)nbt = entity.getHeldItem().getTagCompound();
 		}
-		return entity != null && (entity.isSprinting() && (nbt == null || !nbt.getBoolean("set_up")));
+		return entity != null && (entity.isSprinting() && (nbt == null || !nbt.getBoolean("set_up") || !nbt.getBoolean("IsTriggered")));
 	}
 	private static FloatBuffer setColorBuffer(float p_74521_0_, float p_74521_1_, float p_74521_2_, float p_74521_3_) {
 		colorBuffer.clear();
@@ -952,7 +952,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				partsRender_gun.partSidentification(state, (float) 0, remainbullets);
 			}
 		} else {
-			if (entity instanceof EntityLivingBase && isentitysprinting((EntityLivingBase) entity)) {
+			if (entity instanceof EntityLivingBase && isentitysprinting((EntityLivingBase) entity) && !nbt.getBoolean("IsTriggered")) {
 				partsRender_gun.partSidentification(new GunState[]{GunState.Default}, (float) 0, remainbullets);
 			} else {
 				int cockingtime = this.getintfromnbt("CockingTime");

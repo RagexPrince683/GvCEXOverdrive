@@ -18,7 +18,7 @@ import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 import static handmadeguns.HandmadeGunsCore.tabshmg;
-import static handmadeguns.client.render.HMGRenderItemGun_U_NEW.isentitysprinting;
+//import static handmadeguns.client.render.HMGRenderItemGun_U_NEW.isentitysprinting;
 import static java.lang.Integer.parseInt;
 
 public class HMGAddAttachment
