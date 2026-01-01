@@ -1,6 +1,5 @@
 package handmadeguns.event;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
 import handmadeguns.HandmadeGunsCore;
 import handmadeguns.entity.PlacedGunEntity;
 import handmadeguns.items.*;
@@ -58,11 +57,6 @@ import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 
 public class HMGEventZoom {
 	static boolean updated = false;
-
-	// track last camera zoom we forced and whether we forced zoom/reset
-	private double hmg_lastForcedCameraZoom = 1.0d;
-	private boolean hmg_zoomLockedByUs = false;
-	private boolean hmg_blendEnabledByUs = false;
 
 	// public HMGItemGunBase gunbase;
 
@@ -396,72 +390,39 @@ public class HMGEventZoom {
 									GuiIngameForge.renderCrosshairs = true;
 								} else {
 									GuiIngameForge.renderCrosshairs = false;
-									// enable blend only once (avoid repeatedly calling glEnable)
-									if (!hmg_blendEnabledByUs) {
-										GL11.glEnable(GL11.GL_BLEND);
-										hmg_blendEnabledByUs = true;
-									}
+									GL11.glEnable(GL11.GL_BLEND);
 								}
-
 								if (gunItem.gunInfo.renderHMGcross)
 									this.renderCrossHair(minecraft, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(), bure);
-
-								// decide if we should reset cameraZoom to 1.0 (no valid sight / zoom not allowed)
-								boolean shouldResetZoom = false;
-
 								if (itemstackSight != null) {
 									if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
-										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer) shouldResetZoom = true;
+										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer) {
+											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+													1.0d, "cameraZoom", "field_78503_V");
+											currentZoomLevel = 1;
+										}
 									} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
-										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomres) shouldResetZoom = true;
+										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomres) {
+											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+													1.0d, "cameraZoom", "field_78503_V");
+											currentZoomLevel = 1;
+										}
 									} else if (itemstackSight.getItem() instanceof HMGItemSightBase) {
-										if (!gunItem.gunInfo.canobj || ((HMGItemSightBase) itemstackSight.getItem()).scopeonly) shouldResetZoom = true;
+										if (!gunItem.gunInfo.canobj || ((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
+											ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+													1.0d, "cameraZoom", "field_78503_V");
+											currentZoomLevel = 1;
+										}
 									}
 								} else {
-									if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomren) shouldResetZoom = true;
-								}
-
-								// Only change the EntityRenderer.cameraZoom via reflection when it actually differs from what we want.
-								try {
-									// read current zoom (field name args to handle obfuscation)
-									Double currentZoom = ObfuscationReflectionHelper.getPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
-											"cameraZoom", "field_78503_V");
-									if (currentZoom == null) currentZoom = 1.0d;
-
-									double desiredZoom = shouldResetZoom ? 1.0d : currentZoom; // here we only *reset* to 1.0 as original block did
-
-									// If we want to reset and value differs, or if we previously forced a zoom and now want to reset,
-									// then update. This prevents repeatedly setting the same value every tick.
-									if (Math.abs(currentZoom - desiredZoom) > 1e-6) {
-										ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer, desiredZoom,
-												"cameraZoom", "field_78503_V");
-										hmg_lastForcedCameraZoom = desiredZoom;
-										hmg_zoomLockedByUs = desiredZoom != 1.0d;
-									} else {
-										// keep tracking that we haven't changed anything
-										hmg_lastForcedCameraZoom = currentZoom;
-									}
-
-									// keep your currentZoomLevel consistent with what you forced (only update when reset)
-									if (shouldResetZoom) {
+									if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomren) {
+										ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
+												1.0d, "cameraZoom", "field_78503_V");
 										currentZoomLevel = 1;
 									}
-								} catch (Exception ex) {
-									// don't spam stack traces every tick; log once or ignore silently
-									// Fallback: attempt a safe set without reading if reflection read failed
-									try {
-										ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer, 1.0d,
-												"cameraZoom", "field_78503_V");
-										hmg_lastForcedCameraZoom = 1.0d;
-										hmg_zoomLockedByUs = false;
-										currentZoomLevel = 1;
-									} catch (Exception ignore) {
-										// give up quietly to avoid spam
-									}
 								}
+								// minecraft.gameSettings.fovSetting = 70.0F;
 
-								// NOTE: we purposely do NOT set cameraZoom repeatedly while it's already the desired value.
-								// This prevents conflicts with vanilla sprint FOV changes and stops the zoom-in/out spam.
 							}
 							if (gunItem.gunInfo.canlock && nbt != null) {
 								//todo 3Dにしたので根本から作り直し
@@ -997,132 +958,4 @@ public class HMGEventZoom {
 		GL11.glLoadIdentity();
 		GL11.glTranslatef(0.0F, 0.0F, -2000.0F);
 	}
-
-
-
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent(priority = EventPriority.LOWEST) // run last so we override vanilla sprint FOV
-	public void renderfovOverride(FOVUpdateEvent event)
-	{
-		EntityPlayer entityPlayer = event.entity;
-		if (entityPlayer == null) return;
-
-		// --- compute a clean base FOV (don't rely on event.newfov which other handlers may have modified) ---
-		IAttributeInstance attr = entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
-		double moveSpeed = computeMoveSpeed_WithoutGunModifier((ModifiableAttributeInstance) attr);
-		float baseFov = 1.0F;
-		if (entityPlayer.capabilities.isFlying) baseFov *= 1.1F;
-		float walkSpeed = entityPlayer.capabilities.getWalkSpeed();
-		baseFov = (float)((double)baseFov * ((moveSpeed / (double)walkSpeed + 1.0D) / 2.0D));
-		if (walkSpeed == 0.0F || Float.isNaN(baseFov) || Float.isInfinite(baseFov)) baseFov = 1.0F;
-
-		// bow slowdown
-		if (entityPlayer.isUsingItem() && entityPlayer.getItemInUse() != null && entityPlayer.getItemInUse().getItem() == Items.bow)
-		{
-			int i = entityPlayer.getItemInUseDuration();
-			float f1 = (float)i / 20.0F;
-			if (f1 > 1.0F) f1 = 1.0F;
-			else f1 *= f1;
-			baseFov *= 1.0F - f1 * 0.15F;
-		}
-
-		float finalFov = baseFov;
-
-		// --- compute zoom factor from held item / placed gun (same logic as before) ---
-		ItemStack held = entityPlayer.getCurrentEquippedItem();
-		Entity riding = entityPlayer.ridingEntity;
-		if (riding instanceof PlacedGunEntity)
-		{
-			PlacedGunEntity pge = (PlacedGunEntity) riding;
-			if (pge.gunStack != null && pge.gunStack.getItem() instanceof HMGItem_Unified_Guns)
-			{
-				held = pge.gunStack;
-			}
-		}
-
-		float zoomFactor = 1.0f;
-		float newZoomLevel = currentZoomLevel; // default keep old
-
-		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns)
-		{
-			HMGItem_Unified_Guns gunbase = (HMGItem_Unified_Guns) held.getItem();
-
-			// Only apply zoom when ADS is active (and not forcing sprint to cancel it)
-			if (firstPerson_ADSState && !entityPlayer.isSprinting())
-			{
-				// read sight safely
-				ItemStack sight = null;
-				if (held.hasTagCompound() && held.getTagCompound().hasKey("Items"))
-				{
-					NBTTagList tags = (NBTTagList) held.getTagCompound().getTag("Items");
-					if (tags != null)
-					{
-						ItemStack[] items = new ItemStack[6];
-						int loopCount = Math.min(tags.tagCount(), 7);
-						for (int i = 0; i < loopCount; i++)
-						{
-							NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
-							int slot = tagCompound.getByte("Slot");
-							if (slot >= 0 && slot < items.length)
-							{
-								items[slot] = ItemStack.loadItemStackFromNBT(tagCompound);
-							}
-						}
-						sight = items[1];
-					}
-				}
-
-				if (sight != null)
-				{
-					if (sight.getItem() instanceof HMGItemAttachment_reddot)
-					{
-						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomrer) { zoomFactor = gunbase.gunInfo.scopezoomred; newZoomLevel = gunbase.gunInfo.scopezoomred; }
-					}
-					else if (sight.getItem() instanceof HMGItemAttachment_scope)
-					{
-						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres) { zoomFactor = gunbase.gunInfo.scopezoomscope; newZoomLevel = gunbase.gunInfo.scopezoomscope; }
-					}
-					else if (sight.getItem() instanceof HMGItemSightBase)
-					{
-						if (gunbase.gunInfo.canobj && !((HMGItemSightBase) sight.getItem()).scopeonly)
-						{
-							zoomFactor = ((HMGItemSightBase) sight.getItem()).zoomlevel;
-							newZoomLevel = ((HMGItemSightBase) sight.getItem()).zoomlevel;
-						}
-					}
-					else
-					{
-						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) { zoomFactor = gunbase.gunInfo.scopezoombase; newZoomLevel = gunbase.gunInfo.scopezoombase; }
-					}
-				}
-				else
-				{
-					if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) { zoomFactor = gunbase.gunInfo.scopezoombase; newZoomLevel = gunbase.gunInfo.scopezoombase; }
-				}
-			} // end ADS check
-
-			// keep previous flying compensation behavior if desired
-			if (entityPlayer.capabilities.isFlying)
-			{
-				finalFov /= 1.1F;
-			}
-		} // end held check
-
-		// Protect against division by zero
-		if (zoomFactor <= 0.00001F) zoomFactor = 1.0F;
-
-		// --- IMPORTANT: override event.newfov here (this runs last because of LOWEST priority) ---
-		if (firstPerson_ADSState && prevADSState)
-		{
-			event.newfov = finalFov / zoomFactor;
-			// update currentZoomLevel only if changed
-			if (newZoomLevel != currentZoomLevel) currentZoomLevel = newZoomLevel;
-		}
-		else
-		{
-			// not ADS: ensure no leftover zoom remains
-			// leave event.newfov alone (so vanilla sprint/normal FOV applies)
-		}
-	}
-
 }
