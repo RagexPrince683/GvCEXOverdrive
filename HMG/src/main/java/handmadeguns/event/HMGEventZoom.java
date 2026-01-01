@@ -16,6 +16,7 @@ import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
+import net.minecraftforge.client.event.FOVUpdateEvent;
 import org.lwjgl.opengl.GL11;
 
 
@@ -80,6 +81,7 @@ public class HMGEventZoom {
 	public static boolean isSlowdowned2;
 	public static boolean isSlowdowned3;
 	private double premotion;
+
 
 
 	//@SideOnly(Side.CLIENT)
@@ -243,6 +245,137 @@ public class HMGEventZoom {
 	//}
 
 	//todo onRenderTickStartでマウス感度を下げ、onRenderTickEndで復帰させればズーム時の照準が楽になるだろう
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void renderfov(FOVUpdateEvent event)
+	{
+		//Minecraft minecraft = FMLClientHandler.instance().getClient();
+		//EntityPlayer entityPlayer = minecraft.thePlayer;
+		EntityPlayer entityPlayer = event.entity;
+
+		IAttributeInstance iattributeinstance = entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+
+//		System.out.println("speedModify_\t" + iattributeinstance.getAttributeValue());
+//		System.out.println("debug_FOV\t\t" + event.newfov);
+
+		{
+//			System.out.println("modify\t\t" + HMG_proxy.getCurrentAttributeModifier());
+//			System.out.println("speedModify\t\t" + iattributeinstance.getAttributeValue());
+
+//			if(HMG_proxy.getCurrentAttributeModifier() != null){
+//				flag = true;
+//				if (entityPlayer.getEquipmentInSlot(0) != null && entityPlayer.getEquipmentInSlot(0).getItem() instanceof HMGItem_Unified_Guns){
+//					resetApply = true;
+//				}
+//				entityPlayer.getAttributeMap().removeAttributeModifiers(HMG_proxy.getCurrentAttributeModifier());
+//			}
+			{
+				iattributeinstance = entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
+				double value = computeMoveSpeed_WithoutGunModifier((ModifiableAttributeInstance) iattributeinstance);
+//				System.out.println("changed\t\t\t" + value);
+				float f = 1.0F;
+
+				if (entityPlayer.capabilities.isFlying)
+				{
+					f *= 1.1F;
+				}
+
+				f = (float)((double)f * ((value / (double)entityPlayer.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
+
+				if (entityPlayer.capabilities.getWalkSpeed() == 0.0F || Float.isNaN(f) || Float.isInfinite(f))
+				{
+					f = 1.0F;
+				}
+
+				if (entityPlayer.isUsingItem() && entityPlayer.getItemInUse().getItem() == Items.bow)
+				{
+					int i = entityPlayer.getItemInUseDuration();
+					float f1 = (float)i / 20.0F;
+
+					if (f1 > 1.0F)
+					{
+						f1 = 1.0F;
+					}
+					else
+					{
+						f1 *= f1;
+					}
+
+					f *= 1.0F - f1 * 0.15F;
+				}
+				event.newfov = f;
+			}
+
+			ItemStack itemstack = entityPlayer.getCurrentEquippedItem();
+			Entity ridingEntity = entityPlayer.ridingEntity;
+			if(ridingEntity instanceof PlacedGunEntity){
+				if(((PlacedGunEntity) ridingEntity).gunStack != null  && ((PlacedGunEntity) ridingEntity).gunStack.getItem() instanceof HMGItem_Unified_Guns){
+					itemstack = ((PlacedGunEntity) ridingEntity).gunStack;
+				}
+			}
+			if (itemstack != null && itemstack.getItem() instanceof HMGItem_Unified_Guns) {
+				HMGItem_Unified_Guns gunbase = (HMGItem_Unified_Guns) itemstack.getItem();
+				if (firstPerson_ADSState && prevADSState)
+				{
+					((HMGItem_Unified_Guns) itemstack.getItem()).checkTags(itemstack);
+					ItemStack[] items = new ItemStack[6];
+					ItemStack itemstackSight =null;
+					NBTTagList tags = (NBTTagList) itemstack.getTagCompound().getTag("Items");
+					if (tags != null) {
+						for (int i = 0; i < 7; i++)//133
+						{
+							NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
+							int slot = tagCompound.getByte("Slot");
+							if (slot >= 0 && slot < items.length) {
+								items[slot] = ItemStack.loadItemStackFromNBT(tagCompound);
+//                    if(items[slot] != null) {
+//                        System.out.println(""+ i + "" + items[slot].getItem().getUnlocalizedName());
+//                    }
+							}
+						}
+					}
+					itemstackSight = items[1];
+					if(itemstackSight != null) {
+						if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
+							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomrer) {
+								event.newfov = event.newfov / gunbase.gunInfo.scopezoomred;
+								currentZoomLevel = gunbase.gunInfo.scopezoomred;
+							}
+						} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
+							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomres) {
+								event.newfov = event.newfov / gunbase.gunInfo.scopezoomscope;
+								currentZoomLevel = gunbase.gunInfo.scopezoomscope;
+							}
+						} else if (itemstackSight.getItem() instanceof HMGItemSightBase) {
+							if (gunbase.gunInfo.canobj && !((HMGItemSightBase) itemstackSight.getItem()).scopeonly) {
+								event.newfov = event.newfov / ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
+								currentZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
+							}
+						}else {
+							if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) {
+								event.newfov = event.newfov / gunbase.gunInfo.scopezoombase;
+								currentZoomLevel = gunbase.gunInfo.scopezoombase;
+							}
+						}
+					} else {
+						if (gunbase.gunInfo.canobj && gunbase.gunInfo.zoomren) {
+							event.newfov = event.newfov / gunbase.gunInfo.scopezoombase;
+							currentZoomLevel = gunbase.gunInfo.scopezoombase;
+						}
+					}
+				}
+				if(entityPlayer.capabilities.isFlying){
+					event.newfov /=1.1F;
+				}
+//				System.out.println(entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue());
+//				if(isSlowdowned3)event.newfov /= ((gunbase.motion <= 0 ? 0 : gunbase.motion) + 1 )/2;
+//				premotion = gunbase.motion;
+			}
+		}
+	}
+//todo onRenderTickStartでマウス感度を下げ、onRenderTickEndで復帰させればズーム時の照準が楽になるだろう
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void displayHUD(RenderGameOverlayEvent.Post event) {

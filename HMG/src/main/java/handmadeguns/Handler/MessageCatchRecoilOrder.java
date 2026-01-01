@@ -56,7 +56,7 @@ public class MessageCatchRecoilOrder implements IMessageHandler<PacketRecoil, IM
                             }
                         }
                         float reduceRecoilLevel = 1;
-                        if(HandmadeGunsCore.Key_ADS(entityPlayer)){
+                        if(HandmadeGunsCore.Key_ADS(entityPlayer)){ //grip recoil
                             if(items[4] != null && items[4].getItem() instanceof HMGItemAttachment_grip)
                                 reduceRecoilLevel = ((HMGItemAttachment_grip) items[4].getItem()).reduceRecoilLevel_ADS;
                             entityPlayer.rotationPitch -= ((HMGItem_Unified_Guns) item).gunInfo.recoil_sneak * reduceRecoilLevel;

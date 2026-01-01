@@ -935,7 +935,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			float reloadprogress = this.getintfromnbt("RloadTime") + smoothing;
 			if(reloadprogress + smoothing >= gunitem.reloadTime(gunstack)-1)reloadprogress = gunitem.reloadTime(gunstack);
 			partsRender_gun.partSidentification(new GunState[]{GunState.Reload}, (float) reloadprogress, remainbullets);
-		} else if ((entity != HMG_proxy.getEntityPlayerInstance() && HandmadeGunsCore.Key_ADS(entity)) || firstPerson_ADSState || prevADSState) {
+		} else if ((entity != HMG_proxy.getEntityPlayerInstance() && HandmadeGunsCore.Key_ADS(entity)) || firstPerson_ADSState || prevADSState) { //new gun rendering when ADS
 			GunState[] state = new GunState[2];
 			state[1] = GunState.ADS;
 			int cockingtime = this.getintfromnbt("CockingTime");
