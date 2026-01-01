@@ -28,8 +28,9 @@ import javax.script.ScriptException;
 import javax.vecmath.Vector3d;
 import java.nio.FloatBuffer;
 
-import static handmadeguns.HandmadeGunsCore.*;
+import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 import static handmadeguns.event.HMGEventZoom.setUp3DView;
+import static handmadeguns.HandmadeGunsCore.smooth;
 import static java.lang.Math.abs;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -409,13 +410,6 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		}
 
 	}
-
-
-	private boolean isADSActive() {
-		return firstPerson_ADSState || prevADSState;
-	}
-
-
 	public void rendering(ItemRenderType type, ItemStack gunstack, Object... data){
 		HMGItem_Unified_Guns gunitem = null;
 		if (gunstack.getItem() instanceof HMGItem_Unified_Guns)
@@ -620,7 +614,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					{
 						if (prevReloadState)
 							setUpGunPos_equipe(0);
-						else if (prevSprintState && firstPerson_SprintState && !prevADSState && !firstPerson_ADSState && !Key_ADS(entity))
+						else if (prevSprintState)
 							setUpGunPos_equipe_sprint(0, 1 - smoothing);
 						else if (prevADSState)
 							setUpGunPos_ADS(-1.4F, 1 - smoothing);
