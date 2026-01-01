@@ -251,19 +251,19 @@ public class RenderTickSmoothing {
 		// --------------------------------------------------
 		// Optional: sneak while ADS (no sprint forcing)
 		// --------------------------------------------------
-		if (firstPerson_ADSState && cfg_Sneak_ByADSKey)
-		{
-			if (entityPlayer.ridingEntity == null
-					&& held != null
-					&& held.getItem() instanceof HMGItem_Unified_Guns
-					&& !isentitysprinting(entityPlayer))
-			{
-				if (entityPlayer instanceof EntityClientPlayerMP)
-				{
-					((EntityClientPlayerMP) entityPlayer).movementInput.sneak = true;
-				}
-			}
-		}
+		//if (firstPerson_ADSState && cfg_Sneak_ByADSKey)
+		//{
+		//	if (entityPlayer.ridingEntity == null
+		//			&& held != null
+		//			&& held.getItem() instanceof HMGItem_Unified_Guns
+		//			&& !isentitysprinting(entityPlayer))
+		//	{
+		//		if (entityPlayer instanceof EntityClientPlayerMP)
+		//		{
+		//			((EntityClientPlayerMP) entityPlayer).movementInput.sneak = true;
+		//		}
+		//	}
+		//}
 	}
 
 

@@ -614,7 +614,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					{
 						if (prevReloadState)
 							setUpGunPos_equipe(0);
-						else if (prevSprintState)
+						else if (prevSprintState && !nbt.getBoolean("IsTriggered"))
 							setUpGunPos_equipe_sprint(0, 1 - smoothing);
 						else if (prevADSState)
 							setUpGunPos_ADS(-1.4F, 1 - smoothing);
@@ -627,11 +627,11 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 						setUpGunPos_ADS(-1.4F, smoothing);
 					else if (prevADSState)
 						setUpGunPos_ADS(-1.4F, 1 - smoothing);
-					else if (firstPerson_SprintState && prevSprintState)
+					else if (firstPerson_SprintState && prevSprintState && !nbt.getBoolean("IsTriggered"))
 						setUpGunPos_equipe_sprint(0, 1);
-					else if (firstPerson_SprintState)
+					else if (firstPerson_SprintState && !nbt.getBoolean("IsTriggered"))
 						setUpGunPos_equipe_sprint(0, smoothing);
-					else if (prevSprintState)
+					else if (prevSprintState && !nbt.getBoolean("IsTriggered"))
 						setUpGunPos_equipe_sprint(0, 1 - smoothing);
 					else
 						setUpGunPos_equipe(0);
@@ -897,6 +897,8 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 //	}
 
 	public static boolean isentitysprinting(EntityLivingBase entity){
+		if (nbt != null && nbt.getBoolean("IsTriggered")) return false;
+
 		NBTTagCompound nbt = HMGRenderItemGun_U_NEW.nbt;
 		if(nbt == null){
 			if(entity.getHeldItem() != null)nbt = entity.getHeldItem().getTagCompound();
