@@ -7,8 +7,8 @@ ADS_Spread_coefficient,0.1
 BlletSpreadDiffusion,4,0,4,0.5,4,2
 Cycle,10
 
-Recoil,8
-Recoil_sneaking,5
+Recoil,4
+Recoil_sneaking,2
 
 
 
@@ -78,7 +78,7 @@ DropMagazine,false
 MagazineSG,0,HandmadeGuns,bullet_shell_hmg
 MagazineGL,0,HandmadeGuns,bullet_rr_hmg
 
-MuzzleJump,0
+MuzzleJump,-1
 
 ReloadTime,580
 

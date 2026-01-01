@@ -7,8 +7,8 @@ ADS_Spread_coefficient,0.1
 BlletSpreadDiffusion,4,0,4,0.5,4,2
 Cycle,1
 
-Recoil,8
-Recoil_sneaking,6
+Recoil,6
+Recoil_sneaking,4.5
 
 
 ReloadTime,30
@@ -83,7 +83,8 @@ MultiMagazine,HandmadeGuns:bullet_hg_9mm8rnd,HandmadeGuns:bullet_hg_9mm10rndmak,
 MagazineSG,0,HandmadeGuns,bullet_shell_hmg
 MagazineGL,0,HandmadeGuns,bullet_rr_hmg
 
-MuzzleJump,-10
+//MuzzleJump,-10
+MuzzleJump,-1
 
 AddParts,mat1
     AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0

@@ -342,7 +342,7 @@ public class HMGEventZoom {
 							if (firstPerson_ADSState && prevADSState) {
 								if (itemstackSight != null) {
 									if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot) {
-										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer && !isentitysprinting(entityplayer)) {
+										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomrer ) {
 											//ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 											//		gunItem.gunInfo.scopezoomred, "cameraZoom", "field_78503_V");
 											currentZoomLevel = gunItem.gunInfo.scopezoomred;
@@ -352,7 +352,7 @@ public class HMGEventZoom {
 											renderPumpkinBlur(minecraft, adsr);
 										}
 									} else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope) {
-										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomres && !isentitysprinting(entityplayer)) {
+										if (!gunItem.gunInfo.canobj || !gunItem.gunInfo.zoomres ) {
 											//ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 											//		gunItem.gunInfo.scopezoomscope, "cameraZoom", "field_78503_V");
 											currentZoomLevel = gunItem.gunInfo.scopezoomscope;
@@ -376,12 +376,12 @@ public class HMGEventZoom {
 										}
 									}
 								} else {
-									if (!isentitysprinting(entityplayer)) {
+									//if (!isentitysprinting(entityplayer)) {
 										// FOV zoom is handled in FOVUpdateEvent
 										if (gunItem.gunInfo.zoomrent) {
 											renderPumpkinBlur(minecraft, ads);
 										}
-									}
+									//}
 								}
 								if (gunItem.gunInfo.renderMCcross) {
 									GuiIngameForge.renderCrosshairs = true;
