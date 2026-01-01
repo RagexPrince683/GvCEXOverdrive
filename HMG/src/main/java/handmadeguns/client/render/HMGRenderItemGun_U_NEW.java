@@ -460,6 +460,18 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 
 					GL11.glPushMatrix();
 
+					//todo BOOKMARK
+					if (!firstPerson_SprintState && nbt.getBoolean("set_up") ) { //nbt.getBoolean("set_up")
+						//basically we NEED to do itemstack.getTagCompound().getBoolean("set_up") in here but itemstack isn't availible
+						//because this is the renderer or some fucking bullshit this fucking mod makes me want to rip my fucking eyes out
+						Sprintrotationx = 0F;
+						Sprintrotationy = 0F;
+						Sprintrotationz = 0F;
+						Sprintoffsetx   = 0F;
+						Sprintoffsety   = 0F;
+						Sprintoffsetz   = 0F;
+					}
+
 					/* =========================================================
 					 * FOV COMPENSATION
 					 * Authored at vanilla 95 FOV
@@ -614,7 +626,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					{
 						if (prevReloadState)
 							setUpGunPos_equipe(0);
-						else if (prevSprintState && !nbt.getBoolean("IsTriggered"))
+						else if (prevSprintState && !nbt.getBoolean("set_up"))
 							setUpGunPos_equipe_sprint(0, 1 - smoothing);
 						else if (prevADSState)
 							setUpGunPos_ADS(-1.4F, 1 - smoothing);
@@ -627,11 +639,11 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 						setUpGunPos_ADS(-1.4F, smoothing);
 					else if (prevADSState)
 						setUpGunPos_ADS(-1.4F, 1 - smoothing);
-					else if (firstPerson_SprintState && prevSprintState && !nbt.getBoolean("IsTriggered"))
+					else if (firstPerson_SprintState && prevSprintState && !nbt.getBoolean("set_up"))
 						setUpGunPos_equipe_sprint(0, 1);
-					else if (firstPerson_SprintState && !nbt.getBoolean("IsTriggered"))
+					else if (firstPerson_SprintState && !nbt.getBoolean("set_up"))
 						setUpGunPos_equipe_sprint(0, smoothing);
-					else if (prevSprintState && !nbt.getBoolean("IsTriggered"))
+					else if (prevSprintState && !nbt.getBoolean("set_up"))
 						setUpGunPos_equipe_sprint(0, 1 - smoothing);
 					else
 						setUpGunPos_equipe(0);
@@ -705,7 +717,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 	public void setUpGunPos_equipe_sprint(float reco, float interPole) {
 		//FUCK YOU JUST FUCKING WORK YOU PIECE OF SHIT
 
-		if (nbt != null && nbt.getBoolean("IsTriggered")) return;
+		if (nbt != null && nbt.getBoolean("set_up")) return;
 
 
 
@@ -902,15 +914,23 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 //		}
 //	}
 
-	public static boolean isentitysprinting(EntityLivingBase entity){
-		if (nbt != null && nbt.getBoolean("IsTriggered")) return false;
-
-		NBTTagCompound nbt = HMGRenderItemGun_U_NEW.nbt;
-		if(nbt == null){
-			if(entity.getHeldItem() != null)nbt = entity.getHeldItem().getTagCompound();
+	public static boolean isentitysprinting(EntityLivingBase entity) {
+		NBTTagCompound nbtLocal = HMGRenderItemGun_U_NEW.nbt;
+		if (nbtLocal == null) {
+			if (entity != null && entity.getHeldItem() != null && entity.getHeldItem().hasTagCompound()) {
+				nbtLocal = entity.getHeldItem().getTagCompound();
+			}
 		}
-		return entity != null && (entity.isSprinting() && (nbt == null || !nbt.getBoolean("set_up") || !nbt.getBoolean("IsTriggered")));
+
+		// If the gun is triggered, report NOT sprinting so no sprint transforms are applied.
+		if (nbtLocal != null && nbtLocal.hasKey("IsTriggered") && nbtLocal.getBoolean("IsTriggered")) {
+			return false;
+		}
+
+		// Keep original 'set_up' behavior
+		return entity != null && entity.isSprinting() && (nbtLocal == null || !nbtLocal.getBoolean("set_up"));
 	}
+
 	private static FloatBuffer setColorBuffer(float p_74521_0_, float p_74521_1_, float p_74521_2_, float p_74521_3_) {
 		colorBuffer.clear();
 		colorBuffer.put(p_74521_0_).put(p_74521_1_).put(p_74521_2_).put(p_74521_3_);
@@ -929,6 +949,27 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			gunitem.gunInfo.cycle = gunitem.gunInfo.rates.get(mode);
 		float boltPos = nbt.getByte("Bolt");
 		float recoileprogress = 10 - 10 * (boltPos - smoothing) / (gunitem.gunInfo.cycle);
+
+		// === suppress sprint interpolation while trigger is held ===
+// ensure we detect the trigger both from the current nbt and the stack
+		boolean isTriggeredLocal = false;
+		if (nbt != null && nbt.hasKey("IsTriggered")) {
+			isTriggeredLocal = nbt.getBoolean("IsTriggered");
+		} else if (gunstack != null && gunstack.hasTagCompound()) {
+			NBTTagCompound stackTag = gunstack.getTagCompound();
+			if (stackTag != null && stackTag.hasKey("IsTriggered")) {
+				isTriggeredLocal = stackTag.getBoolean("IsTriggered");
+			}
+		}
+		//System.out.println("DBG: IsTriggered=" + isTriggeredLocal + " prevSprint=" + prevSprintState + " firstSprint=" + firstPerson_SprintState);
+
+
+		if (isTriggeredLocal) {
+			// hard clear both states to stop smoothing/interpolation tail
+			firstPerson_SprintState = false;
+			prevSprintState = false;
+		}
+
 		if(boltPos == 0){
 			recoiled = true;
 		}
@@ -960,7 +1001,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				partsRender_gun.partSidentification(state, (float) 0, remainbullets);
 			}
 		} else {
-			if (entity instanceof EntityLivingBase && isentitysprinting((EntityLivingBase) entity) && !nbt.getBoolean("IsTriggered")) {
+			if (entity instanceof EntityLivingBase && isentitysprinting((EntityLivingBase) entity) && !nbt.getBoolean("set_up")) {
 				partsRender_gun.partSidentification(new GunState[]{GunState.Default}, (float) 0, remainbullets);
 			} else {
 				int cockingtime = this.getintfromnbt("CockingTime");

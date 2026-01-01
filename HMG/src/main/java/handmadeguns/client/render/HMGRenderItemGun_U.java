@@ -628,7 +628,8 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 								GL11.glRotatef(Sprintrotationy, 0.0F, 1.0F, 0.0F);
 								GL11.glRotatef(Sprintrotationz, 0.0F, 0.0F, 1.0F);
 								GL11.glTranslatef(Sprintoffsetx, Sprintoffsety, Sprintoffsetz);
-								System.out.println("TEST");
+								//System.out.println("TEST");
+							//THIS IS LITERALLY THE OTHER RENDER. IT DOES NOT NEED TO BE MODIFIED.
 							//}
 						} else if (getremainingbullet(item)<=0) {
 							if (!reloadanim)
