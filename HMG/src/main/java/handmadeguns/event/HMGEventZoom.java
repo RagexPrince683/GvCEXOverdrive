@@ -376,12 +376,12 @@ public class HMGEventZoom {
 										}
 									}
 								} else {
-									//if (!isentitysprinting(entityplayer)) {
+									if (!isentitysprinting(entityplayer)) {
 										// FOV zoom is handled in FOVUpdateEvent
 										if (gunItem.gunInfo.zoomrent) {
 											renderPumpkinBlur(minecraft, ads);
 										}
-									//}
+									}
 								}
 								if (gunItem.gunInfo.renderMCcross) {
 									GuiIngameForge.renderCrosshairs = true;

@@ -614,7 +614,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 						}
 
 					} else {
-						if (isentitysprinting(entityplayer) || (gun.gunInfo.needfix && !nbt.getBoolean("HMGfixed")) && !HandmadeGunsCore.Key_ADS(entityplayer)) {
+						if ( (isentitysprinting(entityplayer) && !HandmadeGunsCore.Key_ADS(entityplayer) ) || (gun.gunInfo.needfix && !nbt.getBoolean("HMGfixed")) ) {
 							glMatrixForRenderInEquipped(0);
 					/*if(item.getItem() instanceof HMGItemGun_HG){
 					GL11.glRotatef(-60F, 1.0F, 0.0F, 0.0F);
