@@ -477,14 +477,14 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					{
 						if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase)
 						{
-							if (((HMGItemSightBase) itemstackSight.getItem()).scopeonly && !isentitysprinting(entity))
+							if (((HMGItemSightBase) itemstackSight.getItem()).scopeonly)
 							{
 								GL11.glPopMatrix();
 								break;
 							}
 							else if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot)
 							{
-								if (!gunitem.gunInfo.zoomrer && !isentitysprinting(entity))
+								if (!gunitem.gunInfo.zoomrer)
 								{
 									GL11.glPopMatrix();
 									break;
@@ -492,7 +492,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 							}
 							else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope)
 							{
-								if (!gunitem.gunInfo.zoomres && !isentitysprinting(entity))
+								if (!gunitem.gunInfo.zoomres)
 								{
 									GL11.glPopMatrix();
 									break;
@@ -501,7 +501,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 						}
 						else
 						{
-							if (!gunitem.gunInfo.zoomren && !isentitysprinting(entity))
+							if (!gunitem.gunInfo.zoomren)
 							{
 								GL11.glPopMatrix();
 								break;
