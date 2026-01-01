@@ -202,6 +202,43 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		partsRender_gun.modelscala = this.modelscala = scala;
 	}
 
+	//NEW FUCKING BULLSHIT TO FIX THIS JAPSLOP MOD:
+
+	private void beginScopeGLState() {
+		// Save matrix + attribute bits so we can't leak state
+		GL11.glPushMatrix();
+		// Save enable/disable, color, depth, blend etc.
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_TRANSFORM_BIT);
+
+		// Typical overlay state for scope/2D rendering
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);           // overlay should draw on top
+		GL11.glDepthMask(false);                      // don't write to depth buffer
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glColor4f(1f, 1f, 1f, 1f);
+
+		// Make sure bright (so textures show up exactly)
+		try {
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240f, 240f);
+		} catch (Throwable ignored) {}
+	}
+
+	private void endScopeGLState() {
+		// restore what we changed
+		GL11.glDepthMask(true);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		// restore attributes and matrix
+		GL11.glPopAttrib();
+		GL11.glPopMatrix();
+
+		// reset color to white (defensive)
+		GL11.glColor4f(1f, 1f, 1f, 1f);
+	}
+
 	public void setarmOffsetAndRotationR(float px,float py,float pz,float rx,float ry,float rz){
 		partsRender_gun.armoffsetxr = px;
 		partsRender_gun.armoffsetyr = py;
@@ -442,18 +479,18 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 
 					ItemStack itemstackSight = items[1];
 
-					if (isADSActive())
+					if (firstPerson_ADSState && prevADSState)
 					{
 						if (itemstackSight != null && itemstackSight.getItem() instanceof HMGItemSightBase)
 						{
-							if (((HMGItemSightBase) itemstackSight.getItem()).scopeonly)
+							if (((HMGItemSightBase) itemstackSight.getItem()).scopeonly && !isentitysprinting(entity))
 							{
 								GL11.glPopMatrix();
 								break;
 							}
 							else if (itemstackSight.getItem() instanceof HMGItemAttachment_reddot)
 							{
-								if (!gunitem.gunInfo.zoomrer)
+								if (!gunitem.gunInfo.zoomrer && !isentitysprinting(entity))
 								{
 									GL11.glPopMatrix();
 									break;
@@ -461,7 +498,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 							}
 							else if (itemstackSight.getItem() instanceof HMGItemAttachment_scope)
 							{
-								if (!gunitem.gunInfo.zoomres)
+								if (!gunitem.gunInfo.zoomres && !isentitysprinting(entity))
 								{
 									GL11.glPopMatrix();
 									break;
@@ -470,7 +507,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 						}
 						else
 						{
-							if (!gunitem.gunInfo.zoomren)
+							if (!gunitem.gunInfo.zoomren && !isentitysprinting(entity))
 							{
 								GL11.glPopMatrix();
 								break;
