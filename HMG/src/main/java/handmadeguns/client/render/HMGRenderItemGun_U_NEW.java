@@ -460,16 +460,21 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 
 					GL11.glPushMatrix();
 
-					//todo BOOKMARK
-					if (!firstPerson_SprintState && nbt.getBoolean("set_up") ) { //nbt.getBoolean("set_up")
-						//basically we NEED to do itemstack.getTagCompound().getBoolean("set_up") in here but itemstack isn't availible
-						//because this is the renderer or some fucking bullshit this fucking mod makes me want to rip my fucking eyes out
-						Sprintrotationx = 0F;
-						Sprintrotationy = 0F;
-						Sprintrotationz = 0F;
-						Sprintoffsetx   = 0F;
-						Sprintoffsety   = 0F;
-						Sprintoffsetz   = 0F;
+
+
+					if (nbt != null) {
+						boolean isTriggered = nbt.getBoolean("IsTriggered");
+						boolean setUp = nbt.getBoolean("set_up");
+
+						// If firing but NOT sprinting, we must NOT apply sprint/setup transforms
+						if (!firstPerson_SprintState && isTriggered && setUp) {
+							Sprintrotationx = 0F;
+							Sprintrotationy = 0F;
+							Sprintrotationz = 0F;
+							Sprintoffsetx   = 0F;
+							Sprintoffsety   = 0F;
+							Sprintoffsetz   = 0F;
+						}
 					}
 
 					/* =========================================================
@@ -1001,7 +1006,8 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				partsRender_gun.partSidentification(state, (float) 0, remainbullets);
 			}
 		} else {
-			if (entity instanceof EntityLivingBase && isentitysprinting((EntityLivingBase) entity) && !nbt.getBoolean("set_up")) {
+			if (entity instanceof EntityLivingBase && isentitysprinting((EntityLivingBase) entity) && (!nbt.getBoolean("set_up") ) ) { //|| !nbt.getBoolean("IsTriggered")
+				//I'm fucking losing it
 				partsRender_gun.partSidentification(new GunState[]{GunState.Default}, (float) 0, remainbullets);
 			} else {
 				int cockingtime = this.getintfromnbt("CockingTime");
