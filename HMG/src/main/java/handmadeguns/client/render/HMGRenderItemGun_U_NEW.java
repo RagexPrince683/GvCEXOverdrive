@@ -616,31 +616,65 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 
 					//boolean isreloading = this.getbooleanfromnbt("IsReloading");
 					//ununused?
+					// --- Pose selection ---
+// Sprint pose must NEVER be applied while ADS is active
+					boolean adsActive = firstPerson_ADSState || prevADSState;
+
+// Reload has highest priority
 					if (firstPerson_ReloadState)
 					{
 						if (prevReloadState)
+						{
 							setUpGunPos_equipe(0);
-						else if (prevSprintState && firstPerson_SprintState && !prevADSState && !firstPerson_ADSState && !Key_ADS(entity))
+						}
+						else if (prevSprintState && firstPerson_SprintState && !adsActive && !Key_ADS(entity))
+						{
 							setUpGunPos_equipe_sprint(0, 1 - smoothing);
+						}
 						else if (prevADSState)
+						{
 							setUpGunPos_ADS(-1.4F, 1 - smoothing);
+						}
 						else
+						{
 							setUpGunPos_equipe(0);
+						}
 					}
+// ADS steady
 					else if (firstPerson_ADSState && prevADSState)
+					{
 						setUpGunPos_ADS(-1.4F);
+					}
+// ADS entering
 					else if (firstPerson_ADSState)
+					{
 						setUpGunPos_ADS(-1.4F, smoothing);
+					}
+// ADS exiting
 					else if (prevADSState)
+					{
 						setUpGunPos_ADS(-1.4F, 1 - smoothing);
-					else if (firstPerson_SprintState && prevSprintState)
+					}
+// Sprint steady — HARD BLOCKED IF ADS
+					else if (firstPerson_SprintState && prevSprintState && !adsActive)
+					{
 						setUpGunPos_equipe_sprint(0, 1);
-					else if (firstPerson_SprintState)
+					}
+// Sprint entering
+					else if (firstPerson_SprintState && !adsActive)
+					{
 						setUpGunPos_equipe_sprint(0, smoothing);
-					else if (prevSprintState)
+					}
+// Sprint exiting
+					else if (prevSprintState && !adsActive)
+					{
 						setUpGunPos_equipe_sprint(0, 1 - smoothing);
+					}
+// Normal hold
 					else
+					{
 						setUpGunPos_equipe(0);
+					}
 
 					GL11.glScalef(this.modelscala, this.modelscala, this.modelscala);
 					rendering_situation(gunstack, entity);
