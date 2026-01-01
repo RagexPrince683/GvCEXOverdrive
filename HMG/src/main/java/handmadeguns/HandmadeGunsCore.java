@@ -25,6 +25,7 @@ import handmadeguns.command.HMG_CommandReloadparm;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
 import handmadeguns.event.HMGEventZoom;
+import handmadeguns.event.HMGJumpHandler;
 import handmadeguns.event.HMGLivingUpdateEvent;
 import handmadeguns.event.RenderTickSmoothing;
 import handmadeguns.gunsmithing.GunSmithNetwork;
@@ -754,6 +755,7 @@ public class HandmadeGunsCore {
 		FMLCommonHandler.instance().bus().register(this);
 		//if(pEvent.getSide().isClient())
 		{
+			MinecraftForge.EVENT_BUS.register(new HMGJumpHandler());
 			MinecraftForge.EVENT_BUS.register(new WhizEventHandler());
 			MinecraftForge.EVENT_BUS.register(new LivingEventHooks());
 		}
