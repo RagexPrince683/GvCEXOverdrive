@@ -346,7 +346,7 @@ public class HMGEventZoom {
 											//ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 											//		gunItem.gunInfo.scopezoomred, "cameraZoom", "field_78503_V");
 											currentZoomLevel = gunItem.gunInfo.scopezoomred;
-											//needreset = true;
+											needreset = true;
 										}
 										if (gunItem.gunInfo.zoomrert) {
 											renderPumpkinBlur(minecraft, adsr);
@@ -356,7 +356,7 @@ public class HMGEventZoom {
 											//ObfuscationReflectionHelper.setPrivateValue(EntityRenderer.class, minecraft.entityRenderer,
 											//		gunItem.gunInfo.scopezoomscope, "cameraZoom", "field_78503_V");
 											currentZoomLevel = gunItem.gunInfo.scopezoomscope;
-											//needreset = true;
+											needreset = true;
 										}
 										if (gunItem.gunInfo.zoomrest) {
 											renderPumpkinBlur(minecraft, adss);
@@ -368,7 +368,7 @@ public class HMGEventZoom {
 											//		((HMGItemSightBase) itemstackSight.getItem()).zoomlevel, "cameraZoom", "field_78503_V");
 											//do not fucking do that
 											currentZoomLevel = ((HMGItemSightBase) itemstackSight.getItem()).zoomlevel;
-											//needreset = true;
+											needreset = true;
 											//or that
 										}
 										if (((HMGItemSightBase) itemstackSight.getItem()).scopetexture != null) {
@@ -380,6 +380,7 @@ public class HMGEventZoom {
 										// FOV zoom is handled in FOVUpdateEvent
 										if (gunItem.gunInfo.zoomrent) {
 											renderPumpkinBlur(minecraft, ads);
+											needreset = true;
 										}
 									//}
 								}
