@@ -1,70 +1,71 @@
 package handmadeguns.event;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.World;
+import net.minecraft.util.MathHelper;
 
-// Register this with MinecraftForge.EVENT_BUS.register(new HMGJumpHandler());
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class HMGJumpHandler {
 
-    // base delay in ticks (20 ticks == 1 second). Tune this to taste.
-    private static final int BASE_JUMP_DELAY_TICKS = 10;
+    /** minimal delay even for light guns (ticks) */
+    private static final int BASE_JUMP_DELAY = 5;
+
+    /** additional delay at motion = 0.0 */
+    private static final int MAX_EXTRA_DELAY = 15;
+
+    /** per-player cooldown */
+    private final Map<UUID, Integer> jumpCooldown = new HashMap<>();
 
     @SubscribeEvent
-    public void onLivingJump(LivingEvent.LivingJumpEvent event) {
-        if (!(event.entityLiving instanceof EntityPlayer)) return;
-        EntityPlayer player = (EntityPlayer) event.entityLiving;
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
 
-        // Only enforce when player is holding an HMG gun
+        EntityPlayer player = event.player;
+        UUID id = player.getUniqueID();
+
+        // tick cooldown
+        if (jumpCooldown.containsKey(id)) {
+            int t = jumpCooldown.get(id) - 1;
+            if (t <= 0) jumpCooldown.remove(id);
+            else jumpCooldown.put(id, t);
+        }
+
         ItemStack held = player.getCurrentEquippedItem();
-        if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) return;
+        if (held == null) return;
+        if (!(held.getItem() instanceof HMGItem_Unified_Guns)) return;
 
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
+        double motion = gun.gunInfo.motion;
 
-        // ensure tags are present / up to date (your checkTags pattern)
-        try {
-            gun.checkTags(held);
-        } catch (Throwable ignored) {}
+        // no penalty for normal/light guns
+        if (motion >= 1.0) return;
 
-        NBTTagCompound tag = held.hasTagCompound() ? held.getTagCompound() : null;
-        if (tag == null) return; // no tag -> no special handling
-
-        // Pull the motion multiplier from the gun (fall back to 1.0)
-        double motionMult = 1.0;
-        if (gun.gunInfo != null) motionMult = gun.gunInfo.motion;
-
-        // If motion is <= 1.0 we don't impose extra delay
-        if (motionMult <= 1.0) return;
-
-        // Compute required cooldown in ticks
-        int requiredTicks = (int) Math.round(BASE_JUMP_DELAY_TICKS * motionMult);
-
-        // Store last jump tick on the player's entity data
-        // Use a namespaced key to avoid collisions
-        NBTTagCompound pdata = player.getEntityData();
-        final String KEY = "HMG_lastJumpTick";
-
-        long now = player.worldObj.getTotalWorldTime();
-        long last = pdata.hasKey(KEY) ? pdata.getLong(KEY) : -100000L;
-
-        if (now - last < requiredTicks) {
-            // Too soon: cancel the jump by zeroing vertical motion and preventing airborne flag
-            player.motionY = 0.0D;
-            player.fallDistance = 0.0F;
-            // best-effort to stop client-side visual: server is authoritative; client will be corrected
-            if (player instanceof EntityPlayerMP) {
-                // Optionally you can send a velocity packet here; usually not required.
+        // if cooldown active, kill jump
+        if (jumpCooldown.containsKey(id)) {
+            if (player.motionY > 0) {
+                player.motionY = 0;
+                player.isAirBorne = false;
             }
-            // Prevent further processing (nothing else to do)
             return;
         }
 
-        // Accept the jump and record the time
-        pdata.setLong(KEY, now);
+        // detect jump edge (ground → upward motion)
+        if (player.onGround && player.motionY > 0) {
+            int delay = computeJumpDelay(motion);
+            jumpCooldown.put(id, delay);
+        }
+    }
+
+    private int computeJumpDelay(double motion) {
+        // motion: 1.0 = no penalty, 0.6 = heavy
+        double penalty = MathHelper.clamp_double(1.0 - motion, 0.0, 1.0);
+        return BASE_JUMP_DELAY + (int) (penalty * MAX_EXTRA_DELAY);
     }
 }
