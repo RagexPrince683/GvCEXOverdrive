@@ -703,6 +703,12 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 	}
 
 	public void setUpGunPos_equipe_sprint(float reco, float interPole) {
+		//FUCK YOU JUST FUCKING WORK YOU PIECE OF SHIT
+
+		if (nbt != null && nbt.getBoolean("IsTriggered")) return;
+
+
+
 		GL11.glRotatef(180f, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(180f, 0.0F, 0.0F, 1.0F);
 		GL11.glTranslatef(modelPosX, modelPosY, modelPosZ + 1.4f);// -0.2F//-0.7,0.7,0
