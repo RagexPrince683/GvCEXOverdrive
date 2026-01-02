@@ -1589,7 +1589,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 					GL11.glTranslatef(-9.5F, -15.5F, -5.5F);
 
 					// flip/scale to match your usual model orientation in GUI
-					float iconScale = (gun.gunInfo.inventoryscale * 8 * modelscala) * gun.gunInfo.inworldScale;
+					float iconScale = (gun.gunInfo.inventoryscale * 1 * modelscala) * gun.gunInfo.inworldScale;
 					//gun.ModelScala / gun.InworldScale
 					GL11.glScalef(-iconScale, iconScale, iconScale);
 
