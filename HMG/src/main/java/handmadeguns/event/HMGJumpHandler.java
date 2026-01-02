@@ -15,20 +15,18 @@ import java.util.UUID;
 
 public class HMGJumpHandler {
 
-    // state
-    private static final Map<UUID, Boolean> wasJumping = new HashMap<UUID, Boolean>();
-    private static final Map<UUID, Integer> groundGrace = new HashMap<UUID, Integer>();
-    private static final Map<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();      // active blocking cooldown (counts down after landing)
-    private static final Map<UUID, Integer> pendingCooldowns = new HashMap<UUID, Integer>(); // scheduled cooldown to start on landing
-    private static final Map<UUID, Boolean> wasOnGround = new HashMap<UUID, Boolean>();
+    // state maps
+    private static final Map<UUID, Boolean> wasJumping = new HashMap<>();
+    private static final Map<UUID, Integer> groundGrace = new HashMap<>();
+    private static final Map<UUID, Integer> cooldowns = new HashMap<>();
+    private static final Map<UUID, Integer> pendingCooldowns = new HashMap<>();
+    private static final Map<UUID, Boolean> wasOnGround = new HashMap<>();
+    private static final Map<UUID, Boolean> cancelNext = new HashMap<>();
+    private static final Map<UUID, Boolean> willCancelNextJump = new HashMap<>();
 
-    // parity: whether to cancel when a cooldown finishes (toggles each finish)
-    private static final Map<UUID, Boolean> cancelNext = new HashMap<UUID, Boolean>();
-    // one-shot arm: if true, the next rising-edge jump will be cancelled (then cleared)
-    private static final Map<UUID, Boolean> willCancelNextJump = new HashMap<UUID, Boolean>();
-
-    private static final int BASE_DELAY = 2;   // ticks baseline
-    private static final int MAX_EXTRA = 15;   // ticks extra for heavy guns
+    // tuned constants
+    private static final int BASE_DELAY = 2;
+    private static final int MAX_EXTRA = 15;
 
     // reflection: EntityLivingBase.isJumping
     private static Field isJumpingField;
@@ -41,7 +39,7 @@ public class HMGJumpHandler {
         }
     }
 
-    // Primary tick: detect rising-edge jumps, schedule pending cooldowns, and handle willCancelNextJump
+    // --- Primary tick: rising-edge jump detection ---
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
@@ -61,18 +59,18 @@ public class HMGJumpHandler {
             }
         }
 
-        // landing detection: pending -> active cooldown on landing
+        // landing detection: pending -> active cooldown
         boolean prevOn = wasOnGround.getOrDefault(id, player.onGround);
         if (!prevOn && player.onGround) {
             Integer pending = pendingCooldowns.remove(id);
             if (pending != null && pending > 0) {
                 cooldowns.put(id, pending);
-                if (!cancelNext.containsKey(id)) cancelNext.put(id, true);
+                cancelNext.putIfAbsent(id, true);
             }
         }
         wasOnGround.put(id, player.onGround);
 
-        // read isJumping (reflection)
+        // detect rising-edge jump via reflection
         boolean isJumping = false;
         try { if (isJumpingField != null) isJumping = isJumpingField.getBoolean(player); }
         catch (Exception ignored) {}
@@ -81,24 +79,19 @@ public class HMGJumpHandler {
         boolean jumpPressed = isJumping && !prevJump;
         wasJumping.put(id, isJumping);
 
-        // If this rising-edge jump is the one-shot cancel, cancel it now
+        // If a one-shot cancel is armed, cancel this rising-edge jump now
         if (jumpPressed && willCancelNextJump.getOrDefault(id, false)) {
             willCancelNextJump.remove(id);
-            // cancel the attempted jump
             player.motionY = 0;
             player.isAirBorne = false;
             return;
         }
 
-        // If there's an active cooldown counting down, allow this jump (we don't cancel mid-air here)
-        if (jumpPressed && cooldowns.containsKey(id)) {
-            // allow normal jump; cancellation will have been handled on cooldown finish (either armed or immediate)
-            return;
-        }
+        // If cooldown is active and counting down, allow the jump now (we won't cancel mid-air here)
+        if (jumpPressed && cooldowns.containsKey(id)) return;
 
-        // If it's a normal rising-edge jump (no active cooldown/will-cancel), schedule a pending cooldown
-        if (!jumpPressed) return;
-        if (!groundGrace.containsKey(id)) return;
+        // Normal rising-edge jump: schedule pending cooldown (only if gun and delay warrant)
+        if (!jumpPressed || !groundGrace.containsKey(id)) return;
 
         ItemStack held = player.getCurrentEquippedItem();
         if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) return;
@@ -106,20 +99,18 @@ public class HMGJumpHandler {
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
         double motion = gun.gunInfo.motion;
 
-        if (motion >= 1.0) return; // no penalty for lightest weapons
+        // If motion is very high (>= 0.95), treat as effectively unpenalized — do not schedule.
+        if (motion >= 0.95) return;
 
         int delay = computeDelay(motion);
-
-        // skip tiny delays so rifles are not impacted
+        // tiny delay => skip (keeps light rifles feeling natural)
         if (delay <= 1) return;
 
         pendingCooldowns.put(id, delay);
-        if (!cancelNext.containsKey(id)) cancelNext.put(id, true);
+        cancelNext.putIfAbsent(id, true);
     }
 
-    // Secondary tick: countdown active cooldowns; when a cooldown finishes -> toggle parity and either
-    // * immediate stunt if the player is currently holding jump (isJumping true), or
-    // * arm a one-shot willCancelNextJump to cancel the next rising-edge press.
+    // --- Secondary tick: countdown active cooldowns ---
     @SubscribeEvent
     public void onPlayerPostTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
@@ -136,66 +127,66 @@ public class HMGJumpHandler {
             cooldowns.put(id, cd);
             return;
         }
-
         // cooldown finished
         cooldowns.remove(id);
 
-        // get held item info (if absent, do not stunt)
+        // read current held gun motion (default to 1.0 — no penalty)
         ItemStack held = player.getCurrentEquippedItem();
         double motion = 1.0;
         if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
             motion = ((HMGItem_Unified_Guns) held.getItem()).gunInfo.motion;
         }
 
-        // decide parity
+        // decide parity (alternate every finish)
         boolean shouldCancel = cancelNext.getOrDefault(id, true);
-        cancelNext.put(id, !shouldCancel); // toggle parity for next finish
+        cancelNext.put(id, !shouldCancel);
 
         if (!shouldCancel) {
-            // do nothing — next jump allowed
+            // do not arm or stunt; next jump allowed
             willCancelNextJump.remove(id);
             return;
         }
 
-        // shouldCancel == true: either stunt now (if player is holding jump) or arm a one-shot for next rising-edge
-
-        // check current jump state via reflection
+        // check if player is currently holding jump (same keypress)
         boolean isJumpingNow = false;
         try { if (isJumpingField != null) isJumpingNow = isJumpingField.getBoolean(player); }
         catch (Exception ignored) {}
 
-        // only stunt if gun still qualifies (medium/heavy) and player is holding jump
-        if (motion < 0.75 && isJumpingNow) {
-            // immediate stunt because player is still holding the jump key (same press)
-            player.motionY = 0;
-            player.isAirBorne = false;
-            // ensure no one-shot remains
-            willCancelNextJump.remove(id);
+        // APPLY rules:
+        // - HEAVY (motion <= 0.70) : immediate stunt if holding; otherwise arm one-shot.
+        // - MEDIUM (0.70 < motion <= 0.90) : do NOT stunt immediately; arm one-shot only.
+        // - LIGHT (motion > 0.90) : should not reach here because we early-return at motion>=0.95; but safely arm one-shot only.
+        if (motion <= 0.70) {
+            if (isJumpingNow) {
+                // immediate stunt (heavy weapons)
+                player.motionY = 0;
+                player.isAirBorne = false;
+                willCancelNextJump.remove(id);
+            } else {
+                // arm one-shot cancel for next rising-edge
+                willCancelNextJump.put(id, true);
+            }
+        } else if (motion <= 0.90) {
+            // medium weapons: don't stunt mid-air; only arm one-shot
+            willCancelNextJump.put(id, true);
         } else {
-            // arm a one-shot: cancel the next rising-edge jump press
+            // light weapons fallback (unlikely due to earlier check) — only one-shot
             willCancelNextJump.put(id, true);
         }
     }
 
-    // computeDelay tuned to soften light guns while keeping heavy guns punishing
+    // --- compute discrete delay based on motion (simple predictable mapping) ---
+    // motion: 0.95 (light) -> no scheduling
+    // motion: 0.90..0.95 -> tiny delay
+    // motion: 0.70..0.90 -> medium delay
+    // motion: <=0.70 -> large delay
     private static int computeDelay(double motion) {
-        double penalty = MathHelper.clamp_double(1.0 - motion, 0.0, 1.0);
+        motion = MathHelper.clamp_double(motion, 0.0, 1.0);
 
-        double scale;
-        if (motion >= 0.85) {         // very light weapons
-            scale = 0.12;
-        } else if (motion >= 0.70) {  // light weapons
-            scale = 0.35;
-        } else if (motion >= 0.50) {  // medium weapons
-            scale = 0.65;
-        } else {                      // heavy weapons
-            scale = 1.0;
-        }
-
-        int extra = (int) Math.round(penalty * MAX_EXTRA * scale);
-        int result = BASE_DELAY + extra;
-
-        if (motion >= 0.85 && result > 2) result = 2;
-        return result;
+        if (motion >= 0.95) return 0;             // effectively no penalty
+        if (motion >= 0.90) return BASE_DELAY + 1; // very light
+        if (motion >= 0.70) return BASE_DELAY + 4; // medium
+        // heavy
+        return BASE_DELAY + 10; // strong effect for heavy weapons
     }
 }
