@@ -37,53 +37,87 @@ public class HMGJumpHandler {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+
         if (event.phase != TickEvent.Phase.START) return;
 
         EntityPlayer player = event.player;
         UUID id = player.getUniqueID();
 
+        boolean isRemote = player.worldObj.isRemote;
+
         boolean isJumping = false;
         try {
             isJumping = isJumpingField.getBoolean(player);
-        } catch (Exception ignored) {}
+        } catch (Exception e) {
+            System.out.println("[HMGJump] REFLECTION FAILED");
+            e.printStackTrace();
+        }
 
-        boolean prevJumping = wasJumping.containsKey(id) && wasJumping.get(id);
-
-        // Detect rising edge: not jumping last tick → jumping now
-        boolean jumpPressedThisTick = isJumping && !prevJumping;
+        Boolean prev = wasJumping.get(id);
+        boolean wasJumpingLastTick = prev != null && prev;
+        boolean jumpPressedThisTick = isJumping && !wasJumpingLastTick;
 
         wasJumping.put(id, isJumping);
 
-        // Tick down cooldown
+        System.out.println(
+                "[HMGJump] side=" + (isRemote ? "CLIENT" : "SERVER") +
+                        " onGround=" + player.onGround +
+                        " isJumping=" + isJumping +
+                        " prevJumping=" + wasJumpingLastTick +
+                        " edge=" + jumpPressedThisTick
+        );
+
+        // Tick cooldown
         Integer cd = cooldowns.get(id);
         if (cd != null) {
-            if (--cd <= 0) cooldowns.remove(id);
-            else cooldowns.put(id, cd);
+            cooldowns.put(id, cd - 1);
+            if (cd - 1 <= 0) {
+                cooldowns.remove(id);
+                System.out.println("[HMGJump] cooldown expired");
+            }
         }
 
-        if (!jumpPressedThisTick || !player.onGround) return;
+        if (!jumpPressedThisTick) return;
+        if (!player.onGround) {
+            System.out.println("[HMGJump] jump edge but NOT on ground");
+            return;
+        }
 
         ItemStack held = player.getCurrentEquippedItem();
-        if (held == null) return;
-        if (!(held.getItem() instanceof HMGItem_Unified_Guns)) return;
+        if (held == null) {
+            System.out.println("[HMGJump] no held item");
+            return;
+        }
+
+        if (!(held.getItem() instanceof HMGItem_Unified_Guns)) {
+            System.out.println("[HMGJump] held item NOT gun");
+            return;
+        }
 
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
         double motion = gun.gunInfo.motion;
 
-        if (motion >= 1.0) return;
+        System.out.println("[HMGJump] gun motion=" + motion);
+
+        if (motion >= 1.0) {
+            System.out.println("[HMGJump] motion >= 1.0 → ignoring");
+            return;
+        }
 
         int delay = computeDelay(motion);
+        System.out.println("[HMGJump] computed delay=" + delay);
 
-        // If cooldown active → BLOCK THIS JUMP
         if (cooldowns.containsKey(id)) {
+            System.out.println("[HMGJump] BLOCKING JUMP");
             player.motionY = 0;
             player.isAirBorne = false;
             return;
         }
 
-        // Start cooldown immediately on jump press
         cooldowns.put(id, delay);
+        System.out.println("[HMGJump] cooldown started");
     }
+
 
 
     private static int computeDelay(double motion) {
