@@ -20,7 +20,7 @@ public class HMGJumpHandler {
     private static final Map<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();      // active blocking cooldown (blocks jump presses)
     private static final Map<UUID, Integer> pendingCooldowns = new HashMap<UUID, Integer>(); // scheduled cooldown to start on landing
     private static final Map<UUID, Boolean> wasOnGround = new HashMap<UUID, Boolean>();
-
+    private static final Map<UUID, Boolean> cancelNext = new HashMap<UUID, Boolean>(); // parity: whether to cancel when cooldown finishes
 
     private static final int BASE_DELAY = 2;   // ticks
     private static final int MAX_EXTRA = 15;   // ticks
@@ -36,10 +36,6 @@ public class HMGJumpHandler {
             e.printStackTrace();
         }
     }
-
-    // add near your other maps
-
-
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -67,6 +63,8 @@ public class HMGJumpHandler {
             Integer pending = pendingCooldowns.remove(id);
             if (pending != null && pending > 0) {
                 cooldowns.put(id, pending);
+                // initialize parity only if missing (do NOT overwrite existing parity)
+                if (!cancelNext.containsKey(id)) cancelNext.put(id, true); // first blocked press will cancel
             }
         }
         wasOnGround.put(id, player.onGround);
@@ -119,12 +117,14 @@ public class HMGJumpHandler {
 
         int delay = computeDelay(motion);
 
-        // For very light guns, make the pending cooldown tiny (almost immediate next-press block)
-        // For heavy guns, keep the larger pending cooldown.
+        // SKIP tiny delays so light rifles are not affected
+        if (delay <= 1) return;
+
+        // schedule pending cooldown; it will be activated when the player next lands
         pendingCooldowns.put(id, delay);
     }
 
-    // This fires continuously per tick but only **affects motionY once the cooldown > 0**, scaled by gun weight
+    // This fires continuously per tick and handles the cooldown finishing behavior.
     @SubscribeEvent
     public void onPlayerPostTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
@@ -136,7 +136,13 @@ public class HMGJumpHandler {
         if (cd == null) return;
 
         ItemStack held = player.getCurrentEquippedItem();
-        if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) return;
+        if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) {
+            // still tick cooldown even if item changed
+            cd--;
+            if (cd <= 0) cooldowns.remove(id);
+            else cooldowns.put(id, cd);
+            return;
+        }
 
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
         double motion = gun.gunInfo.motion;
@@ -146,8 +152,12 @@ public class HMGJumpHandler {
         if (cd <= 0) {
             cooldowns.remove(id);
 
-            // Only heavy/medium guns actually get blocked
-            if (motion < 0.75) {
+            // alternate cancellation every other time
+            boolean shouldCancel = cancelNext.getOrDefault(id, true);
+            cancelNext.put(id, !shouldCancel); // toggle parity for next time
+
+            // Only heavy/medium guns actually get blocked, and only on alternating finishes
+            if (shouldCancel && motion < 0.75) {
                 player.motionY = 0;
                 player.isAirBorne = false;
             }
@@ -156,12 +166,7 @@ public class HMGJumpHandler {
         }
     }
 
-
-
-
-
-
-    // --- replace your computeDelay with this tuned version ---
+    // --- tuned computeDelay (keeps your scaled behavior) ---
     private static int computeDelay(double motion) {
         double penalty = MathHelper.clamp_double(1.0 - motion, 0.0, 1.0);
 
@@ -184,6 +189,4 @@ public class HMGJumpHandler {
 
         return result;
     }
-
-
 }
