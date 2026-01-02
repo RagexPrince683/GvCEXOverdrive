@@ -17,10 +17,12 @@ public class HMGJumpHandler {
 
     private static final Map<UUID, Boolean> wasJumping = new HashMap<UUID, Boolean>();
     private static final Map<UUID, Integer> groundGrace = new HashMap<UUID, Integer>();
-    private static final Map<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();
+    private static final Map<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();      // active blocking cooldown (blocks jump presses)
+    private static final Map<UUID, Integer> pendingCooldowns = new HashMap<UUID, Integer>(); // scheduled cooldown to start on landing
+    private static final Map<UUID, Boolean> wasOnGround = new HashMap<UUID, Boolean>();
 
 
-    private static final int BASE_DELAY = 5;   // ticks
+    private static final int BASE_DELAY = 2;   // ticks
     private static final int MAX_EXTRA = 15;   // ticks
 
     // reflection field for EntityLivingBase.isJumping
@@ -41,11 +43,12 @@ public class HMGJumpHandler {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END) return; // END keeps isJumping reliable
+        if (event.phase != TickEvent.Phase.END) return;
+
         EntityPlayer player = event.player;
         UUID id = player.getUniqueID();
 
-        /* ------------- ground grace (2 ticks) ------------- */
+        // ground grace for jump detection (keeps behavior stable)
         if (player.onGround) {
             groundGrace.put(id, 2);
         } else {
@@ -57,30 +60,53 @@ public class HMGJumpHandler {
             }
         }
 
-        /* ------------- read isJumping via reflection ------------- */
+        // landing detection (edge: not-on-ground -> onGround)
+        boolean prevOn = wasOnGround.getOrDefault(id, player.onGround);
+        if (!prevOn && player.onGround) {
+            // player just landed — if there's a pending cooldown, activate it now
+            Integer pending = pendingCooldowns.remove(id);
+            if (pending != null && pending > 0) {
+                cooldowns.put(id, pending);
+            }
+        }
+        wasOnGround.put(id, player.onGround);
+
+        // read isJumping via reflection
         boolean isJumping = false;
         try {
             if (isJumpingField != null) isJumping = isJumpingField.getBoolean(player);
         } catch (Exception ignored) {}
 
-        boolean prevJumping = wasJumping.containsKey(id) && wasJumping.get(id);
-        boolean jumpPressedThisTick = isJumping && !prevJumping;
+        boolean prevJump = wasJumping.getOrDefault(id, false);
+        boolean jumpPressed = isJumping && !prevJump;
         wasJumping.put(id, isJumping);
 
-        /* ------------- tick down cooldowns (timer behavior) ------------- */
+        // tick down active blocking cooldowns (these block jump presses)
         Integer cd = cooldowns.get(id);
         if (cd != null) {
             cd--;
-            if (cd <= 0) cooldowns.remove(id);
-            else cooldowns.put(id, cd);
+            if (cd <= 0) {
+                cooldowns.remove(id);
+            } else {
+                cooldowns.put(id, cd);
+            }
         }
 
-        /* ------------- handle rising-edge jump ------------- */
-        if (!jumpPressedThisTick) return;
+        // If this press is not a rising-edge jump, bail
+        if (!jumpPressed) return;
 
-        // only consider jumps when player was on ground very recently
+        // Must have been on ground very recently (avoid mid-air nonsense)
         if (!groundGrace.containsKey(id)) return;
 
+        // If an active cooldown exists now, this press should be blocked (this cancels the NEXT jump)
+        if (cooldowns.containsKey(id)) {
+            // YOUR ORIGINAL EFFECT — cancel the attempted jump
+            player.motionY = 0;
+            player.isAirBorne = false;
+            return;
+        }
+
+        // Otherwise schedule a pending cooldown to start when the player next lands.
         ItemStack held = player.getCurrentEquippedItem();
         if (held == null) return;
         if (!(held.getItem() instanceof HMGItem_Unified_Guns)) return;
@@ -88,20 +114,48 @@ public class HMGJumpHandler {
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
         double motion = gun.gunInfo.motion;
 
-        if (motion >= 1.0) return; // fully light guns → no delay
+        // no penalty for fully-light weapons
+        if (motion >= 1.0) return;
 
         int delay = computeDelay(motion);
 
-        // cooldown active → BLOCK jump
-        if (cooldowns.containsKey(id)) {
-            player.motionY = 0;
-            player.isAirBorne = false;
-            return;
-        }
-
-        // start cooldown immediately
-        cooldowns.put(id, delay);
+        // For very light guns, make the pending cooldown tiny (almost immediate next-press block)
+        // For heavy guns, keep the larger pending cooldown.
+        pendingCooldowns.put(id, delay);
     }
+
+    // This fires continuously per tick but only **affects motionY once the cooldown > 0**, scaled by gun weight
+    @SubscribeEvent
+    public void onPlayerPostTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+
+        EntityPlayer player = event.player;
+        UUID id = player.getUniqueID();
+
+        Integer cd = cooldowns.get(id);
+        if (cd == null) return;
+
+        ItemStack held = player.getCurrentEquippedItem();
+        if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) return;
+
+        HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
+        double motion = gun.gunInfo.motion;
+
+        // tick down
+        cd--;
+        if (cd <= 0) {
+            cooldowns.remove(id);
+
+            // Only heavy/medium guns actually get blocked
+            if (motion < 0.75) {
+                player.motionY = 0;
+                player.isAirBorne = false;
+            }
+        } else {
+            cooldowns.put(id, cd);
+        }
+    }
+
 
 
 
@@ -125,6 +179,7 @@ public class HMGJumpHandler {
         int extra = (int) Math.round(penalty * MAX_EXTRA * scale);
         int result = BASE_DELAY + extra;
 
+        // floor for ultra-light guns
         if (motion >= 0.85 && result > 2) result = 2;
 
         return result;
