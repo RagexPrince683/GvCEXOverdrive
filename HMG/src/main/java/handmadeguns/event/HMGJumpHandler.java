@@ -15,14 +15,14 @@ import java.util.UUID;
 
 public class HMGJumpHandler {
 
-    // state maps
+    // state
     private static final Map<UUID, Boolean> wasJumping = new HashMap<UUID, Boolean>();
     private static final Map<UUID, Integer> groundGrace = new HashMap<UUID, Integer>();
     private static final Map<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();      // active blocking cooldown (counts down after landing)
     private static final Map<UUID, Integer> pendingCooldowns = new HashMap<UUID, Integer>(); // scheduled cooldown to start on landing
     private static final Map<UUID, Boolean> wasOnGround = new HashMap<UUID, Boolean>();
 
-    // parity: whether to cancel when the cooldown finishes and arms the next-jump cancel
+    // parity: whether to cancel when a cooldown finishes (toggles each finish)
     private static final Map<UUID, Boolean> cancelNext = new HashMap<UUID, Boolean>();
     // one-shot arm: if true, the next rising-edge jump will be cancelled (then cleared)
     private static final Map<UUID, Boolean> willCancelNextJump = new HashMap<UUID, Boolean>();
@@ -30,9 +30,8 @@ public class HMGJumpHandler {
     private static final int BASE_DELAY = 2;   // ticks baseline
     private static final int MAX_EXTRA = 15;   // ticks extra for heavy guns
 
-    // reflection field for EntityLivingBase.isJumping
+    // reflection: EntityLivingBase.isJumping
     private static Field isJumpingField;
-
     static {
         try {
             isJumpingField = EntityLivingBase.class.getDeclaredField("isJumping");
@@ -42,8 +41,7 @@ public class HMGJumpHandler {
         }
     }
 
-    /* Main per-tick handler: detect rising-edge jumps, schedule pending cooldowns, and cancel a jump
-       if willCancelNextJump is armed. Uses END phase so isJumping/onGround are stable. */
+    // Primary tick: detect rising-edge jumps, schedule pending cooldowns, and handle willCancelNextJump
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
@@ -51,7 +49,7 @@ public class HMGJumpHandler {
         EntityPlayer player = event.player;
         UUID id = player.getUniqueID();
 
-        /* ground grace (2 ticks) to avoid edge issues */
+        // ground grace (2 ticks)
         if (player.onGround) {
             groundGrace.put(id, 2);
         } else {
@@ -63,81 +61,65 @@ public class HMGJumpHandler {
             }
         }
 
-        /* landing detection: pending -> active cooldown on landing */
+        // landing detection: pending -> active cooldown on landing
         boolean prevOn = wasOnGround.getOrDefault(id, player.onGround);
         if (!prevOn && player.onGround) {
             Integer pending = pendingCooldowns.remove(id);
             if (pending != null && pending > 0) {
                 cooldowns.put(id, pending);
-                // ensure parity exists but DO NOT overwrite if already present
                 if (!cancelNext.containsKey(id)) cancelNext.put(id, true);
             }
         }
         wasOnGround.put(id, player.onGround);
 
-        /* read isJumping via reflection */
+        // read isJumping (reflection)
         boolean isJumping = false;
-        try {
-            if (isJumpingField != null) isJumping = isJumpingField.getBoolean(player);
-        } catch (Exception ignored) {}
+        try { if (isJumpingField != null) isJumping = isJumpingField.getBoolean(player); }
+        catch (Exception ignored) {}
 
         boolean prevJump = wasJumping.getOrDefault(id, false);
         boolean jumpPressed = isJumping && !prevJump;
         wasJumping.put(id, isJumping);
 
-        /* tick down active blocking cooldowns (these count down after landing). Handled in onPlayerPostTick as well, but we keep ticks here for robustness. */
-        Integer cd = cooldowns.get(id);
-        if (cd != null) {
-            // don't remove/tick here; onPlayerPostTick will do the authoritative tick and arm willCancelNextJump.
-            // keep this minimal so we don't double-tick if postTick also ticks.
-        }
-
-        /* If not a rising-edge jump, nothing else to do here */
-        if (!jumpPressed) return;
-
-        /* require recent ground contact */
-        if (!groundGrace.containsKey(id)) return;
-
-        /* If the one-shot arm is set, CANCEL this rising-edge jump and clear the arm.
-           This makes the cancellation happen on the NEXT jump after the cooldown finished (not mid-air). */
-        if (willCancelNextJump.getOrDefault(id, false)) {
+        // If this rising-edge jump is the one-shot cancel, cancel it now
+        if (jumpPressed && willCancelNextJump.getOrDefault(id, false)) {
             willCancelNextJump.remove(id);
-            // original effect: block the jump
+            // cancel the attempted jump
             player.motionY = 0;
             player.isAirBorne = false;
             return;
         }
 
-        /* If there's still an active cooldown counting down, allow the jump (do not cancel mid-air).
-           We only arm a cancel when cooldown finishes (handled in post tick). */
-        if (cooldowns.containsKey(id)) {
-            return; // allow normal jump while cooldown is counting down
+        // If there's an active cooldown counting down, allow this jump (we don't cancel mid-air here)
+        if (jumpPressed && cooldowns.containsKey(id)) {
+            // allow normal jump; cancellation will have been handled on cooldown finish (either armed or immediate)
+            return;
         }
 
-        /* No active cooldown and no will-cancel: this is a normal jump
-           → schedule pending cooldown to be activated when the player lands. */
+        // If it's a normal rising-edge jump (no active cooldown/will-cancel), schedule a pending cooldown
+        if (!jumpPressed) return;
+        if (!groundGrace.containsKey(id)) return;
+
         ItemStack held = player.getCurrentEquippedItem();
         if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) return;
 
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
         double motion = gun.gunInfo.motion;
 
-        // no penalty for fully-light weapons
-        if (motion >= 1.0) return;
+        if (motion >= 1.0) return; // no penalty for lightest weapons
 
         int delay = computeDelay(motion);
 
-        // Skip tiny delays to preserve rifle feel
+        // skip tiny delays so rifles are not impacted
         if (delay <= 1) return;
 
         pendingCooldowns.put(id, delay);
-        // ensure parity exists but do not overwrite existing parity
         if (!cancelNext.containsKey(id)) cancelNext.put(id, true);
     }
 
-    /* Secondary tick: countdown active cooldowns and, when they finish, ARM the one-shot cancel
-       according to parity (cancelNext), then toggle parity. This ensures cancellation is applied
-       on the next rising-edge jump, not immediately mid-air. */
+    // Secondary tick: countdown active cooldowns; when a cooldown finishes -> toggle parity and either
+    // * immediate stunt if the player is currently holding jump (isJumping true), or
+    // * arm a one-shot willCancelNextJump to cancel the next rising-edge press.
     @SubscribeEvent
     public void onPlayerPostTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
@@ -155,19 +137,43 @@ public class HMGJumpHandler {
             return;
         }
 
-        // cooldown finished: remove and ARM or not based on parity
+        // cooldown finished
         cooldowns.remove(id);
 
-        boolean shouldCancel = cancelNext.getOrDefault(id, true);
-        // toggle parity for next time
-        cancelNext.put(id, !shouldCancel);
+        // get held item info (if absent, do not stunt)
+        ItemStack held = player.getCurrentEquippedItem();
+        double motion = 1.0;
+        if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
+            motion = ((HMGItem_Unified_Guns) held.getItem()).gunInfo.motion;
+        }
 
-        if (shouldCancel) {
-            // ARM a one-shot that will cancel the *next* jump press (rising-edge)
-            willCancelNextJump.put(id, true);
-        } else {
-            // do not arm — next jump is allowed normally
+        // decide parity
+        boolean shouldCancel = cancelNext.getOrDefault(id, true);
+        cancelNext.put(id, !shouldCancel); // toggle parity for next finish
+
+        if (!shouldCancel) {
+            // do nothing — next jump allowed
             willCancelNextJump.remove(id);
+            return;
+        }
+
+        // shouldCancel == true: either stunt now (if player is holding jump) or arm a one-shot for next rising-edge
+
+        // check current jump state via reflection
+        boolean isJumpingNow = false;
+        try { if (isJumpingField != null) isJumpingNow = isJumpingField.getBoolean(player); }
+        catch (Exception ignored) {}
+
+        // only stunt if gun still qualifies (medium/heavy) and player is holding jump
+        if (motion < 0.75 && isJumpingNow) {
+            // immediate stunt because player is still holding the jump key (same press)
+            player.motionY = 0;
+            player.isAirBorne = false;
+            // ensure no one-shot remains
+            willCancelNextJump.remove(id);
+        } else {
+            // arm a one-shot: cancel the next rising-edge jump press
+            willCancelNextJump.put(id, true);
         }
     }
 
