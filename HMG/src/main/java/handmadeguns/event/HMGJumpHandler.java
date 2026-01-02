@@ -16,14 +16,12 @@ import java.util.UUID;
 public class HMGJumpHandler {
 
     private static final Map<UUID, Boolean> wasJumping = new HashMap<UUID, Boolean>();
-
     private static final Map<UUID, Integer> groundGrace = new HashMap<UUID, Integer>();
+    private static final Map<UUID, Integer> cooldowns = new HashMap<UUID, Integer>();
 
 
     private static final int BASE_DELAY = 5;   // ticks
     private static final int MAX_EXTRA = 15;   // ticks
-
-    private static final Map<UUID, Integer> cooldowns = new HashMap<>();
 
     // reflection field for EntityLivingBase.isJumping
     private static Field isJumpingField;
@@ -43,15 +41,11 @@ public class HMGJumpHandler {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-
-        if (event.phase != TickEvent.Phase.END) return;
-
+        if (event.phase != TickEvent.Phase.END) return; // END keeps isJumping reliable
         EntityPlayer player = event.player;
         UUID id = player.getUniqueID();
 
-    /* -----------------------------------------
-       Ground grace tracking (2 ticks)
-    ----------------------------------------- */
+        /* ------------- ground grace (2 ticks) ------------- */
         if (player.onGround) {
             groundGrace.put(id, 2);
         } else {
@@ -63,21 +57,17 @@ public class HMGJumpHandler {
             }
         }
 
-    /* -----------------------------------------
-       Read isJumping via reflection
-    ----------------------------------------- */
+        /* ------------- read isJumping via reflection ------------- */
         boolean isJumping = false;
         try {
-            isJumping = isJumpingField.getBoolean(player);
+            if (isJumpingField != null) isJumping = isJumpingField.getBoolean(player);
         } catch (Exception ignored) {}
 
         boolean prevJumping = wasJumping.containsKey(id) && wasJumping.get(id);
         boolean jumpPressedThisTick = isJumping && !prevJumping;
         wasJumping.put(id, isJumping);
 
-    /* -----------------------------------------
-       Tick cooldown
-    ----------------------------------------- */
+        /* ------------- tick down cooldowns (timer behavior) ------------- */
         Integer cd = cooldowns.get(id);
         if (cd != null) {
             cd--;
@@ -85,12 +75,10 @@ public class HMGJumpHandler {
             else cooldowns.put(id, cd);
         }
 
-    /* -----------------------------------------
-       Handle jump press
-    ----------------------------------------- */
+        /* ------------- handle rising-edge jump ------------- */
         if (!jumpPressedThisTick) return;
 
-        // must have been on ground recently
+        // only consider jumps when player was on ground very recently
         if (!groundGrace.containsKey(id)) return;
 
         ItemStack held = player.getCurrentEquippedItem();
@@ -100,7 +88,7 @@ public class HMGJumpHandler {
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
         double motion = gun.gunInfo.motion;
 
-        if (motion >= 1.0) return;
+        if (motion >= 1.0) return; // fully light guns → no delay
 
         int delay = computeDelay(motion);
 
@@ -118,8 +106,29 @@ public class HMGJumpHandler {
 
 
 
+
+    // --- replace your computeDelay with this tuned version ---
     private static int computeDelay(double motion) {
         double penalty = MathHelper.clamp_double(1.0 - motion, 0.0, 1.0);
-        return BASE_DELAY + (int)(penalty * MAX_EXTRA);
+
+        double scale;
+        if (motion >= 0.85) {         // very light weapons
+            scale = 0.12;
+        } else if (motion >= 0.70) {  // light weapons
+            scale = 0.35;
+        } else if (motion >= 0.50) {  // medium weapons
+            scale = 0.65;
+        } else {                      // heavy weapons
+            scale = 1.0;
+        }
+
+        int extra = (int) Math.round(penalty * MAX_EXTRA * scale);
+        int result = BASE_DELAY + extra;
+
+        if (motion >= 0.85 && result > 2) result = 2;
+
+        return result;
     }
+
+
 }
