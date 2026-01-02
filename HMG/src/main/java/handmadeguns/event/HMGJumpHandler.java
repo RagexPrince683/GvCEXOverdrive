@@ -47,7 +47,7 @@ public class HMGJumpHandler {
         EntityPlayer player = event.player;
         UUID id = player.getUniqueID();
 
-        // ground grace (2 ticks)
+        // ground grace
         if (player.onGround) {
             groundGrace.put(id, 2);
         } else {
@@ -70,7 +70,7 @@ public class HMGJumpHandler {
         }
         wasOnGround.put(id, player.onGround);
 
-        // detect rising-edge jump via reflection
+        // detect rising-edge jump
         boolean isJumping = false;
         try { if (isJumpingField != null) isJumping = isJumpingField.getBoolean(player); }
         catch (Exception ignored) {}
@@ -79,7 +79,7 @@ public class HMGJumpHandler {
         boolean jumpPressed = isJumping && !prevJump;
         wasJumping.put(id, isJumping);
 
-        // If a one-shot cancel is armed, cancel this rising-edge jump now
+        // one-shot cancel
         if (jumpPressed && willCancelNextJump.getOrDefault(id, false)) {
             willCancelNextJump.remove(id);
             player.motionY = 0;
@@ -87,10 +87,10 @@ public class HMGJumpHandler {
             return;
         }
 
-        // If cooldown is active and counting down, allow the jump now (we won't cancel mid-air here)
+        // if active cooldown, allow normal jump but do not schedule more
         if (jumpPressed && cooldowns.containsKey(id)) return;
 
-        // Normal rising-edge jump: schedule pending cooldown (only if gun and delay warrant)
+        // schedule pending cooldown
         if (!jumpPressed || !groundGrace.containsKey(id)) return;
 
         ItemStack held = player.getCurrentEquippedItem();
@@ -99,11 +99,9 @@ public class HMGJumpHandler {
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
         double motion = gun.gunInfo.motion;
 
-        // If motion is very high (>= 0.95), treat as effectively unpenalized — do not schedule.
-        if (motion >= 0.95) return;
+        if (motion >= 0.95) return; // light weapons skip entirely
 
         int delay = computeDelay(motion);
-        // tiny delay => skip (keeps light rifles feeling natural)
         if (delay <= 1) return;
 
         pendingCooldowns.put(id, delay);
@@ -127,66 +125,46 @@ public class HMGJumpHandler {
             cooldowns.put(id, cd);
             return;
         }
-        // cooldown finished
         cooldowns.remove(id);
 
-        // read current held gun motion (default to 1.0 — no penalty)
+        // get gun info
         ItemStack held = player.getCurrentEquippedItem();
         double motion = 1.0;
         if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
             motion = ((HMGItem_Unified_Guns) held.getItem()).gunInfo.motion;
         }
 
-        // decide parity (alternate every finish)
+        // decide parity
         boolean shouldCancel = cancelNext.getOrDefault(id, true);
         cancelNext.put(id, !shouldCancel);
 
         if (!shouldCancel) {
-            // do not arm or stunt; next jump allowed
             willCancelNextJump.remove(id);
             return;
         }
 
-        // check if player is currently holding jump (same keypress)
-        boolean isJumpingNow = false;
-        try { if (isJumpingField != null) isJumpingNow = isJumpingField.getBoolean(player); }
-        catch (Exception ignored) {}
-
         // APPLY rules:
-        // - HEAVY (motion <= 0.70) : immediate stunt if holding; otherwise arm one-shot.
-        // - MEDIUM (0.70 < motion <= 0.90) : do NOT stunt immediately; arm one-shot only.
-        // - LIGHT (motion > 0.90) : should not reach here because we early-return at motion>=0.95; but safely arm one-shot only.
+        // HEAVY weapons: arm one-shot cancel for next rising-edge jump (do NOT stunt mid-air)
         if (motion <= 0.70) {
-            if (isJumpingNow) {
-                // immediate stunt (heavy weapons)
-                player.motionY = 0;
-                player.isAirBorne = false;
-                willCancelNextJump.remove(id);
-            } else {
-                // arm one-shot cancel for next rising-edge
-                willCancelNextJump.put(id, true);
-            }
-        } else if (motion <= 0.90) {
-            // medium weapons: don't stunt mid-air; only arm one-shot
+            willCancelNextJump.put(id, true); // blocks next jump entirely until cooldown expires
+        }
+        // MEDIUM: arm one-shot only
+        else if (motion <= 0.90) {
             willCancelNextJump.put(id, true);
-        } else {
-            // light weapons fallback (unlikely due to earlier check) — only one-shot
+        }
+        // LIGHT: only rising-edge cancel
+        else {
             willCancelNextJump.put(id, true);
         }
     }
 
-    // --- compute discrete delay based on motion (simple predictable mapping) ---
-    // motion: 0.95 (light) -> no scheduling
-    // motion: 0.90..0.95 -> tiny delay
-    // motion: 0.70..0.90 -> medium delay
-    // motion: <=0.70 -> large delay
+    // --- compute discrete delay ---
     private static int computeDelay(double motion) {
         motion = MathHelper.clamp_double(motion, 0.0, 1.0);
 
-        if (motion >= 0.95) return 0;             // effectively no penalty
+        if (motion >= 0.95) return 0;
         if (motion >= 0.90) return BASE_DELAY + 1; // very light
         if (motion >= 0.70) return BASE_DELAY + 4; // medium
-        // heavy
-        return BASE_DELAY + 10; // strong effect for heavy weapons
+        return BASE_DELAY + 10; // heavy
     }
 }
