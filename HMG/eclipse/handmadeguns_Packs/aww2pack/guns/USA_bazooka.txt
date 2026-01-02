@@ -22,6 +22,8 @@ ModelScala,0.5f
 InworldScale,1.8f
 Motion,0.3d
 
+InventoryScale,3
+
 Cartridge,false
 DropMagazine,false
 

@@ -7,6 +7,8 @@ ADS_Spread_coefficient,0
 BlletSpreadDiffusion,2,0,1.4,0.1,2,0.8
 Cycle,1
 
+InventoryScale,3
+
 bulletFuse,35
 
 Motion,0.15

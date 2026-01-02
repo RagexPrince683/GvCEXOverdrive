@@ -27,6 +27,8 @@ ObjTexture,smaw.png
 ModelScala,0.5f
 InworldScale,1.8f
 
+InventoryScale,3
+
 Motion,0.6
 
 ModelEquipped,-0.7f,0.0f,-0.55f

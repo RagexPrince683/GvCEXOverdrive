@@ -18,6 +18,8 @@ ZoomRenderTypeTxture,false,true,true
 ReloadMat3,false
 //???
 
+InventoryScale,3
+
 ScopeTexture,rr.png,redPoint.png,scope_RPG7.png
 Explosion,0.5f
 damagerange,3

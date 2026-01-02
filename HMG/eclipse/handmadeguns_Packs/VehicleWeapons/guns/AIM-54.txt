@@ -21,6 +21,8 @@ GunSound,handmadeguns.null,handmadeguns.null
 GunSoundReload,handmadeguns.null
 Weight,600
 
+UseModelIcon,false
+
 BulletNameALL,AIM-54AAM
 
 useVehicleRadar,true

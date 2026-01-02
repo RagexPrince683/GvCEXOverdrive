@@ -26,6 +26,8 @@ bulletFuse,16
 Bursts,1
 Rates,0
 
+InventoryScale,3
+
 attachRestriction,true
 //allowattach,Bullet_Dart
 //allowattach,Bullet_Frag

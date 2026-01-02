@@ -32,6 +32,8 @@ MuzzleFlash,false
 BulletNameALL,atgrenade
 DropMagazine,false
 
+InventoryScale,6
+
 Cartridge,false
 DropMagazine,false
 

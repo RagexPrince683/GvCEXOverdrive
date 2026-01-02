@@ -20,7 +20,9 @@ CanObj,true
 ObjModel,mg42.mqo
 ObjTexture,mg42.png
 ModelScala,0.8f
-InworldScale,1.8f
+InworldScale,1.2f
+
+//InventoryScale,0.7
 
 Bursts,-1
 Rates,1

@@ -23,6 +23,8 @@ ModelScala,0.8f
 InworldScale,1.2f
 Motion,0.3d
 
+InventoryScale,3
+
 ModelEquipped,-0.7f,0.2f,-0.6f
 ModelHigh,0.90f,0.85f,0.85f
 ModelWidthX,0.334f,0.694f,0.694f

@@ -18,8 +18,10 @@ ObjModel,gew98.obj
 ObjTexture,paret.png
 Motion,0.95
 
+//InventoryScale,0.7
+
 ModelScala,0.8f
-InworldScale,1.8f
+InworldScale,1.2f
 ModelEquipped,-0.7f,0.5f,-0.2f
 ModelHigh,1.41f,0.85f,0.85f
 SimpleADSOffsetX,0,0,0

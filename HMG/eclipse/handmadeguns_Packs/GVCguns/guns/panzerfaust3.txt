@@ -29,6 +29,8 @@ ObjTexture,panzerfaust_3.png
 ModelScala,0.5f
 InworldScale,1.8f
 
+InventoryScale,3
+
 Cartridge,false
 DropMagazine,false
 
