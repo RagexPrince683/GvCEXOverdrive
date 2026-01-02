@@ -27,6 +27,8 @@ InworldScale,1.8f
 ThirdModelEquipped,0,0.2,-0.4
 Tabname,HMG_GVCGuns
 
+InventoryScale,0.7
+
 Canfix,true
 NeedFix,false
 FixAsEntity,true
