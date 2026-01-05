@@ -77,6 +77,8 @@ public class HMGItem_Unified_Guns extends Item {
 
 	//oh my god this class is fucking spaghetti hell
 
+
+
 	public void addInformation(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, List par3List, boolean par4){
 		checkTags(par1ItemStack);
 		{
@@ -1322,6 +1324,9 @@ public class HMGItem_Unified_Guns extends Item {
 		}
 		return par1ItemStack;
 	}
+
+
+
 	public void onPlayerStoppedUsing(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer, int par4) {
 	}
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)

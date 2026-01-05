@@ -24,10 +24,7 @@ import handmadeguns.blocks.HMGBlockMounter;
 import handmadeguns.command.HMG_CommandReloadparm;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
-import handmadeguns.event.HMGEventZoom;
-import handmadeguns.event.HMGJumpHandler;
-import handmadeguns.event.HMGLivingUpdateEvent;
-import handmadeguns.event.RenderTickSmoothing;
+import handmadeguns.event.*;
 import handmadeguns.gunsmithing.GunSmithNetwork;
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunSmithTable;
@@ -732,7 +729,7 @@ public class HandmadeGunsCore {
 		//blockGunTable = new GunSmithTable()
 		//		.setBlockName("gun_table")
 		//		.setBlockTextureName("handmadeguns:gun_table");
-//
+
 		//GameRegistry.registerBlock(blockGunTable, "gun_table");
 
 
@@ -756,6 +753,7 @@ public class HandmadeGunsCore {
 		//if(pEvent.getSide().isClient())
 		{
 			FMLCommonHandler.instance().bus().register(new HMGJumpHandler());
+			MinecraftForge.EVENT_BUS.register(new GunPickupHandler());
 			MinecraftForge.EVENT_BUS.register(new WhizEventHandler());
 			MinecraftForge.EVENT_BUS.register(new LivingEventHooks());
 		}

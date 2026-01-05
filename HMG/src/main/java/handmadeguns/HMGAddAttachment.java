@@ -515,6 +515,8 @@ public class HMGAddAttachment
 //									System.out.println("" + objmodel);
 									IModelCustom attach = AdvancedModelLoader
 											.loadModel(new ResourceLocation("handmadeguns:textures/model/" + objmodel));
+									//todo gun skins here
+
 									ResourceLocation attachtexture = new ResourceLocation("handmadeguns:textures/model/" + objtexture);
 									MinecraftForgeClient.registerItemRenderer(newitem, new HMGRenderItemCustom(attach, attachtexture));
 								}
