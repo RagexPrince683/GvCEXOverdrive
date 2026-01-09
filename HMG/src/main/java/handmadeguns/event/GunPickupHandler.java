@@ -11,43 +11,70 @@ import static handmadeguns.HandmadeGunsCore.MAXGUNSINV;
 
 public class GunPickupHandler {
 
-    //todo config option also creative players ignored
     private static final int MAX_GUNS = MAXGUNSINV;
-
     private static final int MAX_GRENADE = 3;
-    //if item nbt data has grenade use max_grenade logic instead
-
-    //if gunInfo.grenade we do not use the MAX_GUNS flag
-
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+
         if (event.phase != TickEvent.Phase.END) return;
         if (event.player.worldObj.isRemote) return;
 
-
         EntityPlayer player = event.player;
 
+        // ignore creative
+        if (player.capabilities.isCreativeMode) return;
         if (player instanceof FakePlayer) return;
-        if (player.capabilities.isCreativeMode) return; // <-- THIS LINE
 
-        // DEBUG — you should see this spam in the server log
-        //System.out.println("[HG] PlayerTick firing for " + player.getCommandSenderName());
 
         int gunCount = 0;
+        int grenadeCount = 0;
 
+        // ---- COUNT ----
         for (ItemStack stack : player.inventory.mainInventory) {
-            if (stack != null && stack.getItem() instanceof HMGItem_Unified_Guns) {
+            if (stack == null) continue;
+            if (!(stack.getItem() instanceof HMGItem_Unified_Guns)) continue;
+
+            HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) stack.getItem();
+
+            if (gun.gunInfo != null && gun.gunInfo.grenade) {
+                grenadeCount += stack.stackSize;
+            } else {
                 gunCount += stack.stackSize;
             }
         }
 
-        if (gunCount <= MAX_GUNS) return;
+        // ---- EARLY EXIT ----
+        if (gunCount <= MAX_GUNS && grenadeCount <= MAX_GRENADE) return;
 
+        // ---- ENFORCE GRENADE LIMIT ----
+        for (int i = 0; i < player.inventory.mainInventory.length && grenadeCount > MAX_GRENADE; i++) {
+            ItemStack stack = player.inventory.mainInventory[i];
+            if (stack == null) continue;
+            if (!(stack.getItem() instanceof HMGItem_Unified_Guns)) continue;
+
+            HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) stack.getItem();
+            if (gun.gunInfo == null || !gun.gunInfo.grenade) continue;
+
+            while (stack.stackSize > 0 && grenadeCount > MAX_GRENADE) {
+                ItemStack drop = stack.splitStack(1);
+                grenadeCount--;
+                player.dropPlayerItemWithRandomChoice(drop, false);
+            }
+
+            if (stack.stackSize <= 0) {
+                player.inventory.mainInventory[i] = null;
+            }
+        }
+
+        // ---- ENFORCE NORMAL GUN LIMIT ----
         for (int i = 0; i < player.inventory.mainInventory.length && gunCount > MAX_GUNS; i++) {
             ItemStack stack = player.inventory.mainInventory[i];
             if (stack == null) continue;
             if (!(stack.getItem() instanceof HMGItem_Unified_Guns)) continue;
+
+            HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) stack.getItem();
+            if (gun.gunInfo != null && gun.gunInfo.grenade) continue;
 
             while (stack.stackSize > 0 && gunCount > MAX_GUNS) {
                 ItemStack drop = stack.splitStack(1);
