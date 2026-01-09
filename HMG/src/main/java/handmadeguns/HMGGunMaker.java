@@ -2147,6 +2147,7 @@ public class HMGGunMaker {
 			case "InventoryScale":
 				gunInfo.inventoryscale = parseFloat(type[1]);
 				break;
+
 			case "CockingTime":
 				gunInfo.cocktime = parseInt(type[1]);
 				gunInfo.needcock = true;
@@ -2338,6 +2339,9 @@ public class HMGGunMaker {
 				break;
 			case "isOneuse":
 				gunInfo.isOneuse = parseBoolean(type[1]);
+				break;
+			case "grenade":
+				gunInfo.grenade = parseBoolean(type[1]);
 				break;
 			
 			case "MuzzleFlash":

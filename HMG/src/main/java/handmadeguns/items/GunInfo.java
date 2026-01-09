@@ -145,6 +145,7 @@ public class GunInfo {
 	public float inworldScale = 1;
 
 	public float inventoryscale = 1;
+	public boolean grenade = false;
 	public boolean hascustombulletmodel = false;
 	public boolean hascustomcartridgemodel = false;
 	public boolean hascustommagemodel = false;

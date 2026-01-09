@@ -31,6 +31,8 @@ MaxstackSize,1
 MuzzleFlash,false
 BulletNameALL,M26grenade
 
+grenade,true
+
 InventoryScale,6
 
 Cartridge,false

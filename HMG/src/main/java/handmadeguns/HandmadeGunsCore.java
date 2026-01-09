@@ -120,6 +120,8 @@ public class HandmadeGunsCore {
 	public static boolean cfg_ZoomRender;
 	public static int cfg_FOV;
 
+	public static int MAXGUNSINV;
+
 	public static boolean cfg_RenderPlayer;
 
 	public static boolean cfg_canEjectCartridge;
@@ -207,6 +209,9 @@ public class HandmadeGunsCore {
 		cfg_RenderGunAttachmentLMM	= lconf.get("LMM", "cfg_RenderGunAttachmentLMM", false).getBoolean(false);
 		cfg_ZoomRender	= lconf.get("Render", "cfg_ZoomRender", true).getBoolean(true);
 		cfg_FOV	= lconf.get("Render", "cfg_FOV", 95).getInt(95);
+
+		MAXGUNSINV	= lconf.get("Gun", "MAXGUNSINV", 2).getInt(2);
+
 		//TODO: multiply all render offset crap by the player's actual FOV setting. That way we aren't locking people to a specific FOV for proper display.
 		// I made ALL MY GUNS USING 95 FUCKING FOV
 		// update: this literally has ZERO usages. I don't even know why it's in the mod as a config option.
