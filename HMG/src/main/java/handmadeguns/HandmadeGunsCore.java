@@ -753,7 +753,10 @@ public class HandmadeGunsCore {
 		//if(pEvent.getSide().isClient())
 		{
 			FMLCommonHandler.instance().bus().register(new HMGJumpHandler());
+
+			FMLCommonHandler.instance().bus().register(new GunPickupHandler());
 			MinecraftForge.EVENT_BUS.register(new GunPickupHandler());
+
 			MinecraftForge.EVENT_BUS.register(new WhizEventHandler());
 			MinecraftForge.EVENT_BUS.register(new LivingEventHooks());
 		}

@@ -1,39 +1,51 @@
 package handmadeguns.event;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 
 public class GunPickupHandler {
-    //todo add config option for max and disabled, also dont do for creative players
+
+    private static final int MAX_GUNS = 2;
 
     @SubscribeEvent
-    public void onItemPickup(EntityItemPickupEvent event) {
-        EntityPlayer player = event.entityPlayer;
-        ItemStack pickedUp = event.item.getEntityItem();
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) return;
+        if (event.player.worldObj.isRemote) return;
 
-        if (!(pickedUp.getItem() instanceof HMGItem_Unified_Guns))
-            return;
+        EntityPlayer player = event.player;
 
-        int count = 0;
+        // DEBUG — you should see this spam in the server log
+        System.out.println("[HG] PlayerTick firing for " + player.getCommandSenderName());
+
+        int gunCount = 0;
 
         for (ItemStack stack : player.inventory.mainInventory) {
-            if (stack != null && stack.getItem() == pickedUp.getItem()) {
-                count += stack.stackSize;
+            if (stack != null && stack.getItem() instanceof HMGItem_Unified_Guns) {
+                gunCount += stack.stackSize;
             }
         }
 
-        if (count >= 2) {
-            event.setCanceled(true);
+        if (gunCount <= MAX_GUNS) return;
 
-            if (!player.worldObj.isRemote) {
-                event.item.setPosition(player.posX, player.posY, player.posZ);
-                event.item.motionX = 0;
-                event.item.motionY = 0.1;
-                event.item.motionZ = 0;
+        for (int i = 0; i < player.inventory.mainInventory.length && gunCount > MAX_GUNS; i++) {
+            ItemStack stack = player.inventory.mainInventory[i];
+            if (stack == null) continue;
+            if (!(stack.getItem() instanceof HMGItem_Unified_Guns)) continue;
+
+            while (stack.stackSize > 0 && gunCount > MAX_GUNS) {
+                ItemStack drop = stack.splitStack(1);
+                gunCount--;
+                player.dropPlayerItemWithRandomChoice(drop, false);
+            }
+
+            if (stack.stackSize <= 0) {
+                player.inventory.mainInventory[i] = null;
             }
         }
+
+        player.inventory.markDirty();
     }
 }
