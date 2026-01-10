@@ -34,6 +34,8 @@ DropMagazine,false
 
 InventoryScale,6
 
+grenade,true
+
 Cartridge,false
 DropMagazine,false
 
