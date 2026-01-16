@@ -137,7 +137,7 @@ processResources {
 // ===========================
 
 jar {
-	baseName = 'HandmadeGuns'
+	baseName = 'HandmadeGunsOverdrive'
 	version = project.version
 }
 
