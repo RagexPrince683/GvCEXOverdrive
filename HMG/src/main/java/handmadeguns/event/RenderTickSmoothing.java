@@ -215,8 +215,9 @@ public class RenderTickSmoothing {
 		// --------------------------------------------------
 		prevSprintState = firstPerson_SprintState;
 
-		if (!firstPerson_ReloadState && !isTriggered)
+		if (!firstPerson_ReloadState && !isTriggered && held != null && held.getItem() instanceof HMGItem_Unified_Guns && held.hasTagCompound())
 		{
+			//todo this line caused a crash, idk why
 			firstPerson_SprintState = isentitysprinting(entityPlayer) && !nbt.getBoolean("IsTriggered");
 		}
 		else
