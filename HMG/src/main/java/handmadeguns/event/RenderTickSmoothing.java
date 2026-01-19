@@ -215,18 +215,35 @@ public class RenderTickSmoothing {
 		// --------------------------------------------------
 		prevSprintState = firstPerson_SprintState;
 
-		if (!firstPerson_ReloadState && !isTriggered && held != null && held.getItem() instanceof HMGItem_Unified_Guns && held.hasTagCompound())
+		if (!firstPerson_ReloadState
+				&& !isTriggered
+				&& held != null
+				&& held.getItem() instanceof HMGItem_Unified_Guns
+				&& held.hasTagCompound()
+				&& entityPlayer != null)
 		{
-			//todo this line caused a crash, idk why
-			firstPerson_SprintState = isentitysprinting(entityPlayer) && !nbt.getBoolean("IsTriggered");
+			NBTTagCompound nbt = held.getTagCompound();
+			if (nbt != null)
+			{
+				firstPerson_SprintState =
+						isentitysprinting(entityPlayer) && !nbt.getBoolean("IsTriggered");
+			}
+			else
+			{
+				firstPerson_SprintState = false;
+			}
 		}
 		else
 		{
 			firstPerson_SprintState = false;
 
 			// prevent sticky sprint while firing or reloading
-			entityPlayer.setSprinting(false);
+			if (entityPlayer != null)
+			{
+				entityPlayer.setSprinting(false);
+			}
 		}
+
 
 		// --------------------------------------------------
 		// ADS state (TOGGLE — edge triggered)
