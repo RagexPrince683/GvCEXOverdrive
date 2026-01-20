@@ -31,6 +31,9 @@ import static handmadeguns.HandmadeGunsCore.islmmloaded;
 public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEntityAdditionalSpawnData
 	//oh my god why
 {
+
+	private boolean hasExploded = false;
+
 	public float exlevel = 2.5F;
 	public MovingObjectPosition hitobjectposition;
 	public HMGEntityBulletExprode(World worldIn) {
@@ -134,37 +137,59 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 	/**
 	 * Called when this EntityThrowable hits a block or entity.
 	 */
-	protected void onImpact(MovingObjectPosition var1)
-	{
-		DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
-		//hopefully whenever the other bullshit logic isn't fired this shit can clutch up and make
-		// SURE MCH tanks recieve the damage that should be applied.
-		System.out.println("on impact in 'Exprode' logic");
-		this.attackEntityFrom(ds, Bdamege);
+	protected void onImpact(MovingObjectPosition var1) {
+		// ALWAYS return early on client
+		if (this.worldObj.isRemote) return;
 
-		super.onImpact(var1);
-		if (var1.entityHit != null)
-		{
-			if(!noex && !canbounce){
-				this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord+0.125,var1.hitVec.zCoord, this.exlevel, this.canex && cfg_blockdestroy, this.ex);
+		// prevent double-explode
+		if (hasExploded) return;
+		hasExploded = true;
+
+		// damage source representing this bullet
+		DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
+
+		System.out.println("on impact in 'Exprode' logic (server)");
+
+		// Apply direct thrown damage first to the hit entity (if present)
+		if (var1.entityHit != null) {
+			// apply direct damage to the hit entity deterministically
+			var1.entityHit.attackEntityFrom(ds, (float)Bdamege);
+		}
+
+		// Then run explosion logic for blocks/visuals, but make sure explosion
+		// does not apply MCH entity damage (we'll disable entity damage inside explode()).
+		if (var1.entityHit != null) {
+			if (!noex && !canbounce) {
+				// register hit entity for your later onUpdate handling
 				hitedentity = var1.entityHit;
 				hitobjectposition = var1;
 				noex = true;
-			}else if(canbounce){
+
+				// call your explode that will NOT damage entities (see next section)
+				this.explode(var1.hitVec.xCoord, var1.hitVec.yCoord + 0.125, var1.hitVec.zCoord,
+						this.exlevel, this.canex && cfg_blockdestroy, this.ex);
 			}
-			if (!this.worldObj.isRemote&& noex) {
+			// mark dead server-side if flagged
+			if (noex) {
 				this.setDead();
 			}
-		}else {
-			if (!this.worldObj.isRemote && (!canbounce||fuse<=0))
-			{
-				this.setDead();
-				if(!noex){
-					this.explode(var1.hitVec.xCoord,var1.hitVec.yCoord+0.125,var1.hitVec.zCoord, this.exlevel, this.canex && cfg_blockdestroy, this.ex);
+		} else {
+			// hit a block or air
+			if (!canbounce || fuse <= 0) {
+				// call explosion (non-entity damage)
+				if (!noex) {
+					this.explode(var1.hitVec.xCoord, var1.hitVec.yCoord + 0.125, var1.hitVec.zCoord,
+							this.exlevel, this.canex && cfg_blockdestroy, this.ex);
+					noex = true;
 				}
+				this.setDead();
 			}
 		}
+
+		// call super at the end to preserve default throwable cleanup
+		super.onImpact(var1);
 	}
+
 	public void writeSpawnData(ByteBuf buffer){
 		super.writeSpawnData(buffer);
 	}
