@@ -41,6 +41,9 @@ public class HMGJumpHandler {
         EntityPlayer player = event.player;
         UUID id = player.getUniqueID();
 
+        // we need prevOnGround for server-side rising detection; read it BEFORE updating wasOnGround
+        boolean prevOn = wasOnGround.getOrDefault(id, player.onGround);
+
         // ground grace
         if (player.onGround) groundGrace.put(id, 2);
         else {
@@ -52,27 +55,46 @@ public class HMGJumpHandler {
             }
         }
 
-        // landing detection
-        boolean prevOn = wasOnGround.getOrDefault(id, player.onGround);
+        // landing detection: if we just landed, move pending -> active cooldown
         if (!prevOn && player.onGround) {
             Integer pending = pendingCooldowns.remove(id);
             if (pending != null && pending > 0) cooldowns.put(id, pending);
         }
         wasOnGround.put(id, player.onGround);
 
+        // clear jump-state on landing so rising-edge is detected once
+        if (player.onGround) {
+            wasJumping.put(id, false);
+        }
+
         // detect rising-edge jump
-        boolean isJumping = false;
-        try { if (isJumpingField != null) isJumping = isJumpingField.getBoolean(player); }
-        catch (Exception ignored) {}
-        boolean prevJump = wasJumping.getOrDefault(id, false);
-        boolean jumpPressed = isJumping && !prevJump;
-        wasJumping.put(id, isJumping);
+        boolean jumpPressed = false;
+
+        if (player.worldObj.isRemote) {
+            // client-side: use isJumping (keyboard)
+            boolean isJumping = false;
+            try { if (isJumpingField != null) isJumping = isJumpingField.getBoolean(player); }
+            catch (Exception ignored) {}
+            boolean prevJump = wasJumping.getOrDefault(id, false);
+            jumpPressed = isJumping && !prevJump;
+            wasJumping.put(id, isJumping);
+        } else {
+            // server-side: detect the moment player starts rising (prevOnGround && now not on ground && upward motion)
+            boolean startedRising = prevOn && !player.onGround && player.motionY > 0.0D;
+            boolean prevJump = wasJumping.getOrDefault(id, false);
+            jumpPressed = startedRising && !prevJump;
+            // mark that we've detected the start of rise until landing clears it
+            if (startedRising) wasJumping.put(id, true);
+        }
 
         // block jump if one-shot cancel armed
         if (jumpPressed && willCancelNextJump.getOrDefault(id, false)) {
             willCancelNextJump.remove(id);
+            // cancel upward motion on both sides
             player.motionY = 0;
             player.isAirBorne = false;
+            player.fallDistance = 0f;
+            // server is authoritative; client will get corrected next tick via normal sync
             return;
         }
 
