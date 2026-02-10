@@ -45,7 +45,24 @@ public class GunSmithRecipeRegistry {
     }
 
     public static List<GunRecipeEntry> getAll() {
-        return RECIPES;
+        List<GunRecipeEntry> out = new ArrayList<GunRecipeEntry>(RECIPES);
+
+        java.util.Collections.sort(out, new java.util.Comparator<GunRecipeEntry>() {
+            @Override
+            public int compare(GunRecipeEntry a, GunRecipeEntry b) {
+                if (a == null || a.result == null) return -1;
+                if (b == null || b.result == null) return 1;
+
+                String an = a.result.getDisplayName();
+                String bn = b.result.getDisplayName();
+                if (an == null) an = "";
+                if (bn == null) bn = "";
+
+                return an.compareToIgnoreCase(bn);
+            }
+        });
+
+        return out;
     }
 
     /**
@@ -262,6 +279,20 @@ public class GunSmithRecipeRegistry {
                 t.printStackTrace();
             }
         }
+        java.util.Collections.sort(out, new java.util.Comparator<GunRecipeEntry>() {
+            @Override
+            public int compare(GunRecipeEntry a, GunRecipeEntry b) {
+                if (a == null || a.result == null) return -1;
+                if (b == null || b.result == null) return 1;
+
+                String an = a.result.getDisplayName();
+                String bn = b.result.getDisplayName();
+                if (an == null) an = "";
+                if (bn == null) bn = "";
+
+                return an.compareToIgnoreCase(bn);
+            }
+        });
 
         return out;
     }
