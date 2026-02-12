@@ -255,6 +255,9 @@ public class HMGEventZoom {
 
 		IAttributeInstance iattributeinstance = entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
 
+		ItemStack itemstack = entityPlayer.getCurrentEquippedItem();
+		Entity ridingEntity = entityPlayer.ridingEntity;
+
 //		System.out.println("speedModify_\t" + iattributeinstance.getAttributeValue());
 //		System.out.println("debug_FOV\t\t" + event.newfov);
 
@@ -270,34 +273,29 @@ public class HMGEventZoom {
 //				entityPlayer.getAttributeMap().removeAttributeModifiers(HMG_proxy.getCurrentAttributeModifier());
 //			}
 			{
+				if (itemstack != null && itemstack.getItem() instanceof HMGItem_Unified_Guns) {
 				iattributeinstance = entityPlayer.getEntityAttribute(SharedMonsterAttributes.movementSpeed);
 				double value = computeMoveSpeed_WithoutGunModifier((ModifiableAttributeInstance) iattributeinstance);
 //				System.out.println("changed\t\t\t" + value);
 				float f = 1.0F;
 
-				if (entityPlayer.capabilities.isFlying)
-				{
+				if (entityPlayer.capabilities.isFlying) {
 					f *= 1.1F;
 				}
 
-				f = (float)((double)f * ((value / (double)entityPlayer.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
+				f = (float) ((double) f * ((value / (double) entityPlayer.capabilities.getWalkSpeed() + 1.0D) / 2.0D));
 
-				if (entityPlayer.capabilities.getWalkSpeed() == 0.0F || Float.isNaN(f) || Float.isInfinite(f))
-				{
+				if (entityPlayer.capabilities.getWalkSpeed() == 0.0F || Float.isNaN(f) || Float.isInfinite(f)) {
 					f = 1.0F;
 				}
 
-				if (entityPlayer.isUsingItem() && entityPlayer.getItemInUse().getItem() == Items.bow)
-				{
+				if (entityPlayer.isUsingItem() && entityPlayer.getItemInUse().getItem() == Items.bow) {
 					int i = entityPlayer.getItemInUseDuration();
-					float f1 = (float)i / 20.0F;
+					float f1 = (float) i / 20.0F;
 
-					if (f1 > 1.0F)
-					{
+					if (f1 > 1.0F) {
 						f1 = 1.0F;
-					}
-					else
-					{
+					} else {
 						f1 *= f1;
 					}
 
@@ -305,9 +303,9 @@ public class HMGEventZoom {
 				}
 				event.newfov = f;
 			}
+			}
 
-			ItemStack itemstack = entityPlayer.getCurrentEquippedItem();
-			Entity ridingEntity = entityPlayer.ridingEntity;
+
 			if(ridingEntity instanceof PlacedGunEntity){
 				if(((PlacedGunEntity) ridingEntity).gunStack != null  && ((PlacedGunEntity) ridingEntity).gunStack.getItem() instanceof HMGItem_Unified_Guns){
 					itemstack = ((PlacedGunEntity) ridingEntity).gunStack;

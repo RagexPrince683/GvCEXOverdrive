@@ -2026,39 +2026,43 @@ public class HMGItem_Unified_Guns extends Item {
 	public Multimap getAttributeModifiers(ItemStack itemstack)
 	{
 
-		if(itemstack.getTagCompound() != null)try {
-			guntemp = new GunTemp();
-			guntemp.items = new ItemStack[6];
-			gunInfo.foruseattackDamage = gunInfo.attackDamage;
-			NBTTagList tags = (NBTTagList) itemstack.getTagCompound().getTag("Items");
-			if (tags != null) {
-				for (int i = 0; i < tags.tagCount(); i++)//133
-				{
-					NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
-					int slot = tagCompound.getByte("Slot");
-					if (slot >= 0 && slot < guntemp.items.length) {
-						guntemp.items[slot] = ItemStack.loadItemStackFromNBT(tagCompound);
+		if (itemstack != null && itemstack.getItem() instanceof HMGItem_Unified_Guns) {
+
+			if (itemstack.getTagCompound() != null) try {
+				guntemp = new GunTemp();
+				guntemp.items = new ItemStack[6];
+				gunInfo.foruseattackDamage = gunInfo.attackDamage;
+				NBTTagList tags = (NBTTagList) itemstack.getTagCompound().getTag("Items");
+				if (tags != null) {
+					for (int i = 0; i < tags.tagCount(); i++)//133
+					{
+						NBTTagCompound tagCompound = tags.getCompoundTagAt(i);
+						int slot = tagCompound.getByte("Slot");
+						if (slot >= 0 && slot < guntemp.items.length) {
+							guntemp.items[slot] = ItemStack.loadItemStackFromNBT(tagCompound);
+						}
+					}
+					ItemStack itemstackattach;
+					itemstackattach = guntemp.items[3];
+					if (itemstackattach != null && itemstackattach.getItem() instanceof HMGXItemGun_Sword) {
+						gunInfo.foruseattackDamage = ((HMGXItemGun_Sword) itemstackattach.getItem()).attackDamage;
+					}
+					itemstackattach = guntemp.items[4];
+					if (itemstackattach != null && itemstackattach.getItem() instanceof HMGXItemGun_Sword) {
+						gunInfo.foruseattackDamage = ((HMGXItemGun_Sword) itemstackattach.getItem()).attackDamage;
 					}
 				}
-				ItemStack itemstackattach;
-				itemstackattach = guntemp.items[3];
-				if (itemstackattach != null && itemstackattach.getItem() instanceof HMGXItemGun_Sword) {
-					gunInfo.foruseattackDamage = ((HMGXItemGun_Sword) itemstackattach.getItem()).attackDamage;
-				}
-				itemstackattach = guntemp.items[4];
-				if (itemstackattach != null && itemstackattach.getItem() instanceof HMGXItemGun_Sword) {
-					gunInfo.foruseattackDamage = ((HMGXItemGun_Sword) itemstackattach.getItem()).attackDamage;
-				}
+			} catch (NullPointerException e) {
+				e.printStackTrace();
 			}
-		}catch (NullPointerException e){
-			e.printStackTrace();
-		}
-		AttributeModifier gunMoveFactor = new AttributeModifier(GunInfo.field_110179_h,"GunMoveFactor", gunInfo.motion-1,1);
-		Multimap multimap = super.getItemAttributeModifiers();
-		multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", (double) gunInfo.foruseattackDamage, 0));
-		multimap.put(SharedMonsterAttributes.movementSpeed.getAttributeUnlocalizedName(), gunMoveFactor);
+			AttributeModifier gunMoveFactor = new AttributeModifier(GunInfo.field_110179_h, "GunMoveFactor", gunInfo.motion - 1, 1);
+			Multimap multimap = super.getItemAttributeModifiers();
+			multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", (double) gunInfo.foruseattackDamage, 0));
+			multimap.put(SharedMonsterAttributes.movementSpeed.getAttributeUnlocalizedName(), gunMoveFactor);
 
-		return multimap;
+			return multimap;
+		}
+		return super.getAttributeModifiers(itemstack);
 	}
 	public void setmodelADSPosAndRotation(double px,double py,double pz){
 		gunInfo.setmodelADSPosAndRotation(px,py,pz);
@@ -2380,44 +2384,77 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 
 	static Field genericAttribute_field;
-	public static double computeMoveSpeed_WithoutGunModifier(ModifiableAttributeInstance iattributeinstance){
-		double d0 = iattributeinstance.getBaseValue();
-		AttributeModifier attributemodifier;
+	public static double computeMoveSpeed_WithoutGunModifier(ModifiableAttributeInstance inst)
+	{
+		if (inst == null) return 0.0D;
 
-		for (Iterator iterator = iattributeinstance.getModifiersByOperation(0).iterator(); iterator.hasNext(); d0 += attributemodifier.getAmount())
+		double base = inst.getBaseValue();
+		AttributeModifier mod;
+
+		// Operation 0 (ADD_NUMBER)
+		Iterator it0 = inst.getModifiersByOperation(0).iterator();
+		while (it0.hasNext())
 		{
-			attributemodifier = (AttributeModifier)iterator.next();
+			mod = (AttributeModifier) it0.next();
+
+			if (GunInfo.field_110179_h != null &&
+					GunInfo.field_110179_h.equals(mod.getID()))
+				continue;
+
+			base += mod.getAmount();
 		}
 
-		double d1 = d0;
-		Iterator iterator1;
-		AttributeModifier attributemodifier1;
+		double result = base;
 
-		for (iterator1 = iattributeinstance.getModifiersByOperation(1).iterator(); iterator1.hasNext(); d1 += d0 * attributemodifier1.getAmount())
+		// Operation 1 (MULTIPLY_BASE)
+		Iterator it1 = inst.getModifiersByOperation(1).iterator();
+		while (it1.hasNext())
 		{
-			attributemodifier1 = (AttributeModifier)iterator1.next();
-			if(attributemodifier1.getID() == GunInfo.field_110179_h){
-				if(iterator1.hasNext())attributemodifier1 = (AttributeModifier)iterator1.next();//スキップ
-				else break;
-			}
+			mod = (AttributeModifier) it1.next();
+
+			if (GunInfo.field_110179_h != null &&
+					GunInfo.field_110179_h.equals(mod.getID()))
+				continue;
+
+			result += base * mod.getAmount();
 		}
 
-		for (iterator1 = iattributeinstance.getModifiersByOperation(2).iterator(); iterator1.hasNext(); d1 *= 1.0D + attributemodifier1.getAmount())
+		// Operation 2 (MULTIPLY_TOTAL)
+		Iterator it2 = inst.getModifiersByOperation(2).iterator();
+		while (it2.hasNext())
 		{
-			attributemodifier1 = (AttributeModifier)iterator1.next();
+			mod = (AttributeModifier) it2.next();
+
+			if (GunInfo.field_110179_h != null &&
+					GunInfo.field_110179_h.equals(mod.getID()))
+				continue;
+
+			result *= (1.0D + mod.getAmount());
 		}
 
-		if(genericAttribute_field == null){
-			genericAttribute_field = ReflectionHelper.findField(ModifiableAttributeInstance.class, "field_111136_b","genericAttribute");
+		// Clamp like vanilla
+		if (genericAttribute_field == null)
+		{
+			genericAttribute_field = ReflectionHelper.findField(
+					ModifiableAttributeInstance.class,
+					"field_111136_b",
+					"genericAttribute"
+			);
 		}
 
-		try {
-			IAttribute genericAttribute = (IAttribute) genericAttribute_field.get(iattributeinstance);
+		try
+		{
+			IAttribute genericAttribute =
+					(IAttribute) genericAttribute_field.get(inst);
 
-			return genericAttribute.clampValue(d1);
-		} catch (IllegalAccessException e) {
+			return genericAttribute.clampValue(result);
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
-		return 1;
+
+		return result;
 	}
+
 }

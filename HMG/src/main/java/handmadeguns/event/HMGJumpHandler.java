@@ -32,6 +32,17 @@ public class HMGJumpHandler {
         EntityPlayer player = (EntityPlayer) event.entity;
         UUID id = player.getUniqueID();
 
+        ItemStack held = player.getCurrentEquippedItem();
+
+        // Not holding a gun → clear any armed cancel state and exit
+        if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) {
+            willCancelNextJump.remove(id);
+            return;
+        }
+
+        HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
+        double motion = gun.gunInfo.motion;
+
         // If cooldown active → allow normal jump
         if (cooldowns.containsKey(id)) return;
 
@@ -42,12 +53,6 @@ public class HMGJumpHandler {
             player.fallDistance = 0;
             return;
         }
-
-        ItemStack held = player.getCurrentEquippedItem();
-        if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) return;
-
-        HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
-        double motion = gun.gunInfo.motion;
 
         if (motion >= 0.95) return; // light weapons = no penalty
 
@@ -62,6 +67,7 @@ public class HMGJumpHandler {
             willCancelNextJump.put(id, true);
         }
     }
+
 
     // ======================
     // LANDING + COOLDOWN TICK

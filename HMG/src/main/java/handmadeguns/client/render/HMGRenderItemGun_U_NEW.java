@@ -933,7 +933,8 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		}
 
 		// Keep original 'set_up' behavior
-		return entity != null && entity.isSprinting() && (nbtLocal == null || !nbtLocal.getBoolean("set_up"));
+		return entity != null && entity.isSprinting();
+				//&& (nbtLocal == null || !nbtLocal.getBoolean("set_up"));
 	}
 
 	private static FloatBuffer setColorBuffer(float p_74521_0_, float p_74521_1_, float p_74521_2_, float p_74521_3_) {
