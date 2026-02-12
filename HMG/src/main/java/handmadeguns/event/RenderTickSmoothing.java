@@ -237,11 +237,14 @@ public class RenderTickSmoothing {
 		{
 			firstPerson_SprintState = false;
 
-			// prevent sticky sprint while firing or reloading
-			if (entityPlayer != null)
-			{
-				entityPlayer.setSprinting(false);
-			}
+			//// prevent sticky sprint while firing or reloading
+			////this fires when it shouldn't?
+			//if (entityPlayer != null && entityPlayer.isSprinting() && entityPlayer.getHeldItem() != null
+			//		&& entityPlayer.getHeldItem().getItem() instanceof HMGItem_Unified_Guns ); //&& entityPlayer.getHeldItem() instanceof HMGItem_Unified_Guns can't be done because incompatible types
+			//{
+			//	entityPlayer.setSprinting(false);
+			//}
+			//just don't
 		}
 
 
