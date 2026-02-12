@@ -760,7 +760,7 @@ public class HandmadeGunsCore {
 			HMGJumpHandler jumpHandler = new HMGJumpHandler();
 			FMLCommonHandler.instance().bus().register(jumpHandler);
 			MinecraftForge.EVENT_BUS.register(jumpHandler);
-			;
+			//;
 
 			FMLCommonHandler.instance().bus().register(new GunPickupHandler());
 			MinecraftForge.EVENT_BUS.register(new GunPickupHandler());
