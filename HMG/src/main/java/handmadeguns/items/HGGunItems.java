@@ -6,190 +6,101 @@ import net.minecraft.creativetab.CreativeTabs;
 
 public class HGGunItems {
 
-    // === Core gun parts ===
+    // === CORE MECHANISMS ===
     public static Item firingPin;
     public static Item triggerAssembly;
+    public static Item springSet;
 
-    // === Weapon-family / category parts ===
-    // Pistol
-    public static Item pistolSlide;
-    public static Item pistolBarrelKit;
-    public static Item pistolFrameInsert;
+    // === MANUFACTURING TIERS ===
+    public static Item machinedParts;        // mid-tier machining
+    public static Item precisionComponents;  // high-tier precision
 
-    // SMG
-    public static Item smgReceiverBlock;
-    public static Item smgBarrelKit;
-    public static Item smgBoltAssembly;
+    // === RECEIVERS (by manufacturing type) ===
+    public static Item stampedReceiver; // WW2 / stamped guns / SMGs / AK-type
+    public static Item milledReceiver;  // modern milled rifles / DMRs
 
-    // AR (assault rifle / carbine)
+    // === FUNCTIONAL CORE ASSEMBLIES ===
+    public static Item blowbackBoltAssembly;   // SMG / simple systems
+    public static Item rotatingBoltAssembly;   // rifle pattern
+    public static Item heavyBoltCarrier;       // LMG / high-mass systems
+
+    // === BARREL ASSEMBLIES ===
+    public static Item lightBarrelKit;
+    public static Item rifleBarrelKit;
+    public static Item heavyBarrelKit;
+
+    // === PLATFORM-SPECIFIC (MODULAR SYSTEMS) ===
     public static Item arUpper;
     public static Item arLower;
-    public static Item arBarrelKit;
-    public static Item arBoltCarrierGroup;
 
-    // DMR
-    public static Item dmrHeavyBarrel;
-    public static Item dmrPrecisionLower;
+    // === FEED & OPERATING MODULES ===
+    public static Item gasSystemModule;
+    public static Item beltFeedModule;
 
-    // LMG
-    public static Item lmgCarrier;
-    public static Item lmgHeavyBarrel;
-    public static Item lmgFeedBlock;
-
-    // Launcher / RPG
+    // === LAUNCHER SYSTEMS ===
     public static Item launcherTube;
     public static Item launcherFiringAssembly;
     public static Item launcherGripFrame;
 
-    // === Universal mounts / modules ===
+    // === MOUNTS / INTERFACES ===
     public static Item stockMount;
     public static Item opticMount;
-    public static Item gasSystemModule;
 
-    // reuse the creative tab defined in HGBaseItems
     private static final CreativeTabs TAB = HGBaseItems.tabHMGCrafting;
 
     public static void init() {
-        // === Core gun parts ===
-        firingPin = new Item()
-                .setUnlocalizedName("firingPin")
-                .setTextureName("handmadeguns:firing_pin")
-                .setCreativeTab(TAB);
-        triggerAssembly = new Item()
-                .setUnlocalizedName("triggerAssembly")
-                .setTextureName("handmadeguns:trigger_assembly")
-                .setCreativeTab(TAB);
 
-        // === Pistol family ===
-        pistolSlide = new Item()
-                .setUnlocalizedName("pistolSlide")
-                .setTextureName("handmadeguns:pistol_slide")
-                .setCreativeTab(TAB);
-        pistolBarrelKit = new Item()
-                .setUnlocalizedName("pistolBarrelKit")
-                .setTextureName("handmadeguns:pistol_barrel_kit")
-                .setCreativeTab(TAB);
-        pistolFrameInsert = new Item()
-                .setUnlocalizedName("pistolFrameInsert")
-                .setTextureName("handmadeguns:pistol_frame_insert")
-                .setCreativeTab(TAB);
+        // ===== CORE =====
+        firingPin = part("firingPin", "firing_pin");
+        triggerAssembly = part("triggerAssembly", "trigger_assembly");
+        springSet = part("springSet", "spring_set");
 
-        // === SMG family ===
-        smgReceiverBlock = new Item()
-                .setUnlocalizedName("smgReceiverBlock")
-                .setTextureName("handmadeguns:smg_receiver_block")
-                .setCreativeTab(TAB);
-        smgBarrelKit = new Item()
-                .setUnlocalizedName("smgBarrelKit")
-                .setTextureName("handmadeguns:smg_barrel_kit")
-                .setCreativeTab(TAB);
-        smgBoltAssembly = new Item()
-                .setUnlocalizedName("smgBoltAssembly")
-                .setTextureName("handmadeguns:smg_bolt_assembly")
-                .setCreativeTab(TAB);
+        // ===== MANUFACTURING TIERS =====
+        machinedParts = part("machinedParts", "machined_parts");
+        precisionComponents = part("precisionComponents", "precision_components");
 
-        // === AR family ===
-        arUpper = new Item()
-                .setUnlocalizedName("arUpper")
-                .setTextureName("handmadeguns:ar_upper")
-                .setCreativeTab(TAB);
-        arLower = new Item()
-                .setUnlocalizedName("arLower")
-                .setTextureName("handmadeguns:ar_lower")
-                .setCreativeTab(TAB);
-        arBoltCarrierGroup = new Item()
-                .setUnlocalizedName("arBoltCarrierGroup")
-                .setTextureName("handmadeguns:ar_bolt_carrier_group")
-                .setCreativeTab(TAB);
-        arBarrelKit = new Item()
-                .setUnlocalizedName("arBarrelKit")
-                .setTextureName("handmadeguns:ar_barrel_kit")
-                .setCreativeTab(TAB);
+        // ===== RECEIVERS =====
+        stampedReceiver = part("stampedReceiver", "stamped_receiver");
+        milledReceiver = part("milledReceiver", "milled_receiver");
 
-        // === DMR family ===
-        dmrHeavyBarrel = new Item()
-                .setUnlocalizedName("dmrHeavyBarrel")
-                .setTextureName("handmadeguns:dmr_heavy_barrel")
-                .setCreativeTab(TAB);
-        dmrPrecisionLower = new Item()
-                .setUnlocalizedName("dmrPrecisionLower")
-                .setTextureName("handmadeguns:dmr_precision_lower")
-                .setCreativeTab(TAB);
+        // ===== CORE ASSEMBLIES =====
+        blowbackBoltAssembly = part("blowbackBoltAssembly", "blowback_bolt");
+        rotatingBoltAssembly = part("rotatingBoltAssembly", "rotating_bolt");
+        heavyBoltCarrier = part("heavyBoltCarrier", "heavy_bolt_carrier");
 
-        // === LMG family ===
-        lmgCarrier = new Item()
-                .setUnlocalizedName("lmgCarrier")
-                .setTextureName("handmadeguns:lmg_carrier")
+        // ===== BARRELS =====
+        lightBarrelKit = part("lightBarrelKit", "light_barrel_kit");
+        rifleBarrelKit = part("rifleBarrelKit", "rifle_barrel_kit");
+        heavyBarrelKit = part("heavyBarrelKit", "heavy_barrel_kit");
+
+        // ===== AR PLATFORM =====
+        arUpper = part("arUpper", "ar_upper");
+        arLower = part("arLower", "ar_lower");
+
+        // ===== OPERATING MODULES =====
+        gasSystemModule = part("gasSystemModule", "gas_system_module");
+        beltFeedModule = part("beltFeedModule", "belt_feed_module");
+
+        // ===== LAUNCHERS =====
+        launcherTube = part("launcherTube", "launcher_tube");
+        launcherFiringAssembly = part("launcherFiringAssembly", "launcher_firing");
+        launcherGripFrame = part("launcherGripFrame", "launcher_grip");
+
+        // ===== INTERFACES =====
+        stockMount = part("stockMount", "stock_mount");
+        opticMount = part("opticMount", "optic_mount");
+    }
+
+    private static Item part(String name, String tex) {
+        Item i = new Item()
+                .setUnlocalizedName(name)
+                .setTextureName("handmadeguns:" + tex)
                 .setCreativeTab(TAB);
-        lmgHeavyBarrel = new Item()
-                .setUnlocalizedName("lmgHeavyBarrel")
-                .setTextureName("handmadeguns:lmg_heavy_barrel")
-                .setCreativeTab(TAB);
-        lmgFeedBlock = new Item()
-                .setUnlocalizedName("lmgFeedBlock")
-                .setTextureName("handmadeguns:lmg_feed_block")
-                .setCreativeTab(TAB);
-
-        // === Launcher / RPG family ===
-        launcherTube = new Item()
-                .setUnlocalizedName("launcherTube")
-                .setTextureName("handmadeguns:launcher_tube")
-                .setCreativeTab(TAB);
-        launcherFiringAssembly = new Item()
-                .setUnlocalizedName("launcherFiringAssembly")
-                .setTextureName("handmadeguns:launcher_firing_assembly")
-                .setCreativeTab(TAB);
-        launcherGripFrame = new Item()
-                .setUnlocalizedName("launcherGripFrame")
-                .setTextureName("handmadeguns:launcher_grip_frame")
-                .setCreativeTab(TAB);
-
-        // === Universal mounts / modules ===
-        stockMount = new Item()
-                .setUnlocalizedName("stockMount")
-                .setTextureName("handmadeguns:stock_mount")
-                .setCreativeTab(TAB);
-        opticMount = new Item()
-                .setUnlocalizedName("opticMount")
-                .setTextureName("handmadeguns:optic_mount")
-                .setCreativeTab(TAB);
-        gasSystemModule = new Item()
-                .setUnlocalizedName("gasSystemModule")
-                .setTextureName("handmadeguns:gas_system_module")
-                .setCreativeTab(TAB);
-
-        // === Registration ===
-        GameRegistry.registerItem(arBoltCarrierGroup, "arBoltCarrierGroup");
-        GameRegistry.registerItem(firingPin, "firingPin");
-        GameRegistry.registerItem(triggerAssembly, "triggerAssembly");
-
-        GameRegistry.registerItem(pistolSlide, "pistolSlide");
-        GameRegistry.registerItem(pistolBarrelKit, "pistolBarrelKit");
-        GameRegistry.registerItem(pistolFrameInsert, "pistolFrameInsert");
-
-        GameRegistry.registerItem(smgReceiverBlock, "smgReceiverBlock");
-        GameRegistry.registerItem(smgBarrelKit, "smgBarrelKit");
-        GameRegistry.registerItem(smgBoltAssembly, "smgBoltAssembly");
-
-        GameRegistry.registerItem(arUpper, "arUpper");
-        GameRegistry.registerItem(arLower, "arLower");
-        GameRegistry.registerItem(arBarrelKit, "arBarrelKit");
-
-        GameRegistry.registerItem(dmrHeavyBarrel, "dmrHeavyBarrel");
-        GameRegistry.registerItem(dmrPrecisionLower, "dmrPrecisionLower");
-
-        GameRegistry.registerItem(lmgCarrier, "lmgCarrier");
-        GameRegistry.registerItem(lmgHeavyBarrel, "lmgHeavyBarrel");
-        GameRegistry.registerItem(lmgFeedBlock, "lmgFeedBlock");
-
-        GameRegistry.registerItem(launcherTube, "launcherTube");
-        GameRegistry.registerItem(launcherFiringAssembly, "launcherFiringAssembly");
-        GameRegistry.registerItem(launcherGripFrame, "launcherGripFrame");
-
-        GameRegistry.registerItem(stockMount, "stockMount");
-        GameRegistry.registerItem(opticMount, "opticMount");
-        GameRegistry.registerItem(gasSystemModule, "gasSystemModule");
+        GameRegistry.registerItem(i, name);
+        return i;
     }
 }
+
+
 
 

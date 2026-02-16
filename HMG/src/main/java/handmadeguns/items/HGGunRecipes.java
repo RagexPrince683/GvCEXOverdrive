@@ -9,10 +9,13 @@ public class HGGunRecipes {
 
     public static void init() {
 
-        // ===== CORE GUN PARTS =====
+        // =====================================================
+        // CORE MECHANISMS
+        // =====================================================
 
+        // firing pin — single output (scarcity maintained)
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.firingPin, 2),
+                new ItemStack(HGGunItems.firingPin, 1),
                 " S ",
                 " I ",
                 " S ",
@@ -20,218 +23,248 @@ public class HGGunRecipes {
                 'I', "ingotIron"
         ));
 
+        // spring set — energy storage parts, now outputs 2
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.triggerAssembly),
+                new ItemStack(HGGunItems.springSet, 2),
                 " S ",
+                " S ",
+                " S ",
+                'S', "ingotSteel"
+        ));
+
+        // trigger assembly — fire control group, now outputs 2
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.triggerAssembly, 2),
+                " P ",
                 "RIR",
+                " S ",
+                'P', HGGunItems.springSet,
+                'I', "ingotIron",
+                'S', "ingotSteel",
+                'R', Items.redstone
+        ));
+
+        // =====================================================
+        // MANUFACTURING TIERS
+        // =====================================================
+
+        // machined parts — mid-tier gate, outputs 2
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.machinedParts, 2),
+                " S ",
+                "IRI",
                 " S ",
                 'S', "ingotSteel",
                 'I', "ingotIron",
                 'R', Items.redstone
         ));
 
-
-        // ===== PISTOL PARTS =====
-
+        // precision components — high-tier gate, outputs 2
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.pistolSlide),
-                "SSS",
-                " S ",
-                "   ",
-                'S', "ingotSteel"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.pistolBarrelKit),
-                "   ",
-                " S ",
-                " I ",
-                'S', "ingotSteel",
-                'I', "ingotIron"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.pistolFrameInsert),
-                " P ",
-                "PSP",
-                " P ",
-                'P', HGBaseItems.polymer,
-                'S', "ingotSteel"
-        ));
-
-
-        // ===== SMG PARTS =====
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.smgReceiverBlock),
-                "SSS",
-                "SI ",
-                "SSS",
-                'S', "ingotSteel",
-                'I', "ingotIron"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.smgBarrelKit),
-                "   ",
-                " S ",
-                " S ",
-                'S', "ingotSteel"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.smgBoltAssembly),
-                "SS ",
-                " S ",
-                " S ",
-                'S', "ingotSteel"
-        ));
-
-
-        // ===== AR FAMILY =====
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.arUpper),
-                "SAS",
-                "S S",
-                "SSS",
-                'S', "ingotSteel",
-                'A', "ingotAluminum"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.arLower),
-                "A A",
-                "AAA",
-                "ASA",
-                'A', "ingotAluminum",
-                'S', "ingotSteel"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.arBoltCarrierGroup),
-                "SSS",
-                " S ",
-                " S ",
-                'S', "ingotSteel"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.arBarrelKit),
-                "   ",
-                " A ",
-                " S ",
-                'A', "ingotAluminum",
-                'S', "ingotSteel"
-        ));
-
-
-        // ===== DMR FAMILY =====
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.dmrHeavyBarrel),
-                "   ",
-                " S ",
-                " S ",
-                'S', "ingotSteel"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.dmrPrecisionLower),
-                "SAS",
-                "R R",
-                "SAS",
-                'S', "ingotSteel",
-                'A', "ingotAluminum",
-                'R', Items.redstone
-        ));
-
-
-        // ===== LMG FAMILY =====
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.lmgCarrier),
-                "SSS",
-                "SSS",
-                " S ",
-                'S', "ingotSteel"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.lmgHeavyBarrel),
-                "   ",
-                " S ",
-                " S ",
-                'S', "ingotSteel"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.lmgFeedBlock),
-                "ISI",
-                "S S",
-                "ISI",
-                'S', "ingotSteel",
-                'I', "ingotIron"
-        ));
-
-
-        // ===== LAUNCHER / RPG PARTS =====
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.launcherTube),
-                "III",
-                "I I",
-                "III",
-                'I', "ingotIron"
-        ));
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.launcherFiringAssembly),
-                "SRS",
-                " I ",
-                "S S",
-                'S', "ingotSteel",
+                new ItemStack(HGGunItems.precisionComponents, 2),
+                " M ",
+                "RGR",
+                " M ",
+                'M', HGGunItems.machinedParts,
                 'R', Items.redstone,
-                'I', "ingotIron"
+                'G', Items.gold_nugget
         ));
 
+        // =====================================================
+        // RECEIVERS (MANUFACTURING TYPE)
+        // =====================================================
+
+        // stamped receiver — WW2 / SMG / AK-type, outputs 2
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.launcherGripFrame),
-                " A ",
-                "ASA",
-                " A ",
-                'A', "ingotAluminum",
-                'S', "ingotSteel"
-        ));
-
-
-        // ===== UNIVERSAL MOUNTS / MODULES =====
-
-        GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.stockMount),
-                "S S",
+                new ItemStack(HGGunItems.stampedReceiver, 2),
                 "SSS",
-                "S S",
-                'S', "ingotSteel"
+                "STS",
+                "SSS",
+                'S', "ingotSteel",
+                'T', HGGunItems.triggerAssembly
         ));
 
+        // milled receiver — modern / precision, outputs 2
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.opticMount),
-                " A ",
-                "ASA",
-                " A ",
-                'A', "ingotAluminum",
-                'S', "ingotSteel"
+                new ItemStack(HGGunItems.milledReceiver, 2),
+                "MMM",
+                "MTM",
+                "MMM",
+                'M', HGGunItems.machinedParts,
+                'T', HGGunItems.triggerAssembly
         ));
 
+        // =====================================================
+        // CORE OPERATING ASSEMBLIES
+        // =====================================================
+
+        // blowback bolt — SMG/simple, outputs 2
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.gasSystemModule),
+                new ItemStack(HGGunItems.blowbackBoltAssembly, 2),
+                "PSS",
+                "SF ",
                 " S ",
-                "SRS",
+                'P', HGGunItems.springSet,
+                'S', "ingotSteel",
+                'F', HGGunItems.firingPin
+        ));
+
+        // rotating bolt — rifle pattern, outputs 2
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.rotatingBoltAssembly, 2),
+                "PMS",
+                "MF ",
+                " S ",
+                'P', HGGunItems.springSet,
+                'M', HGGunItems.machinedParts,
+                'S', "ingotSteel",
+                'F', HGGunItems.firingPin
+        ));
+
+        // heavy carrier — LMG / high-mass, outputs 2
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.heavyBoltCarrier, 2),
+                "PMP",
+                "MFM",
+                " S ",
+                'P', HGGunItems.springSet,
+                'M', HGGunItems.machinedParts,
+                'S', "ingotSteel",
+                'F', HGGunItems.firingPin
+        ));
+
+        // =====================================================
+        // BARREL ASSEMBLIES
+        // =====================================================
+
+        // light barrel — pistol / SMG, outputs 2
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.lightBarrelKit, 2),
+                " S ",
+                " M ",
                 " S ",
                 'S', "ingotSteel",
+                'M', HGGunItems.machinedParts
+        ));
+
+        // rifle barrel — standard, outputs 2
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.rifleBarrelKit, 2),
+                " M ",
+                " S ",
+                " M ",
+                'S', "ingotSteel",
+                'M', HGGunItems.machinedParts
+        ));
+
+        // heavy barrel — DMR / LMG, outputs 2
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.heavyBarrelKit, 2),
+                " M ",
+                " M ",
+                " S ",
+                'S', "ingotSteel",
+                'M', HGGunItems.machinedParts
+        ));
+
+        // =====================================================
+        // AR PLATFORM MODULES
+        // =====================================================
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.gasSystemModule, 2),
+                " M ",
+                "RMR",
+                " M ",
+                'M', HGGunItems.machinedParts,
                 'R', Items.redstone
+        ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.arUpper, 2),
+                "MMM",
+                "MG ",
+                "MMM",
+                'M', HGGunItems.machinedParts,
+                'G', HGGunItems.gasSystemModule
+        ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.arLower, 2),
+                "M M",
+                "MTM",
+                "M M",
+                'M', HGGunItems.machinedParts,
+                'T', HGGunItems.triggerAssembly
+        ));
+
+        // =====================================================
+        // FEED SYSTEMS
+        // =====================================================
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.beltFeedModule, 2),
+                "SMS",
+                "M M",
+                "SMS",
+                'S', "ingotSteel",
+                'M', HGGunItems.machinedParts
+        ));
+
+        // =====================================================
+        // LAUNCHER SYSTEMS
+        // =====================================================
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.launcherTube, 2),
+                " S ",
+                " S ",
+                " S ",
+                'S', "ingotSteel"
+        ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.launcherFiringAssembly, 2),
+                "PMP",
+                "MTM",
+                " M ",
+                'P', HGGunItems.springSet,
+                'M', HGGunItems.machinedParts,
+                'T', HGGunItems.triggerAssembly
+        ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.launcherGripFrame, 2),
+                " M ",
+                "MSM",
+                " M ",
+                'M', HGGunItems.machinedParts,
+                'S', "ingotSteel"
+        ));
+
+        // =====================================================
+        // INTERFACES / MOUNTS
+        // =====================================================
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.stockMount, 2),
+                "S S",
+                " M ",
+                "S S",
+                'S', "ingotSteel",
+                'M', HGGunItems.machinedParts
+        ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.opticMount, 2),
+                " M ",
+                "MSM",
+                " M ",
+                'S', "ingotSteel",
+                'M', HGGunItems.machinedParts
         ));
     }
 }
+
+
 

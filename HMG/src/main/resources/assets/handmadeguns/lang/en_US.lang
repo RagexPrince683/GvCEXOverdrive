@@ -12,15 +12,40 @@ item.polymer.name=Polymer
 item.springSet.name=Spring Set
 item.ironInfusedCoal.name=Iron-Carbon Alloy
 
-item.gunOil.name=Gun Oil
-item.receiverBlank.name=Receiver Blank
-item.barrelBlank.name=Barrel Blank
 item.firingPin.name=Firing Pin
 item.triggerAssembly.name=Trigger Assembly
 item.polymerFrame.name=Polymer Frame
 
-tile.gun_table.name=Gun Smithing Table
+item.machinedParts.name=Machined Parts
+item.precisionComponents.name=Precision Components
 
+item.stampedReceiver.name=Stamped Receiver
+item.milledReceiver.name=Milled Receiver
+
+item.blowbackBoltAssembly.name=Blowback Bolt Assembly
+item.rotatingBoltAssembly.name=Rotating Bolt Assembly
+item.heavyBoltCarrier.name=Heavy Bolt Carrier
+
+item.lightBarrelKit.name=Light Barrel Kit
+item.rifleBarrelKit.name=Rifle Barrel Kit
+item.heavyBarrelKit.name=Heavy Barrel Kit
+
+item.gasSystemModule.name=Gas System Module
+item.arUpper.name=AR Upper Receiver
+item.arLower.name=AR Lower Receiver
+item.arBoltCarrierGroup.name=AR Bolt Carrier Group
+item.arBarrelKit.name=AR Barrel Kit
+
+item.beltFeedModule.name=Belt Feed Module
+
+item.launcherTube.name=Launcher Tube
+item.launcherFiringAssembly.name=Launcher Firing Assembly
+item.launcherGripFrame.name=Launcher Grip Frame
+
+item.stockMount.name=Stock Mount
+item.opticMount.name=Optic Mount
+
+tile.gun_table.name=Gun Smithing Table
 
 item.pistolSlide.name=Pistol Slide
 item.pistolBarrelKit.name=Pistol Barrel Kit
@@ -28,22 +53,6 @@ item.pistolFrameInsert.name=Pistol Frame Insert
 item.smgReceiverBlock.name=SMG Receiver Block
 item.smgBarrelKit.name=SMG Barrel Kit
 item.smgBoltAssembly.name=SMG Bolt Assembly
-item.arUpper.name=AR Upper Receiver
-item.arLower.name=AR Lower Receiver
-item.arBoltCarrierGroup.name=AR Bolt Carrier Group
-item.arBarrelKit.name=AR Barrel Kit
-item.dmrHeavyBarrel.name=DMR Heavy Barrel
-item.dmrPrecisionLower.name=DMR Precision Lower
-item.lmgCarrier.name=LMG Bolt Carrier
-item.lmgHeavyBarrel.name=LMG Heavy Barrel
-item.lmgFeedBlock.name=LMG Feed Block
-item.launcherTube.name=Launcher Tube
-item.launcherFiringAssembly.name=Launcher Firing Assembly
-item.launcherGripFrame.name=Launcher Grip Frame
-item.stockMount.name=Stock Mount
-item.opticMount.name=Optic Mount
-item.gasSystemModule.name=Gas System Module
 
-itemGroup.HMGCrafting=Handmade Guns Crafting
 
 
