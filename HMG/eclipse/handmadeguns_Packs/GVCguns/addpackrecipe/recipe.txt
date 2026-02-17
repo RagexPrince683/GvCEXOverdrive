@@ -99,7 +99,7 @@ Slot2,HandmadeGuns:rotatingBoltAssembly
 Slot3,HandmadeGuns:rifleBarrelKit
 Slot4,HandmadeGuns:gasSystemModule
 Slot5,minecraft:planks
-CraftItem,HandmadeGuns:CopiedAK:0:1
+CraftItem,HandmadeGuns:Copied AK:0:1
 
 AddRecipe
 Slot1,HandmadeGuns:milledReceiver
@@ -180,7 +180,7 @@ Slot4,HandmadeGuns:gasSystemModule
 Slot5,HandmadeGuns:pumpLeverActionModule
 Slot6,HandmadeGuns:stockMount
 Slot7,HandmadeGuns:machinedParts
-CraftItem,HandmadeGuns:AR12:0:1
+CraftItem,HandmadeGuns:AR-12:0:1
 
 AddRecipe
 Slot1,HandmadeGuns:arUpper
@@ -222,7 +222,7 @@ Slot3,HandmadeGuns:rifleBarrelKit
 Slot4,HandmadeGuns:gasSystemModule
 Slot5,HandmadeGuns:polymer
 Slot6,HandmadeGuns:machinedParts
-CraftItem,HandmadeGuns:FamasG2:0:1
+CraftItem,HandmadeGuns:Famas G2:0:1
 
 AddRecipe
 Slot1,HandmadeGuns:milledReceiver
@@ -664,7 +664,7 @@ Slot4,HandmadeGuns:gasSystemModule
 Slot5,HandmadeGuns:stockMount
 Slot6,HandmadeGuns:machinedParts
 Slot7,HandmadeGuns:precisionComponents
-CraftItem,HandmadeGuns:AA12:0:1
+CraftItem,HandmadeGuns:AA-12:0:1
 
 AddRecipe
 Slot1,HandmadeGuns:stampedReceiver
@@ -897,7 +897,7 @@ Slot3,HandmadeGuns:launcherGripFrame
 Slot4,HandmadeGuns:opticMount
 Slot5,HandmadeGuns:machinedParts
 Slot6,HandmadeGuns:precisionComponents
-CraftItem,HandmadeGuns:M320GLM:0:1
+CraftItem,HandmadeGuns:M320 GLM:0:1
 
 AddRecipe
 Slot1,HandmadeGuns:launcherTube
