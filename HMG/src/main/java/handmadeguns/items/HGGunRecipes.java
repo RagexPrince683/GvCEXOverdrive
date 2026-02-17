@@ -63,11 +63,11 @@ public class HGGunRecipes {
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(HGGunItems.precisionComponents, 2),
                 " M ",
-                "RGR",
+                "RAR",
                 " M ",
                 'M', HGGunItems.machinedParts,
                 'R', Items.redstone,
-                'G', Items.gold_nugget
+                'A', "ingotAluminum"
         ));
 
         // =====================================================
@@ -87,10 +87,11 @@ public class HGGunRecipes {
         // milled receiver — modern / precision, outputs 2
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(HGGunItems.milledReceiver, 2),
-                "MMM",
+                "PMP",
                 "MTM",
-                "MMM",
+                " M ",
                 'M', HGGunItems.machinedParts,
+                'P', HGGunItems.precisionComponents,
                 'T', HGGunItems.triggerAssembly
         ));
 
@@ -112,10 +113,11 @@ public class HGGunRecipes {
         // rotating bolt — rifle pattern, outputs 2
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(HGGunItems.rotatingBoltAssembly, 2),
-                "PMS",
+                "PXS",
                 "MF ",
                 " S ",
                 'P', HGGunItems.springSet,
+                'X', HGGunItems.precisionComponents,
                 'M', HGGunItems.machinedParts,
                 'S', "ingotSteel",
                 'F', HGGunItems.firingPin
@@ -123,11 +125,23 @@ public class HGGunRecipes {
 
         // heavy carrier — LMG / high-mass, outputs 2
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.heavyBoltCarrier, 2),
+                new ItemStack(HGGunItems.heavyBoltCarrierAssembly, 2),
                 "PMP",
                 "MFM",
                 " S ",
                 'P', HGGunItems.springSet,
+                'M', HGGunItems.machinedParts,
+                'S', "ingotSteel",
+                'F', HGGunItems.firingPin
+        ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.boltActionAssembly, 2),
+                " XP",
+                "MFM",
+                " S ",
+                'P', HGGunItems.springSet,
+                'X', HGGunItems.precisionComponents,
                 'M', HGGunItems.machinedParts,
                 'S', "ingotSteel",
                 'F', HGGunItems.firingPin
@@ -160,11 +174,12 @@ public class HGGunRecipes {
         // heavy barrel — DMR / LMG, outputs 2
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(HGGunItems.heavyBarrelKit, 2),
-                " M ",
+                " P ",
                 " M ",
                 " S ",
-                'S', "ingotSteel",
-                'M', HGGunItems.machinedParts
+                'P', HGGunItems.precisionComponents,
+                'M', HGGunItems.machinedParts,
+                'S', "ingotSteel"
         ));
 
         // =====================================================
@@ -173,28 +188,29 @@ public class HGGunRecipes {
 
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(HGGunItems.gasSystemModule, 2),
-                " M ",
+                " A ",
                 "RMR",
-                " M ",
+                " A ",
+                'A', "ingotAluminum",
                 'M', HGGunItems.machinedParts,
                 'R', Items.redstone
         ));
 
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(HGGunItems.arUpper, 2),
-                "MMM",
-                "MG ",
-                "MMM",
-                'M', HGGunItems.machinedParts,
-                'G', HGGunItems.gasSystemModule
+                "AAA",
+                "AM ",
+                "AAA",
+                'A', "ingotAluminum",
+                'M', HGGunItems.machinedParts
         ));
 
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(HGGunItems.arLower, 2),
-                "M M",
-                "MTM",
-                "M M",
-                'M', HGGunItems.machinedParts,
+                "A A",
+                "ATA",
+                "A A",
+                'A', "ingotAluminum",
                 'T', HGGunItems.triggerAssembly
         ));
 
@@ -209,6 +225,16 @@ public class HGGunRecipes {
                 "SMS",
                 'S', "ingotSteel",
                 'M', HGGunItems.machinedParts
+        ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.pumpLeverActionModule, 2),
+                " S ",
+                "M M",
+                " P ",
+                'S', "ingotSteel",
+                'M', HGGunItems.machinedParts,
+                'P', HGGunItems.springSet
         ));
 
         // =====================================================
@@ -242,6 +268,33 @@ public class HGGunRecipes {
                 'S', "ingotSteel"
         ));
 
+        //=====================================================
+        //HANDGUN SYSTEMS
+        //=====================================================
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.handgunSlideAssembly, 2),
+                "PSS",
+                "MFM",
+                " S ",
+                'P', HGGunItems.springSet,
+                'M', HGGunItems.machinedParts,
+                'S', "ingotSteel",
+                'F', HGGunItems.firingPin
+        ));
+
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.revolverMechanismAssembly, 2),
+                "PXP",
+                "MFM",
+                " S ",
+                'P', HGGunItems.springSet,
+                'X', HGGunItems.precisionComponents,
+                'M', HGGunItems.machinedParts,
+                'S', "ingotSteel",
+                'F', HGGunItems.firingPin
+        ));
+
         // =====================================================
         // INTERFACES / MOUNTS
         // =====================================================
@@ -257,11 +310,12 @@ public class HGGunRecipes {
 
         GameRegistry.addRecipe(new ShapedOreRecipe(
                 new ItemStack(HGGunItems.opticMount, 2),
-                " M ",
-                "MSM",
-                " M ",
-                'S', "ingotSteel",
-                'M', HGGunItems.machinedParts
+                " A ",
+                "PMP",
+                " A ",
+                'A', "ingotAluminum",
+                'M', HGGunItems.machinedParts,
+                'P', HGGunItems.precisionComponents
         ));
     }
 }

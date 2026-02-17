@@ -14,7 +14,7 @@ item.ironInfusedCoal.name=Iron-Carbon Alloy
 
 item.firingPin.name=Firing Pin
 item.triggerAssembly.name=Trigger Assembly
-item.polymerFrame.name=Polymer Frame
+item.springSet.name=Spring Set
 
 item.machinedParts.name=Machined Parts
 item.precisionComponents.name=Precision Components
@@ -24,19 +24,22 @@ item.milledReceiver.name=Milled Receiver
 
 item.blowbackBoltAssembly.name=Blowback Bolt Assembly
 item.rotatingBoltAssembly.name=Rotating Bolt Assembly
-item.heavyBoltCarrier.name=Heavy Bolt Carrier
+item.heavyBoltCarrierAssembly.name=Heavy Bolt Carrier Assembly
+item.boltActionAssembly.name=Bolt-Action Assembly
+
+item.handgunSlideAssembly.name=Handgun Slide Assembly
+item.revolverMechanismAssembly.name=Revolver Mechanism Assembly
 
 item.lightBarrelKit.name=Light Barrel Kit
 item.rifleBarrelKit.name=Rifle Barrel Kit
 item.heavyBarrelKit.name=Heavy Barrel Kit
 
-item.gasSystemModule.name=Gas System Module
 item.arUpper.name=AR Upper Receiver
 item.arLower.name=AR Lower Receiver
-item.arBoltCarrierGroup.name=AR Bolt Carrier Group
-item.arBarrelKit.name=AR Barrel Kit
 
+item.gasSystemModule.name=Gas System Module
 item.beltFeedModule.name=Belt Feed Module
+item.pumpLeverActionModule.name=Pump / Lever Action Module
 
 item.launcherTube.name=Launcher Tube
 item.launcherFiringAssembly.name=Launcher Firing Assembly
@@ -47,12 +50,6 @@ item.opticMount.name=Optic Mount
 
 tile.gun_table.name=Gun Smithing Table
 
-item.pistolSlide.name=Pistol Slide
-item.pistolBarrelKit.name=Pistol Barrel Kit
-item.pistolFrameInsert.name=Pistol Frame Insert
-item.smgReceiverBlock.name=SMG Receiver Block
-item.smgBarrelKit.name=SMG Barrel Kit
-item.smgBoltAssembly.name=SMG Bolt Assembly
 
 
 

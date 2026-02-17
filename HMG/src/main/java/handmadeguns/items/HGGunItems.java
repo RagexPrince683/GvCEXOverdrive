@@ -20,9 +20,14 @@ public class HGGunItems {
     public static Item milledReceiver;  // modern milled rifles / DMRs
 
     // === FUNCTIONAL CORE ASSEMBLIES ===
-    public static Item blowbackBoltAssembly;   // SMG / simple systems
-    public static Item rotatingBoltAssembly;   // rifle pattern
-    public static Item heavyBoltCarrier;       // LMG / high-mass systems
+    public static Item blowbackBoltAssembly;     // SMG / simple systems
+    public static Item rotatingBoltAssembly;     // rifle pattern
+    public static Item heavyBoltCarrierAssembly;         // LMG / high-mass systems
+    public static Item boltActionAssembly;       // bolt-action rifles
+
+    // === HANDGUN SYSTEMS ===
+    public static Item handgunSlideAssembly;         // semi-auto pistol slide systems
+    public static Item revolverMechanismAssembly;    // revolver cylinder/timing system
 
     // === BARREL ASSEMBLIES ===
     public static Item lightBarrelKit;
@@ -36,6 +41,7 @@ public class HGGunItems {
     // === FEED & OPERATING MODULES ===
     public static Item gasSystemModule;
     public static Item beltFeedModule;
+    public static Item pumpLeverActionModule; // pump / lever / manual cycling systems
 
     // === LAUNCHER SYSTEMS ===
     public static Item launcherTube;
@@ -66,7 +72,12 @@ public class HGGunItems {
         // ===== CORE ASSEMBLIES =====
         blowbackBoltAssembly = part("blowbackBoltAssembly", "blowback_bolt");
         rotatingBoltAssembly = part("rotatingBoltAssembly", "rotating_bolt");
-        heavyBoltCarrier = part("heavyBoltCarrier", "heavy_bolt_carrier");
+        heavyBoltCarrierAssembly = part("heavyBoltCarrierAssembly", "heavy_bolt_carrier");
+        boltActionAssembly = part("boltActionAssembly", "bolt_action");
+
+        // ===== HANDGUN SYSTEMS =====
+        handgunSlideAssembly = part("handgunSlideAssembly", "handgun_slide");
+        revolverMechanismAssembly = part("revolverMechanismAssembly", "revolver_mechanism");
 
         // ===== BARRELS =====
         lightBarrelKit = part("lightBarrelKit", "light_barrel_kit");
@@ -77,11 +88,12 @@ public class HGGunItems {
         arUpper = part("arUpper", "ar_upper");
         arLower = part("arLower", "ar_lower");
 
-        // ===== OPERATING MODULES =====
+        // ===== FEED & OPERATING MODULES =====
         gasSystemModule = part("gasSystemModule", "gas_system_module");
         beltFeedModule = part("beltFeedModule", "belt_feed_module");
+        pumpLeverActionModule = part("pumpLeverActionModule", "pump_lever_action_module");
 
-        // ===== LAUNCHERS =====
+        // ===== LAUNCHER SYSTEMS =====
         launcherTube = part("launcherTube", "launcher_tube");
         launcherFiringAssembly = part("launcherFiringAssembly", "launcher_firing");
         launcherGripFrame = part("launcherGripFrame", "launcher_grip");
@@ -100,6 +112,7 @@ public class HGGunItems {
         return i;
     }
 }
+
 
 
 
