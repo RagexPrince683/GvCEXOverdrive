@@ -339,10 +339,4 @@ Name,Heavy Machine Gun Dshk-38
 LMG,Dshk38
 
 
-Recipe1,  a
-Recipe2,aaa
-Recipe3,abc
-ItemA,minecraft,iron_ingot
-ItemB,minecraft,iron_block
-ItemC,minecraft,emerald
-addNewRecipe,HandmadeGuns,Dshk38,1
+

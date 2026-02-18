@@ -436,10 +436,10 @@ BulletNameCart,12_7mmCart
 Name,M1919A6 Browning
 LMG,M1919A6
 
-Recipe1, c 
-Recipe2, a 
-Recipe3,abc
-ItemA,minecraft,iron_ingot
-ItemB,minecraft,iron_block
-ItemC,minecraft,emerald
-addNewRecipe,HandmadeGuns,M1919A6,1
+//Recipe1, c 
+//Recipe2, a 
+//Recipe3,abc
+//ItemA,minecraft,iron_ingot
+//ItemB,minecraft,iron_block
+//ItemC,minecraft,emerald
+//addNewRecipe,HandmadeGuns,M1919A6,1

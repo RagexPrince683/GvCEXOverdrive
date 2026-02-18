@@ -500,10 +500,4 @@ BulletNameCart,12_7mmCart
 LMG,Kord
 Name,Kord
 
-Recipe1, a 
-Recipe2,aba
-Recipe3,abc
-ItemA,minecraft,iron_ingot
-ItemB,minecraft,iron_block
-ItemC,minecraft,emerald_block
-addNewRecipe,HandmadeGuns,Kord,1
+
