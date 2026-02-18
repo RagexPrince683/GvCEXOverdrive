@@ -486,12 +486,12 @@ AddRecipe
 Slot1,HandmadeGuns:stampedReceiver
 Slot2,HandmadeGuns:blowbackBoltAssembly
 Slot3,HandmadeGuns:lightBarrelKit
-Slot4,minecraft:planks
+Slot4,HandmadeGuns:stockMount
 CraftItem,HandmadeGuns:mp40:0:1
 
 AddRecipe
 Slot1,HandmadeGuns:stampedReceiver
-Slot2,HandmadeGuns:heavyBoltCarrierAssembly	
+Slot2,HandmadeGuns:heavyBoltCarrierAssembly
 Slot3,HandmadeGuns:lightBarrelKit
 Slot4,HandmadeGuns:stockMount
 Slot5,HandmadeGuns:machinedParts
@@ -584,7 +584,7 @@ Slot1,HandmadeGuns:milledReceiver
 Slot2,HandmadeGuns:pumpLeverActionModule
 Slot3,HandmadeGuns:heavyBarrelKit
 Slot4,HandmadeGuns:stockMount
-Slot5,minecraft:planks
+Slot5,HandmadeGuns:polymer
 Slot6,HandmadeGuns:machinedParts
 CraftItem,HandmadeGuns:Mossberg M590:0:1
 
@@ -1465,4 +1465,5 @@ Slot2,HandmadeGuns:handgunSlideAssembly
 Slot3,HandmadeGuns:lightBarrelKit
 Slot4,HandmadeGuns:machinedParts
 Slot5,HandmadeGuns:precisionComponents
+Slot6,minecraft:planks
 CraftItem,HandmadeGuns:WW2 M1911:0:1
