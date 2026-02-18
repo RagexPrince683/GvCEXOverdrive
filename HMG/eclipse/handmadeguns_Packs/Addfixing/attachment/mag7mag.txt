@@ -1,4 +1,4 @@
-Texture,bullet_shell
+Texture,bullet_hg_9mm15sig
 Stack,2
 BulletRound,5
 Tabname,HMG_Ammo
