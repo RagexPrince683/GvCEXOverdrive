@@ -15,7 +15,7 @@ public class HGGunRecipes {
 
         // firing pin — single output (scarcity maintained)
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.firingPin, 1),
+                new ItemStack(HGGunItems.firingPin, 3),
                 " S ",
                 " I ",
                 " S ",
