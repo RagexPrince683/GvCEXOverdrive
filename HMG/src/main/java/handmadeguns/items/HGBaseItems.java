@@ -5,6 +5,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public class HGBaseItems {
@@ -37,10 +38,12 @@ public class HGBaseItems {
 
         // Polymer
         GameRegistry.addShapelessRecipe(
-                new ItemStack(polymer),
+                new ItemStack(polymer, 16),
                 new ItemStack(Items.slime_ball),
                 new ItemStack(Items.reeds)
         );
+        OreDictionary.registerOre("ingotAnyPlastic", new ItemStack(polymer, 1, 0));
+
     }
 }
 
