@@ -637,6 +637,7 @@ public class HandmadeGunsCore {
 		blockGunTable = new GunSmithTable();
 		blockGunTable.setBlockName("gun_table");
 		blockGunTable.setBlockTextureName("handmadeguns:gun_table");
+		blockGunTable.setCreativeTab(HGBaseItems.tabHMGCrafting);
 
 		GameRegistry.registerBlock(blockGunTable, "gun_table");
 		/*

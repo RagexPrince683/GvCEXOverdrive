@@ -317,6 +317,13 @@ public class HGGunRecipes {
                 'M', HGGunItems.machinedParts,
                 'P', HGGunItems.precisionComponents
         ));
+        GameRegistry.addRecipe(new ShapedOreRecipe(
+                new ItemStack(HGGunItems.woodGunFurniture),
+                " P ",
+                "P P",
+                " P ",
+                'P', "plankWood"
+        ));
     }
 }
 

@@ -1,4 +1,6 @@
 #
+itemGroup.HMGCrafting=HMG Crafting
+
 item.hmg_handing.name=Gun_Rack
 item.hmg_handing2.name=Gun_Rack2
 
@@ -47,8 +49,10 @@ item.launcherGripFrame.name=Launcher Grip Frame
 
 item.stockMount.name=Stock Mount
 item.opticMount.name=Optic Mount
+item.woodGunFurniture.name=Wood Gun Furniture
 
 tile.gun_table.name=Gun Smithing Table
+
 
 
 

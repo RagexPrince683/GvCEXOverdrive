@@ -52,6 +52,8 @@ public class HGGunItems {
     public static Item stockMount;
     public static Item opticMount;
 
+    public static Item woodGunFurniture; // wooden stocks / handguards / grips
+
     private static final CreativeTabs TAB = HGBaseItems.tabHMGCrafting;
 
     public static void init() {
@@ -101,6 +103,7 @@ public class HGGunItems {
         // ===== INTERFACES =====
         stockMount = part("stockMount", "stock_mount");
         opticMount = part("opticMount", "optic_mount");
+        woodGunFurniture = part("woodGunFurniture", "wood_gun_furniture");
     }
 
     private static Item part(String name, String tex) {
