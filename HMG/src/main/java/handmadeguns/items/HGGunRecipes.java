@@ -23,9 +23,9 @@ public class HGGunRecipes {
                 'I', "ingotIron"
         ));
 
-        // spring set — energy storage parts, now outputs 2
+        // spring set — energy storage parts, now outputs 12
         GameRegistry.addRecipe(new ShapedOreRecipe(
-                new ItemStack(HGGunItems.springSet, 2),
+                new ItemStack(HGGunItems.springSet, 12),
                 " S ",
                 " S ",
                 " S ",
