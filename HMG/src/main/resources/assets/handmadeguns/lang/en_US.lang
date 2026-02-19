@@ -1,57 +1,91 @@
-#
+# ========================
+# Creative Tabs
+# ========================
 itemGroup.HMGCrafting=HMG Crafting
+itemGroup.HMG_Ores=HMG Ores
 
-item.hmg_handing.name=Gun_Rack
-item.hmg_handing2.name=Gun_Rack2
-
-tile.copperOre.name=Copper Ore
-tile.aluminumOre.name=Aluminum Ore
+# ========================
+# Base Materials / Ingots
+# ========================
 item.steelIngot.name=Steel Ingot
 item.copperIngot.name=Copper Ingot
 item.aluminumIngot.name=Aluminum Ingot
-
 item.polymer.name=Polymer
 item.springSet.name=Spring Set
 item.ironInfusedCoal.name=Iron-Carbon Alloy
 
+# ========================
+# Gun Racks / Furniture
+# ========================
+item.hmg_handing.name=Gun Rack
+item.hmg_handing2.name=Gun Rack2
+tile.gun_table.name=Gun Smithing Table
+
+# ========================
+# Core Gun Parts
+# ========================
 item.firingPin.name=Firing Pin
 item.triggerAssembly.name=Trigger Assembly
-item.springSet.name=Spring Set
-
 item.machinedParts.name=Machined Parts
 item.precisionComponents.name=Precision Components
 
+# ========================
+# Receivers
+# ========================
 item.stampedReceiver.name=Stamped Receiver
 item.milledReceiver.name=Milled Receiver
 
+# ========================
+# Bolt Assemblies
+# ========================
 item.blowbackBoltAssembly.name=Blowback Bolt Assembly
 item.rotatingBoltAssembly.name=Rotating Bolt Assembly
 item.heavyBoltCarrierAssembly.name=Heavy Bolt Carrier Assembly
 item.boltActionAssembly.name=Bolt-Action Assembly
 
+# ========================
+# Handgun / Revolver Assemblies
+# ========================
 item.handgunSlideAssembly.name=Handgun Slide Assembly
 item.revolverMechanismAssembly.name=Revolver Mechanism Assembly
 
+# ========================
+# Barrel Kits
+# ========================
 item.lightBarrelKit.name=Light Barrel Kit
 item.rifleBarrelKit.name=Rifle Barrel Kit
 item.heavyBarrelKit.name=Heavy Barrel Kit
 
+# ========================
+# AR / Rifle Components
+# ========================
 item.arUpper.name=AR Upper Receiver
 item.arLower.name=AR Lower Receiver
 
-item.gasSystemModule.name=Gas System Module
-item.beltFeedModule.name=Belt Feed Module
-item.pumpLeverActionModule.name=Pump / Lever Action Module
-
+# ========================
+# Launcher Parts
+# ========================
 item.launcherTube.name=Launcher Tube
 item.launcherFiringAssembly.name=Launcher Firing Assembly
 item.launcherGripFrame.name=Launcher Grip Frame
 
+# ========================
+# Modules / Accessories
+# ========================
+item.gasSystemModule.name=Gas System Module
+item.beltFeedModule.name=Belt Feed Module
+item.pumpLeverActionModule.name=Pump / Lever Action Module
 item.stockMount.name=Stock Mount
 item.opticMount.name=Optic Mount
 item.woodGunFurniture.name=Wood Gun Furniture
 
-tile.gun_table.name=Gun Smithing Table
+# ========================
+# Ores & Blocks
+# ========================
+tile.copperOre.name=Copper Ore
+tile.aluminumOre.name=Aluminum Ore
+tile.copperBlock.name=Copper Block
+tile.aluminumBlock.name=Aluminum Block
 
 
 

@@ -252,7 +252,7 @@ public class HandmadeGunsCore {
 
 		HMGPacketHandler.init();
 		HGBaseItems.init();
-		HGMetalItems.init(HGBaseItems.tabHMGCrafting);
+		HGMetalItems.init();
 		HGGunItems.init();
 		HGMetalBlocks.init();
 

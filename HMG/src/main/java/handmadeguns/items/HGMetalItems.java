@@ -8,7 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import handmadeguns.compat.HGMetalCompat;
 
-
 public class HGMetalItems {
 
     public static Item steelIngot;
@@ -18,27 +17,35 @@ public class HGMetalItems {
     // Steel fallback production
     public static Item ironInfusedCoal;
 
-    public static void init(CreativeTabs tab) {
+    // New creative tab for ores & metals
+    public static final CreativeTabs tabHmgOres = new CreativeTabs("HMG_Ores") {
+        @Override
+        public Item getTabIconItem() {
+            return copperIngot; // tab icon
+        }
+    };
+
+    public static void init() {
 
         steelIngot = new Item()
                 .setUnlocalizedName("steelIngot")
                 .setTextureName("handmadeguns:steel_ingot")
-                .setCreativeTab(tab);
+                .setCreativeTab(tabHmgOres);
 
         copperIngot = new Item()
                 .setUnlocalizedName("copperIngot")
                 .setTextureName("handmadeguns:copper_ingot")
-                .setCreativeTab(tab);
+                .setCreativeTab(tabHmgOres);
 
         aluminumIngot = new Item()
                 .setUnlocalizedName("aluminumIngot")
                 .setTextureName("handmadeguns:aluminum_ingot")
-                .setCreativeTab(tab);
+                .setCreativeTab(tabHmgOres);
 
         ironInfusedCoal = new Item()
                 .setUnlocalizedName("ironInfusedCoal")
                 .setTextureName("handmadeguns:iron_infused_coal")
-                .setCreativeTab(tab);
+                .setCreativeTab(tabHmgOres);
 
         GameRegistry.registerItem(steelIngot, "steelIngot");
         GameRegistry.registerItem(copperIngot, "copperIngot");
@@ -51,5 +58,6 @@ public class HGMetalItems {
         OreDictionary.registerOre("ingotAluminum", aluminumIngot);
     }
 }
+
 
 
