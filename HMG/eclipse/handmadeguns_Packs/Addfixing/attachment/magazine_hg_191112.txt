@@ -10,4 +10,4 @@ Recipe3,ccc
 ItemA,HandmadeGuns,steelIngot
 ItemB,HandmadeGuns,copperIngot
 ItemC,minecraft,gunpowder
-addNewRecipe,HandmadeGuns,bullet_hg_hmg19117,2
+addNewRecipe,HandmadeGuns,bullet_hg_hmg191112,2

@@ -13,4 +13,4 @@ Recipe3,c
 ItemA,HandmadeGuns,copperIngot
 ItemB,minecraft,gunpowder
 ItemC,HandmadeGuns,steelIngot
-addNewRecipe,HandmadeGuns,bullet_shell_bird6,1
+addNewRecipe,HandmadeGuns,bullet_shell_bird6,8

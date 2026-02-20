@@ -23,4 +23,4 @@ ItemA,minecraft,redstone
 ItemB,HandmadeGuns,aluminumIngot
 ItemC,HandmadeGuns,polymer
 ItemD,minecraft,gunpowder
-addNewRecipe,HandmadeGuns,bullet_rr_hmgstinger,1
+addNewRecipe,HandmadeGuns,bullet_rr_hmgstingerjp,1
