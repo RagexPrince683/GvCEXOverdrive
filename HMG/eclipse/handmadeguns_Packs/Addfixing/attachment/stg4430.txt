@@ -7,10 +7,12 @@ Tabname,HMG_Ammo
 
 CustomMagazine,stg4430
 
-Recipe1,aa 
+//TEMPLATE
+
+Recipe1,a  
 Recipe2,bb 
-Recipe3,ccb
-ItemA,minecraft,iron_ingot
-ItemB,minecraft,gunpowder
-ItemC,minecraft,emerald
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
 addNewRecipe,HandmadeGuns,stg4430,2

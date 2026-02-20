@@ -6,11 +6,10 @@ BulletRound,200
 Tabname,HMG_Ammo
 
 CustomMagazine,7.62x63mmbox
-Recipe1,aaa
+Recipe1,aab
 Recipe2,ccc
 Recipe3,bbb
-ItemA,minecraft,iron_block
-ItemB,minecraft,emerald
+ItemA,HandmadeGuns,copperBlock
+ItemB,HandmadeGuns,steelIngot
 ItemC,minecraft,gunpowder
-//ItemD,HandmadeGuns,WP_Certificate
 addNewRecipe,HandmadeGuns,7.62x63mmbox,1

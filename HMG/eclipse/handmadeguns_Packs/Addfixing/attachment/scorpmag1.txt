@@ -4,4 +4,10 @@ Tabname,HMG_Ammo
 BulletRound,20
 Name,20 Rnd .32 ACP Magazine
 Magazine,scorpmag1
-addRecipe,scorpmag1,2,aa0,ee0,000,265,289,289,289,289,289,289,289,289
+Recipe1,a  
+Recipe2,bb 
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,scorpmag1,2

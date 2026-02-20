@@ -5,10 +5,12 @@ BulletRound,30
 Name,30 Rnd 5.56x45mm Proprietary AUG Mag
 Magazine,augmag
 
-Recipe1,aa 
+//TEMPLATE
+
+Recipe1,a  
 Recipe2,bb 
-Recipe3,   
-ItemA,minecraft,iron_ingot
-ItemB,minecraft,gunpowder
-ItemC,minecraft,emerald
-addNewRecipe,HandmadeGuns,augmag,1
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,augmag,2

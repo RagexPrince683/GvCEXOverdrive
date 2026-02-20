@@ -4,4 +4,12 @@ BulletRound,20
 Tabname,HMG_Ammo
 Name,20 Rnd .30-06 BAR Magazine
 Magazine,barmag
-addRecipe,barmag,2,a00,0e0,000,265,289,289,289,289,289,289,289,289
+//TEMPLATE
+
+Recipe1,a  
+Recipe2,bb 
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,barmag,2

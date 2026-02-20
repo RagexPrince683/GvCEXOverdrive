@@ -4,4 +4,11 @@ BulletRound,1
 Tabname,HMG_Ammo
 Name,PIAT HE/AT Bomb Mk I
 Magazine,bullet_rr_hmgpiat
-addRecipe,bullet_rr_hmgpiat,1,abc,def,000,289,265,289,289,265,289,289,289,289
+//TEMPLATE
+
+Recipe1,bbb
+Recipe2,ddd
+Recipe3,ddd
+ItemB,HandmadeGuns,steelIngot
+ItemD,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,bullet_rr_hmgpiat,1

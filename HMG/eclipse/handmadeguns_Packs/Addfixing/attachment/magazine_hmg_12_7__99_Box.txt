@@ -7,10 +7,9 @@ Tabname,HMG_Ammo
 
 CustomMagazine,12.7mmx99mmBox
 
-Recipe1,a  
-Recipe2,bbb
+Recipe1,bbb
+Recipe2,bbc
 Recipe3,ccc
-ItemA,minecraft,iron_block
-ItemB,minecraft,gunpowder
-ItemC,minecraft,emerald
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
 addNewRecipe,HandmadeGuns,12.7mmx99mmBox,1

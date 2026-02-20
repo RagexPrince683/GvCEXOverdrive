@@ -4,4 +4,12 @@ Tabname,HMG_Ammo
 BulletRound,1
 Name,.476'' Revolver Mk II Bullet
 Magazine,bullet_hg_hmgerev
-addRecipe,bullet_hg_hmgerev,2,a00,0e0,000,265,289,289,289,289,289,289,289,289
+//TEMPLATE
+
+Recipe1,   
+Recipe2,bb 
+Recipe3,cc 
+//ItemA,HandmadeGuns,7.62mm magazine 30Round
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,bullet_hg_hmgerev,16

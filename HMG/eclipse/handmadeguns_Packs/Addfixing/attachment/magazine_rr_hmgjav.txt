@@ -11,7 +11,7 @@ Recipe1,abc
 Recipe2,ddd
 Recipe3,ddd
 ItemA,minecraft,redstone_block
-ItemB,minecraft,iron_ingot
-ItemC,HandmadeGuns,Prastic
+ItemB,HandmadeGuns,copperIngot
+ItemC,HandmadeGuns,polymer
 ItemD,minecraft,gunpowder
 addNewRecipe,HandmadeGuns,bullet_rr_hmgjav,1

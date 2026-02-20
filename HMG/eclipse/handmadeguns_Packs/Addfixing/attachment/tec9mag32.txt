@@ -4,4 +4,12 @@ Tabname,HMG_Ammo
 BulletRound,32
 Name,32 Rnd 9x19mm Parabellum Tec-9 Magazine
 Magazine,tec9mag32
-addRecipe,tec9mag32,1,a00,0e0,000,265,289,289,289,289,289,289,289,289
+//TEMPLATE
+
+Recipe1,aa 
+Recipe2,bb 
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,tec9mag32,1

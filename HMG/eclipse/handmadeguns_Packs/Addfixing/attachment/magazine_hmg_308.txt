@@ -7,12 +7,12 @@ Tabname,HMG_Ammo
 
 CustomMagazine,308 Remington clip
 
-Recipe1,aab
-Recipe2,bac
-Recipe3,cba
-ItemA,minecraft,iron_ingot
-ItemB,minecraft,gunpowder
-ItemC,minecraft,emerald
+Recipe1,a  
+Recipe2,bb 
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
 addNewRecipe,HandmadeGuns,308 Remington clip,1
 
 

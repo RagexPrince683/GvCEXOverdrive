@@ -6,10 +6,10 @@ Tabname,HMG_Ammo
 
 Magazine,81mmShell
 
-Recipe1,bb 
-Recipe2,bb 
-Recipe3,abc
-ItemA,minecraft,iron_block
-ItemB,minecraft,gunpowder
-ItemC,minecraft,emerald
-addNewRecipe,HandmadeGuns,81mmShell,10
+//Recipe1,bb 
+//Recipe2,bb 
+//Recipe3,abc
+//ItemA,minecraft,iron_block
+//ItemB,minecraft,gunpowder
+//ItemC,minecraft,emerald
+//addNewRecipe,HandmadeGuns,81mmShell,10

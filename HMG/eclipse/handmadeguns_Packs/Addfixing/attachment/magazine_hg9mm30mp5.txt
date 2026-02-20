@@ -4,4 +4,10 @@ Tabname,HMG_Ammo
 BulletRound,30
 Name,30 Rnd 9x19mm Parabellum MP5 Box Magazine
 Magazine,bullet_hg_9mm30rndmp5
-addRecipe,bullet_hg_9mm30rndmp5,2,a00,0e0,000,265,289,289,289,289,289,289,289,289
+Recipe1,aa 
+Recipe2,bb 
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,bullet_hg_9mm30rndmp5,2

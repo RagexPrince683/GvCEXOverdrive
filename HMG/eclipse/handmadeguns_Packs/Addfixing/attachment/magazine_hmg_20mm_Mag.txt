@@ -6,10 +6,10 @@ Tabname,HMG_Ammo
 
 Magazine,20mm Magazine
 
-Recipe1,bbb
-Recipe2,aaa
-Recipe3,bbc
-ItemA,minecraft,iron_block
-ItemB,minecraft,gunpowder
-ItemC,minecraft,emerald
-addNewRecipe,HandmadeGuns,20mm Magazine,1
+//Recipe1,bbb
+//Recipe2,aaa
+//Recipe3,bbc
+//ItemA,minecraft,iron_block
+//ItemB,minecraft,gunpowder
+//ItemC,minecraft,emerald
+//addNewRecipe,HandmadeGuns,20mm Magazine,1

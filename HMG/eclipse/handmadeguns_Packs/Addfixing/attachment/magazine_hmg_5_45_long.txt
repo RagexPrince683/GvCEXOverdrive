@@ -1,5 +1,5 @@
 Texture,545bullet_long
-Stack,2
+Stack,1
 BulletRound,45
 Name,45 Rnd 5.45x39mm Long Magazine
 
@@ -7,10 +7,10 @@ Tabname,HMG_Ammo
 
 CustomMagazine,5.45mm long magazine
 
-Recipe1,a  
-Recipe2,a  
-Recipe3,c  
-ItemA,HandmadeGuns,5.45mm magazine
-ItemB,minecraft,gunpowder
-ItemC,minecraft,iron_ingot
+Recipe1,aa 
+Recipe2,bbb
+Recipe3,ccc
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
 addNewRecipe,HandmadeGuns,5.45mm long magazine,1

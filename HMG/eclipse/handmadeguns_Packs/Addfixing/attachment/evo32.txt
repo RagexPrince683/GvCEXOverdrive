@@ -4,4 +4,11 @@ Tabname,HMG_Ammo
 BulletRound,30
 Name,30 Rnd 9x19mm Parabellum EVO-3 Magazine
 Magazine,evo32
-addRecipe,evo32,2,a00,0e0,000,265,289,289,289,289,289,289,289,289
+Recipe1,a  
+Recipe2,bb 
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,evo32,1
+

@@ -18,9 +18,9 @@ Magazine,bullet_rr_hmgstinger
 
 Recipe1,abc
 Recipe2,ddd
-Recipe3,dd 
+Recipe3,ddb
 ItemA,minecraft,redstone
-ItemB,minecraft,iron_ingot
-ItemC,HandmadeGuns,Prastic
+ItemB,HandmadeGuns,aluminumIngot
+ItemC,HandmadeGuns,polymer
 ItemD,minecraft,gunpowder
 addNewRecipe,HandmadeGuns,bullet_rr_hmgstinger,1

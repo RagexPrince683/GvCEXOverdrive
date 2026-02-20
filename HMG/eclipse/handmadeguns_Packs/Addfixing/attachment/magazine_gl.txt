@@ -7,8 +7,7 @@ Magazine,bullet_gl
 Recipe1,bbb
 Recipe2, a 
 Recipe3,bbb
-ItemA,minecraft,iron_ingot
+ItemA,HandmadeGuns,copperIngot
 ItemB,minecraft,gunpowder
-ItemC,minecraft,emerald
-addNewRecipe,HandmadeGuns,bullet_gl,6
+addNewRecipe,HandmadeGuns,bullet_gl,4
 

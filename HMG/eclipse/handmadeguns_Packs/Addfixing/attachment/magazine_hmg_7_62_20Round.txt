@@ -7,10 +7,10 @@ Tabname,HMG_Ammo
 
 CustomMagazine,7.62mm magazine 20Round
 
-Recipe1,aa 
+Recipe1,a  
 Recipe2,bb 
 Recipe3,cc 
-ItemA,minecraft,iron_ingot
-ItemB,minecraft,gunpowder
-ItemC,minecraft,emerald
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
 addNewRecipe,HandmadeGuns,7.62mm magazine 20Round,2

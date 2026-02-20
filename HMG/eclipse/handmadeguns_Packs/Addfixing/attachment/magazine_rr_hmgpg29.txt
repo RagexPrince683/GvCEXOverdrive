@@ -4,4 +4,11 @@ BulletRound,1
 Tabname,HMG_Ammo
 Name,105mm PG-29V Tandem Warhead
 Magazine,bullet_rr_hmgrpg29
-addRecipe,bullet_rr_hmgrpg29,1,abc,def,000,289,265,289,289,265,289,289,289,289
+Recipe1,abc
+Recipe2,ddd
+Recipe3,ddb
+ItemA,minecraft,redstone
+ItemB,HandmadeGuns,steelIngot
+ItemC,HandmadeGuns,polymer
+ItemD,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,bullet_rr_hmgrpg29,1

@@ -4,4 +4,10 @@ Tabname,HMG_Ammo
 BulletRound,12
 Name,12 Rnd 9x19mm Parabellum Makarov Box Magazine
 Magazine,bullet_hg_9mm12rndmak
-addRecipe,bullet_hg_9mm12rndmak,1,aa0,ee0,000,265,289,289,289,289,289,289,289,289
+Recipe1,aa 
+Recipe2,bb 
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,bullet_hg_9mm12rndmak,2

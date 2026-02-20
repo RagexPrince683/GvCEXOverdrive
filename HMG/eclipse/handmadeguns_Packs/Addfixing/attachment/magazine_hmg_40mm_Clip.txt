@@ -6,10 +6,10 @@ Tabname,HMG_Ammo
 
 Magazine,40mm Clip
 
-Recipe1,ba 
-Recipe2,aa 
-Recipe3,bbc
-ItemA,minecraft,iron_block
-ItemB,minecraft,gunpowder
-ItemC,minecraft,emerald
-addNewRecipe,HandmadeGuns,40mm Clip,1
+//Recipe1,ba 
+//Recipe2,aa 
+//Recipe3,bbc
+//ItemA,minecraft,iron_block
+//ItemB,minecraft,gunpowder
+//ItemC,minecraft,emerald
+//addNewRecipe,HandmadeGuns,40mm Clip,1

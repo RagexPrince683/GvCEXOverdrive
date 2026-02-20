@@ -8,10 +8,8 @@ Tabname,HMG_Ammo
 CustomMagazine,gastank
 
 Recipe1,aa
-Recipe2,cc
+Recipe2,aa
 Recipe3,bb
-ItemA,minecraft,iron_block
-ItemB,minecraft,emerald_block
-ItemC,minecraft,iron_ingot
-//ItemD,HandmadeGuns,NATO_Certificate
+ItemA,HandmadeGuns,steelIngot
+ItemB,minecraft,coal_block
 addNewRecipe,HandmadeGuns,gastank,1

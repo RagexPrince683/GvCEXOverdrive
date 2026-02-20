@@ -4,4 +4,12 @@ BulletRound,1
 Tabname,HMG_Ammo
 Name,83mm MK 6 MOD 0 HEAA Warhead
 Magazine,bullet_rr_hmgsmaw
-addRecipe,bullet_rr_hmgsmaw,1,abc,def,000,289,265,289,289,265,289,289,289,289
+
+Recipe1,abc
+Recipe2,ddd
+Recipe3,ddb
+ItemA,minecraft,redstone
+ItemB,HandmadeGuns,aluminumIngot
+ItemC,HandmadeGuns,polymer
+ItemD,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,bullet_rr_hmgsmaw,1

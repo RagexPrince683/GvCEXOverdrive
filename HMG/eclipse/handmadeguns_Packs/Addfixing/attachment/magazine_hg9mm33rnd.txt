@@ -4,4 +4,10 @@ Tabname,HMG_Ammo
 BulletRound,33
 Name,33 Rnd 9x19mm Parabellum Magazine
 Magazine,bullet_hg_9mm33rnd
-addRecipe,bullet_hg_9mm33rnd,1,a00,0e0,000,265,289,289,289,289,289,289,289,289
+Recipe1,aaa
+Recipe2,bb 
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,bullet_hg_9mm33rnd,1

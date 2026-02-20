@@ -8,9 +8,9 @@ Tabname,HMG_Ammo
 
 CustomMagazine,7.6238mmR bullet
 
-Recipe1,a  
-Recipe2,b  
+Recipe1,aa 
+Recipe2,bb 
 Recipe3,   
-ItemA,minecraft,iron_ingot
+ItemA,HandmadeGuns,copperIngot
 ItemB,minecraft,gunpowder
-addNewRecipe,HandmadeGuns,7.6238mmR bullet,7
+addNewRecipe,HandmadeGuns,7.6238mmR bullet,8

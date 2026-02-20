@@ -7,11 +7,12 @@ Tabname,HMG_Ammo
 
 CustomMagazine,bren30
 
-//todo change
+//TEMPLATE
 
-//Recipe1,aa 
-//Recipe2,aa 
-//Recipe3,bb 
-//ItemA,HandmadeGuns,7.92mm bulletclip
-//ItemB,minecraft,iron_ingot
-//addNewRecipe,HandmadeGuns,bren30,1
+Recipe1,a  
+Recipe2,bb 
+Recipe3,cc 
+ItemA,HandmadeGuns,steelIngot
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,bren30,1

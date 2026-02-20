@@ -10,6 +10,6 @@ CustomMagazine,7.62x63mm bullet
 Recipe1,a  
 Recipe2,b  
 Recipe3,   
-ItemA,minecraft,iron_ingot
+ItemA,HandmadeGuns,copperIngot
 ItemB,minecraft,gunpowder
-addNewRecipe,HandmadeGuns,7.62x63mm bullet,5
+addNewRecipe,HandmadeGuns,7.62x63mm bullet,8

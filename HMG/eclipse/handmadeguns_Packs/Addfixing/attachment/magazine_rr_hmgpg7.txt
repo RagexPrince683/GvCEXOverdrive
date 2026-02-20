@@ -4,4 +4,12 @@ BulletRound,1
 Tabname,HMG_Ammo
 Name,93mm PG-7VL Warhead
 Magazine,bullet_rr_hmgrpg
-addRecipe,bullet_rr_hmgrpg,1,abc,def,000,289,265,289,289,265,289,289,289,289
+//TEMPLATE
+
+Recipe1,bbc
+Recipe2,ddd
+Recipe3,ddd
+ItemB,HandmadeGuns,steelIngot
+ItemC,HandmadeGuns,polymer
+ItemD,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,bullet_rr_hmgrpg,1

@@ -7,11 +7,11 @@ Tabname,HMG_Ammo
 
 CustomMagazine,bullet_lmg_hmg_7_62_NATO
 
-Recipe1,aaa
+Recipe1,aab
 Recipe2,ccc
-Recipe3,bbc
-ItemA,minecraft,iron_block
-ItemB,minecraft,emerald
+Recipe3,bbb
+ItemA,HandmadeGuns,copperBlock
+ItemB,HandmadeGuns,steelIngot
 ItemC,minecraft,gunpowder
 addNewRecipe,HandmadeGuns,bullet_lmg_hmg_7_62_NATO,1
 

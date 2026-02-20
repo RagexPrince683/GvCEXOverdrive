@@ -8,9 +8,11 @@ Tabname,HMG_Ammo
 
 CustomMagazine,ragingjudgeblt
 
-Recipe1,ab 
+//TEMPLATE
+
+Recipe1,   
 Recipe2,bb 
-Recipe3,   
-ItemA,minecraft,iron_ingot
-ItemB,minecraft,gunpowder
-addNewRecipe,HandmadeGuns,ragingjudgeblt,3
+Recipe3,cc 
+ItemB,HandmadeGuns,copperIngot
+ItemC,minecraft,gunpowder
+addNewRecipe,HandmadeGuns,ragingjudgeblt,4
