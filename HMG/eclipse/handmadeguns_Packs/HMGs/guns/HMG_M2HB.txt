@@ -439,10 +439,10 @@ BulletNameCart,12_7mmCart
 Name,M2HB Heavy Machine Gun
 LMG,byfrou01_M2HB_fromNGP
 
-Recipe1, c 
-Recipe2,aa 
-Recipe3,abc
-ItemA,minecraft,iron_ingot
-ItemB,minecraft,iron_block
-ItemC,minecraft,emerald
-addNewRecipe,HandmadeGuns,byfrou01_M2HB_fromNGP,1
+//Recipe1, c 
+//Recipe2,aa 
+//Recipe3,abc
+//ItemA,minecraft,iron_ingot
+//ItemB,minecraft,iron_block
+//ItemC,minecraft,emerald
+//addNewRecipe,HandmadeGuns,byfrou01_M2HB_fromNGP,1

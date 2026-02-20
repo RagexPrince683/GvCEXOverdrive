@@ -48,5 +48,7 @@ MagazineItemCount,6
 Tabname,HMG_WW2Guns
 DropMagazine,false
 
+InventoryScale,3.7
+
 HG,Enfield Mk 2 Revolver
 Name,Enfield Mk 2 Revolver
