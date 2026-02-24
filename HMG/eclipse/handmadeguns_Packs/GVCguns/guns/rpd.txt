@@ -9,7 +9,7 @@ Cycle,2
 ElevationOffsets,     0,-0.4,-0.8,-1.4,-2 ,-2.7,-3.5
 elevationOffsets_info,0,20m ,40m ,60m ,80m,100m,120m
 
-Motion,0.75
+Motion,0.46
 
 Recoil,2.9
 Recoil_sneaking,1.3
