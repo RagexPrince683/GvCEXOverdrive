@@ -93,25 +93,31 @@ public class HMGJumpHandler {
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 
-        if (event.player.worldObj.isRemote) return;
-
         if (event.phase != TickEvent.Phase.END) return;
+        if (event.player.worldObj.isRemote) return;
 
         EntityPlayer player = event.player;
         UUID id = player.getUniqueID();
 
-        // Activate pending cooldown when player touches ground
-        if (player.onGround) {
-            Integer pending = pendingCooldowns.remove(id);
-            if (pending != null) cooldowns.put(id, pending);
+        ItemStack held = player.getCurrentEquippedItem();
+        if (!(held != null && held.getItem() instanceof HMGItem_Unified_Guns)) return;
+
+        HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
+        double motion = gun.gunInfo.motion;
+
+        // If cooldown active → hard block jump
+        if (cooldowns.containsKey(id)) {
+
+            if (player.motionY > 0) {
+                player.motionY = 0;
+                player.isAirBorne = false;
+                player.fallDistance = 0;
+            }
         }
 
-        // Tick cooldown
-        Integer cd = cooldowns.get(id);
-        if (cd != null) {
-            cd--;
-            if (cd <= 0) cooldowns.remove(id);
-            else cooldowns.put(id, cd);
+        // Hard clamp heavy weapons
+        if (motion <= 0.70 && player.motionY > 0.2) {
+            player.motionY = 0.2;
         }
     }
 
