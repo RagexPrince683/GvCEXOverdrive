@@ -27,10 +27,6 @@ public class HMGJumpHandler {
     @SubscribeEvent
     public void onJump(LivingEvent.LivingJumpEvent event) {
 
-        if(event.entity.worldObj.isRemote) {
-            return; // client-side jump events are unreliable for our purposes, ignore them
-        }
-
         if (!(event.entity instanceof EntityPlayer)) return;
 
         EntityPlayer player = (EntityPlayer) event.entity;
@@ -79,10 +75,6 @@ public class HMGJumpHandler {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-
-        if (event.player.worldObj.isRemote) {
-            return; // client-side ticks are unreliable for our purposes, ignore them
-        }
 
         if (event.phase != TickEvent.Phase.END) return;
 
