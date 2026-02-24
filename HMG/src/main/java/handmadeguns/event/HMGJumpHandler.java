@@ -1,6 +1,5 @@
 package handmadeguns.event;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
@@ -28,10 +27,6 @@ public class HMGJumpHandler {
     @SubscribeEvent
     public void onJump(LivingEvent.LivingJumpEvent event) {
 
-        if (event.entity.worldObj.isRemote) return;
-
-
-
         if (!(event.entity instanceof EntityPlayer)) return;
 
         EntityPlayer player = (EntityPlayer) event.entity;
@@ -46,15 +41,10 @@ public class HMGJumpHandler {
         }
 
         HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) held.getItem();
-        double motion = getServerMotion(gun);
+        double motion = gun.gunInfo.motion;
 
-        // If cooldown active → do not allow jump?
-        if (cooldowns.containsKey(id)) {
-            player.motionY = 0;
-            player.isAirBorne = false;
-            player.fallDistance = 0;
-            return;
-        }
+        // If cooldown active → allow normal jump
+        if (cooldowns.containsKey(id)) return;
 
         // Cancel armed jump (heavy weapons)
         if (willCancelNextJump.remove(id) != null) {
@@ -78,13 +68,6 @@ public class HMGJumpHandler {
         }
     }
 
-    private double getServerMotion(HMGItem_Unified_Guns gun) {
-        if (FMLCommonHandler.instance().getEffectiveSide().isClient()) {
-            return 1.0; // client never influences logic
-        }
-        return gun.gunInfo.motion;
-    }
-
 
     // ======================
     // LANDING + COOLDOWN TICK
@@ -92,8 +75,6 @@ public class HMGJumpHandler {
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-
-        if (event.player.worldObj.isRemote) return;
 
         if (event.phase != TickEvent.Phase.END) return;
 
