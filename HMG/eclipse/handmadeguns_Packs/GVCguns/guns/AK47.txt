@@ -145,9 +145,20 @@ AddParts,Sys_Zero_in
 		//automatic is defined as -1 in bursts, no idea if this correlates
 		AddChildParts,mats1
 			SetAsNormalParts
+			
+			
+			//causes this to at least be rendered?
+			//first number does nothing, second number made this stop rendering on safe but now it won't render on automatic so yay
+			AddSomeMotion,0,false,      2,      1
+			//as far as I can tell this does absolutely nothing, I'm commenting it out
+			//changing 1s to 0s: first number did nothing, second number did nothing... third number did nothing
+			AddSomeMotion,-1,0,0,0     ,0,0,0,      -1,0,0,0     ,0,0,0,      2
+			//this did absolutely nothing:
+			//AddSomeMotion,-1,0,0,0     ,0,0,0,      1,0,0,0     ,0,0,0,      1
 
-			AddSomeMotion,-1,false,      0,      1
-			AddSomeMotion,0,0,0,0     ,0,0,0,      1,0,0,0     ,0,0,0,      1
+			//safestate test
+			//AddSomeMotion,0,false,      0,      1
+
 
 		BackParts
 
