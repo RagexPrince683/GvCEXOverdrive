@@ -124,28 +124,20 @@ AddParts,Sys_Zero_in
 		AddChildParts,mats0
     			SetAsNormalParts
 
-    			// hide by default on auto
-    			AddSomeMotion,0,false,      0,      0
+    			// Semi (slot 0)
+    			AddSomeMotion,-1,0,0,0 ,0,0,0, -1,0,0,0 ,0,0,0, 0
 
-    			// show on semi
-    			AddSomeMotion,-1,0,0,0 ,0,0,0, -1,0,0,0 ,0,0,0, 1
-
-    			// show on safe
-   			 AddSomeMotion,-1,0,0,0 ,0,0,0, -1,0,0,0 ,0,0,0, 2
+    			// Safe (slot 2)
+    			AddSomeMotion,-1,0,0,0 ,0,0,0, -1,0,0,0 ,0,0,0, 2
 
 		BackParts
+
 
 		AddChildParts,mats1
     			SetAsNormalParts
 
-   			// hide on semi
-    			AddSomeMotion,0,false,      1,      1
-
-    			// hide on safe
-    			AddSomeMotion,0,false,      2,      2
-
-    			// show on auto (index 0)
-    			AddSomeMotion,-1,0,0,0 ,0,0,0, -1,0,0,0 ,0,0,0, 0
+    			// Auto (slot 1)
+    			AddSomeMotion,-1,0,0,0 ,0,0,0, -1,0,0,0 ,0,0,0, 1
 
 		BackParts
 
