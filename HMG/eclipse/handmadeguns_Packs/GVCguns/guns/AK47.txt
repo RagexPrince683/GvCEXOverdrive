@@ -144,16 +144,10 @@ AddParts,Sys_Zero_in
 		//automatic
 		//automatic is defined as -1 in bursts, no idea if this correlates
 		AddChildParts,mats1
-    			SetAsNormalParts
+			SetAsNormalParts
 
-				// show on AUTO (slot 1) using group id 3
-				AddSomeMotion,0,0,0,0     ,0,0,0,      1,0,0,0     ,0,0,0,      3
-
-				// suppress group id 3 on SEMI (slot 0)
-				AddSomeMotion,-1,false,      0,      3
-
-				// suppress group id 3 on SAFE (slot 2)
-				AddSomeMotion,-1,false,      2,      3
+			AddSomeMotion,-1,false,      0,      1
+			AddSomeMotion,0,0,0,0     ,0,0,0,      1,0,0,0     ,0,0,0,      1
 
 		BackParts
 
