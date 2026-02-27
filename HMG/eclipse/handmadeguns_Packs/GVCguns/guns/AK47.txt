@@ -120,6 +120,8 @@ AddParts,Sys_Zero_in
 		BackParts
 
 
+
+		//semi
 		AddChildParts,mats0
 			SetAsNormalParts
 
@@ -128,6 +130,7 @@ AddParts,Sys_Zero_in
 
 		BackParts
 
+		//automatic
 		AddChildParts,mats1
 			SetAsNormalParts
 
