@@ -121,44 +121,68 @@ AddParts,Sys_Zero_in
 
 
 
-		//semi
-		//semi is defined as 1 in bursts, no idea if this correlates
+
+			//SO THIS WHOLE FUCKING BLOCK JUST CAUSES THE FUCKING STUPID GODDAMN SHITTY RENDERING SYSTEM TO ONLY RENDER THE SEMI/SAFE THING
+	//	//semi
+	//	//semi is defined as 1 in bursts, no idea if this correlates
+	//	AddChildParts,mats0
+	//		SetAsNormalParts
+	//
+	//		//this renders the semi state
+	//		AddSomeMotion,-1,0,0,0     ,0,0,0,      -1,0,0,0     ,0,0,0,      1
+	//		//2 is our safe state
+	//		//this prevents the other state from being rendered
+	//		AddSomeMotion,0,false,      1,      1
+	//
+	//		//safe state test
+	//		//this renders safe state
+	//		AddSomeMotion,-1,0,0,0     ,0,0,0,      -1,0,0,0     ,0,0,0,      2
+	//		//2 is our safe state
+	//		//this prevents the other state from being rendered
+	//		AddSomeMotion,0,false,      2,      2
+	//
+	//	BackParts
+	//
+	//	//automatic
+	//	//automatic is defined as -1 in bursts, no idea if this correlates
+	//	AddChildParts,mats1
+	//		SetAsNormalParts
+	//		
+	//		
+	//		//causes this to at least be rendered?
+	//		//first number does nothing, second number made this stop rendering on safe but now it won't render on automatic so yay
+	//		AddSomeMotion,0,false,      2,      1
+	//		//as far as I can tell this does absolutely nothing, I'm commenting it out
+	//		//changing 1s to 0s: first number did nothing, second number did nothing... third number did nothing
+	//		AddSomeMotion,-1,0,0,0     ,0,0,0,      -1,0,0,0     ,0,0,0,      2
+	//		//this did absolutely nothing:
+	//		//AddSomeMotion,-1,0,0,0     ,0,0,0,      1,0,0,0     ,0,0,0,      1
+	//
+	//		//safestate test
+	//		//AddSomeMotion,0,false,      0,      1
+	//
+	//
+	//	BackParts
+	
+	
+	//BUT THIS STUPID SHIT DOESN'T TAKE INTO ACCOUNT THE THIRD POSITION (SAFE) BECAUSE DESPITE ADDING A SAFE FEATURE TO THE FUCKING MOD WE JUST NEVER ACCOUNTED FOR THAT FOR SOME FUCKING REASON
+	//GREAT, NOW IM GONNA HAVE TO CODE UP SOME DOGSHIT SO WE ACTUALLY ACCOUNT FOR A THIRD FUCKING POSITION OR SOMETHING
+	
+	//semi
 		AddChildParts,mats0
 			SetAsNormalParts
 
-			//this renders the semi state
-			AddSomeMotion,-1,0,0,0     ,0,0,0,      -1,0,0,0     ,0,0,0,      1
-			//2 is our safe state
-			//this prevents the other state from being rendered
+			AddSomeMotion,-1,0,0,0     ,0,0,0,      0,0,0,0     ,0,0,0,      1
 			AddSomeMotion,0,false,      1,      1
-
-			//safe state test
-			//this renders safe state
-			AddSomeMotion,-1,0,0,0     ,0,0,0,      -1,0,0,0     ,0,0,0,      2
-			//2 is our safe state
-			//this prevents the other state from being rendered
-			AddSomeMotion,0,false,      2,      2
 
 		BackParts
 
 		//automatic
-		//automatic is defined as -1 in bursts, no idea if this correlates
 		AddChildParts,mats1
 			SetAsNormalParts
-			
-			
-			//causes this to at least be rendered?
-			//first number does nothing, second number made this stop rendering on safe but now it won't render on automatic so yay
-			AddSomeMotion,0,false,      2,      1
-			//as far as I can tell this does absolutely nothing, I'm commenting it out
-			//changing 1s to 0s: first number did nothing, second number did nothing... third number did nothing
-			AddSomeMotion,-1,0,0,0     ,0,0,0,      -1,0,0,0     ,0,0,0,      2
-			//this did absolutely nothing:
-			//AddSomeMotion,-1,0,0,0     ,0,0,0,      1,0,0,0     ,0,0,0,      1
 
-			//safestate test
-			//AddSomeMotion,0,false,      0,      1
-
+			AddSomeMotion,-1,false,      0,      1
+			AddSomeMotion,0,0,0,0     ,0,0,0,      1,0,0,0     ,0,0,0,      1
 
 		BackParts
 
