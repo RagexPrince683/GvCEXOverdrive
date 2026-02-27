@@ -140,7 +140,7 @@ AddParts,Sys_Zero_in
 			
 			
 			//
-			//AddSomeMotion,-1,false,      0,      1
+			AddSomeMotion,-1,false,      0,      1
 			//as far as I can tell this does absolutely nothing, I'm commenting it out
 			//AddSomeMotion,1,0,0,0     ,0,0,0,      1,0,0,0     ,0,0,0,      1
 
