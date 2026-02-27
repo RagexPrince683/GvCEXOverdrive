@@ -759,8 +759,18 @@ public class HandmadeGunsCore {
 		//if(pEvent.getSide().isClient())
 		{
 			HMGJumpHandler jumpHandler = new HMGJumpHandler();
+			HMGJumpHandlerClient jumpHandler2 = new HMGJumpHandlerClient();
+
+			//this first one ENSURES players aren't overriding the mobility of the guns using their own custom configs
+			//it's handled on the SERVER
 			FMLCommonHandler.instance().bus().register(jumpHandler);
 			MinecraftForge.EVENT_BUS.register(jumpHandler);
+
+			//second one is client side...
+			//client smoothing... hopefully...
+			FMLCommonHandler.instance().bus().register(jumpHandler2);
+			MinecraftForge.EVENT_BUS.register(jumpHandler2);
+
 			//;
 
 			FMLCommonHandler.instance().bus().register(new GunPickupHandler());
