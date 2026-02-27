@@ -12,8 +12,8 @@ ZoomRenderTypeTxture,false,false,true
 
 Motion,0.93
 
-Bursts,1,-1
-Rates,1.6,1.6
+Bursts,1,-1,0
+Rates,1.6,1.6,1.6
 Cycle,1.6
 //it's 750 idk why it says 749, its the same as the g36 this mod is just fucking special needs sometimes
 

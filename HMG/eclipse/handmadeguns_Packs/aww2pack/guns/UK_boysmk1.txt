@@ -1,7 +1,8 @@
 BulletPower,25
 //max 25 for mk2 but 18mm isnt enough to murder someone
 BulletSpeed,15.0f
-BlletSpread,1.0f
+BlletSpread,1.4f
+BlletSpreadDiffusion,15,0,14,0.2,4,0.2
 Recoil,80.0d
 ReloadTime,80
 RemainingBullet,5

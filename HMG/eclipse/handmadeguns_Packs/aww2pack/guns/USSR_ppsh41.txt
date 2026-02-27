@@ -20,8 +20,8 @@ ObjTexture,ppsh41.png
 ModelScala,0.5f
 InworldScale,1.8f
 
-Bursts,-1
-Rates,1
+Bursts,-1,1,0
+Rates,1,1,1
 
 ModelEquipped,-0.3f,0.7f,0.0f
 ModelHigh,1.37f,1.29f,0.10f

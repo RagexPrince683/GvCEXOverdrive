@@ -12,6 +12,9 @@ ZoomRenderTypeTxture,false,false,true
 
 Motion,0.93
 
+//Bursts,1,0
+
+
 Cartridge,true
 Texture,m1c
 //SoundSpeed,1.2f
