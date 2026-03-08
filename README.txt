@@ -23,6 +23,9 @@ Ignore broken vehicle code – Missing files, I don’t care.
 Storage issues? – Maybe I ran out, but that’s just a glowing federal psyop.
 Bonus: If you're cursed, I'm using Android Studio 2024.1.2.12 (Windows)—go find it yourself.
 
+ADDITIONAL INFO:
+Under HMG you can build and runclient. No I will NOT be fixing anything else! (Except maybe GVC!)
+
 
 Regular forge install tutorial:
 
