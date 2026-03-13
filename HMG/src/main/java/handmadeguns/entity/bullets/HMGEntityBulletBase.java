@@ -1405,7 +1405,9 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 			ismotionupdate = true;
 
 			targetnbt.setBoolean("behome", true);
-			if (targetnbt.getBoolean("flare"))
+			//flare shit
+			//use flare should be the mcheli shit
+			if (targetnbt.getBoolean("flare") || targetnbt.getBoolean("useFlare"))
 				resetLock();
 		}
 		if(lockedBlockPos != null){
