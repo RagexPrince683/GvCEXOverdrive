@@ -1127,6 +1127,7 @@ public class HMGGunMaker {
 								}
 								newgun.gunInfo = gunInfo;
 								newgun.setMaxStackSize(maxstacksize);
+								//todo marker
 								newgun.setmodelADSPosAndRotation(modelwidthx + seatoffset[0],modelhigh + seatoffset[1],modelwidthz + seatoffset[2]);
 								newgun.setADSoffsetRed(modelwidthxr + seatoffset[0],modelhighr + seatoffset[1],modelwidthzr + seatoffset[2]);
 								newgun.setADSoffsetScope(modelwidthxs + seatoffset[0],modelhighs + seatoffset[1],modelwidthzs + seatoffset[2]);

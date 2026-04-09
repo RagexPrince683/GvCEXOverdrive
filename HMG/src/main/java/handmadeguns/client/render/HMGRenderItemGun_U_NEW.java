@@ -678,9 +678,10 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					GL11.glScalef(-scala * 0.6f, scala * 0.6f, scala * 0.6f);
 				}
 
-				//todo: add a way to move the gun forwards or backwards in third person so the player is
+				//todone: add a way to move the gun forwards or backwards in third person so the player is
 				// at least holding the grip in third person pov,
 				// or just translate the first person pov so that it scales properly
+				//this already exists
 				GL11.glScalef(gunitem.gunInfo.inworldScale, gunitem.gunInfo.inworldScale, gunitem.gunInfo.inworldScale);
 				rendering_situation(gunstack,entity);
 				GL11.glPopMatrix();

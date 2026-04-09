@@ -169,7 +169,7 @@ public class RenderTickSmoothing {
 		}
 	}
 
-	//todo: figure out why some guns decide to continue to be in sprint state while firing
+	//todone?: figure out why some guns decide to continue to be in sprint state while firing
 	@SubscribeEvent
 	public void clientTickEvent(TickEvent.ClientTickEvent event)
 	{
