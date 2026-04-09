@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.EXTFramebufferObject;
 
@@ -42,6 +43,21 @@ public class RenderTickSmoothing {
 	public static int currentRenderBuffer = -1;
 	public static int currentTextureBuffer = -1;
 	public static int currentStencilBufferID = -1;
+
+	@SubscribeEvent
+	public void onRenderPlayer(RenderPlayerEvent.Pre event) {
+		EntityPlayer player = event.entityPlayer;
+
+		ItemStack held = player.getHeldItem();
+
+		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
+			NBTTagCompound nbt = held.getTagCompound();
+
+			if (nbt != null && nbt.getBoolean("set_up")) {
+				event.renderer.modelBipedMain.aimedBow = true;
+			}
+		}
+	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void renderTick(TickEvent.RenderTickEvent event)

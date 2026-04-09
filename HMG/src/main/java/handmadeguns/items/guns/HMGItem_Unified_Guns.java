@@ -389,21 +389,22 @@ public class HMGItem_Unified_Guns extends Item {
 						}
 
 						//ADS FIX FOR FLANS ARMORS AND HBM ARMORS HOPEFULLY
-						if (entity instanceof EntityPlayer) {
-							EntityPlayer player = (EntityPlayer) entity;
-
-							boolean isADS = HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed");
-
-							if (isADS) {
-								if (!player.isUsingItem()) {
-									player.setItemInUse(itemstack, 72000);
-								}
-							} else {
-								if (player.isUsingItem()) {
-									player.stopUsingItem();
-								}
-							}
-						}
+						//if (entity instanceof EntityPlayer) {
+						//	EntityPlayer player = (EntityPlayer) entity;
+//
+						//	boolean isADS = HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed");
+//
+						//	if (isADS) {
+						//		if (!player.isUsingItem()) {
+						//			player.setItemInUse(itemstack, 72000);
+						//		}
+						//	} else {
+						//		if (player.isUsingItem()) {
+						//			player.stopUsingItem();
+						//		}
+						//	}
+						//}
+						//sloppy
 
 						if (world.isRemote && (i != -1) && i != -10 && ((EntityPlayer) entity).getHeldItem() == itemstack) {
 							if(!guntemp.connectedTurret){
@@ -1375,6 +1376,7 @@ public class HMGItem_Unified_Guns extends Item {
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.bow;
 	}
+	//WAS NULL CHANGE BACK IF BROKEN
 	public boolean func_150897_b(Block p_150897_1_)
 	{
 		return p_150897_1_ == Blocks.web;

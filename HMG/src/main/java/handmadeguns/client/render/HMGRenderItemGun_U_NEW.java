@@ -946,6 +946,8 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		return colorBuffer;
 	}
 
+
+
 	public void rendering_situation(ItemStack gunstack,Entity entity){
 		boolean isreloading = this.getbooleanfromnbt("IsReloading");
 		int remainbullets = gunitem.remain_Bullet(gunstack);
