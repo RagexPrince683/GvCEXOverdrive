@@ -378,7 +378,8 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 			}
 		}
 		fuse--;
-		if(fuse<=0){//時限信管が作動したらその場で衝突処理
+		if(fuse==0){
+			//PROBLEM: when fuse is less than or equal to 0 anti tank immediately explodes when fired for some reason.
 			this.posX += this.motionX;
 			this.posY += this.motionY;
 			this.posZ += this.motionZ;

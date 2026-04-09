@@ -145,7 +145,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 
 		// prevent double-explode
 		if (hasExploded) return;
-		hasExploded = true;
+
 
 		// damage source representing this bullet
 		DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
@@ -170,6 +170,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 				// call your explode that will NOT damage entities (see next section)
 				this.explode(var1.hitVec.xCoord, var1.hitVec.yCoord + 0.125, var1.hitVec.zCoord,
 						this.exlevel, this.canex && cfg_blockdestroy, this.ex);
+				hasExploded = true;
 			}
 			// mark dead server-side if flagged
 			if (noex) {
