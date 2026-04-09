@@ -137,6 +137,8 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 	/**
 	 * Called when this EntityThrowable hits a block or entity.
 	 */
+	//HMGENTITYBULLETBASEEXPRODE LOGIC - USED FOR ANTI TANK WEAPONRY; FOR SOME REASON, NOT CALLED WHEN GRENADES ARE THROWN.
+	//MOST LIKELY DUE TO FUSE LOGIC.
 	protected void onImpact(MovingObjectPosition var1) {
 		// ALWAYS return early on client
 		if (this.worldObj.isRemote) return;

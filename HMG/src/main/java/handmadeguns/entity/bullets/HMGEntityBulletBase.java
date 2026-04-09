@@ -350,6 +350,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	public double lastTickPosZ2;
 
 
+	//ONUPDATE IN HMGENTITYBULLETBASE
 	public void onUpdate() {
 		super.onUpdate();
 		this.worldObj.theProfiler.startSection("HMG_Bullet");
@@ -377,7 +378,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 			}
 		}
 		fuse--;
-		if(fuse==0){//時限信管が作動したらその場で衝突処理
+		if(fuse<=0){//時限信管が作動したらその場で衝突処理
 			this.posX += this.motionX;
 			this.posY += this.motionY;
 			this.posZ += this.motionZ;
@@ -446,6 +447,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	/**
 	 * Called when this EntityThrowable hits a block or entity.
 	 */
+	//HMGENTITYBULLETBASE LOGIC- USED FOR GRENADES
 	protected void onImpact(MovingObjectPosition var1)
 	{
 
