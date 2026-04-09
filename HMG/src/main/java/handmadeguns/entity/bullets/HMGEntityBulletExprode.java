@@ -33,6 +33,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 {
 
 	private boolean hasExploded = false;
+
 	public float exlevel = 2.5F;
 	public MovingObjectPosition hitobjectposition;
 	public HMGEntityBulletExprode(World worldIn) {
@@ -63,17 +64,6 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 	}
 	public void onUpdate(){
 		super.onUpdate();
-
-		// 🚨 FUSE HANDLING GOES HERE (TOP PRIORITY)
-		if (!worldObj.isRemote) {
-			fuse--;
-
-			if (fuse <= 0) {
-				detonate(this.posX, this.posY, this.posZ);
-				return;
-			}
-		}
-
 		if(noex && !this.worldObj.isRemote){
 			if (hitedentity != null && hitedentity != this.getThrower() && noex) {
 				if(this.getThrower() != null&&getThrower() instanceof EntityPlayerMP){
@@ -140,26 +130,6 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 		}
 	}
 
-	private void detonate(double x, double y, double z) {
-		if (worldObj.isRemote || hasExploded) return;
-		if (fuse <= 0) {
-			// call explosion
-
-		hasExploded = true;
-
-		System.out.println("DETONATE");
-
-
-
-			this.explode(x, y, z,
-					this.exlevel,
-					this.canex && cfg_blockdestroy,
-					this.ex);
-
-			this.setDead();
-		}
-	}
-
 	public HMGEntityBulletExprode(World worldIn, double x, double y, double z) {
 		super(worldIn, x, y, z);
 	}
@@ -167,88 +137,57 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 	/**
 	 * Called when this EntityThrowable hits a block or entity.
 	 */
-	//HMGEntityBulletExprode onImpact yes it is called Exprode. No I did not name it that.
-//	protected void onImpact(MovingObjectPosition var1) {
-//		// ALWAYS return early on client
-//		if (this.worldObj.isRemote) return;
-//
-//		// prevent double-explode
-//		if (hasExploded) return;
-//		hasExploded = true;
-//
-//		// damage source representing this bullet
-//		DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
-//
-//		System.out.println("on impact in 'Exprode' logic (server)");
-//
-//		// Apply direct thrown damage first to the hit entity (if present)
-//		if (var1.entityHit != null) {
-//			// apply direct damage to the hit entity deterministically
-//			var1.entityHit.attackEntityFrom(ds, (float)Bdamege);
-//		}
-//
-//		// Then run explosion logic for blocks/visuals, but make sure explosion
-//		// does not apply MCH entity damage (we'll disable entity damage inside explode()).
-//		if (var1.entityHit != null) {
-//			if (!noex && !canbounce) {
-//				// register hit entity for your later onUpdate handling
-//				hitedentity = var1.entityHit;
-//				hitobjectposition = var1;
-//				noex = true;
-//
-//				// call your explode that will NOT damage entities (see next section)
-//				this.explode(var1.hitVec.xCoord, var1.hitVec.yCoord + 0.125, var1.hitVec.zCoord,
-//						this.exlevel, this.canex && cfg_blockdestroy, this.ex);
-//			}
-//			// mark dead server-side if flagged
-//			if (noex) {
-//				this.setDead();
-//			}
-//		} else {
-//			// hit a block or air
-//			if (!canbounce || fuse <= 0) {
-//				// call explosion (non-entity damage)
-//				if (!noex) {
-//					this.explode(var1.hitVec.xCoord, var1.hitVec.yCoord + 0.125, var1.hitVec.zCoord,
-//							this.exlevel, this.canex && cfg_blockdestroy, this.ex);
-//					noex = true;
-//				}
-//				this.setDead();
-//			}
-//		}
-//
-//		// call super at the end to preserve default throwable cleanup
-//		super.onImpact(var1);
-//	}
+	protected void onImpact(MovingObjectPosition var1) {
+		// ALWAYS return early on client
+		if (this.worldObj.isRemote) return;
 
-//	protected void onImpact(MovingObjectPosition var1) {
-//		if (this.worldObj.isRemote) return;
-//		if (fuse <= 0) {
-//			// call explosion
-//
-//			System.out.println("IMPACT");
-//
-//			if (var1.entityHit != null) {
-//				DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
-//				var1.entityHit.attackEntityFrom(ds, (float) Bdamege);
-//			}
-//
-//			detonate(
-//					var1.hitVec.xCoord,
-//					var1.hitVec.yCoord + 0.125,
-//					var1.hitVec.zCoord
-//			);
-//		}
-//	}
-	protected void onImpact(MovingObjectPosition hit) {
-		if (worldObj.isRemote || hasExploded) return;
+		// prevent double-explode
+		if (hasExploded) return;
+		hasExploded = true;
 
-		if (hit.entityHit != null) {
-			DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
-			hit.entityHit.attackEntityFrom(ds, (float) Bdamege);
+		// damage source representing this bullet
+		DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
+
+		System.out.println("on impact in 'Exprode' logic (server)");
+
+		// Apply direct thrown damage first to the hit entity (if present)
+		if (var1.entityHit != null) {
+			// apply direct damage to the hit entity deterministically
+			var1.entityHit.attackEntityFrom(ds, (float)Bdamege);
 		}
 
-		detonate(hit.hitVec.xCoord, hit.hitVec.yCoord + 0.125, hit.hitVec.zCoord);
+		// Then run explosion logic for blocks/visuals, but make sure explosion
+		// does not apply MCH entity damage (we'll disable entity damage inside explode()).
+		if (var1.entityHit != null) {
+			if (!noex && !canbounce) {
+				// register hit entity for your later onUpdate handling
+				hitedentity = var1.entityHit;
+				hitobjectposition = var1;
+				noex = true;
+
+				// call your explode that will NOT damage entities (see next section)
+				this.explode(var1.hitVec.xCoord, var1.hitVec.yCoord + 0.125, var1.hitVec.zCoord,
+						this.exlevel, this.canex && cfg_blockdestroy, this.ex);
+			}
+			// mark dead server-side if flagged
+			if (noex) {
+				this.setDead();
+			}
+		} else {
+			// hit a block or air
+			if (!canbounce || fuse <= 0) {
+				// call explosion (non-entity damage)
+				if (!noex) {
+					this.explode(var1.hitVec.xCoord, var1.hitVec.yCoord + 0.125, var1.hitVec.zCoord,
+							this.exlevel, this.canex && cfg_blockdestroy, this.ex);
+					noex = true;
+				}
+				this.setDead();
+			}
+		}
+
+		// call super at the end to preserve default throwable cleanup
+		super.onImpact(var1);
 	}
 
 	public void writeSpawnData(ByteBuf buffer){

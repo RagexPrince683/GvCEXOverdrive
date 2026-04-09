@@ -350,7 +350,6 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	public double lastTickPosZ2;
 
 
-	//HMGEntityBulletBase onUpdate
 	public void onUpdate() {
 		super.onUpdate();
 		this.worldObj.theProfiler.startSection("HMG_Bullet");
@@ -377,23 +376,15 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				}
 			}
 		}
-		//fuse--;
-		////very broken! 3 issues due to public/private access!
-		//if (fuse <= 0) {
-		//	if (!worldObj.isRemote && !HMGEntityBulletExprode.hasExploded) {
-		//		HMGEntityBulletExprode.hasExploded = true;
-//
-		//		System.out.println("FUSE EXPLODE");
-//
-		//		this.explode(this.posX, this.posY, this.posZ,
-		//				HMGEntityBulletExprode.exlevel,
-		//				this.canex && cfg_blockdestroy,
-		//				this.ex);
-		//	}
-//
-		//	this.setDead();
-		//	return;
-		//}
+		fuse--;
+		if(fuse==0){//時限信管が作動したらその場で衝突処理
+			this.posX += this.motionX;
+			this.posY += this.motionY;
+			this.posZ += this.motionZ;
+			onImpact(new MovingObjectPosition((int)posX,(int)posY,(int)posZ,-1,Vec3.createVectorHelper(this.posX,this.posY,this.posZ),true));
+			setDead();
+			return;
+		}
 		if (this.inGround)
 		{
 			if (worldObj.blockExists(this.xTile, this.yTile, this.zTile) && this.worldObj.getBlock(this.xTile, this.yTile, this.zTile) == this.inBlock)
@@ -408,7 +399,6 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 					this.posZ = lockedpos.zCoord;
 				}
 				if(fuse<0){
-					System.out.println("DEBUG2");
 					setDead();
 				}
 			}
@@ -456,7 +446,6 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	/**
 	 * Called when this EntityThrowable hits a block or entity.
 	 */
-	//HMGEntityBulletBase onImpact
 	protected void onImpact(MovingObjectPosition var1)
 	{
 
