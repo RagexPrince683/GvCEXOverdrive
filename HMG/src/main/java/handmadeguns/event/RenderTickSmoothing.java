@@ -45,6 +45,23 @@ public class RenderTickSmoothing {
 	public static int currentStencilBufferID = -1;
 
 	@SubscribeEvent
+	public void onRenderPlayer(RenderPlayerEvent.Post event) {
+		EntityPlayer player = event.entityPlayer;
+
+		ItemStack held = player.getHeldItem();
+
+		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
+			NBTTagCompound nbt = held.getTagCompound();
+
+			if (nbt != null && nbt.getBoolean("set_up")) {
+				event.renderer.modelBipedMain.aimedBow = true;
+				event.renderer.modelBipedMain.heldItemRight = 1;
+			}
+		}
+	}
+	//TODOne try  Pre and post
+
+	@SubscribeEvent
 	public void onRenderPlayer(RenderPlayerEvent.Pre event) {
 		EntityPlayer player = event.entityPlayer;
 
@@ -55,6 +72,7 @@ public class RenderTickSmoothing {
 
 			if (nbt != null && nbt.getBoolean("set_up")) {
 				event.renderer.modelBipedMain.aimedBow = true;
+				event.renderer.modelBipedMain.heldItemRight = 1;
 			}
 		}
 	}

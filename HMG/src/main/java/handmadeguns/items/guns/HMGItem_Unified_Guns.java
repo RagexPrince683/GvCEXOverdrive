@@ -404,7 +404,7 @@ public class HMGItem_Unified_Guns extends Item {
 						//		}
 						//	}
 						//}
-						//sloppy
+						//sloppy, caused firing to stop working when ADS for some reason.
 
 						if (world.isRemote && (i != -1) && i != -10 && ((EntityPlayer) entity).getHeldItem() == itemstack) {
 							if(!guntemp.connectedTurret){
