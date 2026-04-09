@@ -137,6 +137,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 	/**
 	 * Called when this EntityThrowable hits a block or entity.
 	 */
+	//HMGEntityBulletExprode
 	protected void onImpact(MovingObjectPosition var1) {
 		// ALWAYS return early on client
 		if (this.worldObj.isRemote) return;
