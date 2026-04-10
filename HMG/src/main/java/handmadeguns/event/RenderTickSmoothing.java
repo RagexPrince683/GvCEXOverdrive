@@ -9,6 +9,7 @@ import handmadeguns.client.render.HMGRenderItemGun_U;
 import handmadeguns.client.render.HMGRenderItemGun_U_NEW;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -44,38 +45,44 @@ public class RenderTickSmoothing {
 	public static int currentTextureBuffer = -1;
 	public static int currentStencilBufferID = -1;
 
-	@SubscribeEvent
-	public void onRenderPlayer(RenderPlayerEvent.Post event) {
-		EntityPlayer player = event.entityPlayer;
+	//@SubscribeEvent
+	//public void onRenderPlayer(RenderPlayerEvent.Pre event) {
+	//	EntityPlayer player = event.entityPlayer;
+//
+	//	ItemStack held = player.getHeldItem();
+//
+	//	if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
+	//		//System.out.println("found gun, held " + held.getDisplayName());
+	//		//this IS firing. It's just NOT fixing the arm pose issue for some reason.
+	//		NBTTagCompound nbt = held.getTagCompound();
+//
+	//		if (nbt != null && nbt.getBoolean("set_up")) {
+//
+	//			ModelBiped model = event.renderer.modelBipedMain;
+//
+	//			model.bipedRightArm.rotateAngleY = -0.1F + model.bipedHead.rotateAngleY;
+	//			model.bipedRightArm.rotateAngleX = -1.570796F + model.bipedHead.rotateAngleX;
+//
+	//			model.bipedLeftArm.rotateAngleY = 0.1F + model.bipedHead.rotateAngleY + 0.4F;
+	//			model.bipedLeftArm.rotateAngleX = -1.570796F + model.bipedHead.rotateAngleX;
+//
+	//			if (event.renderer.modelArmorChestplate != null) {
+	//				ModelBiped armor = event.renderer.modelArmorChestplate;
+//
+	//				armor.bipedRightArm.rotateAngleY = model.bipedRightArm.rotateAngleY;
+	//				armor.bipedRightArm.rotateAngleX = model.bipedRightArm.rotateAngleX;
+//
+	//				armor.bipedLeftArm.rotateAngleY = model.bipedLeftArm.rotateAngleY;
+	//				armor.bipedLeftArm.rotateAngleX = model.bipedLeftArm.rotateAngleX;
+	//			}
+	//		}
+	//	}
+	//}
 
-		ItemStack held = player.getHeldItem();
-
-		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
-			NBTTagCompound nbt = held.getTagCompound();
-
-			if (nbt != null && nbt.getBoolean("set_up")) {
-				event.renderer.modelBipedMain.aimedBow = true;
-				event.renderer.modelBipedMain.heldItemRight = 1;
-			}
-		}
-	}
-	//TODOne try  Pre and post
-
-	@SubscribeEvent
-	public void onRenderPlayer(RenderPlayerEvent.Pre event) {
-		EntityPlayer player = event.entityPlayer;
-
-		ItemStack held = player.getHeldItem();
-
-		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
-			NBTTagCompound nbt = held.getTagCompound();
-
-			if (nbt != null && nbt.getBoolean("set_up")) {
-				event.renderer.modelBipedMain.aimedBow = true;
-				event.renderer.modelBipedMain.heldItemRight = 1;
-			}
-		}
-	}
+	//@SubscribeEvent
+	//public void test(RenderPlayerEvent.Post event) {
+	//	event.renderer.modelBipedMain.bipedRightArm.rotateAngleX = -3.0F;
+	//}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void renderTick(TickEvent.RenderTickEvent event)

@@ -389,22 +389,24 @@ public class HMGItem_Unified_Guns extends Item {
 						}
 
 						//ADS FIX FOR FLANS ARMORS AND HBM ARMORS HOPEFULLY
-						//if (entity instanceof EntityPlayer) {
-						//	EntityPlayer player = (EntityPlayer) entity;
-//
-						//	boolean isADS = HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed");
-//
-						//	if (isADS) {
-						//		if (!player.isUsingItem()) {
-						//			player.setItemInUse(itemstack, 72000);
-						//		}
-						//	} else {
-						//		if (player.isUsingItem()) {
-						//			player.stopUsingItem();
-						//		}
-						//	}
-						//}
-						//sloppy, caused firing to stop working when ADS for some reason.
+						if (entity instanceof EntityPlayer) {
+							EntityPlayer player = (EntityPlayer) entity;
+							boolean isADS = HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed");
+							//seemed to cause issues on remote??? might just be firing/reloading transforms are still really broken.
+							//if (world.isRemote) {
+								if (isADS) {
+									if (!player.isUsingItem()) {
+										player.setItemInUse(itemstack, 72000);
+									}
+								} else {
+									//if (player.isUsingItem()) {
+									//	player.stopUsingItem();
+									//}
+									//we don't actually want to do that...?
+								}
+							//}
+						}
+						//caused firing to stop working when ADS for some reason. Does not work with reload anim or firing anim
 
 						if (world.isRemote && (i != -1) && i != -10 && ((EntityPlayer) entity).getHeldItem() == itemstack) {
 							if(!guntemp.connectedTurret){
