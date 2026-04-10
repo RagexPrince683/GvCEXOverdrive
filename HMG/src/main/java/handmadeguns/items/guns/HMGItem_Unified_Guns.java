@@ -373,6 +373,9 @@ public class HMGItem_Unified_Guns extends Item {
 					}
 				}
 				if (entity instanceof EntityPlayer) {
+
+					EntityPlayer player = (EntityPlayer) entity;
+
 					gunInfo.canceler = false;
 					try {
 						if (guntemp.invocable != null)
@@ -384,7 +387,6 @@ public class HMGItem_Unified_Guns extends Item {
 					}
 					if (!gunInfo.canceler) {
 						if (HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed")) {
-							EntityPlayer player = (EntityPlayer) entity;
 							//player.setItemInUse(itemstack, this.getMaxItemUseDuration(itemstack));
 							nbt.setBoolean("set_up", true);
 							nbt.setInteger("set_up_cnt", 3);
@@ -393,24 +395,33 @@ public class HMGItem_Unified_Guns extends Item {
 						// I'm just losing my shit and making my own armors or something.
 
 						//ADS FIX FOR FLANS ARMORS AND HBM ARMORS HOPEFULLY
+						//we are in HMGItem_Unified_Guns.java
 						//if (entity instanceof EntityPlayer) {
-						//	EntityPlayer player = (EntityPlayer) entity;
-						//	boolean isADS = HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed");
-						//	//seemed to cause issues on remote??? might just be firing/reloading transforms are still really broken.
-						//	//if (world.isRemote) {
-						//		if (isADS) {
-						//			if (!player.isUsingItem()) {
-						//				player.setItemInUse(itemstack, 72000);
-						//			}
-						//		} else {
-						//			//if (player.isUsingItem()) {
-						//			//	player.stopUsingItem();
-						//			//}
-						//			//we don't actually want to do that...?
-						//		}
-						//	//}
+						//we already check this?
+							boolean isADS = HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed");
+							//seemed to cause issues on remote??? might just be firing/reloading transforms are still really broken.
+							if (world.isRemote) {
+
+								if (isADS && !nbt.getBoolean("IsTriggered")) { //IsTriggered is the easy boolean for firing
+									// ONLY start use if not already using
+									if (!player.isUsingItem()) {
+										//player.setItemInUse(itemstack, this.getMaxItemUseDuration(itemstack)); //was 72000 now player.getItemInUseDuration.
+										//player.getItemInUseDuration()
+										//System.out.println(player.getItemInUseDuration() + " item in use duration");
+										//so somehow setting the item in use breaks firing
+										//while ADS but also fixes the animation bug with flan/ntm armors
+										//update: when we stopped using 72000 as the duration and replaced it with player.getItemInUseDuration()
+										//the fix no longer works for armors, and it reverts back to the sleeves just dangling there instead of aiming with the gun
+//
+									}
+								} else {
+									//if (player.isUsingItem()) {
+									//	player.stopUsingItem();
+									//}
+								}
+							}
 						//}
-						//caused firing to stop working when ADS for some reason. Does not work with reload anim or firing anim
+						//caused firing to stop working when ADS for some reason (WHEN IT WAS WORKING). Does not work with reload anim or firing anim
 
 						if (world.isRemote && (i != -1) && i != -10 && ((EntityPlayer) entity).getHeldItem() == itemstack) {
 							if(!guntemp.connectedTurret){
@@ -488,7 +499,7 @@ public class HMGItem_Unified_Guns extends Item {
 
 							// run only on client ? oh my god why
 							if (entity instanceof EntityPlayer && entity.worldObj.isRemote) {
-								EntityPlayer player = (EntityPlayer) entity;
+
 
 								int selecting = nbt.getInteger("get_selectingMagazine");
 								// CALL THE INSTANCE METHOD ON THIS and pass the actual itemstack param
@@ -1380,13 +1391,14 @@ public class HMGItem_Unified_Guns extends Item {
 	//ADS FIX 2
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		return EnumAction.bow;
+		return EnumAction.none;
 	}
 	//WAS NULL CHANGE BACK IF BROKEN
 	public boolean func_150897_b(Block p_150897_1_)
 	{
 		return p_150897_1_ == Blocks.web;
 	}
+	//just casual fucking booleans below just not fucking used for some reason
 	public boolean isWeaponReload(ItemStack itemstack, EntityPlayer entityplayer) {
 		return remain_Bullet(itemstack) <= 0;
 	}

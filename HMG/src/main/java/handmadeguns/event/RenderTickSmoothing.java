@@ -79,6 +79,59 @@ public class RenderTickSmoothing {
 	//	}
 	//}
 
+//	@SubscribeEvent
+//	public void onRenderPlayer(RenderPlayerEvent.Post event) {
+//		EntityPlayer player = event.entityPlayer;
+//		ItemStack held = player.getHeldItem();
+//
+//		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
+//			NBTTagCompound nbt = held.getTagCompound();
+//
+//			if (nbt != null && nbt.getBoolean("set_up")) {
+//
+//				// MAIN MODEL
+//				event.renderer.modelBipedMain.aimedBow = true;
+//				event.renderer.modelBipedMain.heldItemRight = 1;
+//
+//				// ARMOR MODELS
+//				if (event.renderer.modelArmor != null) {
+//					event.renderer.modelArmor.aimedBow = true;
+//					event.renderer.modelArmor.heldItemRight = 1;
+//				}
+//
+//				if (event.renderer.modelArmorChestplate != null) {
+//					event.renderer.modelArmorChestplate.aimedBow = true;
+//					event.renderer.modelArmorChestplate.heldItemRight = 1;
+//				}
+//			}
+//		}
+//	}
+	//this just flat out does not work. I don't know why we keep trying this.
+
+	@SubscribeEvent
+	public void onRenderPlayer(RenderPlayerEvent.Pre event) {
+		EntityPlayer player = event.entityPlayer;
+		ItemStack held = player.getHeldItem();
+
+		if (held != null && held.getItem() instanceof HMGItem_Unified_Guns) {
+			NBTTagCompound nbt = held.getTagCompound();
+
+			if (nbt != null && nbt.getBoolean("set_up")) {
+
+				ModelBiped model = event.renderer.modelBipedMain;
+
+				model.aimedBow = true;
+				model.heldItemRight = 1;
+
+				if (event.renderer.modelArmorChestplate != null) {
+					ModelBiped armor = event.renderer.modelArmorChestplate;
+					armor.aimedBow = true;
+					armor.heldItemRight = 1;
+				}
+			}
+		}
+	}
+
 	//@SubscribeEvent
 	//public void test(RenderPlayerEvent.Post event) {
 	//	event.renderer.modelBipedMain.bipedRightArm.rotateAngleX = -3.0F;
