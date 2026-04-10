@@ -311,6 +311,7 @@ public class ItemGunsBase extends ItemBow {
 		GunsBase.setUncheckedItemStack(par1ItemStack, par3EntityPlayer);
 		par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
 		return par1ItemStack;
+		//TODO BLAME
 	}
 
 	@Override

@@ -385,7 +385,7 @@ public class HMGItem_Unified_Guns extends Item {
 					if (!gunInfo.canceler) {
 						if (HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed")) {
 							EntityPlayer player = (EntityPlayer) entity;
-							player.setItemInUse(itemstack, 72000);
+							//player.setItemInUse(itemstack, this.getMaxItemUseDuration(itemstack));
 							nbt.setBoolean("set_up", true);
 							nbt.setInteger("set_up_cnt", 3);
 						}
