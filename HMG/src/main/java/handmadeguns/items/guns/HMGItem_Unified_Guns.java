@@ -384,28 +384,32 @@ public class HMGItem_Unified_Guns extends Item {
 					}
 					if (!gunInfo.canceler) {
 						if (HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed")) {
+							EntityPlayer player = (EntityPlayer) entity;
+							player.setItemInUse(itemstack, 72000);
 							nbt.setBoolean("set_up", true);
 							nbt.setInteger("set_up_cnt", 3);
 						}
+						//TODO trace set_up or something to fix armor compat. If this doesn't work
+						// I'm just losing my shit and making my own armors or something.
 
 						//ADS FIX FOR FLANS ARMORS AND HBM ARMORS HOPEFULLY
-						if (entity instanceof EntityPlayer) {
-							EntityPlayer player = (EntityPlayer) entity;
-							boolean isADS = HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed");
-							//seemed to cause issues on remote??? might just be firing/reloading transforms are still really broken.
-							//if (world.isRemote) {
-								if (isADS) {
-									if (!player.isUsingItem()) {
-										player.setItemInUse(itemstack, 72000);
-									}
-								} else {
-									//if (player.isUsingItem()) {
-									//	player.stopUsingItem();
-									//}
-									//we don't actually want to do that...?
-								}
-							//}
-						}
+						//if (entity instanceof EntityPlayer) {
+						//	EntityPlayer player = (EntityPlayer) entity;
+						//	boolean isADS = HandmadeGunsCore.Key_ADS(entity) || nbt.getBoolean("HMGfixed");
+						//	//seemed to cause issues on remote??? might just be firing/reloading transforms are still really broken.
+						//	//if (world.isRemote) {
+						//		if (isADS) {
+						//			if (!player.isUsingItem()) {
+						//				player.setItemInUse(itemstack, 72000);
+						//			}
+						//		} else {
+						//			//if (player.isUsingItem()) {
+						//			//	player.stopUsingItem();
+						//			//}
+						//			//we don't actually want to do that...?
+						//		}
+						//	//}
+						//}
 						//caused firing to stop working when ADS for some reason. Does not work with reload anim or firing anim
 
 						if (world.isRemote && (i != -1) && i != -10 && ((EntityPlayer) entity).getHeldItem() == itemstack) {
@@ -1436,6 +1440,8 @@ public class HMGItem_Unified_Guns extends Item {
 				iy = entity.getEyeHeight() - 0.1 - MathHelper.sin(f2);
 				iz += MathHelper.cos(f1) * MathHelper.cos(f2) + MathHelper.sin(-f1) * 0.2;
 			} else {
+				//EntityPlayer player = (EntityPlayer) entity;
+				//player.setItemInUse(par1ItemStack, 72000);
 				ix -= MathHelper.sin(f1) * MathHelper.cos(f2);
 				iy = entity.getEyeHeight() - 0.1 - MathHelper.sin(f2);
 				iz += MathHelper.cos(f1) * MathHelper.cos(f2);
