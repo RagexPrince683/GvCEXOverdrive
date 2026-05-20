@@ -170,4 +170,7 @@ public class CommonSideProxyHMG {
 	}
 	public void AddModel(Object o){
 	}
+
+	public void addKillFeedEntry(String attacker, String victim, ItemStack weapon) {
+	}
 }
