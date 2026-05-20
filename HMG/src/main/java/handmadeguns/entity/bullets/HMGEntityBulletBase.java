@@ -23,6 +23,7 @@ import handmadeguns.Util.sendEntitydata;
 import handmadeguns.entity.*;
 import handmadeguns.network.PacketFixClientbullet;
 import handmadeguns.network.PacketSpawnParticle;
+import handmadeguns.network.PacketKillFeedEntry;
 import handmadevehicle.HMVChunkLoaderManager;
 import handmadevehicle.Utils;
 import io.netty.buffer.ByteBuf;
@@ -489,6 +490,8 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 			}
 			var1.entityHit.hurtResistantTime = 0;
 
+			boolean victimWasAlive = !(var1.entityHit instanceof EntityPlayer) || ((EntityPlayer)var1.entityHit).getHealth() > 0.0F;
+
 			double moXback = var1.entityHit.motionX;
 			double moYback = var1.entityHit.motionY;
 			double moZback = var1.entityHit.motionZ;
@@ -532,6 +535,17 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				if(this.getThrower() != null&&getThrower() instanceof EntityPlayerMP){
 					HMGPacketHandler.INSTANCE.sendTo(new HMGMessageKeyPressedC(10, this.getThrower().getEntityId()),(EntityPlayerMP)this.getThrower());
 				}
+
+				if (this.getThrower() instanceof EntityPlayer && var1.entityHit instanceof EntityPlayer) {
+					EntityPlayer attacker = (EntityPlayer) this.getThrower();
+					EntityPlayer victim = (EntityPlayer) var1.entityHit;
+					boolean victimNowDead = victim.isDead || victim.getHealth() <= 0.0F;
+					if (victimWasAlive && victimNowDead) {
+						ItemStack weapon = attacker.getHeldItem();
+						HMGPacketHandler.INSTANCE.sendToAll(new PacketKillFeedEntry(attacker.getDisplayName(), victim.getDisplayName(), weapon));
+					}
+				}
+
 				this.setDead();
 			}
 			if(var1.entityHit instanceof EntityLiving)for (int i = 0; i < 4; ++i) {
