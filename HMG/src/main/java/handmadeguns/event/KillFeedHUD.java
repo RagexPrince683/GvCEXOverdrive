@@ -7,6 +7,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
@@ -57,13 +58,43 @@ public class KillFeedHUD {
             Gui.drawRect(x - 4, rowY - 2, x + 164, rowY + 16, 0x4A000000);
             font.drawStringWithShadow(entry.attacker, x, rowY + 4, 0xFFFFFF);
             if (entry.weapon != null) {
+
                 GL11.glPushMatrix();
+
                 RenderHelper.enableGUIStandardItemLighting();
+
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+                GL11.glDepthMask(true);
+
+                // Move to desired position
                 GL11.glTranslatef(x + 82.0F, rowY + 8.0F, 0.0F);
+
+                // Rotate item sideways
                 GL11.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
+
+                // Center 16x16 item
                 GL11.glTranslatef(-8.0F, -8.0F, 0.0F);
-                minecraft.renderItem.renderItemAndEffectIntoGUI(font, minecraft.renderEngine, entry.weapon, 0, 0);
+
+                RenderItem.getInstance().renderItemAndEffectIntoGUI(
+                        font,
+                        minecraft.renderEngine,
+                        entry.weapon,
+                        0,
+                        0
+                );
+
+                RenderItem.getInstance().renderItemOverlayIntoGUI(
+                        font,
+                        minecraft.renderEngine,
+                        entry.weapon,
+                        0,
+                        0
+                );
+
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+
                 RenderHelper.disableStandardItemLighting();
+
                 GL11.glPopMatrix();
             }
             font.drawStringWithShadow(entry.victim, x + 96, rowY + 4, 0xFFFFFF);
