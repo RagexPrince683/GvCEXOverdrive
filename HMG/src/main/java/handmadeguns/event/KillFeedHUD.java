@@ -17,7 +17,7 @@ import java.util.List;
 @SideOnly(Side.CLIENT)
 public class KillFeedHUD {
     private static final List<KillEntry> ENTRIES = new ArrayList<KillEntry>();
-    private static final int DISPLAY_TICKS = 120;
+    private static final int DISPLAY_TICKS = 300;
 
     public static void addEntry(String attacker, String victim, ItemStack weapon) {
         ItemStack copy = weapon == null ? null : weapon.copy();
@@ -55,15 +55,18 @@ public class KillFeedHUD {
 
             int rowY = y + (row * 20);
             Gui.drawRect(x - 4, rowY - 2, x + 164, rowY + 16, 0x4A000000);
-            font.drawStringWithShadow(entry.attacker, x, rowY + 4, 0xFF5555);
+            font.drawStringWithShadow(entry.attacker, x, rowY + 4, 0xFFFFFF);
             if (entry.weapon != null) {
                 GL11.glPushMatrix();
                 RenderHelper.enableGUIStandardItemLighting();
-                minecraft.renderItem.renderItemAndEffectIntoGUI(font, minecraft.renderEngine, entry.weapon, x + 74, rowY);
+                GL11.glTranslatef(x + 82.0F, rowY + 8.0F, 0.0F);
+                GL11.glRotatef(-90.0F, 0.0F, 0.0F, 1.0F);
+                GL11.glTranslatef(-8.0F, -8.0F, 0.0F);
+                minecraft.renderItem.renderItemAndEffectIntoGUI(font, minecraft.renderEngine, entry.weapon, 0, 0);
                 RenderHelper.disableStandardItemLighting();
                 GL11.glPopMatrix();
             }
-            font.drawStringWithShadow(entry.victim, x + 96, rowY + 4, 0x55AAFF);
+            font.drawStringWithShadow(entry.victim, x + 96, rowY + 4, 0xFFFFFF);
             row++;
         }
 
