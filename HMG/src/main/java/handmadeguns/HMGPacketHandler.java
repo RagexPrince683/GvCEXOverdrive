@@ -55,6 +55,8 @@ public class HMGPacketHandler {
                 Side.SERVER);
         INSTANCE.registerMessage(MessageCatch_PlaySound_Gui.class, PacketPlaySound_Gui.class, ++id,
                 Side.CLIENT);
+        INSTANCE.registerMessage(MessageCatch_KillFeedEntry.class, PacketKillFeedEntry.class, ++id,
+                Side.CLIENT);
         INSTANCE.registerMessage(MessageCatch_SetElevation.class, PacketSetElevation.class, ++id,
                 Side.SERVER);
     }
