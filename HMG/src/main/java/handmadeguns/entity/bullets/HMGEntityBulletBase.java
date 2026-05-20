@@ -23,6 +23,7 @@ import handmadeguns.Util.sendEntitydata;
 import handmadeguns.entity.*;
 import handmadeguns.network.PacketFixClientbullet;
 import handmadeguns.network.PacketSpawnParticle;
+import handmadeguns.network.PacketKillFeedEntry;
 import handmadevehicle.HMVChunkLoaderManager;
 import handmadevehicle.Utils;
 import io.netty.buffer.ByteBuf;
@@ -532,6 +533,14 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				if(this.getThrower() != null&&getThrower() instanceof EntityPlayerMP){
 					HMGPacketHandler.INSTANCE.sendTo(new HMGMessageKeyPressedC(10, this.getThrower().getEntityId()),(EntityPlayerMP)this.getThrower());
 				}
+
+				if (this.getThrower() instanceof EntityPlayer && var1.entityHit instanceof EntityPlayer && var1.entityHit.isDead) {
+					EntityPlayer attacker = (EntityPlayer) this.getThrower();
+					EntityPlayer victim = (EntityPlayer) var1.entityHit;
+					ItemStack weapon = attacker.getHeldItem();
+					HMGPacketHandler.INSTANCE.sendToAll(new PacketKillFeedEntry(attacker.getDisplayName(), victim.getDisplayName(), weapon));
+				}
+
 				this.setDead();
 			}
 			if(var1.entityHit instanceof EntityLiving)for (int i = 0; i < 4; ++i) {
