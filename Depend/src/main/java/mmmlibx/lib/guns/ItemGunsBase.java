@@ -309,9 +309,8 @@ public class ItemGunsBase extends ItemBow {
 				par1ItemStack.toString()
 				);
 		GunsBase.setUncheckedItemStack(par1ItemStack, par3EntityPlayer);
-		//par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
+		par3EntityPlayer.setItemInUse(par1ItemStack, this.getMaxItemUseDuration(par1ItemStack));
 		return par1ItemStack;
-		//TODO BLAME
 	}
 
 	@Override
@@ -388,10 +387,6 @@ public class ItemGunsBase extends ItemBow {
 //				setState(par1ItemStack, State_Empty);
 			}
 		}
-
-		//TODO IDEA: if ADS then player.setItemInUse(par1ItemStack, 72000); to fix other mod armors
-
-
 	}
 
 	@Override
