@@ -6,7 +6,6 @@ import handmadeguns.entity.PlacedGunEntity;
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
 import handmadeguns.event.AmmoHUDRenderer;
-import handmadeguns.event.KillFeedHUD;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.entity.Entity;
@@ -811,7 +810,6 @@ public class HMGEventZoom {
 			}
 			GL11.glPopAttrib();
 			GL11.glPopMatrix();
-			KillFeedHUD.render(minecraft);
 			previtemstack = gunstack;
 		}
 
