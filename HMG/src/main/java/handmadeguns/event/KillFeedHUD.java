@@ -59,7 +59,7 @@ public class KillFeedHUD {
             if (entry.weapon != null) {
                 GL11.glPushMatrix();
                 RenderHelper.enableGUIStandardItemLighting();
-                minecraft.renderItem.renderItemAndEffectIntoGUI(font, minecraft.renderEngine, entry.weapon, x + 74, rowY);
+                minecraft.getRenderItem().renderItemAndEffectIntoGUI(font, minecraft.renderEngine, entry.weapon, x + 74, rowY);
                 RenderHelper.disableStandardItemLighting();
                 GL11.glPopMatrix();
             }
