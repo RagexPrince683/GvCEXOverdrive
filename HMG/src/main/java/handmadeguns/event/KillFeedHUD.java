@@ -1,7 +1,5 @@
 package handmadeguns.event;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -14,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@SideOnly(Side.CLIENT)
 public class KillFeedHUD {
     private static final List<KillEntry> ENTRIES = new ArrayList<KillEntry>();
     private static final int DISPLAY_TICKS = 120;
@@ -33,15 +30,7 @@ public class KillFeedHUD {
         ScaledResolution scaled = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
         FontRenderer font = minecraft.fontRenderer;
         int x = scaled.getScaledWidth() - 170;
-        int y = (scaled.getScaledHeight() / 2) - 50;
-
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-        GL11.glPushMatrix();
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        int y = 20;
 
         Iterator<KillEntry> it = ENTRIES.iterator();
         int row = 0;
@@ -54,7 +43,7 @@ public class KillFeedHUD {
             }
 
             int rowY = y + (row * 20);
-            Gui.drawRect(x - 4, rowY - 2, x + 164, rowY + 16, 0x4A000000);
+            Gui.drawRect(x - 4, rowY - 2, x + 164, rowY + 16, 0x66000000);
             font.drawStringWithShadow(entry.attacker, x, rowY + 4, 0xFF5555);
             if (entry.weapon != null) {
                 GL11.glPushMatrix();
@@ -66,10 +55,6 @@ public class KillFeedHUD {
             font.drawStringWithShadow(entry.victim, x + 96, rowY + 4, 0x55AAFF);
             row++;
         }
-
-        GL11.glDepthMask(true);
-        GL11.glPopMatrix();
-        GL11.glPopAttrib();
     }
 
     private static class KillEntry {
