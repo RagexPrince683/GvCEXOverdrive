@@ -14,7 +14,6 @@ import handmadeguns.client.modelLoader.emb_modelloader.MQO_ModelLoader;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
 import handmadeguns.event.HMGFovHandler;
-import handmadeguns.event.KillFeedHUD;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadeguns.network.PacketSpawnParticle;
 import handmadeguns.client.render.*;
@@ -162,11 +161,6 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 	public void playGUISound(String sound,float speed){
 		getMCInstance().getSoundHandler().playSound(PositionedSoundRecord.func_147673_a(new ResourceLocation(sound)));
 	}
-	@Override
-	public void addKillFeedEntry(String attacker, String victim, ItemStack weapon) {
-		KillFeedHUD.addEntry(attacker, victim, weapon);
-	}
-
 	@Override
 	public World getCilentWorld(){
 		return FMLClientHandler.instance().getClient().theWorld;
