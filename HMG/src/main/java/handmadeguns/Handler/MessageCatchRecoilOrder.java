@@ -7,6 +7,7 @@ import handmadeguns.items.HMGItemAttachment_grip;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadeguns.HandmadeGunsCore;
 import handmadeguns.network.PacketRecoil;
+import handmadeguns.event.RenderTickSmoothing;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -59,11 +60,11 @@ public class MessageCatchRecoilOrder implements IMessageHandler<PacketRecoil, IM
                         if(HandmadeGunsCore.Key_ADS(entityPlayer)){ //grip recoil
                             if(items[4] != null && items[4].getItem() instanceof HMGItemAttachment_grip)
                                 reduceRecoilLevel = ((HMGItemAttachment_grip) items[4].getItem()).reduceRecoilLevel_ADS;
-                            entityPlayer.rotationPitch -= ((HMGItem_Unified_Guns) item).gunInfo.recoil_sneak * reduceRecoilLevel;
+                            RenderTickSmoothing.addSmoothRecoilPitch((float) (((HMGItem_Unified_Guns) item).gunInfo.recoil_sneak * reduceRecoilLevel));
                         }else {
                             if(items[4] != null && items[4].getItem() instanceof HMGItemAttachment_grip)
                                 reduceRecoilLevel = ((HMGItemAttachment_grip) items[4].getItem()).reduceRecoilLevel;
-                            entityPlayer.rotationPitch -= ((HMGItem_Unified_Guns) item).gunInfo.recoil * reduceRecoilLevel;
+                            RenderTickSmoothing.addSmoothRecoilPitch((float) (((HMGItem_Unified_Guns) item).gunInfo.recoil * reduceRecoilLevel));
                         }
                     }
                 }
