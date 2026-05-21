@@ -47,8 +47,9 @@ public class RenderTickSmoothing {
 	private static float pendingRecoilYaw = 0.0f;
 	private static float recoilVelocityPitch = 0.0f;
 	private static float recoilVelocityYaw = 0.0f;
-	private static final float RECOIL_SPRING = 0.48f;
-	private static final float RECOIL_DAMPING = 0.76f;
+	private static final float RECOIL_INITIAL_IMPULSE = 0.65f;
+	private static final float RECOIL_SPRING = 0.62f;
+	private static final float RECOIL_DAMPING = 0.74f;
 	private static final float HORIZONTAL_RECOIL_RATIO = 0.15f;
 	private static final Random RECOIL_RANDOM = new Random();
 
@@ -316,13 +317,18 @@ public class RenderTickSmoothing {
 		if (pendingRecoilPitch == 0.0f && recoilVelocityPitch == 0.0f
 				&& pendingRecoilYaw == 0.0f && recoilVelocityYaw == 0.0f) return;
 
-		recoilVelocityPitch += pendingRecoilPitch;
-		recoilVelocityYaw += pendingRecoilYaw;
+		float immediatePitch = pendingRecoilPitch * RECOIL_INITIAL_IMPULSE;
+		float immediateYaw = pendingRecoilYaw * RECOIL_INITIAL_IMPULSE;
+		float delayedPitch = pendingRecoilPitch - immediatePitch;
+		float delayedYaw = pendingRecoilYaw - immediateYaw;
+
+		recoilVelocityPitch += delayedPitch;
+		recoilVelocityYaw += delayedYaw;
 		pendingRecoilPitch = 0.0f;
 		pendingRecoilYaw = 0.0f;
 
-		float recoilStepPitch = recoilVelocityPitch * RECOIL_SPRING;
-		float recoilStepYaw = recoilVelocityYaw * RECOIL_SPRING;
+		float recoilStepPitch = immediatePitch + recoilVelocityPitch * RECOIL_SPRING;
+		float recoilStepYaw = immediateYaw + recoilVelocityYaw * RECOIL_SPRING;
 		recoilVelocityPitch *= RECOIL_DAMPING;
 		recoilVelocityYaw *= RECOIL_DAMPING;
 
