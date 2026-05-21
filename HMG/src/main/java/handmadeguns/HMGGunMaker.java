@@ -1917,7 +1917,7 @@ public class HMGGunMaker {
 				gunInfo.power = (int) (parseInt(type[1]) * damageCof);
 				break;
 			case "BulletSpeed":
-				gunInfo.speed = parseFloat(type[1]) * speedCof;
+				gunInfo.speed = parseFloat(type[1]) * speedCof * 2;
 				break;
 			case "BulletGravity":
 				gunInfo.gravity = parseFloat(type[1]);
