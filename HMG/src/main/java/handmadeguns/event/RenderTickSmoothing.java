@@ -42,6 +42,15 @@ public class RenderTickSmoothing {
 	public static int currentRenderBuffer = -1;
 	public static int currentTextureBuffer = -1;
 	public static int currentStencilBufferID = -1;
+	private static float pendingRecoilPitch = 0.0f;
+	private static float recoilVelocityPitch = 0.0f;
+	private static final float RECOIL_SPRING = 0.30f;
+	private static final float RECOIL_DAMPING = 0.72f;
+
+	public static void addSmoothRecoilPitch(float recoilAmount)
+	{
+		pendingRecoilPitch += recoilAmount;
+	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void renderTick(TickEvent.RenderTickEvent event)
@@ -177,6 +186,7 @@ public class RenderTickSmoothing {
 
 		if (HMG_proxy.getEntityPlayerInstance() == null) return;
 		EntityPlayer entityPlayer = HMG_proxy.getEntityPlayerInstance();
+		applySmoothRecoil(entityPlayer);
 
 		ItemStack held = entityPlayer.getCurrentEquippedItem();
 
@@ -285,6 +295,24 @@ public class RenderTickSmoothing {
 		//		}
 		//	}
 		//}
+	}
+
+	private void applySmoothRecoil(EntityPlayer entityPlayer)
+	{
+		if (entityPlayer == null) return;
+		if (pendingRecoilPitch == 0.0f && recoilVelocityPitch == 0.0f) return;
+
+		recoilVelocityPitch += pendingRecoilPitch;
+		pendingRecoilPitch = 0.0f;
+
+		float recoilStep = recoilVelocityPitch * RECOIL_SPRING;
+		recoilVelocityPitch *= RECOIL_DAMPING;
+
+		if (Math.abs(recoilVelocityPitch) < 0.001f) {
+			recoilVelocityPitch = 0.0f;
+		}
+
+		entityPlayer.rotationPitch -= recoilStep;
 	}
 
 
