@@ -17,6 +17,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.EXTFramebufferObject;
 
 import java.nio.FloatBuffer;
+import java.util.Random;
 
 import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 import static handmadeguns.HandmadeGunsCore.cfg_Sneak_ByADSKey;
@@ -42,6 +43,27 @@ public class RenderTickSmoothing {
 	public static int currentRenderBuffer = -1;
 	public static int currentTextureBuffer = -1;
 	public static int currentStencilBufferID = -1;
+	private static float pendingRecoilPitch = 0.0f;
+	private static float pendingRecoilYaw = 0.0f;
+	private static float recoilVelocityPitch = 0.0f;
+	private static float recoilVelocityYaw = 0.0f;
+	private static final float RECOIL_SPRING = 0.48f;
+	private static final float RECOIL_DAMPING = 0.76f;
+	private static final float HORIZONTAL_RECOIL_RATIO = 0.15f;
+	private static final Random RECOIL_RANDOM = new Random();
+
+	public static void addSmoothRecoilPitch(float recoilAmount)
+	{
+		addSmoothRecoil(recoilAmount);
+	}
+
+	public static void addSmoothRecoil(float recoilPitchAmount)
+	{
+		float horizontalSign = RECOIL_RANDOM.nextBoolean() ? 1.0f : -1.0f;
+		float recoilYawAmount = recoilPitchAmount * HORIZONTAL_RECOIL_RATIO * horizontalSign;
+		pendingRecoilPitch += recoilPitchAmount;
+		pendingRecoilYaw += recoilYawAmount;
+	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void renderTick(TickEvent.RenderTickEvent event)
@@ -177,6 +199,7 @@ public class RenderTickSmoothing {
 
 		if (HMG_proxy.getEntityPlayerInstance() == null) return;
 		EntityPlayer entityPlayer = HMG_proxy.getEntityPlayerInstance();
+		applySmoothRecoil(entityPlayer);
 
 		ItemStack held = entityPlayer.getCurrentEquippedItem();
 
@@ -285,6 +308,33 @@ public class RenderTickSmoothing {
 		//		}
 		//	}
 		//}
+	}
+
+	private void applySmoothRecoil(EntityPlayer entityPlayer)
+	{
+		if (entityPlayer == null) return;
+		if (pendingRecoilPitch == 0.0f && recoilVelocityPitch == 0.0f
+				&& pendingRecoilYaw == 0.0f && recoilVelocityYaw == 0.0f) return;
+
+		recoilVelocityPitch += pendingRecoilPitch;
+		recoilVelocityYaw += pendingRecoilYaw;
+		pendingRecoilPitch = 0.0f;
+		pendingRecoilYaw = 0.0f;
+
+		float recoilStepPitch = recoilVelocityPitch * RECOIL_SPRING;
+		float recoilStepYaw = recoilVelocityYaw * RECOIL_SPRING;
+		recoilVelocityPitch *= RECOIL_DAMPING;
+		recoilVelocityYaw *= RECOIL_DAMPING;
+
+		if (Math.abs(recoilVelocityPitch) < 0.001f) {
+			recoilVelocityPitch = 0.0f;
+		}
+		if (Math.abs(recoilVelocityYaw) < 0.001f) {
+			recoilVelocityYaw = 0.0f;
+		}
+
+		entityPlayer.rotationPitch -= recoilStepPitch;
+		entityPlayer.rotationYaw += recoilStepYaw;
 	}
 
 
