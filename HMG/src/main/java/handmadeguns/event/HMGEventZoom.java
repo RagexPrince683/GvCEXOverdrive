@@ -513,6 +513,7 @@ public class HMGEventZoom {
 											renderPumpkinBlur(minecraft, ads);
 											needreset = true;
 										}
+										renderPeripheralFocusMask(minecraft, 0.45F);
 									//}
 								}
 								if (gunItem.gunInfo.renderMCcross) {
@@ -1012,6 +1013,47 @@ public class HMGEventZoom {
 	public static void renderPumpkinBlur(Minecraft minecraft, String adss)
 	{
 		renderPumpkinBlur(minecraft,new ResourceLocation(adss));
+	}
+
+	private static void renderPeripheralFocusMask(Minecraft minecraft, float alpha){
+		ScaledResolution sr = new ScaledResolution(minecraft, minecraft.displayWidth, minecraft.displayHeight);
+		int width = sr.getScaledWidth();
+		int height = sr.getScaledHeight();
+		int cx = width / 2;
+		int cy = height / 2;
+		int halfHoleW = width / 10;
+		int halfHoleH = height / 8;
+
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glColor4f(0.0F, 0.0F, 0.0F, alpha);
+
+		Tessellator tess = Tessellator.instance;
+		tess.startDrawingQuads();
+		// top
+		tess.addVertex(0, 0, -90);
+		tess.addVertex(width, 0, -90);
+		tess.addVertex(width, cy - halfHoleH, -90);
+		tess.addVertex(0, cy - halfHoleH, -90);
+		// bottom
+		tess.addVertex(0, cy + halfHoleH, -90);
+		tess.addVertex(width, cy + halfHoleH, -90);
+		tess.addVertex(width, height, -90);
+		tess.addVertex(0, height, -90);
+		// left
+		tess.addVertex(0, cy - halfHoleH, -90);
+		tess.addVertex(cx - halfHoleW, cy - halfHoleH, -90);
+		tess.addVertex(cx - halfHoleW, cy + halfHoleH, -90);
+		tess.addVertex(0, cy + halfHoleH, -90);
+		// right
+		tess.addVertex(cx + halfHoleW, cy - halfHoleH, -90);
+		tess.addVertex(width, cy - halfHoleH, -90);
+		tess.addVertex(width, cy + halfHoleH, -90);
+		tess.addVertex(cx + halfHoleW, cy + halfHoleH, -90);
+		tess.draw();
+
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 
 	@SideOnly(Side.CLIENT)
