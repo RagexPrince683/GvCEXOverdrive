@@ -47,6 +47,8 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 	public static boolean prevSprintState = false;
 	public static boolean firstPerson_ADSState = false;
 	public static boolean prevADSState = false;
+	private static float adsTransition = 0.0F;
+	private static long adsTransitionLastNanos = 0L;
 	public static boolean firstPerson_ReloadState = false;
 	public static boolean prevReloadState = false;
 	private static FloatBuffer colorBuffer = GLAllocation.createDirectFloatBuffer(16);
@@ -627,23 +629,23 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 
 					//boolean isreloading = this.getbooleanfromnbt("IsReloading");
 					//ununused?
+					updateADSProgress(firstPerson_ADSState);
+					float adsBlend = getADSBlend(adsTransition);
 					if (firstPerson_ReloadState)
 					{
 						if (prevReloadState)
 							setUpGunPos_equipe(0);
 						else if (prevSprintState && !nbt.getBoolean("set_up"))
 							setUpGunPos_equipe_sprint(0, 1 - smoothing);
-						else if (prevADSState)
-							setUpGunPos_ADS(-1.4F, 1 - smoothing);
+						else if (adsTransition > 0.0F)
+							setUpGunPos_ADS(-1.4F, adsBlend);
 						else
 							setUpGunPos_equipe(0);
 					}
-					else if (firstPerson_ADSState && prevADSState)
+					else if (adsTransition >= 0.999F)
 						setUpGunPos_ADS(-1.4F);
-					else if (firstPerson_ADSState)
-						setUpGunPos_ADS(-1.4F, smoothing);
-					else if (prevADSState)
-						setUpGunPos_ADS(-1.4F, 1 - smoothing);
+					else if (adsTransition > 0.0F)
+						setUpGunPos_ADS(-1.4F, adsBlend);
 					else if (firstPerson_SprintState && prevSprintState && !nbt.getBoolean("set_up"))
 						setUpGunPos_equipe_sprint(0, 1);
 					else if (firstPerson_SprintState && !nbt.getBoolean("set_up"))
@@ -837,6 +839,28 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 
 	public float getSmoothing(){
 		return smoothing;
+	}
+
+	private static float getADSBlend(float progress){
+		float clamped = MathHelper.clamp_float(progress, 0.0F, 1.0F);
+		return clamped * clamped * (3.0F - 2.0F * clamped);
+	}
+
+	private static void updateADSProgress(boolean adsActive){
+		long now = System.nanoTime();
+		if(adsTransitionLastNanos == 0L){
+			adsTransitionLastNanos = now;
+		}
+		float dt = (now - adsTransitionLastNanos) / 1000000000.0F;
+		adsTransitionLastNanos = now;
+		dt = MathHelper.clamp_float(dt, 0.0F, 0.05F);
+		float durationSec = 0.18F;
+		float step = MathHelper.clamp_float(dt / durationSec, 0.0F, 0.12F);
+		if(adsActive){
+			adsTransition = Math.min(1.0F, adsTransition + step);
+		}else{
+			adsTransition = Math.max(0.0F, adsTransition - step);
+		}
 	}
 
 	public void bindPlayertexture(Entity entityplayer) {
