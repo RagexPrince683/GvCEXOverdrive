@@ -772,7 +772,10 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 	public void setUpGunPos_ADS(float reco,float interPole) {
 		GL11.glRotatef(180f, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(180f, 0.0F, 0.0F, 1.0F);
-		GL11.glTranslatef(modelPosX * (1 - interPole), modelPosY * (1 - interPole), (modelPosZ) * (1 - interPole));// -0.2F//-0.7,0.7,0
+		// Match the exact hipfire base transform while interpolating into ADS.
+		// Using modelPosZ without the +1.4f hipfire offset causes a small jump at
+		// transition start/end when the gun is resting off-center.
+		GL11.glTranslatef(modelPosX * (1 - interPole), modelPosY * (1 - interPole), (modelPosZ + 1.4f) * (1 - interPole));// -0.2F//-0.7,0.7,0
 
 		if(gunitem != null && nbt != null && gunitem.gunInfo.sightOffset_zeroIn != null && nbt.getInteger("currentElevation") >= 0 && gunitem.gunInfo.sightOffset_zeroIn.length>nbt.getInteger("currentElevation")) {
 			Vector3d sightOffset_zeroIn = gunitem.gunInfo.sightOffset_zeroIn[nbt.getInteger("currentElevation")];
