@@ -513,7 +513,7 @@ public class HMGEventZoom {
 											renderPumpkinBlur(minecraft, ads);
 											needreset = true;
 										}
-										renderPeripheralFocusMask(minecraft, 0.45F);
+										renderPeripheralFocusMask(minecraft, 0.70F);
 									//}
 								}
 								if (gunItem.gunInfo.renderMCcross) {
@@ -1021,39 +1021,42 @@ public class HMGEventZoom {
 		int height = sr.getScaledHeight();
 		int cx = width / 2;
 		int cy = height / 2;
-		int halfHoleW = width / 10;
-		int halfHoleH = height / 8;
+		int halfHoleW = width / 12;
+		int halfHoleH = height / 10;
 
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4f(0.0F, 0.0F, 0.0F, alpha);
+		drawPeripheralRect(width, height, cx, cy, halfHoleW + width / 9, halfHoleH + height / 9, alpha * 0.22F);
+		drawPeripheralRect(width, height, cx, cy, halfHoleW + width / 18, halfHoleH + height / 18, alpha * 0.35F);
+		drawPeripheralRect(width, height, cx, cy, halfHoleW, halfHoleH, alpha);
 
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_BLEND);
+	}
+
+	private static void drawPeripheralRect(int width, int height, int cx, int cy, int halfHoleW, int halfHoleH, float alpha){
+		GL11.glColor4f(0.0F, 0.0F, 0.0F, alpha);
 		Tessellator tess = Tessellator.instance;
 		tess.startDrawingQuads();
-		// top
 		tess.addVertex(0, 0, -90);
 		tess.addVertex(width, 0, -90);
 		tess.addVertex(width, cy - halfHoleH, -90);
 		tess.addVertex(0, cy - halfHoleH, -90);
-		// bottom
 		tess.addVertex(0, cy + halfHoleH, -90);
 		tess.addVertex(width, cy + halfHoleH, -90);
 		tess.addVertex(width, height, -90);
 		tess.addVertex(0, height, -90);
-		// left
 		tess.addVertex(0, cy - halfHoleH, -90);
 		tess.addVertex(cx - halfHoleW, cy - halfHoleH, -90);
 		tess.addVertex(cx - halfHoleW, cy + halfHoleH, -90);
 		tess.addVertex(0, cy + halfHoleH, -90);
-		// right
 		tess.addVertex(cx + halfHoleW, cy - halfHoleH, -90);
 		tess.addVertex(width, cy - halfHoleH, -90);
 		tess.addVertex(width, cy + halfHoleH, -90);
 		tess.addVertex(cx + halfHoleW, cy + halfHoleH, -90);
 		tess.draw();
-
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 
 	@SideOnly(Side.CLIENT)

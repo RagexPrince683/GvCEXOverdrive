@@ -48,6 +48,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 	public static boolean firstPerson_ADSState = false;
 	public static boolean prevADSState = false;
 	private static float adsTransition = 0.0F;
+	private static long adsTransitionLastNanos = 0L;
 	public static boolean firstPerson_ReloadState = false;
 	public static boolean prevReloadState = false;
 	private static FloatBuffer colorBuffer = GLAllocation.createDirectFloatBuffer(16);
@@ -846,7 +847,15 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 	}
 
 	private static void updateADSProgress(boolean adsActive){
-		float step = 0.18F;
+		long now = System.nanoTime();
+		if(adsTransitionLastNanos == 0L){
+			adsTransitionLastNanos = now;
+		}
+		float dt = (now - adsTransitionLastNanos) / 1000000000.0F;
+		adsTransitionLastNanos = now;
+		dt = MathHelper.clamp_float(dt, 0.0F, 0.05F);
+		float durationSec = 0.18F;
+		float step = dt / durationSec;
 		if(adsActive){
 			adsTransition = Math.min(1.0F, adsTransition + step);
 		}else{
