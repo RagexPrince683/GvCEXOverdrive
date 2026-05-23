@@ -1351,7 +1351,9 @@ public class HMGItem_Unified_Guns extends Item {
 		return true;
 	}
 	public EnumAction getItemUseAction(ItemStack par1ItemStack) {
-		return null;
+		// Compatibility: external armour renderers (e.g. Flan's custom armour models)
+		// key off EnumAction.bow + itemInUseCount to drive aimed arm transforms.
+		return EnumAction.bow;
 	}
 	public boolean func_150897_b(Block p_150897_1_)
 	{

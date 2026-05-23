@@ -967,6 +967,14 @@ public class HandmadeGunsCore {
 			ItemStack itemstack = event.entityPlayer.getCurrentEquippedItem();
 			RenderPlayer renderplayer = event.renderer;
 			if(itemstack != null && (itemstack.getItem() instanceof HMGItem_Unified_Guns) && itemstack.hasTagCompound()){
+				// Signal ADS state through vanilla "using bow" semantics so external armour
+				// models that compute aimed pose from item use action (e.g. Flan's armour)
+				// receive the same arm transform intent.
+				if(Key_ADS(event.entityPlayer)) {
+					event.entityPlayer.setItemInUse(itemstack, itemstack.getMaxItemUseDuration());
+				} else if(event.entityPlayer.getItemInUse() == itemstack) {
+					event.entityPlayer.clearItemInUse();
+				}
 				if(itemstack.getTagCompound().getBoolean("set_up")) {
 					renderplayer.modelArmor.aimedBow = renderplayer.modelArmorChestplate.aimedBow = renderplayer.modelBipedMain.aimedBow = true;
 				}else {
@@ -1100,6 +1108,5 @@ public class HandmadeGunsCore {
 	//END
 
 }
-
 
 

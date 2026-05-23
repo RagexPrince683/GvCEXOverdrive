@@ -2106,24 +2106,51 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 	public void renderarm(float armrotationxl,float armrotationyl,float armrotationzl,float armoffsetxl,float armoffsetyl,float armoffsetzl,
 						  float armrotationxr,float armrotationyr,float armrotationzr,float armoffsetxr,float armoffsetyr,float armoffsetzr){
 		GL11.glScalef(1/modelscala,1/modelscala,1/modelscala);
+		// Keep non-HMG player model consumers (e.g. armor / other mods) stable by restoring arm state
+		// after HMG applies custom arm offsets and rotations for first-person gun rendering.
+		float prevLeftRotateX = modelBipedMain.bipedLeftArm.rotateAngleX;
+		float prevLeftRotateY = modelBipedMain.bipedLeftArm.rotateAngleY;
+		float prevLeftRotateZ = modelBipedMain.bipedLeftArm.rotateAngleZ;
+		float prevLeftOffsetX = modelBipedMain.bipedLeftArm.offsetX;
+		float prevLeftOffsetY = modelBipedMain.bipedLeftArm.offsetY;
+		float prevLeftOffsetZ = modelBipedMain.bipedLeftArm.offsetZ;
+		float prevRightRotateX = modelBipedMain.bipedRightArm.rotateAngleX;
+		float prevRightRotateY = modelBipedMain.bipedRightArm.rotateAngleY;
+		float prevRightRotateZ = modelBipedMain.bipedRightArm.rotateAngleZ;
+		float prevRightOffsetX = modelBipedMain.bipedRightArm.offsetX;
+		float prevRightOffsetY = modelBipedMain.bipedRightArm.offsetY;
+		float prevRightOffsetZ = modelBipedMain.bipedRightArm.offsetZ;
+
+		modelBipedMain.bipedLeftArm.rotateAngleX = armrotationxl;
+		modelBipedMain.bipedLeftArm.rotateAngleY = armrotationyl;
+		modelBipedMain.bipedLeftArm.rotateAngleZ = armrotationzl;
+		modelBipedMain.bipedLeftArm.offsetX = armoffsetxl * armoffsetscale;
+		modelBipedMain.bipedLeftArm.offsetY = armoffsetyl * armoffsetscale;
+		modelBipedMain.bipedLeftArm.offsetZ = armoffsetzl * armoffsetscale;
+		modelBipedMain.bipedRightArm.rotateAngleX = armrotationxr;
+		modelBipedMain.bipedRightArm.rotateAngleY = armrotationyr;
+		modelBipedMain.bipedRightArm.rotateAngleZ = armrotationzr;
+		modelBipedMain.bipedRightArm.offsetX = armoffsetxr * armoffsetscale;
+		modelBipedMain.bipedRightArm.offsetY = armoffsetyr * armoffsetscale;
+		modelBipedMain.bipedRightArm.offsetZ = armoffsetzr * armoffsetscale;
+
 		GL11.glPushMatrix();
 		modelBipedMain.bipedRightArm.render(0.0625f);
 		modelBipedMain.bipedLeftArm.render(0.0625f);
 		GL11.glPopMatrix();
-		modelBipedMain.bipedLeftArm.rotateAngleX = armrotationxl;
-		modelBipedMain.bipedLeftArm.rotateAngleY = armrotationyl;
-		modelBipedMain.bipedLeftArm.rotateAngleZ = armrotationzl;
-		modelBipedMain.bipedLeftArm.offsetX = armoffsetxl*armoffsetscale;
-		modelBipedMain.bipedLeftArm.offsetY = armoffsetyl*armoffsetscale;
-		modelBipedMain.bipedLeftArm.offsetZ = armoffsetzl*armoffsetscale;
 
-
-		modelBipedMain.bipedRightArm.rotateAngleX = armrotationxr;
-		modelBipedMain.bipedRightArm.rotateAngleY = armrotationyr;
-		modelBipedMain.bipedRightArm.rotateAngleZ = armrotationzr;
-		modelBipedMain.bipedRightArm.offsetX = armoffsetxr*armoffsetscale;
-		modelBipedMain.bipedRightArm.offsetY = armoffsetyr*armoffsetscale;
-		modelBipedMain.bipedRightArm.offsetZ = armoffsetzr*armoffsetscale;
+		modelBipedMain.bipedLeftArm.rotateAngleX = prevLeftRotateX;
+		modelBipedMain.bipedLeftArm.rotateAngleY = prevLeftRotateY;
+		modelBipedMain.bipedLeftArm.rotateAngleZ = prevLeftRotateZ;
+		modelBipedMain.bipedLeftArm.offsetX = prevLeftOffsetX;
+		modelBipedMain.bipedLeftArm.offsetY = prevLeftOffsetY;
+		modelBipedMain.bipedLeftArm.offsetZ = prevLeftOffsetZ;
+		modelBipedMain.bipedRightArm.rotateAngleX = prevRightRotateX;
+		modelBipedMain.bipedRightArm.rotateAngleY = prevRightRotateY;
+		modelBipedMain.bipedRightArm.rotateAngleZ = prevRightRotateZ;
+		modelBipedMain.bipedRightArm.offsetX = prevRightOffsetX;
+		modelBipedMain.bipedRightArm.offsetY = prevRightOffsetY;
+		modelBipedMain.bipedRightArm.offsetZ = prevRightOffsetZ;
 	}
 
 	public int bindAttach_SightPosition_and_getSightType(Entity entity,ItemStack item) {
