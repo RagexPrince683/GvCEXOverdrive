@@ -634,16 +634,16 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 						else if (prevSprintState && !nbt.getBoolean("set_up"))
 							setUpGunPos_equipe_sprint(0, 1 - smoothing);
 						else if (prevADSState)
-							setUpGunPos_ADS(-1.4F, 1 - smoothing);
+							setUpGunPos_ADS(-1.4F, getADSBlend(1 - smoothing));
 						else
 							setUpGunPos_equipe(0);
 					}
 					else if (firstPerson_ADSState && prevADSState)
 						setUpGunPos_ADS(-1.4F);
 					else if (firstPerson_ADSState)
-						setUpGunPos_ADS(-1.4F, smoothing);
+						setUpGunPos_ADS(-1.4F, getADSBlend(smoothing));
 					else if (prevADSState)
-						setUpGunPos_ADS(-1.4F, 1 - smoothing);
+						setUpGunPos_ADS(-1.4F, getADSBlend(1 - smoothing));
 					else if (firstPerson_SprintState && prevSprintState && !nbt.getBoolean("set_up"))
 						setUpGunPos_equipe_sprint(0, 1);
 					else if (firstPerson_SprintState && !nbt.getBoolean("set_up"))
@@ -837,6 +837,11 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 
 	public float getSmoothing(){
 		return smoothing;
+	}
+
+	private static float getADSBlend(float progress){
+		float clamped = MathHelper.clamp_float(progress, 0.0F, 1.0F);
+		return clamped * clamped * (3.0F - 2.0F * clamped);
 	}
 
 	public void bindPlayertexture(Entity entityplayer) {
