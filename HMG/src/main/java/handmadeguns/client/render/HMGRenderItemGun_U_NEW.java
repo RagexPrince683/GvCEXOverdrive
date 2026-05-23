@@ -855,7 +855,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		adsTransitionLastNanos = now;
 		dt = MathHelper.clamp_float(dt, 0.0F, 0.05F);
 		float durationSec = 0.18F;
-		float step = dt / durationSec;
+		float step = MathHelper.clamp_float(dt / durationSec, 0.0F, 0.12F);
 		if(adsActive){
 			adsTransition = Math.min(1.0F, adsTransition + step);
 		}else{
