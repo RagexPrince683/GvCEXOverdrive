@@ -48,6 +48,8 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 	public static boolean firstPerson_ADSState = false;
 	public static boolean prevADSState = false;
 	private static float adsTransition = 0.0F;
+	private static float sprintTransition = 0.0F;
+	private static float reloadTransition = 0.0F;
 	private static long adsTransitionLastNanos = 0L;
 	public static boolean firstPerson_ReloadState = false;
 	public static boolean prevReloadState = false;
@@ -629,29 +631,29 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 
 					//boolean isreloading = this.getbooleanfromnbt("IsReloading");
 					//ununused?
-					updateADSProgress(firstPerson_ADSState);
+					updateADSProgress(firstPerson_ADSState, firstPerson_SprintState, firstPerson_ReloadState);
 					float adsBlend = getADSBlend(adsTransition);
+					float sprintBlend = getADSBlend(sprintTransition);
+					float reloadBlend = getADSBlend(reloadTransition);
 					if (firstPerson_ReloadState)
 					{
-						if (prevReloadState)
+						if (reloadTransition > 0.0F)
 							setUpGunPos_equipe(0);
 						else if (prevSprintState && !nbt.getBoolean("set_up"))
-							setUpGunPos_equipe_sprint(0, 1 - smoothing);
+							setUpGunPos_equipe_sprint(0, 1 - sprintBlend);
 						else if (adsTransition > 0.0F)
 							setUpGunPos_ADS(-1.4F, adsBlend);
 						else
 							setUpGunPos_equipe(0);
 					}
+					else if (reloadTransition > 0.0F)
+						setUpGunPos_equipe(0);
 					else if (adsTransition >= 0.999F)
 						setUpGunPos_ADS(-1.4F);
 					else if (adsTransition > 0.0F)
 						setUpGunPos_ADS(-1.4F, adsBlend);
-					else if (firstPerson_SprintState && prevSprintState && !nbt.getBoolean("set_up"))
-						setUpGunPos_equipe_sprint(0, 1);
-					else if (firstPerson_SprintState && !nbt.getBoolean("set_up"))
-						setUpGunPos_equipe_sprint(0, smoothing);
-					else if (prevSprintState && !nbt.getBoolean("set_up"))
-						setUpGunPos_equipe_sprint(0, 1 - smoothing);
+					else if (sprintTransition > 0.0F && !nbt.getBoolean("set_up"))
+						setUpGunPos_equipe_sprint(0, sprintBlend);
 					else
 						setUpGunPos_equipe(0);
 
@@ -849,7 +851,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		return clamped * clamped * (3.0F - 2.0F * clamped);
 	}
 
-	private static void updateADSProgress(boolean adsActive){
+	private static void updateADSProgress(boolean adsActive, boolean sprintActive, boolean reloadActive){
 		long now = System.nanoTime();
 		if(adsTransitionLastNanos == 0L){
 			adsTransitionLastNanos = now;
@@ -863,6 +865,16 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			adsTransition = Math.min(1.0F, adsTransition + step);
 		}else{
 			adsTransition = Math.max(0.0F, adsTransition - step);
+		}
+		if(sprintActive){
+			sprintTransition = Math.min(1.0F, sprintTransition + step);
+		}else{
+			sprintTransition = Math.max(0.0F, sprintTransition - step);
+		}
+		if(reloadActive){
+			reloadTransition = Math.min(1.0F, reloadTransition + step);
+		}else{
+			reloadTransition = Math.max(0.0F, reloadTransition - step);
 		}
 	}
 
