@@ -102,9 +102,9 @@ public class HMGItem_Unified_Guns extends Item {
 			par3List.add(EnumChatFormatting.WHITE + "Bullet Spread " + "+" + StatCollector.translateToLocal(bure));
 			par3List.add(EnumChatFormatting.WHITE + "Recoil " + "+" + StatCollector.translateToLocal(recoil));
 			par3List.add(EnumChatFormatting.YELLOW + "Reload Time " + "+" + StatCollector.translateToLocal(retime));
-			//todone: explosion radius and lethal radius for explosives, also RPM
+			// Show explosive radius separately from BulletPower damage.
 			if (gunInfo.ex > 0.0f) {
-				par3List.add(EnumChatFormatting.RED + "Explosion " + "+" + StatCollector.translateToLocal(exp));
+				par3List.add(EnumChatFormatting.RED + "Explosion Radius " + "+" + StatCollector.translateToLocal(exp));
 			}
 			if (gunInfo.damagerange > 0.0f) { //I guess this works as a non null check too idk im sure it's fine
 				par3List.add(EnumChatFormatting.RED + "Damage Range " + "+" + StatCollector.translateToLocal(damagerange));

@@ -4,16 +4,12 @@ package handmadeguns.entity.bullets;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import handmadeguns.network.PacketSpawnParticle;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-
-import java.util.List;
 
 import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 
 public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEntityAdditionalSpawnData
 {
-	//what the actual fuck is this spaghetti nightmare code
 	public HMGEntityBulletRocket(World worldIn) {
 		super(worldIn);
 	}
@@ -27,64 +23,9 @@ public class HMGEntityBulletRocket extends HMGEntityBulletExprode implements IEn
 
 	@Override
 	public void explode(double x, double y, double z, float level, boolean candestroy, float exl) {
-		System.out.println("explode fired");
-		if (!worldObj.isRemote) {
-			//handle damage in range probably or something idk hopefully this works
-			DamageSource ds1 = DamageSource.causeThrownDamage(this, this.thrower);
-			this.attackEntityFrom(ds1, Bdamege);
-			System.out.println("serverside damage applied");
-			System.out.println("exlevel: " + this.exlevel + " ex:" + this.ex + "exl:" + exl);
-			//so somehow some way, some why, this is 0 for both. Great.
-			// Handle damage to nearby entities
-			//oh my god
-			List<Entity> entities = worldObj.getEntitiesWithinAABBExcludingEntity(this,
-					this.boundingBox.expand(exlevel, exlevel, exlevel)); // IDEALLY based on the actual explosion size
-			//could also be ex
-			//ok this is either ex or exlevel, this mod is so shit I can't tell which one it actually fucking uses in this case
-			//todo expand size to be the actual explosion size value
-
-			for (Entity target : entities) {
-				if (!target.isDead && target.canBeCollidedWith()) {
-					//float distance = (float) this.getDistanceToEntity(target);
-					//dist unused
-					//float damage = this.getDamageBasedOnDistance(distance, level); // Your method (below)
-					//todone get the fucking stupid ass fucking gunpower info or whatever the fuck we were working
-					// with before the big ass error of death happened
-					System.out.println("new explosion bullshit" + Bdamege + "bdamage" + this.thrower);
-					//debug to see what this stupid shit even is
-					System.out.println("exlevel: " + exlevel + " ex:" + ex);
-					//damage = this.whateverthefuck
-					DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
-
-					// hopefully does the base damage that the projectile does as opposed to relying on the stupid fucking explosion value
-					target.attackEntityFrom(ds, Bdamege); //todo Bdamege/distance from impact
-					//holy shit this is a nightmare to work with
-				}
-			}
-
-			// removed if statement
-			//if (canex) {
-				worldObj.createExplosion(this, x, y, z, level, candestroy); // handles both visual and terrain
-			//}
-		}
-
+		super.explode(x, y, z, level, candestroy, exl);
 		this.setDead();
 	}
-
-	//private float getDamageBasedOnDistance(float distance, float explosionPower) {
-	//	//float explosionPower is never used
-	//	float maxDamage = (float)this.damage; // dip my balls in texas road house butter
-	//	float falloffStart = 1.5f;
-	//	float falloffEnd = 3.5f;
-//
-	//	if (distance <= falloffStart) return maxDamage;
-	//	if (distance >= falloffEnd) return 0;
-//
-	//	float falloffRange = falloffEnd - falloffStart;
-	//	float scale = 1.0f - ((distance - falloffStart) / falloffRange);
-	//	return maxDamage * scale;
-	//}
-	//DOES NOT WORK, CAUSED A LOT OF CRASHES AND ISSUES
 
 	public HMGEntityBulletRocket(World worldIn, Entity throwerIn, int damege, float bspeed, float bure, float exl, boolean canex) {
 		this(worldIn, throwerIn, damege, bspeed, bure);
