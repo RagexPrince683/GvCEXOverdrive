@@ -18,12 +18,15 @@ import java.util.List;
 public class OverdriveEntityRendererTransformer implements IClassTransformer, Opcodes {
     private static final String ENTITY_RENDERER = "net.minecraft.client.renderer.EntityRenderer";
     private static final String ENTITY_RENDERER_OBF = "blt";
+    private static final String NET_HANDLER_PLAY_CLIENT = "net.minecraft.client.network.NetHandlerPlayClient";
     private static final String CONTROLLER = "handmadeguns/client/camera/OverdriveCameraController";
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (basicClass == null) return null;
-        if (!ENTITY_RENDERER.equals(transformedName) && !ENTITY_RENDERER.equals(name) && !ENTITY_RENDERER_OBF.equals(name)) {
+        boolean entityRenderer = ENTITY_RENDERER.equals(transformedName) || ENTITY_RENDERER.equals(name) || ENTITY_RENDERER_OBF.equals(name);
+        boolean netHandler = NET_HANDLER_PLAY_CLIENT.equals(transformedName) || NET_HANDLER_PLAY_CLIENT.equals(name);
+        if (!entityRenderer && !netHandler) {
             return basicClass;
         }
 
@@ -34,16 +37,20 @@ public class OverdriveEntityRendererTransformer implements IClassTransformer, Op
         int patches = 0;
         List<MethodNode> methods = classNode.methods;
         for (MethodNode method : methods) {
-            if (isUpdateCameraAndRender(method)) {
-                patches += injectUpdate(method);
-            } else if (isOrientCamera(method)) {
-                patches += injectOrient(method);
-            } else if (isApplyBobbing(method)) {
-                patches += injectApplyBobbing(method);
-            } else if (isGetFovModifier(method)) {
-                patches += injectFov(method);
-            } else if (isHurtCameraEffect(method)) {
-                patches += injectHurt(method);
+            if (entityRenderer) {
+                if (isUpdateCameraAndRender(method)) {
+                    patches += injectUpdate(method);
+                } else if (isOrientCamera(method)) {
+                    patches += injectOrient(method);
+                } else if (isApplyBobbing(method)) {
+                    patches += injectApplyBobbing(method);
+                } else if (isGetFovModifier(method)) {
+                    patches += injectFov(method);
+                } else if (isHurtCameraEffect(method)) {
+                    patches += injectHurt(method);
+                }
+            } else if (netHandler && isHandleExplosion(method)) {
+                patches += injectExplosionPacket(method);
             }
         }
 
@@ -71,6 +78,13 @@ public class OverdriveEntityRendererTransformer implements IClassTransformer, Op
 
     private boolean isHurtCameraEffect(MethodNode method) {
         return "(F)V".equals(method.desc) && ("hurtCameraEffect".equals(method.name) || "func_78482_e".equals(method.name));
+    }
+
+    private boolean isHandleExplosion(MethodNode method) {
+        return method.desc.endsWith(")V")
+                && ("handleExplosion".equals(method.name)
+                || "func_147283_a".equals(method.name)
+                || method.desc.indexOf("S27PacketExplosion") >= 0);
     }
 
     private int injectUpdate(MethodNode method) {
@@ -130,6 +144,14 @@ public class OverdriveEntityRendererTransformer implements IClassTransformer, Op
         hook.add(new JumpInsnNode(IFEQ, vanilla));
         hook.add(new org.objectweb.asm.tree.InsnNode(RETURN));
         hook.add(vanilla);
+        method.instructions.insert(hook);
+        return 1;
+    }
+
+    private int injectExplosionPacket(MethodNode method) {
+        InsnList hook = new InsnList();
+        hook.add(new VarInsnNode(ALOAD, 1));
+        hook.add(new MethodInsnNode(INVOKESTATIC, CONTROLLER, "handleExplosionPacket", "(Ljava/lang/Object;)V"));
         method.instructions.insert(hook);
         return 1;
     }
