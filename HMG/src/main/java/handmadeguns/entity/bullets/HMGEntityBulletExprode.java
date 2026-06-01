@@ -19,7 +19,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -147,19 +146,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 		if (hasExploded) return;
 
 
-		// damage source representing this bullet
-		DamageSource ds = DamageSource.causeThrownDamage(this, this.thrower);
-
-		System.out.println("on impact in 'Exprode' logic (server)");
-
-		// Apply direct thrown damage first to the hit entity (if present)
-		if (var1.entityHit != null) {
-			// apply direct damage to the hit entity deterministically
-			var1.entityHit.attackEntityFrom(ds, (float)Bdamege);
-		}
-
-		// Then run explosion logic for blocks/visuals, but make sure explosion
-		// does not apply MCH entity damage (we'll disable entity damage inside explode()).
+		// Run explosion logic for blocks, visuals, and radius damage.
 		if (var1.entityHit != null) {
 			if (!noex && !canbounce) {
 				// register hit entity for your later onUpdate handling
@@ -167,7 +154,7 @@ public class HMGEntityBulletExprode extends HMGEntityBulletBase implements IEnti
 				hitobjectposition = var1;
 				noex = true;
 
-				// call your explode that will NOT damage entities (see next section)
+				// Apply the configured explosion radius and BulletPower damage.
 				this.explode(var1.hitVec.xCoord, var1.hitVec.yCoord + 0.125, var1.hitVec.zCoord,
 						this.exlevel, this.canex && cfg_blockdestroy, this.ex);
 				hasExploded = true;

@@ -1923,6 +1923,8 @@ public class HMGGunMaker {
 				gunInfo.gravity = parseFloat(type[1]);
 				break;
 			case "Explosion":
+			case "ExplosionRadius":
+			case "explosionradius":
 				gunInfo.ex = parseFloat(type[1]);
 				break;
 			case "BlockDestory":
