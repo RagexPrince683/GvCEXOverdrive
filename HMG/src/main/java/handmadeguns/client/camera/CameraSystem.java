@@ -10,7 +10,6 @@ import handmadeguns.camera.CameraConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -60,31 +59,25 @@ public class CameraSystem {
             return;
         }
 
+        updateViewOffsetState(player);
         motionTilt.update(player);
         bobController.update(player);
         shakeManager.update();
         handleLandingShake(player);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onCameraSetup(EntityViewRenderEvent.CameraSetup event) {
-        if (!CameraConfig.masterEnabled || !(event.entity instanceof EntityClientPlayerMP)) return;
-        EntityClientPlayerMP player = (EntityClientPlayerMP) event.entity;
-        float partialTicks = (float) event.renderPartialTicks;
-
-        rotationSmoother.update(player, partialTicks);
-
-        // CameraSetup edits only the view event values. It never writes player rotation or movement,
-        // so aim, hit detection, networking, and server-visible player state remain untouched.
-        // No raw GL matrix state is pushed here, which keeps this low-risk with OptiFine/shader render paths.
-        event.yaw += rotationSmoother.getYawOffset(partialTicks) + shakeManager.getYaw(partialTicks);
-        event.pitch += rotationSmoother.getPitchOffset(partialTicks)
-                + motionTilt.getPitch(partialTicks)
-                + bobController.getPitch(partialTicks)
-                + shakeManager.getPitch(partialTicks);
-        event.roll += motionTilt.getRoll(partialTicks)
-                + bobController.getRoll(partialTicks)
-                + shakeManager.getRoll(partialTicks);
+    /**
+     * Forge 1.7.10 does not expose EntityViewRenderEvent.CameraSetup. That hook exists in later
+     * Forge versions, but adding a typed handler for it breaks 1.7.10 compilation. The visual
+     * yaw/pitch/roll controllers therefore stay isolated and stateful here, but their world-camera
+     * application remains a deliberate no-op unless a future non-coremod 1.7.10-safe hook is added.
+     *
+     * Do not emulate CameraSetup by temporarily writing player.rotationYaw/rotationPitch or replacing
+     * EntityRenderer/renderViewEntity: those options would affect aim/ray tracing or conflict with
+     * OptiFine/shader render paths. FOV inertia remains active because FOVUpdateEvent is available.
+     */
+    private void updateViewOffsetState(EntityClientPlayerMP player) {
+        rotationSmoother.update(player, 1.0F);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
