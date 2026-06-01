@@ -4,7 +4,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import handmadeguns.HandmadeGunsCore;
-import handmadeguns.client.camera.CameraSystem;
+import handmadeguns.client.camera.OverdriveCameraController;
 import handmadeguns.entity.HMGEntityParticles;
 import handmadeguns.client.render.HMGRenderItemGun_U;
 import handmadeguns.client.render.HMGRenderItemGun_U_NEW;
@@ -62,8 +62,8 @@ public class RenderTickSmoothing {
 	public static void addSmoothRecoil(float recoilPitchAmount)
 	{
 		// Visual-only camera impulse. Actual player aim/recoil mechanics are intentionally not changed here;
-		// CameraSystem applies the feel through Forge camera events on the client render path.
-		CameraSystem.addRecoilShake(Math.abs(recoilPitchAmount));
+		// OverdriveCameraController applies the feel through the patched EntityRenderer render path.
+		OverdriveCameraController.addRecoilShake(Math.abs(recoilPitchAmount));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -200,7 +200,7 @@ public class RenderTickSmoothing {
 
 		if (HMG_proxy.getEntityPlayerInstance() == null) return;
 		EntityPlayer entityPlayer = HMG_proxy.getEntityPlayerInstance();
-		// Recoil camera feel is now handled visually by CameraSystem; do not write player.rotationYaw/Pitch here.
+		// Recoil camera feel is now handled visually by OverdriveCameraController; do not write player.rotationYaw/Pitch here.
 
 		ItemStack held = entityPlayer.getCurrentEquippedItem();
 
