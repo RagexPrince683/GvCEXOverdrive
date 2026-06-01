@@ -74,21 +74,11 @@ public final class OverdriveCameraController {
     }
 
     public static void addRecoilShake(float strength) {
-        float scaled = strength * CameraConfig.recoilShakeMultiplier;
-        if (strength > 0.0F) scaled = Math.max(0.12F, scaled);
-        INSTANCE.addImpulse(scaled, 0.72F, -1.0F, 0.35F, 0.45F);
+        INSTANCE.addImpulse(strength * CameraConfig.recoilShakeMultiplier, 0.72F, -1.0F, 0.35F, 0.45F);
     }
 
     public static void addExplosionShake(float strength) {
         INSTANCE.addImpulse(strength * CameraConfig.explosionShakeMultiplier, 0.86F, 0.7F, 0.8F, 0.9F);
-    }
-
-    public static void addExplosionShakeAt(double x, double y, double z, float strength) {
-        INSTANCE.addExplosionAt(x, y, z, strength);
-    }
-
-    public static void handleExplosionPacket(Object packet) {
-        INSTANCE.handleExplosionPacketInternal(packet);
     }
 
     public static void addLandingShake(float strength) {
@@ -167,7 +157,7 @@ public final class OverdriveCameraController {
         double horizontalSpeed = Math.sqrt(player.motionX * player.motionX + player.motionZ * player.motionZ);
         float movement = clamp((float) horizontalSpeed * 5.5F, 0.0F, 1.0F);
         float multiplier = player.isSprinting() ? CameraConfig.bobSprintMultiplier : 1.0F;
-        if (isAds(player)) multiplier *= CameraConfig.bobAdsMultiplier;
+        if (HandmadeGunsCore.Key_ADS(player)) multiplier *= CameraConfig.bobAdsMultiplier;
         bobPhase += CameraConfig.bobSpeed * (0.25F + movement) * multiplier;
         float strength = CameraConfig.bobStrength * movement * multiplier;
         bobPitch = approach(bobPitch, (float) Math.sin(bobPhase * 2.0F) * 0.35F * strength, 0.2F);
@@ -248,7 +238,7 @@ public final class OverdriveCameraController {
         float target = fov;
         if (player != null && player.isSprinting()) target += CameraConfig.sprintFovBoost * 70.0F;
         if (fovCurrent < 0.0F) fovCurrent = target;
-        float speed = player != null && isAds(player) ? CameraConfig.adsFovSpeed : CameraConfig.fovLerpSpeed;
+        float speed = player != null && HandmadeGunsCore.Key_ADS(player) ? CameraConfig.adsFovSpeed : CameraConfig.fovLerpSpeed;
         fovCurrent = approach(fovCurrent, target, clamp(speed, 0.01F, 1.0F));
         return fovCurrent;
     }
@@ -275,44 +265,12 @@ public final class OverdriveCameraController {
         EntityClientPlayerMP player = mc == null ? null : mc.thePlayer;
         World world = event.world;
         if (player == null || world == null || !world.isRemote) return;
-        addExplosionAt(event.explosion.explosionX, event.explosion.explosionY, event.explosion.explosionZ, event.explosion.explosionSize);
-    }
-
-    private void handleExplosionPacketInternal(Object packet) {
-        if (packet == null) return;
-        try {
-            java.lang.reflect.Field[] fields = packet.getClass().getDeclaredFields();
-            double[] coords = new double[3];
-            int coordCount = 0;
-            Float strength = null;
-            for (java.lang.reflect.Field field : fields) {
-                field.setAccessible(true);
-                Object value = field.get(packet);
-                if (!(value instanceof Number)) continue;
-                if (coordCount < 3 && (field.getType() == Double.TYPE || value instanceof Double)) {
-                    coords[coordCount++] = ((Number) value).doubleValue();
-                } else if (strength == null && (field.getType() == Float.TYPE || value instanceof Float)) {
-                    strength = ((Number) value).floatValue();
-                }
-            }
-            if (coordCount == 3) {
-                addExplosionAt(coords[0], coords[1], coords[2], strength == null ? 2.0F : strength.floatValue());
-            }
-        } catch (Throwable ignored) {
-            // Packet field names differ between dev/prod mappings; if reflection fails, skip shake safely.
-        }
-    }
-
-    private void addExplosionAt(double x, double y, double z, float strength) {
-        Minecraft mc = Minecraft.getMinecraft();
-        EntityClientPlayerMP player = mc == null ? null : mc.thePlayer;
-        if (player == null) return;
-        double dx = x - player.posX;
-        double dy = y - player.posY;
-        double dz = z - player.posZ;
+        double dx = event.explosion.explosionX - player.posX;
+        double dy = event.explosion.explosionY - player.posY;
+        double dz = event.explosion.explosionZ - player.posZ;
         double dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-        double radius = Math.max(4.0D, strength * 5.0D);
-        if (dist <= radius) addExplosionShake((float) ((1.0D - dist / radius) * strength));
+        double radius = Math.max(4.0D, event.explosion.explosionSize * 5.0D);
+        if (dist <= radius) addExplosionShake((float) ((1.0D - dist / radius) * event.explosion.explosionSize));
     }
 
     private void addImpulse(float strength, float decay, float pitchBias, float yawScale, float rollScale) {
@@ -322,14 +280,6 @@ public final class OverdriveCameraController {
                 (RANDOM.nextFloat() * 2.0F - 1.0F) * strength * yawScale,
                 (RANDOM.nextFloat() * 2.0F - 1.0F) * strength * rollScale,
                 clamp(decay, 0.1F, 0.98F)));
-    }
-
-    private boolean isAds(EntityClientPlayerMP player) {
-        try {
-            return HandmadeGunsCore.HMG_proxy != null && HandmadeGunsCore.Key_ADS(player);
-        } catch (Throwable ignored) {
-            return false;
-        }
     }
 
     private void resetSoft() {
