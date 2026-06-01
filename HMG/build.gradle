@@ -139,10 +139,6 @@ processResources {
 jar {
 	baseName = 'HandmadeGunsOverdrive'
 	version = project.version
-	manifest {
-		attributes 'FMLCorePlugin': 'handmadeguns.coremod.HMGOverdriveCorePlugin'
-		attributes 'FMLCorePluginContainsFMLMod': 'true'
-	}
 }
 
 // ===========================

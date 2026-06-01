@@ -23,7 +23,6 @@ public final class CameraConfig {
     public static float bobSpeed = 0.72F;
     public static float bobSprintMultiplier = 1.35F;
     public static float bobAdsMultiplier = 0.45F;
-    public static boolean bobReplaceVanilla = true;
 
     public static boolean fovEnabled = true;
     public static float fovLerpSpeed = 0.22F;
@@ -37,12 +36,6 @@ public final class CameraConfig {
     public static float recoilShakeMultiplier = 0.18F;
     public static float explosionShakeMultiplier = 1.0F;
     public static float landingShakeMultiplier = 1.0F;
-
-    public static boolean hurtEffectEnabled = true;
-    public static boolean hurtReplaceVanilla = false;
-    public static boolean hurtEffectAddsShake = true;
-    public static float hurtEffectStrength = 6.0F;
-    public static float hurtShakeStrength = 0.45F;
 
     private CameraConfig() {
     }
@@ -67,8 +60,6 @@ public final class CameraConfig {
         bobSpeed = (float) config.get(CATEGORY, "bob.bobSpeed", bobSpeed).getDouble(bobSpeed);
         bobSprintMultiplier = (float) config.get(CATEGORY, "bob.sprintMultiplier", bobSprintMultiplier).getDouble(bobSprintMultiplier);
         bobAdsMultiplier = (float) config.get(CATEGORY, "bob.adsMultiplier", bobAdsMultiplier).getDouble(bobAdsMultiplier);
-        bobReplaceVanilla = config.get(CATEGORY, "bob.replaceVanilla", bobReplaceVanilla,
-                "If true, the EntityRenderer bobbing hook skips vanilla bob and applies Overdrive's smoother bob. If false, vanilla bob is preserved.").getBoolean(bobReplaceVanilla);
 
         fovEnabled = config.get(CATEGORY, "fov.enabled", fovEnabled).getBoolean(fovEnabled);
         fovLerpSpeed = (float) config.get(CATEGORY, "fov.fovLerpSpeed", fovLerpSpeed).getDouble(fovLerpSpeed);
@@ -82,12 +73,5 @@ public final class CameraConfig {
         recoilShakeMultiplier = (float) config.get(CATEGORY, "shake.recoilMultiplier", recoilShakeMultiplier).getDouble(recoilShakeMultiplier);
         explosionShakeMultiplier = (float) config.get(CATEGORY, "shake.explosionMultiplier", explosionShakeMultiplier).getDouble(explosionShakeMultiplier);
         landingShakeMultiplier = (float) config.get(CATEGORY, "shake.landingMultiplier", landingShakeMultiplier).getDouble(landingShakeMultiplier);
-
-        hurtEffectEnabled = config.get(CATEGORY, "hurt.enabled", hurtEffectEnabled).getBoolean(hurtEffectEnabled);
-        hurtReplaceVanilla = config.get(CATEGORY, "hurt.replaceVanilla", hurtReplaceVanilla,
-                "If true, the EntityRenderer hurt-camera hook skips vanilla hurt tilt. If false, Overdrive adds a small supplemental damage shake and vanilla remains.").getBoolean(hurtReplaceVanilla);
-        hurtEffectAddsShake = config.get(CATEGORY, "hurt.addShake", hurtEffectAddsShake).getBoolean(hurtEffectAddsShake);
-        hurtEffectStrength = (float) config.get(CATEGORY, "hurt.rollStrength", hurtEffectStrength).getDouble(hurtEffectStrength);
-        hurtShakeStrength = (float) config.get(CATEGORY, "hurt.shakeStrength", hurtShakeStrength).getDouble(hurtShakeStrength);
     }
 }
