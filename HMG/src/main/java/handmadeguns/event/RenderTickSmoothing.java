@@ -4,6 +4,7 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import handmadeguns.HandmadeGunsCore;
+import handmadeguns.client.camera.OverdriveCameraController;
 import handmadeguns.entity.HMGEntityParticles;
 import handmadeguns.client.render.HMGRenderItemGun_U;
 import handmadeguns.client.render.HMGRenderItemGun_U_NEW;
@@ -60,10 +61,9 @@ public class RenderTickSmoothing {
 
 	public static void addSmoothRecoil(float recoilPitchAmount)
 	{
-		float horizontalSign = RECOIL_RANDOM.nextBoolean() ? 1.0f : -1.0f;
-		float recoilYawAmount = recoilPitchAmount * HORIZONTAL_RECOIL_RATIO * horizontalSign;
-		pendingRecoilPitch += recoilPitchAmount;
-		pendingRecoilYaw += recoilYawAmount;
+		// Visual-only camera impulse. Actual player aim/recoil mechanics are intentionally not changed here;
+		// OverdriveCameraController applies the feel through the patched EntityRenderer render path.
+		OverdriveCameraController.addRecoilShake(Math.abs(recoilPitchAmount));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -200,7 +200,7 @@ public class RenderTickSmoothing {
 
 		if (HMG_proxy.getEntityPlayerInstance() == null) return;
 		EntityPlayer entityPlayer = HMG_proxy.getEntityPlayerInstance();
-		applySmoothRecoil(entityPlayer);
+		// Recoil camera feel is now handled visually by OverdriveCameraController; do not write player.rotationYaw/Pitch here.
 
 		ItemStack held = entityPlayer.getCurrentEquippedItem();
 
@@ -313,34 +313,9 @@ public class RenderTickSmoothing {
 
 	private void applySmoothRecoil(EntityPlayer entityPlayer)
 	{
-		if (entityPlayer == null) return;
-		if (pendingRecoilPitch == 0.0f && recoilVelocityPitch == 0.0f
-				&& pendingRecoilYaw == 0.0f && recoilVelocityYaw == 0.0f) return;
-
-		float immediatePitch = pendingRecoilPitch * RECOIL_INITIAL_IMPULSE;
-		float immediateYaw = pendingRecoilYaw * RECOIL_INITIAL_IMPULSE;
-		float delayedPitch = pendingRecoilPitch - immediatePitch;
-		float delayedYaw = pendingRecoilYaw - immediateYaw;
-
-		recoilVelocityPitch += delayedPitch;
-		recoilVelocityYaw += delayedYaw;
-		pendingRecoilPitch = 0.0f;
-		pendingRecoilYaw = 0.0f;
-
-		float recoilStepPitch = immediatePitch + recoilVelocityPitch * RECOIL_SPRING;
-		float recoilStepYaw = immediateYaw + recoilVelocityYaw * RECOIL_SPRING;
-		recoilVelocityPitch *= RECOIL_DAMPING;
-		recoilVelocityYaw *= RECOIL_DAMPING;
-
-		if (Math.abs(recoilVelocityPitch) < 0.001f) {
-			recoilVelocityPitch = 0.0f;
-		}
-		if (Math.abs(recoilVelocityYaw) < 0.001f) {
-			recoilVelocityYaw = 0.0f;
-		}
-
-		entityPlayer.rotationPitch -= recoilStepPitch;
-		entityPlayer.rotationYaw += recoilStepYaw;
+		// Stub retained for binary/source compatibility with older call sites. Forge 1.7.10 camera
+		// events give us a safe client-only render hook, so this method intentionally avoids
+		// mutating entityPlayer.rotationYaw or rotationPitch.
 	}
 
 

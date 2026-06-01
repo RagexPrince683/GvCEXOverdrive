@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import handmadeguns.client.audio.BulletSoundHMG;
+import handmadeguns.client.camera.OverdriveCameraController;
 import handmadeguns.client.audio.GunSoundHMG;
 import handmadeguns.client.audio.MovingSoundHMG;
 import handmadeguns.client.audio.ReloadSoundHMG;
@@ -199,6 +200,7 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		ClientRegistry.registerKeyBinding(Mode.keyBinding);
 		MinecraftForge.EVENT_BUS.register(new HMGParticles());
 		MinecraftForge.EVENT_BUS.register(new HMGFovHandler());
+		OverdriveCameraController.registerForgeEvents();
 
 
 		try {
