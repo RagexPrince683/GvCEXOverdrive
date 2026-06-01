@@ -23,6 +23,7 @@ import static java.lang.Math.abs;
 public class HMGExplosion extends Explosion {
 	//todo hardpatch for MCH vehicles
 	private static final Random explosionRNG = new Random();
+	private static final boolean DEBUG_HMG_BLAST_EXPOSURE = false;
 	private float explosionDamage = -1.0F;
 
 	public HMGExplosion(World p_i1948_1_, Entity p_i1948_2_, double p_i1948_3_, double p_i1948_5_, double p_i1948_7_, float p_i1948_9_) {
@@ -132,7 +133,9 @@ public class HMGExplosion extends Explosion {
 					d5 /= d9;
 					d6 /= d9;
 					d7 /= d9;
-					double d10 = (double)this.worldObj.getBlockDensity(vec3, entity.boundingBox);
+					// Use HMG exposure so grass, flowers, vines, snow layers, fire, and other
+					// non-cover blocks do not incorrectly absorb configured blast damage.
+					double d10 = (double)this.getHMGBlockDensity(vec3, entity.boundingBox);
 					double d11 = (1.0D - d4) * d10;
 					entity.attackEntityFrom(DamageSource.setExplosionSource(this), getExplosionDamage(entity, d10, d11, f));
 					//we're gonna be buffing this by a multiple of 3 so mcheli fucks off with it's retarded damg calc
@@ -160,6 +163,111 @@ public class HMGExplosion extends Explosion {
 		}
 
 		this.explosionSize = f;
+	}
+
+
+	private float getHMGBlockDensity(Vec3 explosionPos, AxisAlignedBB entityBB)
+	{
+		double sampleStepX = 1.0D / ((entityBB.maxX - entityBB.minX) * 2.0D + 1.0D);
+		double sampleStepY = 1.0D / ((entityBB.maxY - entityBB.minY) * 2.0D + 1.0D);
+		double sampleStepZ = 1.0D / ((entityBB.maxZ - entityBB.minZ) * 2.0D + 1.0D);
+
+		if (sampleStepX <= 0.0D || sampleStepY <= 0.0D || sampleStepZ <= 0.0D)
+		{
+			return 0.0F;
+		}
+
+		int unblockedSamples = 0;
+		int totalSamples = 0;
+		double xOffset = (1.0D - Math.floor(1.0D / sampleStepX) * sampleStepX) / 2.0D;
+		double zOffset = (1.0D - Math.floor(1.0D / sampleStepZ) * sampleStepZ) / 2.0D;
+
+		for (double sampleX = 0.0D; sampleX <= 1.0D; sampleX += sampleStepX)
+		{
+			for (double sampleY = 0.0D; sampleY <= 1.0D; sampleY += sampleStepY)
+			{
+				for (double sampleZ = 0.0D; sampleZ <= 1.0D; sampleZ += sampleStepZ)
+				{
+					double x = entityBB.minX + (entityBB.maxX - entityBB.minX) * sampleX;
+					double y = entityBB.minY + (entityBB.maxY - entityBB.minY) * sampleY;
+					double z = entityBB.minZ + (entityBB.maxZ - entityBB.minZ) * sampleZ;
+
+					if (!this.isHMGBlastRayBlocked(Vec3.createVectorHelper(x + xOffset, y, z + zOffset), explosionPos))
+					{
+						++unblockedSamples;
+					}
+
+					++totalSamples;
+				}
+			}
+		}
+
+		return (float)unblockedSamples / (float)totalSamples;
+	}
+
+	private boolean isHMGBlastRayBlocked(Vec3 start, Vec3 end)
+	{
+		double deltaX = end.xCoord - start.xCoord;
+		double deltaY = end.yCoord - start.yCoord;
+		double deltaZ = end.zCoord - start.zCoord;
+		double distance = MathHelper.sqrt_double(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+		int steps = Math.max(1, MathHelper.ceiling_double_int(distance / 0.25D));
+
+		for (int step = 0; step <= steps; ++step)
+		{
+			double progress = (double)step / (double)steps;
+			int x = MathHelper.floor_double(start.xCoord + deltaX * progress);
+			int y = MathHelper.floor_double(start.yCoord + deltaY * progress);
+			int z = MathHelper.floor_double(start.zCoord + deltaZ * progress);
+
+			if (this.hmgBlocksExplosionDamage(this.worldObj, x, y, z))
+			{
+				if (DEBUG_HMG_BLAST_EXPOSURE)
+				{
+					System.out.println("HMG blast exposure blocked by " + this.worldObj.getBlock(x, y, z) + " at " + x + "," + y + "," + z);
+				}
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private boolean hmgBlocksExplosionDamage(World world, int x, int y, int z)
+	{
+		Block block = world.getBlock(x, y, z);
+
+		if (block == null || block.isAir(world, x, y, z))
+		{
+			return false;
+		}
+
+		Material material = block.getMaterial();
+
+		if (material == Material.air || material.isReplaceable() || material == Material.plants || material == Material.vine || material == Material.leaves || material == Material.snow || material == Material.fire || material == Material.water || material == Material.lava)
+		{
+			return false;
+		}
+
+		if (block == Blocks.tallgrass || block == Blocks.double_plant || block == Blocks.yellow_flower || block == Blocks.red_flower || block == Blocks.deadbush || block == Blocks.vine || block == Blocks.snow_layer || block == Blocks.fire || block == Blocks.wheat || block == Blocks.carrots || block == Blocks.potatoes || block == Blocks.reeds || block == Blocks.waterlily)
+		{
+			return false;
+		}
+
+		if (!block.isOpaqueCube() || !block.renderAsNormalBlock())
+		{
+			return false;
+		}
+
+		block.setBlockBoundsBasedOnState(world, x, y, z);
+
+		if (block.getCollisionBoundingBoxFromPool(world, x, y, z) == null)
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	private float getExplosionDamage(Entity entity, double blockDensity, double vanillaExposure, float fullDamageRadius)
