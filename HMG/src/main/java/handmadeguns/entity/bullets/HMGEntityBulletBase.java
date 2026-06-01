@@ -598,14 +598,10 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 
 			List list = worldObj.loadedEntityList;
 
-			double maxDist = damageRange;
+			double fullDamageDist = damageRange;
+			double maxDist = damageRange * 2.0D;
 			double maxDistSq = maxDist * maxDist;
 
-			// Global shrapnel nerf multiplier (TUNE THIS)
-			final double shrapnelMultiplier = 0.15;  // 15% of normal damage
-
-			// Hard safety cap
-			final float maxShrapnelDamage = 8.0F;    // never exceed 8 damage (~4 hearts)
 
 			for (int j = 0; j < list.size(); ++j) {
 
@@ -658,18 +654,18 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 					}
 				}
 
-				// Distance falloff
+				// Full damage inside the configured radius, then linear falloff to zero
+				// over the same distance beyond it.
 				double dist = Math.sqrt(distSq);
-				double falloff = 1.0 - (dist / maxDist); // linear falloff
+				double falloff = 1.0D;
+				if (dist > fullDamageDist) {
+					falloff = 1.0D - ((dist - fullDamageDist) / (maxDist - fullDamageDist));
+				}
 
 				if (falloff <= 0) continue;
 
 				// FINAL DAMAGE CALC
-				float finalDmg = (float)(baseDmg * falloff * shrapnelMultiplier);
-
-				// Cap max damage to avoid insane values
-				if (finalDmg > maxShrapnelDamage)
-					finalDmg = maxShrapnelDamage;
+				float finalDmg = (float)(baseDmg * falloff);
 
 				if (finalDmg <= 0) continue;
 
@@ -765,7 +761,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 		//there is FUCKING MORE EXPLOSION CODE HERE JUST INCASE ALL THE OTHER SHIT WASN'T ENOUGH ALREADY!!!
 		noex = true;
 		if(!worldObj.isRemote){
-			HMGExplosion explosion = new HMGExplosion(worldObj,thrower,x,y,z, level);
+			HMGExplosion explosion = new HMGExplosion(worldObj,thrower,x,y,z, level, Bdamege);
 			explosion.isFlaming = false;
 			explosion.isSmoking = candestroy;
 			if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(worldObj, explosion)) return;

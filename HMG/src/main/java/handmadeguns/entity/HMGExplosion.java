@@ -23,9 +23,16 @@ import static java.lang.Math.abs;
 public class HMGExplosion extends Explosion {
 	//todo hardpatch for MCH vehicles
 	private static final Random explosionRNG = new Random();
+	private float explosionDamage = -1.0F;
+
 	public HMGExplosion(World p_i1948_1_, Entity p_i1948_2_, double p_i1948_3_, double p_i1948_5_, double p_i1948_7_, float p_i1948_9_) {
+		this(p_i1948_1_, p_i1948_2_, p_i1948_3_, p_i1948_5_, p_i1948_7_, p_i1948_9_, -1.0F);
+	}
+
+	public HMGExplosion(World p_i1948_1_, Entity p_i1948_2_, double p_i1948_3_, double p_i1948_5_, double p_i1948_7_, float p_i1948_9_, float explosionDamage) {
 		super(p_i1948_1_, p_i1948_2_, p_i1948_3_, p_i1948_5_, p_i1948_7_, p_i1948_9_);
 		this.worldObj = p_i1948_1_;
+		this.explosionDamage = explosionDamage;
 	}
 
 	private World worldObj;
@@ -127,7 +134,7 @@ public class HMGExplosion extends Explosion {
 					d7 /= d9;
 					double d10 = (double)this.worldObj.getBlockDensity(vec3, entity.boundingBox);
 					double d11 = (1.0D - d4) * d10;
-					entity.attackEntityFrom(DamageSource.setExplosionSource(this), (float)((int)((d11 * d11 + d11) / 1.2D * (double)this.explosionSize * 3)));
+					entity.attackEntityFrom(DamageSource.setExplosionSource(this), getExplosionDamage(entity, d10, d11, f));
 					//we're gonna be buffing this by a multiple of 3 so mcheli fucks off with it's retarded damg calc
 					//old method:
 					//entity.attackEntityFrom(DamageSource.setExplosionSource(this), (float)((int)((d11 * d11 + d11) / 2.0D * 8.0D * (double)this.explosionSize + 1.0D)));
@@ -153,6 +160,30 @@ public class HMGExplosion extends Explosion {
 		}
 
 		this.explosionSize = f;
+	}
+
+	private float getExplosionDamage(Entity entity, double blockDensity, double vanillaExposure, float fullDamageRadius)
+	{
+		if (this.explosionDamage < 0.0F)
+		{
+			return (float)((int)((vanillaExposure * vanillaExposure + vanillaExposure) / 1.2D * (double)this.explosionSize * 3));
+		}
+
+		double distance = entity.getDistance(this.explosionX, this.explosionY, this.explosionZ);
+		double falloff = 1.0D;
+		double falloffRange = (double)this.explosionSize - (double)fullDamageRadius;
+
+		if (falloffRange > 0.0D && distance > (double)fullDamageRadius)
+		{
+			falloff = 1.0D - ((distance - (double)fullDamageRadius) / falloffRange);
+		}
+
+		if (falloff <= 0.0D || blockDensity <= 0.0D)
+		{
+			return 0.0F;
+		}
+
+		return (float)((double)this.explosionDamage * falloff * blockDensity);
 	}
 
 	/**
