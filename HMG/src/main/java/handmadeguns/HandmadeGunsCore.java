@@ -21,6 +21,7 @@ import cpw.mods.fml.common.gameevent.InputEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import handmadeguns.blocks.HMGBlockMounter;
+import handmadeguns.camera.CameraConfig;
 import handmadeguns.command.HMG_CommandReloadparm;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
@@ -231,6 +232,7 @@ public class HandmadeGunsCore {
 		cfg_Flash	= lconf.get("Render", "cfg_Flash", true).getBoolean(true);
 		cfg_defaultknockback = lconf.get("Gun", "cfg_KnockBack", 0.05).getDouble(0.05);
 		cfg_defaultknockbacky = lconf.get("Gun", "cfg_KnockBackY", 0.01).getDouble(0.01);
+		CameraConfig.load(lconf);
 
 		lconf.save();
 
@@ -748,9 +750,11 @@ public class HandmadeGunsCore {
 		FMLCommonHandler.instance().bus().register(hmgLivingUpdateEvent);
 		MinecraftForge.EVENT_BUS.register(hmgLivingUpdateEvent);
 
-		RenderTickSmoothing renderTickSmoothing = new RenderTickSmoothing();
-		FMLCommonHandler.instance().bus().register(renderTickSmoothing);
-		MinecraftForge.EVENT_BUS.register(renderTickSmoothing);
+		if (pEvent.getSide().isClient()) {
+			RenderTickSmoothing renderTickSmoothing = new RenderTickSmoothing();
+			FMLCommonHandler.instance().bus().register(renderTickSmoothing);
+			MinecraftForge.EVENT_BUS.register(renderTickSmoothing);
+		}
 
 		//I don't know if this is needed. I don't know how this fucking mod works. I don't know why this isn't working. OH MY GOD JUST FUCKING WORK
 		//NetworkRegistry.INSTANCE.registerGuiHandler(this, new HMGGuiHandler());
