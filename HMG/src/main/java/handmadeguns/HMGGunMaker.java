@@ -6,7 +6,9 @@ import cpw.mods.fml.common.registry.LanguageRegistry;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
@@ -41,6 +43,10 @@ public class HMGGunMaker {
 	public static ScriptEngine currentScript;
 	public static FileReader currentScriptFile;
 
+	private static final ScriptEngineManager SCRIPT_ENGINE_MANAGER = new ScriptEngineManager(null);
+	private static final Map<String, ResourceLocation> RESOURCE_LOCATION_CACHE = new HashMap<String, ResourceLocation>();
+	private static final Map<String, IModelCustom> MODEL_CACHE = new HashMap<String, IModelCustom>();
+
 	public static float damageCof = 0;
 	public static float speedCof = 0;
 
@@ -48,6 +54,9 @@ public class HMGGunMaker {
 
 
 	public void load( boolean isClient, File file1) {
+		long loadStartNanos = System.nanoTime();
+		int parsedLines = 0;
+		int modelRegistrations = 0;
 		GunInfo gunInfo = new GunInfo();
 		String  GunName = null;
 		String  displayNamegun = null;
@@ -287,8 +296,9 @@ public class HMGGunMaker {
 
 				String str;
 				while ((str = br.readLine()) != null) { // 1行ずつ読み込む
+					parsedLines++;
 					// System.out.println(str);
-					String[] type = str.split(",");
+					String[] type = splitComma(str);
 					if(!type[0].equals("Recipe1")&& !type[0].equals("Recipe2") && !type[0].equals("Recipe3") && !type[0].equals("addRecipe") && !type[0].equals("addNewRecipe") && !type[0].equals("Magazine")){
 						for(int i=0;i<type.length;i++){
 							type[i] = type[i].trim();
@@ -309,7 +319,7 @@ public class HMGGunMaker {
 									if (str.equals("{")) continue;
 									if (str.equals("}")) break;
 									if (str.isEmpty()) continue;
-									String[] key = str.split(",");
+									String[] key = splitComma(str);
 									reloadanimation.add(parseInt(key[0]), new Float[]{
 													parseFloat(key[1]),
 													
@@ -971,8 +981,9 @@ public class HMGGunMaker {
 									e.printStackTrace();
 								}
 								if (gunInfo.canobj && isClient) {
-									IModelCustom gunobj = AdvancedModelLoader.loadModel(new ResourceLocation("handmadeguns:textures/model/" + objmodel));
-									ResourceLocation guntexture = new ResourceLocation("handmadeguns:textures/model/" + objtexture);
+									IModelCustom gunobj = getCachedModel("handmadeguns:textures/model/" + objmodel);
+									ResourceLocation guntexture = getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
+									modelRegistrations++;
 									boolean useLegacyInventoryScale = false;
 									if(partslist.isEmpty()) {
 										partslist = createLegacyCompatibleParts(mat22, mat22posx, mat22posy, mat22posz, mat22rotex, mat22rotey, mat22rotez, mat25, mat25posx, mat25posy, mat25posz, mat25rotex, mat25rotey, mat25rotez, mat31posx, mat31posy, mat31posz, mat31rotex, mat31rotey, mat31rotez, mat32posx, mat32posy, mat32posz, mat32rotex, mat32rotey, mat32rotez, remat31, remat3, cockleft, alljump);
@@ -1074,9 +1085,9 @@ public class HMGGunMaker {
 							}
 
 							if (gunInfo.canobj && isClient) {
-								ResourceLocation guntexture = new ResourceLocation("handmadeguns:textures/model/" + objtexture);
-								IModelCustom gunobj = AdvancedModelLoader
-										.loadModel(new ResourceLocation("handmadeguns:textures/model/" + objmodel));
+								ResourceLocation guntexture = getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
+								IModelCustom gunobj = getCachedModel("handmadeguns:textures/model/" + objmodel);
+								modelRegistrations++;
 								MinecraftForgeClient.registerItemRenderer(newgun, new HMGRenderItemGun_S(gunobj,guntexture,
 										                                                                        gunInfo.modelscale, modelhigh, modelhighr, modelhighs, modelwidthx, modelwidthxr, modelwidthxs, modelwidthz
 										, modelwidthzr, modelwidthzs, rotationx, rotationxr, rotationxs, rotationy, rotationyr, rotationys
@@ -1326,7 +1337,62 @@ public class HMGGunMaker {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			logLoadTiming(file1, parsedLines, modelRegistrations, loadStartNanos);
 		}
+	}
+
+
+	static String[] splitComma(String value) {
+		return splitPreserveStringSplitSemantics(value, ',');
+	}
+
+	static String[] splitColon(String value) {
+		return splitPreserveStringSplitSemantics(value, ':');
+	}
+
+	private static String[] splitPreserveStringSplitSemantics(String value, char delimiter) {
+		// String.split() compiles a regex for these hot TXT parsing paths.  This
+		// helper keeps String.split's default behavior by discarding trailing empty
+		// tokens, preserving legacy pack compatibility while avoiding regex work.
+		ArrayList<String> tokens = new ArrayList<String>();
+		int start = 0;
+		for (int i = 0; i < value.length(); i++) {
+			if (value.charAt(i) == delimiter) {
+				tokens.add(value.substring(start, i));
+				start = i + 1;
+			}
+		}
+		tokens.add(value.substring(start));
+		for (int i = tokens.size() - 1; i > 0 && tokens.get(i).length() == 0; i--) {
+			tokens.remove(i);
+		}
+		return tokens.toArray(new String[tokens.size()]);
+	}
+
+	static ResourceLocation getCachedResourceLocation(String path) {
+		ResourceLocation location = RESOURCE_LOCATION_CACHE.get(path);
+		if (location == null) {
+			location = new ResourceLocation(path);
+			RESOURCE_LOCATION_CACHE.put(path, location);
+		}
+		return location;
+	}
+
+	static IModelCustom getCachedModel(String path) {
+		IModelCustom model = MODEL_CACHE.get(path);
+		if (model == null) {
+			// Gun pack resources are immutable after the pack scan/resource refresh
+			// phase, so the same OBJ can be safely reused by multiple guns/renderers.
+			model = AdvancedModelLoader.loadModel(getCachedResourceLocation(path));
+			MODEL_CACHE.put(path, model);
+		}
+		return model;
+	}
+
+	private static void logLoadTiming(File file, int parsedLines, int modelRegistrations, long startNanos) {
+		long elapsedMs = (System.nanoTime() - startNanos) / 1000000L;
+		System.out.println("[HMG][Timing] gun TXT parse " + file.getName() + " lines=" + parsedLines + " modelRegistrations=" + modelRegistrations + " took " + elapsedMs + " ms");
 	}
 
 	//TODO:INJECTING
@@ -1351,7 +1417,7 @@ public class HMGGunMaker {
 				while ((str = br.readLine()) != null){
 					str_Debug = str;
 					l++;
-					String[] type = str.split(",");
+					String[] type = splitComma(str);
 
 
 					if(type[0] == null){
@@ -1406,7 +1472,7 @@ public class HMGGunMaker {
 							setSlot(8, type, onslot, items, itemstacks);
 							break;
 						case "CRAFTITEM":
-							itemids = type[1].split(":");
+							itemids = splitColon(type[1]);
 							itemlist = new ArrayList<Object>(Arrays.asList(new Object[9]));
 							char[] rf = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'};
 							for(int var0 = 0; var0 < 9; var0++){
@@ -1511,7 +1577,7 @@ public class HMGGunMaker {
 	}
 	public static void setSlot(int index,String[] type, boolean[] onslot ,Item[] items, ItemStack[] itemstacks){
 		if(type[1] != null){
-			String[] itemids = type[1].split(":");
+			String[] itemids = splitColon(type[1]);
 			if(itemids.length == 2){
 				items[index] = GameRegistry.findItem(itemids[0], itemids[1]);
 				itemstacks[index] = null;
@@ -1596,7 +1662,7 @@ public class HMGGunMaker {
 	}
 	private static ScriptEngine doScript(String s)
 	{
-		ScriptEngine se = (new ScriptEngineManager(null)).getEngineByName("js");//引数にnull入れないと20でぬるぽ
+		ScriptEngine se = SCRIPT_ENGINE_MANAGER.getEngineByName("js");//引数にnull入れないと20でぬるぽ
 
 		try
 		{
@@ -2164,7 +2230,7 @@ public class HMGGunMaker {
 			case "MultiMagazine": {
 				gunInfo.magazine = new Item[type.length-1];
 				for(int i = 1;i < type.length;i++){
-					String[] parts = type[i].split(":");
+					String[] parts = splitColon(type[i]);
 					String modId = parts[0];
 					String name = parts[1];
 					gunInfo.magazine[i-1] = GameRegistry.findItem(modId, name);
@@ -2550,7 +2616,7 @@ public class HMGGunMaker {
 
 	private static ScriptEngine doScript(FileReader s)
 	{
-		ScriptEngine se = (new ScriptEngineManager(null)).getEngineByName("js");//引数にnull入れないと20でぬるぽ
+		ScriptEngine se = SCRIPT_ENGINE_MANAGER.getEngineByName("js");//引数にnull入れないと20でぬるぽ
 
 		try
 		{

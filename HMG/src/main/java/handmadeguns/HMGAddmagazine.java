@@ -6,7 +6,6 @@ import handmadeguns.items.HMGItemBullet_with_Internal_Bullet;
 import handmadeguns.client.render.HMGRenderItemCustom;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 import java.io.*;
@@ -44,7 +43,7 @@ public class HMGAddmagazine {
                 e.printStackTrace();
             }
             while ((str = br.readLine()) != null) {  // 1�s���ǂݍ���
-                String[] data = str.split(",");
+                String[] data = HMGGunMaker.splitComma(str);
                 if(data.length>0){
                     if(data[0].equals("StackSize")){
                         stacksize = Integer.parseInt(data[1]);
@@ -131,9 +130,8 @@ public class HMGAddmagazine {
                         }
                         System.out.println("" + Name);
                         if(canobj && isClient) {
-                            IModelCustom attach = AdvancedModelLoader
-                                    .loadModel(new ResourceLocation("handmadeguns:textures/model/" + objmodel));
-                            ResourceLocation attachtexture = new ResourceLocation("handmadeguns:textures/model/" + objtexture);
+                            IModelCustom attach = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + objmodel);
+                            ResourceLocation attachtexture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
                             MinecraftForgeClient.registerItemRenderer(newmagazine, new HMGRenderItemCustom(attach, attachtexture));
                         }
                         GameRegistry.registerItem(newmagazine, Name);
