@@ -391,7 +391,8 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
 				GL11.glTranslatef(9.5F, 0.5F, 5.5F);
 
-				float iconScale = (gunitem.gunInfo.inventoryscale * 8 * modelscala) * gunitem.gunInfo.inworldScale;
+				float inventoryScaleMultiplier = partsRender_gun.useLegacyInventoryScale ? 1.0F : 8.0F;
+				float iconScale = (gunitem.gunInfo.inventoryscale * inventoryScaleMultiplier * modelscala) * gunitem.gunInfo.inworldScale;
 				GL11.glScalef(-iconScale, iconScale, iconScale);
 
 				try { glMatrixForRenderInInventory(); } catch (Throwable ignored) {}

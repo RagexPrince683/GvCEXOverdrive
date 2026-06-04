@@ -973,8 +973,10 @@ public class HMGGunMaker {
 								if (gunInfo.canobj && isClient) {
 									IModelCustom gunobj = AdvancedModelLoader.loadModel(new ResourceLocation("handmadeguns:textures/model/" + objmodel));
 									ResourceLocation guntexture = new ResourceLocation("handmadeguns:textures/model/" + objtexture);
+									boolean useLegacyInventoryScale = false;
 									if(partslist.isEmpty()) {
 										partslist = createLegacyCompatibleParts(mat22, mat22posx, mat22posy, mat22posz, mat22rotex, mat22rotey, mat22rotez, mat25, mat25posx, mat25posy, mat25posz, mat25rotex, mat25rotey, mat25rotez, mat31posx, mat31posy, mat31posz, mat31rotex, mat31rotey, mat31rotez, mat32posx, mat32posy, mat32posz, mat32rotex, mat32rotey, mat32rotez, remat31, remat3, cockleft, alljump);
+										useLegacyInventoryScale = true;
 									}
 									IItemRenderer gunrender = MinecraftForgeClient.getItemRenderer(new ItemStack(newgun), IItemRenderer.ItemRenderType.EQUIPPED);
 									if(gunrender instanceof HMGRenderItemGun_U_NEW){
@@ -997,6 +999,7 @@ public class HMGGunMaker {
 											
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.partslist = partslist;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.gunPartsScale = gunPartsScale;
+											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.useLegacyInventoryScale = useLegacyInventoryScale;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.muzzleattachoffset = barrelattachoffset;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.muzzleattachrotation = barrelattachrotation;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.sightattachoffset = sightattachoffset;
@@ -1026,6 +1029,7 @@ public class HMGGunMaker {
 											
 											renderItemGun_u_new.partsRender_gun.partslist = partslist;
 											renderItemGun_u_new.partsRender_gun.gunPartsScale = gunPartsScale;
+											renderItemGun_u_new.partsRender_gun.useLegacyInventoryScale = useLegacyInventoryScale;
 											renderItemGun_u_new.partsRender_gun.muzzleattachoffset = barrelattachoffset;
 											renderItemGun_u_new.partsRender_gun.muzzleattachrotation = barrelattachrotation;
 											renderItemGun_u_new.partsRender_gun.sightattachoffset = sightattachoffset;
