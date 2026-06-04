@@ -29,6 +29,10 @@ public class HMGManualGunPickup {
         return entityItem != null && !entityItem.isDead && isManualPickupStack(entityItem.getEntityItem());
     }
 
+    public static boolean isHMGGunStack(ItemStack stack) {
+        return stack != null && stack.getItem() instanceof HMGItem_Unified_Guns;
+    }
+
     public static EntityItem getLookedAtGunItem(EntityPlayer player, double range) {
         if (player == null || player.worldObj == null) return null;
         Vec3 start = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
@@ -86,6 +90,8 @@ public class HMGManualGunPickup {
         ItemStack entityStack = entityItem.getEntityItem();
         if (entityStack == null || entityStack.stackSize <= 0) return false;
 
+        if (trySwapHeldGun(player, entityItem, entityStack)) return true;
+
         ItemStack insertStack = entityStack.copy();
         int originalSize = insertStack.stackSize;
         boolean fullyInserted = player.inventory.addItemStackToInventory(insertStack);
@@ -104,6 +110,32 @@ public class HMGManualGunPickup {
             entityStack.stackSize = remaining;
         }
 
+        return true;
+    }
+
+    private static boolean trySwapHeldGun(EntityPlayer player, EntityItem entityItem, ItemStack entityStack) {
+        ItemStack heldStack = player.getHeldItem();
+        if (!isHMGGunStack(heldStack) || !isHMGGunStack(entityStack)) return false;
+
+        int currentSlot = player.inventory.currentItem;
+        if (currentSlot < 0 || currentSlot >= player.inventory.mainInventory.length) return false;
+
+        ItemStack pickedUpStack = entityStack.copy();
+        ItemStack droppedStack = heldStack.copy();
+        player.inventory.mainInventory[currentSlot] = pickedUpStack;
+        player.inventory.markDirty();
+        if (player.inventoryContainer != null) {
+            player.inventoryContainer.detectAndSendChanges();
+        }
+
+        entityItem.playSound("random.pop", 0.2F, ((entityItem.worldObj.rand.nextFloat() - entityItem.worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+        player.onItemPickup(entityItem, pickedUpStack.stackSize);
+        entityItem.setEntityItemStack(droppedStack);
+        entityItem.delayBeforeCanPickup = 10;
+        entityItem.age = 0;
+        entityItem.motionX = 0.0D;
+        entityItem.motionY = 0.0D;
+        entityItem.motionZ = 0.0D;
         return true;
     }
 }
