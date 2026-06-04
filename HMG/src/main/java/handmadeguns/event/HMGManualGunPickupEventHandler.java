@@ -1,7 +1,7 @@
 package handmadeguns.event;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import handmadeguns.util.HMGManualGunPickup;
+import handmadeguns.HMGManualGunPickup;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 
 import static handmadeguns.HandmadeGunsCore.enableManualGunPickup;

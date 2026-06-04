@@ -4,7 +4,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import handmadeguns.HMGPacketHandler;
 import handmadeguns.network.PacketManualGunPickup;
-import handmadeguns.util.HMGManualGunPickup;
+import handmadeguns.HMGManualGunPickup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.item.EntityItem;
