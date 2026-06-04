@@ -59,5 +59,7 @@ public class HMGPacketHandler {
                 Side.CLIENT);
         INSTANCE.registerMessage(MessageCatch_SetElevation.class, PacketSetElevation.class, ++id,
                 Side.SERVER);
+        INSTANCE.registerMessage(MessageCatcher_ManualGunPickup.class, PacketManualGunPickup.class, ++id,
+                Side.SERVER);
     }
 }

@@ -150,6 +150,11 @@ public class HandmadeGunsCore {
 	public static double cfg_defaultknockback;
 	public static double cfg_defaultknockbacky;
 	public static boolean cfgRender_useStencil = true;
+	public static boolean enableManualGunPickup = true;
+	public static double manualGunPickupRange = 3.0D;
+	public static boolean manualGunPickupRequiresLineOfSight = true;
+	public static boolean manualGunPickupOnlyGuns = true;
+	public static boolean enableGunGroundPhysicsRender = false;
 
 
 	public static Item hmg_bullet;
@@ -238,6 +243,11 @@ public class HandmadeGunsCore {
 		cfg_Flash	= lconf.get("Render", "cfg_Flash", true).getBoolean(true);
 		cfg_defaultknockback = lconf.get("Gun", "cfg_KnockBack", 0.05).getDouble(0.05);
 		cfg_defaultknockbacky = lconf.get("Gun", "cfg_KnockBackY", 0.01).getDouble(0.01);
+		enableManualGunPickup = lconf.get("ManualGunPickup", "enableManualGunPickup", true, "When true, dropped HMG gun items are not picked up by walking over them; players must use the Pickup HMG Gun key.").getBoolean(true);
+		manualGunPickupRange = lconf.get("ManualGunPickup", "manualGunPickupRange", 3.0D, "Maximum distance, in blocks, for the manual dropped-gun pickup request.", 0.1D, 8.0D).getDouble(3.0D);
+		manualGunPickupRequiresLineOfSight = lconf.get("ManualGunPickup", "manualGunPickupRequiresLineOfSight", true, "When true, the server requires the player to be looking at the dropped gun with no block in the way.").getBoolean(true);
+		manualGunPickupOnlyGuns = lconf.get("ManualGunPickup", "manualGunPickupOnlyGuns", true, "When true, only HMG gun items use manual pickup. If false, other HandmadeGuns items may also use it; non-HMG items are never affected.").getBoolean(true);
+		enableGunGroundPhysicsRender = lconf.get("ManualGunPickup", "enableGunGroundPhysicsRender", false, "Client-side only: render dropped HMG guns with a flat, physical-looking orientation when supported by the HMG gun renderer.").getBoolean(false);
 
 		lconf.save();
 
@@ -734,6 +744,7 @@ public class HandmadeGunsCore {
 		WhizEventHandler whizHandler = new WhizEventHandler();
 		FMLCommonHandler.instance().bus().register(whizHandler);
 		MinecraftForge.EVENT_BUS.register(whizHandler);
+		MinecraftForge.EVENT_BUS.register(new HMGManualGunPickupEventHandler());
 
 
 //		EntityRegistry.registerModEntity(EntityItemFrameHMG.class, "ItemFrameHMG", 200, this, 128, 5, true);
