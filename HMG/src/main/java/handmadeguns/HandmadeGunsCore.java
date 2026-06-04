@@ -88,6 +88,13 @@ import static handmadeguns.HMGGunMaker.checkBeforeReadfile;
 
 public class HandmadeGunsCore {
 
+	private static final Comparator<File> FILE_NAME_COMPARATOR = new Comparator<File>() {
+		public int compare(File file1, File file2) {
+			return file1.getName().compareTo(file2.getName());
+		}
+	};
+	private static final ScriptEngineManager SCRIPT_ENGINE_MANAGER = new ScriptEngineManager(null);
+
 	//@Mod.Instance
 	//public static HandmadeGunsCore instance2;
 	public static float textureOffsetU;//for textureAnimation
@@ -288,68 +295,66 @@ public class HandmadeGunsCore {
 
 		//TODO:INJECT_FUNCTION
 		File[] packlist = packdir_normal.listFiles();
-		Arrays.sort(packlist, new Comparator<File>() {
-			public int compare(File file1, File file2){
-				return file1.getName().compareTo(file2.getName());
-			}
-		});
-		for (File aPacklist : packlist) {
-			if (aPacklist.isDirectory()) {
-				File[] addscripts = getFileList(aPacklist, "addscripts");
-				if (addscripts != null && addscripts.length > 0) {
-					for (File aScript : addscripts) {
-						System.out.println("debug" + aScript);
-						try {
-							ScriptEngine script = (new ScriptEngineManager(null)).getEngineByName("js");
+		if (packlist != null) {
+			Arrays.sort(packlist, FILE_NAME_COMPARATOR);
+			for (File aPacklist : packlist) {
+				if (aPacklist.isDirectory()) {
+					File[] addscripts = getFileList(aPacklist, "addscripts");
+					if (addscripts != null && addscripts.length > 0) {
+						for (File aScript : addscripts) {
+							System.out.println("debug" + aScript);
 							try {
-								if (script.toString().contains("Nashorn")) {
-									script.eval("load(\"nashorn:mozilla_compat.js\");");
-								}
-								script.eval(new FileReader(aScript));
+								ScriptEngine script = SCRIPT_ENGINE_MANAGER.getEngineByName("js");
 								try {
-									((Invocable) script).invokeFunction("preInit", pEvent);
+									if (script.toString().contains("Nashorn")) {
+										script.eval("load(\"nashorn:mozilla_compat.js\");");
+									}
+									script.eval(new FileReader(aScript));
+									try {
+										((Invocable) script).invokeFunction("preInit", pEvent);
+									} catch (ScriptException e) {
+										e.printStackTrace();
+									} catch (NoSuchMethodException e) {
+										e.printStackTrace();
+									}
+									scripts.add((Invocable) script);
 								} catch (ScriptException e) {
-									e.printStackTrace();
-								} catch (NoSuchMethodException e) {
-									e.printStackTrace();
+									throw new RuntimeException("Script exec error", e);
 								}
-								scripts.add((Invocable) script);
-							} catch (ScriptException e) {
-								throw new RuntimeException("Script exec error", e);
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
 							}
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
 						}
 					}
-				}
-				File[] addscripts_2 = getFileList(aPacklist, "scripts");
-				if (addscripts_2 != null && addscripts_2.length > 0) {
-					for (File aScript : addscripts_2) {
-						System.out.println("debug" + aScript);
-						try {
-							ScriptEngine script = (new ScriptEngineManager(null)).getEngineByName("js");
+					File[] addscripts_2 = getFileList(aPacklist, "scripts");
+					if (addscripts_2 != null && addscripts_2.length > 0) {
+						for (File aScript : addscripts_2) {
+							System.out.println("debug" + aScript);
 							try {
-								if (script.toString().contains("Nashorn")) {
-									script.eval("load(\"nashorn:mozilla_compat.js\");");
-								}
-								script.eval(new FileReader(aScript));
+								ScriptEngine script = SCRIPT_ENGINE_MANAGER.getEngineByName("js");
 								try {
-									((Invocable) script).invokeFunction("preInit", pEvent);
+									if (script.toString().contains("Nashorn")) {
+										script.eval("load(\"nashorn:mozilla_compat.js\");");
+									}
+									script.eval(new FileReader(aScript));
+									try {
+										((Invocable) script).invokeFunction("preInit", pEvent);
+									} catch (ScriptException e) {
+										e.printStackTrace();
+									} catch (NoSuchMethodException e) {
+										e.printStackTrace();
+									}
+									scripts.add((Invocable) script);
 								} catch (ScriptException e) {
-									e.printStackTrace();
-								} catch (NoSuchMethodException e) {
-									e.printStackTrace();
+									throw new RuntimeException("Script exec error", e);
 								}
-								scripts.add((Invocable) script);
-							} catch (ScriptException e) {
-								throw new RuntimeException("Script exec error", e);
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
 							}
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
 						}
 					}
+					//fileSetup(filelist1[pack], "addbattlepack", "battlepacks");
 				}
-				//fileSetup(filelist1[pack], "addbattlepack", "battlepacks");
 			}
 		}
 		//END
@@ -361,13 +366,11 @@ public class HandmadeGunsCore {
 
 	}
 	public void readPackResource(File packdir,boolean isClient){
+		long startNanos = System.nanoTime();
+		int copiedResources = 0;
 		File[] packlist = packdir.listFiles();
 		if(packlist == null)return;
-		Arrays.sort(packlist, new Comparator<File>() {
-			public int compare(File file1, File file2){
-				return file1.getName().compareTo(file2.getName());
-			}
-		});
+		Arrays.sort(packlist, FILE_NAME_COMPARATOR);
 		for (File apack : packlist) {
 			if (apack.isDirectory()) {
 				String assetsdirstring = apack.getName() + File.separatorChar + "assets" + File.separatorChar + "handmadeguns" + File.separatorChar;
@@ -380,6 +383,7 @@ public class HandmadeGunsCore {
 									"textures" + File.separatorChar + "model" + File.separatorChar + filemodel[ii].getName());
 							try {
 								FileUtils.copyFile(filemodel[ii], directory111);
+								copiedResources++;
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -395,6 +399,7 @@ public class HandmadeGunsCore {
 									"textures" + File.separatorChar + "items" + File.separatorChar + filetexture[ii].getName());
 							try {
 								FileUtils.copyFile(filetexture[ii], directory111);
+								copiedResources++;
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -410,6 +415,7 @@ public class HandmadeGunsCore {
 									"textures" + File.separatorChar + "misc" + File.separatorChar + filesighttexture[ii].getName());
 							try {
 								FileUtils.copyFile(filesighttexture[ii], directory111);
+								copiedResources++;
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -425,6 +431,7 @@ public class HandmadeGunsCore {
 									"sounds" + File.separatorChar + filesound[ii].getName());
 							try {
 								FileUtils.copyFile(filesound[ii], directory111);
+								copiedResources++;
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
@@ -436,7 +443,7 @@ public class HandmadeGunsCore {
 			}
 		}
 
-		for (File file : packdir.listFiles())
+		for (File file : packlist)
 		{
 			if (file.isDirectory())
 			{
@@ -463,9 +470,19 @@ public class HandmadeGunsCore {
 		if(isClient){
 			Minecraft.getMinecraft().refreshResources();
 		}
+		System.out.println("[HMG][Timing] config/resource scan " + packdir.getPath() + " packs=" + packlist.length + " copiedResources=" + copiedResources + " took " + ((System.nanoTime() - startNanos) / 1000000L) + " ms");
 	}
 
 	public void readPack(File packdir,boolean isClient){
+		long startNanos = System.nanoTime();
+		long attachmentNanos = 0L;
+		long magazineNanos = 0L;
+		long bulletNanos = 0L;
+		long gunNanos = 0L;
+		int attachmentFiles = 0;
+		int magazineFiles = 0;
+		int bulletFiles = 0;
+		int gunFiles = 0;
 		File[] packlist = packdir.listFiles();
 		if(packlist == null)return;
 		Arrays.sort(packlist, new Comparator<File>() {
@@ -503,7 +520,10 @@ public class HandmadeGunsCore {
 						});
 						for (int ii = 0; ii < fileattach.length; ii++) {
 							if (fileattach[ii].isFile()) {
+								long phaseStart = System.nanoTime();
 								HMGAddAttachment.load(isClient, fileattach[ii]);
+								attachmentNanos += System.nanoTime() - phaseStart;
+								attachmentFiles++;
 							}
 						}
 					}
@@ -518,7 +538,10 @@ public class HandmadeGunsCore {
 						for (int ii = 0; ii < filelistmag.length; ii++) {
 							if (filelistmag[ii].isFile()) {
 								try {
+									long phaseStart = System.nanoTime();
 									HMGAddmagazine.load(isClient, filelistmag[ii]);
+									magazineNanos += System.nanoTime() - phaseStart;
+									magazineFiles++;
 								} catch (ModelFormatException e) {
 									e.printStackTrace();
 								} catch (IOException e) {
@@ -534,7 +557,10 @@ public class HandmadeGunsCore {
 						for (int ii = 0; ii < filebullet.length; ii++) {
 							if (filebullet[ii].isFile()) {
 								try {
+									long phaseStart = System.nanoTime();
 									HMGAddBullets.load(isClient, filebullet[ii]);
+									bulletNanos += System.nanoTime() - phaseStart;
+									bulletFiles++;
 								} catch (ModelFormatException e) {
 									e.printStackTrace();
 								}
@@ -568,7 +594,7 @@ public class HandmadeGunsCore {
 
 							String str;
 							while ((str = br.readLine()) != null) { // 1行ずつ読み込む
-								String[] key = str.split(",");
+								String[] key = HMGGunMaker.splitComma(str);
 								switch (key[0]) {
 									case "damageCof":
 										HMGGunMaker.damageCof = Float.parseFloat(key[1]);
@@ -588,15 +614,17 @@ public class HandmadeGunsCore {
 					}
 					File diregun = new File(apack, "guns");
 					File[] filegun = diregun.listFiles();
-					Arrays.sort(filegun, new Comparator<File>() {
-						public int compare(File file1, File file2) {
-							return file1.getName().compareTo(file2.getName());
-						}
-					});
+					if (filegun == null) {
+						continue;
+					}
+					Arrays.sort(filegun, FILE_NAME_COMPARATOR);
 					for (int ii = 0; ii < filegun.length; ii++) {
 						if (filegun[ii].isFile()) {
 							try {
+								long phaseStart = System.nanoTime();
 								new HMGGunMaker().load(isClient, filegun[ii]);
+								gunNanos += System.nanoTime() - phaseStart;
+								gunFiles++;
 							} catch (ModelFormatException e) {
 								e.printStackTrace();
 							}
@@ -606,6 +634,11 @@ public class HandmadeGunsCore {
 
 			}
 		}
+		System.out.println("[HMG][Timing] attachment registration files=" + attachmentFiles + " took " + (attachmentNanos / 1000000L) + " ms");
+		System.out.println("[HMG][Timing] magazine registration files=" + magazineFiles + " took " + (magazineNanos / 1000000L) + " ms");
+		System.out.println("[HMG][Timing] bullet registration files=" + bulletFiles + " took " + (bulletNanos / 1000000L) + " ms");
+		System.out.println("[HMG][Timing] gun TXT parse/item registration files=" + gunFiles + " took " + (gunNanos / 1000000L) + " ms");
+		System.out.println("[HMG][Timing] pack load " + packdir.getPath() + " packs=" + packlist.length + " took " + ((System.nanoTime() - startNanos) / 1000000L) + " ms");
 	}
 
 	public static void copyFile(File in, File out) throws IOException {
@@ -1029,14 +1062,12 @@ public class HandmadeGunsCore {
 	//Recipe loading
 	public void readPackRecipe(File packdir){
 
+		long startNanos = System.nanoTime();
+		int recipeFiles = 0;
 		File[] packlist = packdir.listFiles();
 		if(packlist == null) return;
 
-		Arrays.sort(packlist, new Comparator<File>() {
-			public int compare(File file1, File file2){
-				return file1.getName().compareTo(file2.getName());
-			}
-		});
+		Arrays.sort(packlist, FILE_NAME_COMPARATOR);
 
 		for (File aPacklist : packlist) {
 			if (aPacklist.isDirectory()) {
@@ -1058,6 +1089,7 @@ public class HandmadeGunsCore {
 						try {
 							HMGGunMaker.addRecipe(recipeFile); // original crafting system
 							GunSmithRecipeRegistry.registerFromFile(recipeFile); // GUI system
+							recipeFiles++;
 							System.out.println("[HMG] Loaded recipe: " + recipeFile.getAbsolutePath());
 
 						} catch (Exception e) {
@@ -1068,6 +1100,7 @@ public class HandmadeGunsCore {
 				}
 			}
 		}
+		System.out.println("[HMG][Timing] recipe registration " + packdir.getPath() + " files=" + recipeFiles + " took " + ((System.nanoTime() - startNanos) / 1000000L) + " ms");
 	}
 
 

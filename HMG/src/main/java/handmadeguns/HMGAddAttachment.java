@@ -14,7 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 import static handmadeguns.HandmadeGunsCore.tabshmg;
@@ -105,7 +104,7 @@ public class HMGAddAttachment
 				String str;
 				while((str = br.readLine()) != null){  // 1行ずつ読み込む
 					//System.out.println(str);
-					String[] type = str.split(",");
+					String[] type = HMGGunMaker.splitComma(str);
 
 					int guntype = 0;
 
@@ -260,7 +259,7 @@ public class HMGAddAttachment
 							//}
 							((HMGItemSightBase)newitem).isnightvision = isnightvision;
 
-							if(hud != null)((HMGItemSightBase)newitem).scopetexture = new ResourceLocation("handmadeguns:textures/misc/" + hud);
+							if(hud != null)((HMGItemSightBase)newitem).scopetexture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/misc/" + hud);
 							((HMGItemSightBase)newitem).scopeonly = textureOnly;
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
@@ -276,7 +275,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+ texture).setCreativeTab(HandmadeGunsCore.tabhmg);
 							((HMGItemSightBase)newitem).zoomlevel = zoom;
 							((HMGItemSightBase)newitem).isnightvision = isnightvision;
-							if(hud != null)((HMGItemSightBase)newitem).scopetexture = new ResourceLocation("handmadeguns:textures/misc/" + hud);
+							if(hud != null)((HMGItemSightBase)newitem).scopetexture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/misc/" + hud);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
@@ -291,7 +290,7 @@ public class HMGAddAttachment
 									.setTextureName("handmadeguns:"+texture).setCreativeTab(HandmadeGunsCore.tabhmg);
 							((HMGItemSightBase)newitem).zoomlevel = zoom;
 							((HMGItemSightBase)newitem).isnightvision = isnightvision;
-							if(hud != null)((HMGItemSightBase)newitem).scopetexture = new ResourceLocation("handmadeguns:textures/misc/" + hud);
+							if(hud != null)((HMGItemSightBase)newitem).scopetexture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/misc/" + hud);
 							if(Namegun != null){
 								LanguageRegistry.instance().addNameForObject(newitem, "jp_JP", Namegun);
 								LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
@@ -513,11 +512,10 @@ public class HMGAddAttachment
 							try {
 								if (canobj && isClient) {
 //									System.out.println("" + objmodel);
-									IModelCustom attach = AdvancedModelLoader
-											.loadModel(new ResourceLocation("handmadeguns:textures/model/" + objmodel));
+									IModelCustom attach = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + objmodel);
 									//todo gun skins here
 
-									ResourceLocation attachtexture = new ResourceLocation("handmadeguns:textures/model/" + objtexture);
+									ResourceLocation attachtexture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
 									MinecraftForgeClient.registerItemRenderer(newitem, new HMGRenderItemCustom(attach, attachtexture));
 								}
 							}catch (Exception e){
