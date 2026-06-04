@@ -1,5 +1,7 @@
 package handmadeguns;
 
+import handmadeguns.client.HMGManualGunPickupClientHandler;
+
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -197,6 +199,8 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		ClientRegistry.registerKeyBinding(El_Down.keyBinding);
 		ClientRegistry.registerKeyBinding(SeekerOpen_Close.keyBinding);
 		ClientRegistry.registerKeyBinding(Mode.keyBinding);
+		ClientRegistry.registerKeyBinding(HMGManualGunPickupClientHandler.PICKUP_KEY);
+		cpw.mods.fml.common.FMLCommonHandler.instance().bus().register(new HMGManualGunPickupClientHandler());
 		MinecraftForge.EVENT_BUS.register(new HMGParticles());
 		MinecraftForge.EVENT_BUS.register(new HMGFovHandler());
 
