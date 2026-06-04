@@ -1,5 +1,7 @@
 package handmadeguns.client.render;
 
+import handmadeguns.client.HMGDroppedGunRenderHelper;
+
 import handmadeguns.HandmadeGunsCore;
 import handmadeguns.gui.HMGContainerInventoryItem;
 import handmadeguns.items.*;
@@ -697,6 +699,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				isfirstperson = false;
 				Minecraft.getMinecraft().renderEngine.bindTexture(guntexture);
 				GL11.glPushMatrix();
+				HMGDroppedGunRenderHelper.applyGroundTransform(data);
 				GL11.glScalef(0.4f * scala * gunitem.gunInfo.inworldScale * (isPlacedGun ? gunitem.gunInfo.onTurretScale : 1), 0.4f * scala * gunitem.gunInfo.inworldScale * (isPlacedGun ? gunitem.gunInfo.onTurretScale : 1), 0.4f * scala * gunitem.gunInfo.inworldScale * (isPlacedGun ? gunitem.gunInfo.onTurretScale : 1));
 				rendering_situation(gunstack,null);
 				GL11.glPopMatrix();
