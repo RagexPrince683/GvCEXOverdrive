@@ -34,6 +34,7 @@ public class PartsRender_Gun extends PartsRender {
 	public float gripattachrotation[] = new float[3];
 	public float overbarrelattachoffset[] = new float[3];
 	public float overbarrelattachrotation[] = new float[3];
+	public boolean useLegacyInventoryScale = false;
 	
 	public void partSidentification(Object... data){
 		guntemp.readPropertyFromNBT(gunitem.gunInfo,nbt, HandmadeGunsCore.Key_ADS(curretnEntity),HMG_proxy.getCilentWorld());
