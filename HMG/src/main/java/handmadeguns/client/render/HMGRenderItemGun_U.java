@@ -1,5 +1,7 @@
 package handmadeguns.client.render;
 
+import handmadeguns.client.HMGDroppedGunRenderHelper;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import handmadeguns.HandmadeGunsCore;
 import handmadeguns.items.*;
@@ -1381,6 +1383,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 						glAlphaFunc(GL_EQUAL, 1);
 					}
 					GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+					HMGDroppedGunRenderHelper.applyGroundTransform(data);
 					int cockingtime = nbt.getInteger("CockingTime");
 					boolean recoiled = nbt.getBoolean("Recoiled");
 					int mode = nbt.getInteger("HMGMode");
