@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelFormatException;
-import net.minecraftforge.client.model.obj.WavefrontObject;
 import org.lwjgl.opengl.GL11;
 
 import java.io.BufferedReader;
@@ -27,7 +26,7 @@ import static handmadeguns.HandmadeGunsCore.HMG_proxy;
  *  Wavefront Object importer
  *  Based heavily off of the specifications found at http://en.wikipedia.org/wiki/Wavefront_.obj_file
  */
-public class HMGWavefrontObject extends WavefrontObject implements IModelCustom_HMG
+public class HMGWavefrontObject implements IModelCustom_HMG
 {
     private static Pattern vertexPattern = Pattern.compile("(v( (\\-){0,1}\\d+(\\.\\d+)?){3,4} *\\n)|(v( (\\-){0,1}\\d+(\\.\\d+)?){3,4} *$)");
     private static Pattern vertexNormalPattern = Pattern.compile("(vn( (\\-){0,1}\\d+(\\.\\d+)?){3,4} *\\n)|(vn( (\\-){0,1}\\d+(\\.\\d+)?){3,4} *$)");
@@ -50,15 +49,15 @@ public class HMGWavefrontObject extends WavefrontObject implements IModelCustom_
     private String fileName;
 
     public boolean endLoad = false;
+    private boolean cpuSourceDataReleased = false;
 
     ExecutorService es;
     public HMGWavefrontObject(ResourceLocation resource) throws ModelFormatException
     {
-        super(resource);
         HMG_proxy.AddModel(this);
         this.fileName = resource.toString();
 
-        es = Executors.newCachedThreadPool();
+        es = Executors.newSingleThreadExecutor();
         es.execute(() -> {
             try
             {
@@ -82,9 +81,9 @@ public class HMGWavefrontObject extends WavefrontObject implements IModelCustom_
 
     public HMGWavefrontObject(String filename, InputStream inputStream) throws ModelFormatException
     {
-        super(filename,inputStream);
         this.fileName = filename;
         loadObjModel(inputStream);
+        endLoad = true;
     }
 
     private void loadObjModel(InputStream inputStream) throws ModelFormatException
@@ -195,6 +194,7 @@ public class HMGWavefrontObject extends WavefrontObject implements IModelCustom_
     public void renderAll()
     {
         tessellateAll();
+        releaseCpuSourceData();
     }
 
     @SideOnly(Side.CLIENT)
@@ -203,6 +203,17 @@ public class HMGWavefrontObject extends WavefrontObject implements IModelCustom_
         for (HMGGroupObject HMGGroupObject : HMGGroupObjects)
         {
             HMGGroupObject.render();
+        }
+    }
+
+    private void releaseCpuSourceData()
+    {
+        if (!cpuSourceDataReleased)
+        {
+            vertices.clear();
+            HMGVertexNormals.clear();
+            HMGTextureCoordinates.clear();
+            cpuSourceDataReleased = true;
         }
     }
 

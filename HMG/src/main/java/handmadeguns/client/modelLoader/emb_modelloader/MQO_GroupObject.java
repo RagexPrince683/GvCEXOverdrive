@@ -23,6 +23,7 @@ public class MQO_GroupObject extends HMGGroupObject
 	public MQO_Material currentMaterial;
 	public MQO_MetasequoiaObject mqo_metasequoiaObject;
 	private int displayList = -1;
+	private boolean cpuDataReleased = false;
 
 	public MQO_GroupObject()
 	{
@@ -47,6 +48,23 @@ public class MQO_GroupObject extends HMGGroupObject
 		GL11.glNewList(this.displayList, GL11.GL_COMPILE);
 		render_init();
 		GL11.glEndList();
+		releaseCpuRenderData();
+	}
+
+	private void releaseCpuRenderData()
+	{
+		if (!cpuDataReleased && faces_PerMat != null)
+		{
+			for (ArrayList faces : faces_PerMat)
+			{
+				if (faces != null)
+				{
+					faces.clear();
+				}
+			}
+			faces_PerMat = null;
+			cpuDataReleased = true;
+		}
 	}
 
 	public void render()
@@ -58,6 +76,7 @@ public class MQO_GroupObject extends HMGGroupObject
 
 	public void render_init()
 	{
+		if (faces_PerMat == null) return;
 		for(int i = 0; i < faces_PerMat.length; i++) {
 			if (faces_PerMat[i].size() > 0) {
 				currentMaterial = null;

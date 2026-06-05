@@ -5,8 +5,12 @@ import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;
 import net.minecraftforge.client.model.ModelFormatException;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class HMGObjModelLoader implements IModelCustomLoader
 {
+    private static final Map<String, IModelCustom> MODEL_CACHE = new ConcurrentHashMap<String, IModelCustom>();
 
     @Override
     public String getType()
@@ -24,6 +28,22 @@ public class HMGObjModelLoader implements IModelCustomLoader
     @Override
     public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
     {
-        return new HMGWavefrontObject(resource);
+        String key = resource.toString();
+        IModelCustom cached = MODEL_CACHE.get(key);
+        if (cached != null)
+        {
+            return cached;
+        }
+
+        synchronized (MODEL_CACHE)
+        {
+            cached = MODEL_CACHE.get(key);
+            if (cached == null)
+            {
+                cached = new HMGWavefrontObject(resource);
+                MODEL_CACHE.put(key, cached);
+            }
+            return cached;
+        }
     }
 }

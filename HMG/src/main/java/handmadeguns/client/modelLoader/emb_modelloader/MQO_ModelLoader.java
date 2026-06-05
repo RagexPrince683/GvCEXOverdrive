@@ -1,34 +1,49 @@
 package handmadeguns.client.modelLoader.emb_modelloader;
 
-import handmadeguns.client.render.IModelCustom_HMG;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;
 import net.minecraftforge.client.model.ModelFormatException;
 
-import static handmadeguns.ClientProxyHMG.modelList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class MQO_ModelLoader implements IModelCustomLoader
 {
-	@Override
-	public String getType()
-	{
-		return "Metasequoia model";
-	}
+    private static final Map<String, IModelCustom> MODEL_CACHE = new ConcurrentHashMap<String, IModelCustom>();
 
-	private static final String[] types = { "mqo" };
+    @Override
+    public String getType()
+    {
+        return "Metasequoia model";
+    }
 
-	@Override
-	public String[] getSuffixes()
-	{
-		return types;
-	}
+    private static final String[] types = { "mqo" };
 
-	public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
-	{
-		for(IModelCustom_HMG model:modelList){
-			if(model.toString().equals(resource.toString()))return model;
-		}
-		return new MQO_MetasequoiaObject(resource);
-	}
+    @Override
+    public String[] getSuffixes()
+    {
+        return types;
+    }
+
+    public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
+    {
+        String key = resource.toString();
+        IModelCustom cached = MODEL_CACHE.get(key);
+        if (cached != null)
+        {
+            return cached;
+        }
+
+        synchronized (MODEL_CACHE)
+        {
+            cached = MODEL_CACHE.get(key);
+            if (cached == null)
+            {
+                cached = new MQO_MetasequoiaObject(resource);
+                MODEL_CACHE.put(key, cached);
+            }
+            return cached;
+        }
+    }
 }
