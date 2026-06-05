@@ -50,12 +50,13 @@ public class MQO_MetasequoiaObject implements IModelCustom_HMG
 	public float	sizeZ = 0;
 
 	public boolean endLoad = false;
+	private boolean cpuSourceDataReleased = false;
 	ExecutorService es;
 	public MQO_MetasequoiaObject(ResourceLocation resource) throws ModelFormatException
 	{
 		HMG_proxy.AddModel(this);
 		this.fileName = resource.toString();
-		es = Executors.newCachedThreadPool();
+		es = Executors.newSingleThreadExecutor();
 		es.execute(() -> {
 			try
 			{
@@ -74,6 +75,7 @@ public class MQO_MetasequoiaObject implements IModelCustom_HMG
 	public MQO_MetasequoiaObject(InputStream inputStream) throws ModelFormatException
 	{
 		loadObjModel(inputStream);
+		endLoad = true;
 	}
 
 	@Override
@@ -135,6 +137,17 @@ public class MQO_MetasequoiaObject implements IModelCustom_HMG
 		for (MQO_GroupObject groupObject : groupObjects)
 		{
 			groupObject.render();
+		}
+		releaseCpuSourceData();
+	}
+
+	private void releaseCpuSourceData()
+	{
+		if (!cpuSourceDataReleased)
+		{
+			vertices.clear();
+			materials = null;
+			cpuSourceDataReleased = true;
 		}
 	}
 
@@ -220,7 +233,7 @@ public class MQO_MetasequoiaObject implements IModelCustom_HMG
 		int lineCnt = 0;
 		for (MQO_GroupObject groupObject : groupObjects)
 		{
-			if (groupObject.faces_PerMat[0].size() > 0)
+			if (groupObject.faces_PerMat != null && groupObject.faces_PerMat[0].size() > 0)
 			{
 				for (Object obj : groupObject.faces_PerMat[0])
 				{

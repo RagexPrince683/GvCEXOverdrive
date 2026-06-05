@@ -621,8 +621,13 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 
 	public void setUpModels(){
 		for(IModelCustom_HMG modelCustom_hmg : modelList){
-			while(!modelCustom_hmg.getLoadThread().isTerminated()){
-				if(modelCustom_hmg.getLoadThread().isTerminated())break;
+			while(!modelCustom_hmg.isReady()){
+				try {
+					Thread.sleep(1L);
+				} catch (InterruptedException e) {
+					Thread.currentThread().interrupt();
+					break;
+				}
 			}
 			modelCustom_hmg.renderAll();
 		}

@@ -16,6 +16,7 @@ public class HMGGroupObject
 	public ArrayList<HMGFace> faces = new ArrayList<HMGFace>();
 	public int glDrawingMode;
 	private int displayList = -1;
+	private boolean cpuDataReleased = false;
 
 	public HMGGroupObject()
 	{
@@ -43,7 +44,23 @@ public class HMGGroupObject
         tessellator.draw();
 
 	    org.lwjgl.opengl.GL11.glEndList();
+	    releaseCpuRenderData();
     }
+
+	/**
+	 * Rendering uses immutable OpenGL display lists after the first compile.  The
+	 * parsed face graph is only needed to build that list, so drop it immediately
+	 * to avoid retaining millions of tiny vertex/UV wrapper objects on large packs.
+	 */
+	private void releaseCpuRenderData()
+	{
+		if (!cpuDataReleased && faces != null)
+		{
+			faces.clear();
+			faces = null;
+			cpuDataReleased = true;
+		}
+	}
 
 	@SideOnly(Side.CLIENT)
     public void render()
@@ -56,7 +73,7 @@ public class HMGGroupObject
     @SideOnly(Side.CLIENT)
     private void render(net.minecraft.client.renderer.Tessellator tessellator)
     {
-        if (faces.size() > 0)
+        if (faces != null && faces.size() > 0)
         {
             for (HMGFace HMGFace : faces)
             {
@@ -71,6 +88,10 @@ public class HMGGroupObject
 
 		HMGFace hitFace = null;
 		Vector3d hitVec = null;
+		if (faces == null)
+		{
+			return null;
+		}
 		for (HMGFace HMGFace : faces)
 		{
 			Vector3d TemphitVec = HMGFace.hitCheck(start,end);

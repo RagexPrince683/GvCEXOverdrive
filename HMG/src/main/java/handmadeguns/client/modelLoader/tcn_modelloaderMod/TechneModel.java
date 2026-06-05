@@ -61,7 +61,7 @@ public class TechneModel extends ModelBase implements IModelCustom_HMG {
     {
         HMG_proxy.AddModel(this);
         this.fileName = resource.toString();
-        es = Executors.newCachedThreadPool();
+        es = Executors.newSingleThreadExecutor();
         es.execute(() -> {
             try
             {
