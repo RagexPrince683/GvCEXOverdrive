@@ -8,15 +8,14 @@ import org.lwjgl.opengl.GL12;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.AdvancedModelLoader;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 public class HMGRenderItemMount2 extends Render {
 
 	private static final ResourceLocation skeletonTextures = new ResourceLocation("gvcguns:textures/entity/target.png");
 	private static final ResourceLocation skeletonTexturesz = new ResourceLocation("textures/blocks/planks_oak.png");
-	private static final IModelCustom tankk = AdvancedModelLoader
-			.loadModel(new ResourceLocation("handmadeguns:textures/model/rack2.obj"));
+	private static final IModelCustom tankk = HMGObjModelLoader.loadHMGModel(new ResourceLocation("handmadeguns:textures/model/rack2.obj"));
 
 	public HMGRenderItemMount2() {
 		// super(new ModelBiped(), 0.5F);

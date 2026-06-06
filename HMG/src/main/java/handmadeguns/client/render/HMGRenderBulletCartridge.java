@@ -8,7 +8,7 @@ import net.minecraft.entity.Entity;
 //import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.AdvancedModelLoader;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 import org.lwjgl.opengl.GL11;
@@ -21,15 +21,15 @@ import static org.lwjgl.opengl.GL11.*;
 public class HMGRenderBulletCartridge extends Render
 {
     private static final ResourceLocation arrowTextures = new ResourceLocation("handmadeguns:textures/entity/bulletcartridge.png");
-    private static final IModelCustom modeling = AdvancedModelLoader.loadModel(new ResourceLocation("handmadeguns:textures/entity/bulletcartridge.obj"));
+    private static final IModelCustom modeling = HMGObjModelLoader.loadHMGModel(new ResourceLocation("handmadeguns:textures/entity/bulletcartridge.obj"));
     private static final ResourceLocation arrowTextures2 = new ResourceLocation("handmadeguns:textures/entity/bulletcartridge2.png");
-    private static final IModelCustom modeling2 = AdvancedModelLoader.loadModel(new ResourceLocation("handmadeguns:textures/entity/bulletcartridge2.obj"));
+    private static final IModelCustom modeling2 = HMGObjModelLoader.loadHMGModel(new ResourceLocation("handmadeguns:textures/entity/bulletcartridge2.obj"));
     private static final ResourceLocation arrowTextures3 = new ResourceLocation("handmadeguns:textures/entity/bulletcartridge3.png");
-    private static final IModelCustom modeling3 = AdvancedModelLoader.loadModel(new ResourceLocation("handmadeguns:textures/entity/bulletcartridge3.obj"));
+    private static final IModelCustom modeling3 = HMGObjModelLoader.loadHMGModel(new ResourceLocation("handmadeguns:textures/entity/bulletcartridge3.obj"));
     private static final ResourceLocation arrowTextures4 = new ResourceLocation("handmadeguns:textures/entity/bulletcartridge4.png");
-    private static final IModelCustom modeling4 = AdvancedModelLoader.loadModel(new ResourceLocation("handmadeguns:textures/entity/bulletcartridge4.obj"));
+    private static final IModelCustom modeling4 = HMGObjModelLoader.loadHMGModel(new ResourceLocation("handmadeguns:textures/entity/bulletcartridge4.obj"));
     private static final ResourceLocation arrowTextures5 = new ResourceLocation("handmadeguns:textures/entity/magazine.png");
-    private static final IModelCustom modeling5 = AdvancedModelLoader.loadModel(new ResourceLocation("handmadeguns:textures/entity/magazine.obj"));
+    private static final IModelCustom modeling5 = HMGObjModelLoader.loadHMGModel(new ResourceLocation("handmadeguns:textures/entity/magazine.obj"));
 
     /**
      * Actually renders the given argument. This is a synthetic bridge method, always casting down its argument and then

@@ -28,8 +28,6 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.MapData;
-import net.minecraftforge.client.model.AdvancedModelLoader;
-import net.minecraftforge.client.model.IModelCustom;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -39,7 +37,6 @@ public class RenderItemFrameHMG extends Render
 {
     private static final ResourceLocation mapBackgroundTextures = new ResourceLocation("textures/map/map_background.png");
     //private static final ResourceLocation skeletonTexturesz = new ResourceLocation("mcwarsbf:textures/model/lblue/25T.png");
-	//private static final IModelCustom tankk = AdvancedModelLoader.loadModel(new ResourceLocation("mcwarsbf:textures/model/lblue/25T.obj"));
     
     private final RenderBlocks field_147916_f = new RenderBlocks();
     private final Minecraft field_147917_g = Minecraft.getMinecraft();

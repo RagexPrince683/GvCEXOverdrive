@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 //import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.AdvancedModelLoader;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -21,7 +21,7 @@ public class HMGRenderBullet extends Render
 //    private static final ResourceLocation arrowTextures = new ResourceLocation("handmadeguns:textures/entity/bullet.png");
     private static final ResourceLocation trailtexture = new ResourceLocation("handmadeguns:textures/entity/laser.png");
     private ResourceLocation arrowTextures = new ResourceLocation("handmadeguns:textures/entity/bulletmat.png");
-    private IModelCustom modeling = AdvancedModelLoader.loadModel(new ResourceLocation("handmadeguns:textures/entity/bullet3d.obj"));
+    private IModelCustom modeling = HMGObjModelLoader.loadHMGModel(new ResourceLocation("handmadeguns:textures/entity/bullet3d.obj"));
 
     private static final String __OBFID = "CL_00000978";
 

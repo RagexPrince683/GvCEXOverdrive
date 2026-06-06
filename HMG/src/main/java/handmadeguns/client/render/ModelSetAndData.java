@@ -1,7 +1,7 @@
 package handmadeguns.client.render;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.AdvancedModelLoader;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 public class ModelSetAndData {
@@ -14,7 +14,7 @@ public class ModelSetAndData {
         scale = scalesetting;
     }
     public ModelSetAndData(String modeldata,String texturedata){
-        model = AdvancedModelLoader.loadModel(new ResourceLocation(modeldata));
+        model = HMGObjModelLoader.loadHMGModel(new ResourceLocation(modeldata));
         texture = new ResourceLocation(texturedata);
     }
 }

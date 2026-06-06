@@ -1,10 +1,12 @@
 package handmadeguns.client.modelLoader.obj_modelloaderMod.obj;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import net.minecraftforge.client.model.IModelCustomLoader;
 import net.minecraftforge.client.model.ModelFormatException;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -25,9 +27,13 @@ public class HMGObjModelLoader implements IModelCustomLoader
         return types;
     }
 
-    @Override
-    public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
+    public static IModelCustom loadHMGModel(ResourceLocation resource) throws ModelFormatException
     {
+        if (!resource.getResourcePath().toLowerCase(Locale.ROOT).endsWith(".obj"))
+        {
+            return AdvancedModelLoader.loadModel(resource);
+        }
+
         String key = resource.toString();
         IModelCustom cached = MODEL_CACHE.get(key);
         if (cached != null)
@@ -45,5 +51,11 @@ public class HMGObjModelLoader implements IModelCustomLoader
             }
             return cached;
         }
+    }
+
+    @Override
+    public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
+    {
+        return loadHMGModel(resource);
     }
 }

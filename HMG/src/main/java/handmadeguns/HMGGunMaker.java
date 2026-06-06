@@ -13,6 +13,7 @@ import java.util.Map;
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
 import handmadeguns.client.render.*;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import handmadevehicle.render.HMVVehicleParts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
@@ -20,7 +21,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 import javax.script.ScriptEngine;
@@ -1384,7 +1384,7 @@ public class HMGGunMaker {
 		if (model == null) {
 			// Gun pack resources are immutable after the pack scan/resource refresh
 			// phase, so the same OBJ can be safely reused by multiple guns/renderers.
-			model = AdvancedModelLoader.loadModel(getCachedResourceLocation(path));
+			model = HMGObjModelLoader.loadHMGModel(getCachedResourceLocation(path));
 			MODEL_CACHE.put(path, model);
 		}
 		return model;

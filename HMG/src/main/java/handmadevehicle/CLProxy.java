@@ -4,6 +4,7 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import handmadeguns.KeyBinding_mod;
 import handmadeguns.client.render.ModelSetAndData;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import handmadevehicle.audio.TurretSound;
 import handmadevehicle.audio.VehicleEngineSound;
 import handmadevehicle.audio.VehicleNoRepeatSound;
@@ -20,7 +21,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.AdvancedModelLoader;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
@@ -111,7 +111,7 @@ public class CLProxy extends CMProxy {
 	
 	@Override
 	public ModelSetAndData loadResource_model(String resourceName_model,String resourceName_Texture,float scale){
-		return new ModelSetAndData(AdvancedModelLoader.loadModel(new ResourceLocation("handmadevehicle:textures/model/" + resourceName_model)),new ResourceLocation("handmadevehicle:textures/model/" + resourceName_Texture),scale);
+		return new ModelSetAndData(HMGObjModelLoader.loadHMGModel(new ResourceLocation("handmadevehicle:textures/model/" + resourceName_model)),new ResourceLocation("handmadevehicle:textures/model/" + resourceName_Texture),scale);
 	}
 	
 	//@Override
