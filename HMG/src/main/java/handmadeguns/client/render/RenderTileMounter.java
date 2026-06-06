@@ -10,13 +10,13 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.AdvancedModelLoader;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 public class RenderTileMounter extends TileEntitySpecialRenderer {
-    private static final IModelCustom basemodel = AdvancedModelLoader.loadModel(new ResourceLocation("handmadeguns:textures/model/rack.obj"));
+    private static final IModelCustom basemodel = HMGObjModelLoader.loadHMGModel(new ResourceLocation("handmadeguns:textures/model/rack.obj"));
     private static final ResourceLocation basetexture = new ResourceLocation("textures/blocks/planks_oak.png");
     EntityItem entItem = null;
     public float[][] gunpos = new float[4][3];

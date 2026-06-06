@@ -20,7 +20,6 @@ import handmadeguns.event.KillFeedHUD;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadeguns.network.PacketSpawnParticle;
 import handmadeguns.client.render.*;
-import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import handmadeguns.client.modelLoader.tcn_modelloaderMod.TechneModelLoader;
 import handmadeguns.tile.TileMounter;
 import net.minecraft.block.Block;
@@ -124,7 +123,6 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		SoundSystemConfig.setNumberStreamingChannels(32);
 		AdvancedModelLoader.registerModelHandler(new MQO_ModelLoader());
 		AdvancedModelLoader.registerModelHandler(new TechneModelLoader());
-		AdvancedModelLoader.registerModelHandler(new HMGObjModelLoader());//怒りのオーバーライド
 	}
 	@Override
 	public void playsoundat(String sound, float soundLV, float soundSP, float tempsp, double posX, double posY, double posZ){

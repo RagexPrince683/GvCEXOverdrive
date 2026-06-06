@@ -3,8 +3,8 @@ package handmadeguns;
 import handmadeguns.Util.SoundInfo;
 import handmadeguns.Util.TrailInfo;
 import handmadeguns.client.render.ModelSetAndData;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.AdvancedModelLoader;
 import net.minecraftforge.client.model.IModelCustom;
 
 import java.io.*;
@@ -151,7 +151,7 @@ public class HMGAddBullets {
                                     System.out.println("model" + model);
                                     System.out.println("textures" + texture);
                                     if (objmodel != null && objtexture != null) {
-                                        IModelCustom modeling = AdvancedModelLoader.loadModel(model);
+                                        IModelCustom modeling = HMGObjModelLoader.loadHMGModel(model);
                                         modellist.put(cnt, new ModelSetAndData(modeling, texture, objscale));
                                     }
                                     if (trailtexture != null || smoketexture != null) {
