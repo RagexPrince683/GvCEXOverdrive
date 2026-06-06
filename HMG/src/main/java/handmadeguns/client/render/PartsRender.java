@@ -27,23 +27,6 @@ public abstract class PartsRender {
 
 	public void part_Render(HMGGunParts parts, GunState state, float flame, int remainbullets, HMGGunParts_Motion_PosAndRotation OffsetAndRotation){
 		FMLClientHandler.instance().getWorldClient().theProfiler.startSection("partRender");
-//		System.out.println("" + glGetFramebufferAttachmentParameteriEXT(GL_FRAMEBUFFER_EXT,GL_STENCIL_ATTACHMENT_EXT,GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT));
-
-//		FrameBuffer.defaultFBOID = glGetInteger(GL_FRAMEBUFFER_BINDING_EXT);
-//		FrameBuffer.defaultFBO_DepthID = glGetInteger(GL_RENDERBUFFER_BINDING_EXT);
-//		System.out.println("debug" + FrameBuffer.defaultFBOID);
-
-
-//		if(glGetFramebufferAttachmentParameteriEXT(GL_FRAMEBUFFER_EXT,GL_STENCIL_ATTACHMENT_EXT,GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT) == 0) {
-//			System.out.println("attach_Stencil to " + glGetInteger(GL_RENDERBUFFER_BINDING_EXT));
-//			System.out.println("attach_Stencil to " + glGetInteger(GL_TEXTURE_BINDING_BUFFER_EXT));
-//			int width = Display.getWidth();
-//			int height = Display.getHeight();
-//			glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, glGetInteger(GL_RENDERBUFFER_BINDING_EXT));
-//			glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8, width, height);
-//			OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, width, height);
-//			glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER_EXT, glGetInteger(GL_RENDERBUFFER_BINDING_EXT));
-//		}
 		if(!parts.initialized){
 			GL11.glColorMask(false,false,false,false);
 			GL11.glDepthMask(true);
@@ -147,30 +130,33 @@ public abstract class PartsRender {
 //		System.out.println("currentFBO " + RenderTickSmoothing.currentFBO);
 				RenderTickSmoothing.currentRenderBuffer = glGetInteger(GL_RENDERBUFFER_BINDING_EXT);
 //		System.out.println("currentRenderBuffer " + RenderTickSmoothing.currentRenderBuffer);
-				RenderTickSmoothing.currentTextureBuffer = glGetFramebufferAttachmentParameteriEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT);;
+				RenderTickSmoothing.currentTextureBuffer = glGetFramebufferAttachmentParameteriEXT(GL_FRAMEBUFFER_EXT,GL_DEPTH_ATTACHMENT_EXT,GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT);
 //		System.out.println("currentTextureBuffer " + RenderTickSmoothing.currentTextureBuffer);
 				RenderTickSmoothing.currentStencilBufferID = glGetFramebufferAttachmentParameteriEXT(GL_FRAMEBUFFER_EXT,GL_STENCIL_ATTACHMENT_EXT,GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT);
 //		System.out.println("currentStencilState " + RenderTickSmoothing.currentStencilState);
 
+				boolean stencilAvailable = RenderTickSmoothing.ensureStencilBufferAvailable();
 				FMLClientHandler.instance().getClient().getTextureManager().bindTexture(this.texture);
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-				GL11.glClear(GL_STENCIL_BUFFER_BIT);
-				GL11.glEnable(GL_STENCIL_TEST);
-				GL11.glStencilMask(1);
-				GL11.glStencilFunc(GL_ALWAYS, 1, -1);
-				GL11.glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-				GL11.glColorMask(false, false, false, false);
 				GL11.glEnable(GL_BLEND);
 				GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				GL11.glDepthMask(false);
 				GL11.glAlphaFunc(GL_GREATER, 0.0F);
+				if (stencilAvailable) {
+					GL11.glClear(GL_STENCIL_BUFFER_BIT);
+					GL11.glEnable(GL_STENCIL_TEST);
+					GL11.glStencilMask(1);
+					GL11.glStencilFunc(GL_ALWAYS, 1, -1);
+					GL11.glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+					GL11.glColorMask(false, false, false, false);
 //				this.model.renderPart(parts.partsname_reticlePlate);
-				parts.currentGroup_reticlePlate.render();
+					parts.currentGroup_reticlePlate.render();
 
 
-				GL11.glColorMask(true, true, true, true);
-				GL11.glStencilFunc(GL_EQUAL, 1, -1);
-				GL11.glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+					GL11.glColorMask(true, true, true, true);
+					GL11.glStencilFunc(GL_EQUAL, 1, -1);
+					GL11.glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+				}
 				GL11.glAlphaFunc(GL_GREATER, 0.0F);
 				GL11.glDepthMask(false);
 				GL11.glDepthFunc(GL_ALWAYS);
@@ -187,7 +173,9 @@ public abstract class PartsRender {
 				GL11.glAlphaFunc(GL_GREATER, 0.0F);
 
 				GL11.glDisable(GL_LIGHTING);
-				GL11.glDisable(GL_STENCIL_TEST);
+				if (stencilAvailable) {
+					GL11.glDisable(GL_STENCIL_TEST);
+				}
 //				GL11.glPopMatrix();
 //				int tex = FBO.end();
 //				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
