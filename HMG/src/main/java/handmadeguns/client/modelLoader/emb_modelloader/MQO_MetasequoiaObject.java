@@ -145,7 +145,10 @@ public class MQO_MetasequoiaObject implements IModelCustom_HMG
 	{
 		if (!cpuSourceDataReleased)
 		{
-			vertices.clear();
+			if (vertices != null)
+			{
+				vertices.clear();
+			}
 			materials = null;
 			cpuSourceDataReleased = true;
 		}
