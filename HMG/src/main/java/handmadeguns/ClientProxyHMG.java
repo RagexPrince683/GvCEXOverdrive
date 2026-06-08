@@ -13,6 +13,7 @@ import handmadeguns.client.audio.GunSoundHMG;
 import handmadeguns.client.audio.MovingSoundHMG;
 import handmadeguns.client.audio.ReloadSoundHMG;
 import handmadeguns.client.modelLoader.emb_modelloader.MQO_ModelLoader;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjResourceReloadListener;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
 import handmadeguns.event.HMGFovHandler;
@@ -25,6 +26,7 @@ import handmadeguns.tile.TileMounter;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.settings.GameSettings;
@@ -199,6 +201,9 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		ClientRegistry.registerKeyBinding(Mode.keyBinding);
 		ClientRegistry.registerKeyBinding(HMGManualGunPickupClientHandler.PICKUP_KEY);
 		cpw.mods.fml.common.FMLCommonHandler.instance().bus().register(new HMGManualGunPickupClientHandler());
+		if (Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager) {
+			((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new HMGObjResourceReloadListener());
+		}
 		MinecraftForge.EVENT_BUS.register(new HMGParticles());
 		MinecraftForge.EVENT_BUS.register(new HMGFovHandler());
 

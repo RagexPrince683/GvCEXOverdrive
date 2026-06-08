@@ -27,6 +27,19 @@ public class HMGObjModelLoader implements IModelCustomLoader
         return types;
     }
 
+    public static void clearModelCache()
+    {
+        for (IModelCustom model : MODEL_CACHE.values())
+        {
+            if (model instanceof HMGWavefrontObject)
+            {
+                ((HMGWavefrontObject) model).releaseVbos();
+            }
+        }
+        MODEL_CACHE.clear();
+        HMGVboModelCache.releaseAll();
+    }
+
     public static IModelCustom loadHMGModel(ResourceLocation resource) throws ModelFormatException
     {
         if (!resource.getResourcePath().toLowerCase(Locale.ROOT).endsWith(".obj"))
