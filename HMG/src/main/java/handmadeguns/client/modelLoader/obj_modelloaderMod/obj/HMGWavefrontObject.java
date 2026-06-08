@@ -162,6 +162,7 @@ public class HMGWavefrontObject implements IModelCustom_HMG
             }
 
             HMGGroupObjects.add(currentHMGGroupObject);
+            assignModelKeys();
         }
         catch (IOException e)
         {
@@ -185,6 +186,29 @@ public class HMGWavefrontObject implements IModelCustom_HMG
             catch (IOException e)
             {
                 // hush
+            }
+        }
+    }
+
+    private void assignModelKeys()
+    {
+        for (HMGGroupObject groupObject : HMGGroupObjects)
+        {
+            if (groupObject != null)
+            {
+                groupObject.setModelKey(fileName);
+            }
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void releaseVbos()
+    {
+        for (HMGGroupObject groupObject : HMGGroupObjects)
+        {
+            if (groupObject != null)
+            {
+                groupObject.releaseVbo();
             }
         }
     }

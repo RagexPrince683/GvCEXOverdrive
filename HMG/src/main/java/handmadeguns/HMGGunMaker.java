@@ -1379,6 +1379,10 @@ public class HMGGunMaker {
 		return location;
 	}
 
+	public static void clearCachedModels() {
+		MODEL_CACHE.clear();
+	}
+
 	static IModelCustom getCachedModel(String path) {
 		IModelCustom model = MODEL_CACHE.get(path);
 		if (model == null) {

@@ -17,6 +17,8 @@ public class HMGGroupObject
 	public int glDrawingMode;
 	private int displayList = -1;
 	private boolean cpuDataReleased = false;
+	private String modelKey = "unknown";
+	private HMGVboMeshGroup vboMesh;
 
 	public HMGGroupObject()
 	{
@@ -33,6 +35,21 @@ public class HMGGroupObject
         this.name = name;
         this.glDrawingMode = glDrawingMode;
     }
+
+	@SideOnly(Side.CLIENT)
+	public void setModelKey(String modelKey)
+	{
+		this.modelKey = modelKey;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void releaseVbo()
+	{
+		if (vboMesh != null)
+		{
+			vboMesh.release();
+		}
+	}
 
 	@SideOnly(Side.CLIENT)
     public void initDisplay(){
@@ -65,6 +82,22 @@ public class HMGGroupObject
 	@SideOnly(Side.CLIENT)
     public void render()
     {
+        if (HMGVboModelCache.isEnabled())
+        {
+            if (vboMesh == null)
+            {
+                vboMesh = new HMGVboMeshGroup(modelKey + "#" + name);
+            }
+            // Compilation is intentionally lazy here: render() runs on Minecraft's
+            // client render thread with a current OpenGL context, unlike the OBJ
+            // parser thread used by HMGWavefrontObject(ResourceLocation).
+            if ((vboMesh.isCompiled() || vboMesh.compile(faces, glDrawingMode)) && vboMesh.isCompiled())
+            {
+                vboMesh.render();
+                return;
+            }
+        }
+
         if(displayList == -1)initDisplay();
         else if(displayList != 0) org.lwjgl.opengl.GL11.glCallList(this.displayList);
         else initDisplay();
