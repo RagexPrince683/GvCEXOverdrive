@@ -155,6 +155,7 @@ public class HandmadeGunsCore {
 	public static boolean manualGunPickupRequiresLineOfSight = true;
 	public static boolean manualGunPickupOnlyGuns = true;
 	public static boolean enableGunGroundPhysicsRender = false;
+	public static boolean enableVBOModelRendering = true;
 
 
 	public static Item hmg_bullet;
@@ -229,6 +230,7 @@ public class HandmadeGunsCore {
 		// update: this literally has ZERO usages. I don't even know why it's in the mod as a config option.
 		cfg_RenderPlayer	= lconf.get("Render", "cfg_RenderPlayer", false).getBoolean(false);
 		cfgRender_useStencil = lconf.get("Render", "cfg_useStencil", false).getBoolean(false);
+		enableVBOModelRendering = lconf.get("Render", "enableVBOModelRendering", true, "Client-side only: render HMG OBJ model groups from OpenGL VBOs when possible. Disable to force the legacy display-list renderer.").getBoolean(true);
 		cfg_canEjectCartridge	= lconf.get("Cartridge", "cfg_canEjectCartridge", true).getBoolean(true);
 		cfg_Cartridgetime	= lconf.get("Cartridge", "cfg_Cartridgetime", 200).getInt(200);
 		cfg_muzzleflash	= lconf.get("Gun", "cfg_MuzzleFlash", true).getBoolean(true);
