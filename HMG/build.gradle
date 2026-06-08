@@ -1,27 +1,27 @@
-import org.gradle.plugins.ide.eclipse.model.internal.FileReferenceFactory
 
 // ===========================
-// VERSION HANDLING (REAL BASE-10, BUILD-ONLY)
+// VERSION HANDLING
 // ===========================
 
 def versionFile = file('version.properties')
 
-// defaults
 int major = 2
 int minor = 7
 int revision = 0
 
 if (versionFile.exists()) {
-	def parts = versionFile.text.trim().tokenize('.')
-	if (parts.size() != 3) {
-		throw new GradleException("Invalid version format in version.properties")
+	def text = versionFile.text.trim()
+
+	if (!text.matches("\\d+\\.\\d+\\.\\d+")) {
+		throw new GradleException("Invalid version format in version.properties. Expected: major.minor.revision")
 	}
+
+	def parts = text.tokenize('.')
 	major = parts[0].toInteger()
 	minor = parts[1].toInteger()
 	revision = parts[2].toInteger()
 }
 
-// detect if this is a real build
 def isBuildTask = gradle.startParameter.taskNames.any {
 	it.equalsIgnoreCase("build") || it.equalsIgnoreCase("jar")
 }
@@ -29,52 +29,26 @@ def isBuildTask = gradle.startParameter.taskNames.any {
 if (isBuildTask) {
 	revision++
 
-	if (revision == 10) {
+	if (revision >= 10) {
 		revision = 0
 		minor++
 	}
 
-	if (minor == 10) {
+	if (minor >= 10) {
 		minor = 0
 		major++
 	}
 }
 
-def newVersion = "${major}.${minor}.${revision}"
-project.version = newVersion
+def computedVersion = "${major}.${minor}.${revision}"
+version = computedVersion
 
 task updateVersion {
 	onlyIf { isBuildTask }
+
 	doLast {
-		versionFile.text = newVersion
-		println "Version bumped to $newVersion"
-	}
-}
-
-// ===========================
-// ECLIPSE CLASSPATH FIX
-// ===========================
-
-eclipse.classpath.file.whenMerged { cp ->
-	def srcent = cp.entries.findAll {
-		it.path.contains("codechicken") && it.path.endsWith("-src.jar")
-	}
-
-	cp.entries.removeAll(srcent)
-
-	Map<String, File> srcmap = new HashMap<>()
-	srcent.each {
-		def file = new File(it.path)
-		srcmap.put(file.name.replace("-src.jar", "-dev.jar"), file)
-	}
-
-	def fileref = new FileReferenceFactory()
-
-	cp.entries.findAll {
-		it.path.contains("codechicken") && it.path.endsWith("-dev.jar")
-	}.each {
-		File srcmapping = srcmap.get(new File(it.path).name)
-		it.sourcePath = fileref.fromFile(srcmapping)
+		versionFile.text = computedVersion
+		println "Version bumped to ${computedVersion}"
 	}
 }
 
@@ -84,13 +58,16 @@ eclipse.classpath.file.whenMerged { cp ->
 
 repositories {
 	maven {
-		name = 'ModMaven'
-		url = 'https://modmaven.dev'
+		name = "ModMaven"
+		url = "https://modmaven.dev"
 	}
+
 	maven {
-		name = "gt"
+		name = "GTNH"
 		url = "https://gregtech.mechaenetia.com/"
 	}
+
+	mavenCentral()
 }
 
 // ===========================
@@ -98,37 +75,46 @@ repositories {
 // ===========================
 
 dependencies {
-	implementation 'codechicken:CodeChickenCore:1.7.10-1.0.4.29:dev'
-	compileOnly   'codechicken:CodeChickenCore:1.7.10-1.0.4.29:src'
+	/*
+     * Do not hardwire old ChickenBones NEI/CCL here.
+     *
+     * For GTNH/Angelica runClient testing, put matching dev/deobf jars in:
+     *   eclipse/mods/
+     *
+     * Put compile-only API jars in:
+     *   libs/compileOnly/
+     */
 
-	implementation 'codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev'
-	compileOnly   'codechicken:CodeChickenLib:1.7.10-1.1.3.140:src'
-
-	implementation 'codechicken:NotEnoughItems:1.7.10-1.0.3.74:dev'
-	compileOnly   'codechicken:NotEnoughItems:1.7.10-1.0.3.74:src'
+	compileOnly fileTree(dir: "libs/compileOnly", include: ["*.jar"])
 
 	compileOnly "inventorytweaks:InventoryTweaks:1.59-dev:deobf"
 	implementation "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"
 
-	compile project(':depend')
-	compile fileTree(dir: 'lib', include: '*.jar')
-	compile 'javax.vecmath:vecmath:1.5.2'
+	compile project(":depend")
+	compile fileTree(dir: "lib", include: ["*.jar"])
+
+	compile "javax.vecmath:vecmath:1.5.2"
 }
 
 // ===========================
 // RESOURCE PROCESSING
 // ===========================
 
-processResources.dependsOn updateVersion
-
 processResources {
+	dependsOn updateVersion
+
 	inputs.property "version", project.version
 
-	filesMatching('mcmod.info') {
-		expand version: project.version
-	}
 	from(sourceSets.main.resources.srcDirs) {
-		include '**/*'
+		include "mcmod.info"
+
+		expand([
+				version: project.version
+		])
+	}
+
+	from(sourceSets.main.resources.srcDirs) {
+		exclude "mcmod.info"
 	}
 }
 
@@ -137,7 +123,9 @@ processResources {
 // ===========================
 
 jar {
-	baseName = 'HandmadeGunsOverdrive'
+	dependsOn updateVersion
+
+	baseName = "HandmadeGunsOverdrive"
 	version = project.version
 }
 
@@ -146,7 +134,9 @@ jar {
 // ===========================
 
 tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
+	options.encoding = "UTF-8"
+	sourceCompatibility = "1.8"
+	targetCompatibility = "1.8"
 }
 
 // ===========================
