@@ -138,6 +138,7 @@ Yes. HMG registers `/reloadSettings` and `/hmgmanual`. See [`docs/command-refere
 ## Resources
 
 - GitHub: https://github.com/RagexPrince683/GvCEXOverdrive/
+- Modrinth: https://modrinth.com/mod/handmade-guns-overdrive
 - CurseForge: https://www.curseforge.com/minecraft/mc-mods/hand-made-guns-overdrive
 - Minecraft Forge 1.7.10: https://files.minecraftforge.net/net/minecraftforge/forge/index_1.7.10.html
 - In-repository documentation: [`docs/`](docs/)
