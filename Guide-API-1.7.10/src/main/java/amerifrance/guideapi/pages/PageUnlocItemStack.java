@@ -4,6 +4,7 @@ import amerifrance.guideapi.api.abstraction.CategoryAbstract;
 import amerifrance.guideapi.api.abstraction.EntryAbstract;
 import amerifrance.guideapi.api.base.Book;
 import amerifrance.guideapi.api.util.GuiHelper;
+import amerifrance.guideapi.api.util.PageLayoutHelper;
 import amerifrance.guideapi.gui.GuiBase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -69,7 +70,7 @@ public class PageUnlocItemStack extends PageUnlocText {
     @Override
     @SideOnly(Side.CLIENT)
     public void drawExtras(Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuiBase guiBase, FontRenderer fontRenderer) {
-        GuiHelper.drawScaledItemStack(stack, guiLeft + 75, guiTop + 20, 3);
+        GuiHelper.drawScaledItemStack(stack, guiLeft + PageLayoutHelper.ITEM_ICON_X, guiTop + PageLayoutHelper.ITEM_ICON_Y, PageLayoutHelper.ITEM_ICON_SCALE);
     }
 
     @Override

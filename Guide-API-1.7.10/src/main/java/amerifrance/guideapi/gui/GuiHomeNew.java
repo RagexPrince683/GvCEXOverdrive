@@ -2,6 +2,7 @@ package amerifrance.guideapi.gui;
 
 import amerifrance.guideapi.api.abstraction.CategoryAbstract;
 import amerifrance.guideapi.api.base.Book;
+import amerifrance.guideapi.api.util.PageLayoutHelper;
 import amerifrance.guideapi.buttons.ButtonNext;
 import amerifrance.guideapi.buttons.ButtonPrev;
 import amerifrance.guideapi.wrappers.CategoryWrapper;
@@ -82,7 +83,7 @@ public class GuiHomeNew extends GuiHome {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         Minecraft.getMinecraft().getTextureManager().bindTexture(outlineTexture);
         drawTexturedModalRectWithColor(guiLeft, guiTop, 0, 0, xSize, ySize, book.bookColor);
-        drawCenteredString(fontRendererObj, book.getLocalizedWelcomeMessage().replace("\\n", "\n").replace("&", "\u00a7"), guiLeft + xSize / 2 + 1, guiTop + 15, 0);
+        PageLayoutHelper.drawWrappedText(fontRendererObj, book.getLocalizedWelcomeMessage(), guiLeft + 37, guiTop + 12, (4 * xSize / 6) - 4, guiTop + 38, 0);
 
         for (CategoryWrapper wrapper : this.categoryWrapperMap.get(categoryPage))
             if (wrapper.canPlayerSee())

@@ -4,6 +4,7 @@ import amerifrance.guideapi.api.abstraction.CategoryAbstract;
 import amerifrance.guideapi.api.abstraction.EntryAbstract;
 import amerifrance.guideapi.api.base.Book;
 import amerifrance.guideapi.api.base.PageBase;
+import amerifrance.guideapi.api.util.PageLayoutHelper;
 import amerifrance.guideapi.gui.GuiBase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -36,7 +37,7 @@ public class PageText extends PageBase {
         if (unicode)
             fontRenderer.setUnicodeFlag(true);
 
-        fontRenderer.drawSplitString(draw, guiLeft + 39, guiTop + 12 + yOffset, 3 * guiBase.xSize / 5, 0);
+        PageLayoutHelper.drawPageText(fontRenderer, draw, guiLeft, guiTop, guiBase, yOffset, 0);
 
         if (unicode && !startFlag)
             fontRenderer.setUnicodeFlag(false);

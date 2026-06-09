@@ -5,6 +5,7 @@ import amerifrance.guideapi.api.abstraction.EntryAbstract;
 import amerifrance.guideapi.api.base.Book;
 import amerifrance.guideapi.api.base.PageBase;
 import amerifrance.guideapi.api.util.GuiHelper;
+import amerifrance.guideapi.api.util.PageLayoutHelper;
 import amerifrance.guideapi.gui.GuiBase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -41,7 +42,7 @@ public class PageTextImage extends PageBase {
 
         if (unicode)
             fontRenderer.setUnicodeFlag(true);
-        fontRenderer.drawSplitString(draw, guiLeft + 39, guiTop + (drawAtTop ? 12 : 112), 3 * guiBase.xSize / 5, 0);
+        PageLayoutHelper.drawWrappedText(fontRenderer, draw, PageLayoutHelper.contentLeft(guiLeft), guiTop + (drawAtTop ? PageLayoutHelper.PAGE_BODY_TOP_MARGIN : 112), PageLayoutHelper.contentWidth(guiBase), drawAtTop ? guiTop + 55 : PageLayoutHelper.contentBottom(guiBase, guiTop), 0);
         if (unicode && !startFlag)
             fontRenderer.setUnicodeFlag(false);
     }

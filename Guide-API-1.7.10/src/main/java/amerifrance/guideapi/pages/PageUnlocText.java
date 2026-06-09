@@ -4,6 +4,7 @@ import amerifrance.guideapi.api.abstraction.CategoryAbstract;
 import amerifrance.guideapi.api.abstraction.EntryAbstract;
 import amerifrance.guideapi.api.base.Book;
 import amerifrance.guideapi.api.base.PageBase;
+import amerifrance.guideapi.api.util.PageLayoutHelper;
 import amerifrance.guideapi.gui.GuiBase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -47,7 +48,7 @@ public class PageUnlocText extends PageBase {
     @SideOnly(Side.CLIENT)
     public void draw(Book book, CategoryAbstract category, EntryAbstract entry, int guiLeft, int guiTop, int mouseX, int mouseY, GuiBase guiBase, FontRenderer fontRenderer) {
         fontRenderer.setUnicodeFlag(true);
-        fontRenderer.drawSplitString(StatCollector.translateToLocal(unlocText), guiLeft + 39, guiTop + 12 + yOffset, 3 * guiBase.xSize / 5, 0);
+        PageLayoutHelper.drawPageText(fontRenderer, StatCollector.translateToLocal(unlocText), guiLeft, guiTop, guiBase, yOffset, 0);
         fontRenderer.setUnicodeFlag(false);
     }
 
