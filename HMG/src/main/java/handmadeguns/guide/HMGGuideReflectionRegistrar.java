@@ -21,8 +21,7 @@ final class HMGGuideReflectionRegistrar {
         Class<?> entryBaseClass = Class.forName("amerifrance.guideapi.api.base.EntryBase");
         Class<?> categoryItemStackClass = Class.forName("amerifrance.guideapi.categories.CategoryItemStack");
         Class<?> pageTextClass = Class.forName("amerifrance.guideapi.pages.PageText");
-        Class<?> pageUnlocTextClass = Class.forName("amerifrance.guideapi.pages.PageUnlocText");
-        Class<?> pageUnlocItemStackClass = Class.forName("amerifrance.guideapi.pages.PageUnlocItemStack");
+        Class<?> pageItemStackClass = Class.forName("amerifrance.guideapi.pages.PageItemStack");
         Class<?> bookBuilderClass = Class.forName("amerifrance.guideapi.api.util.BookBuilder");
         Class<?> bookClass = Class.forName("amerifrance.guideapi.api.base.Book");
         Class<?> guideRegistryClass = Class.forName("amerifrance.guideapi.api.GuideRegistry");
@@ -30,8 +29,7 @@ final class HMGGuideReflectionRegistrar {
         Constructor<?> entryCtor = entryBaseClass.getConstructor(List.class, String.class);
         Constructor<?> categoryCtor = categoryItemStackClass.getConstructor(List.class, String.class, net.minecraft.item.ItemStack.class);
         Constructor<?> pageTextCtor = pageTextClass.getConstructor(String.class);
-        Constructor<?> pageUnlocTextCtor = pageUnlocTextClass.getConstructor(String.class);
-        Constructor<?> pageUnlocItemCtor = pageUnlocItemStackClass.getConstructor(String.class, net.minecraft.item.ItemStack.class);
+        Constructor<?> pageItemCtor = pageItemStackClass.getConstructor(String.class, net.minecraft.item.ItemStack.class);
         Method setCategories = bookBuilderClass.getMethod("setCategories", List.class);
         Method setUnlocBookTitle = bookBuilderClass.getMethod("setUnlocBookTitle", String.class);
         Method setUnlocWelcomeMessage = bookBuilderClass.getMethod("setUnlocWelcomeMessage", String.class);
@@ -48,16 +46,17 @@ final class HMGGuideReflectionRegistrar {
             for (HMGGuideBookData.EntrySpec entrySpec : categorySpec.entries) {
                 List<Object> pages = new ArrayList<Object>();
                 for (HMGGuideBookData.PageSpec pageSpec : entrySpec.pages) {
-                    Object page;
-                    if (pageSpec.generated) {
-                        page = pageTextCtor.newInstance(HMGGuideDynamicText.textFor(pageSpec.key));
-                    } else if (pageSpec.stack != null) {
-                        page = pageUnlocItemCtor.newInstance(pageSpec.key, pageSpec.stack.copy());
-                    } else {
-                        page = pageUnlocTextCtor.newInstance(pageSpec.key);
+                    List<HMGGuidePageFormatter.FormattedPage> formattedPages = HMGGuidePageFormatter.pagesFor(pageSpec);
+                    for (HMGGuidePageFormatter.FormattedPage formattedPage : formattedPages) {
+                        Object page;
+                        if (formattedPage.featuredStack != null) {
+                            page = pageItemCtor.newInstance(formattedPage.text, formattedPage.featuredStack.copy());
+                        } else {
+                            page = pageTextCtor.newInstance(formattedPage.text);
+                        }
+                        iPageClass.cast(page);
+                        pages.add(page);
                     }
-                    iPageClass.cast(page);
-                    pages.add(page);
                 }
                 Object entry = entryCtor.newInstance(pages, entrySpec.key(categorySpec));
                 entryAbstractClass.cast(entry);

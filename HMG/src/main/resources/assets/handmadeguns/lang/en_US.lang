@@ -97,7 +97,7 @@ tile.aluminumBlock.name=Aluminum Block
 # ========================
 item.hmg_field_manual.name=HMG Field Manual
 hmg.guide.book.title=HMG-Overdrive Manual
-hmg.guide.book.welcome=Welcome to the HMG-Overdrive Field Manual. Use the categories to learn crafting, part compatibility, handling, ammo, explosives, server balance, and gun-pack creation.
+hmg.guide.book.welcome=Select a category for HMG-Overdrive help.
 hmg.guide.command.disabled=The HMG Field Manual is disabled in the HMG GuideBook config category.
 hmg.guide.command.missing=Install Guide-API for the full HMG-Overdrive in-game manual. Basic help: craft gun parts at the Gun Smithing Table, match receivers/assemblies/barrels/ammo by weapon role, and check server configs for recoil, ADS, damage, and explosives.
 hmg.guide.command.registered=Guide-API is installed and the HMG Field Manual has been registered. Look for the HMG-Overdrive Manual guidebook item.

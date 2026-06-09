@@ -5,6 +5,7 @@ import amerifrance.guideapi.api.abstraction.EntryAbstract;
 import amerifrance.guideapi.api.base.Book;
 import amerifrance.guideapi.api.base.PageBase;
 import amerifrance.guideapi.api.util.GuiHelper;
+import amerifrance.guideapi.api.util.PageLayoutHelper;
 import amerifrance.guideapi.gui.GuiBase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -42,13 +43,13 @@ public class PageLocImage extends PageBase {
             GuiHelper.drawSizedIconWithoutColor(guiLeft + 50, guiTop + 12, guiBase.xSize, guiBase.ySize, 0);
 
             fontRenderer.setUnicodeFlag(true);
-            fontRenderer.drawSplitString(locText, guiLeft + 39, guiTop + 112, 3 * guiBase.xSize / 5, 0);
+            PageLayoutHelper.drawWrappedText(fontRenderer, locText, PageLayoutHelper.contentLeft(guiLeft), guiTop + 112, PageLayoutHelper.contentWidth(guiBase), PageLayoutHelper.contentBottom(guiBase, guiTop), 0);
             fontRenderer.setUnicodeFlag(false);
         } else {
             GuiHelper.drawSizedIconWithoutColor(guiLeft + 50, guiTop + 60, guiBase.xSize, guiBase.ySize, 0);
 
             fontRenderer.setUnicodeFlag(true);
-            fontRenderer.drawSplitString(locText, guiLeft + 39, guiTop + 12, 3 * guiBase.xSize / 5, 0);
+            PageLayoutHelper.drawWrappedText(fontRenderer, locText, PageLayoutHelper.contentLeft(guiLeft), PageLayoutHelper.contentTop(guiTop), PageLayoutHelper.contentWidth(guiBase), guiTop + 55, 0);
             fontRenderer.setUnicodeFlag(false);
         }
     }
