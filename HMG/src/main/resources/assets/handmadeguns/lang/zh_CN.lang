@@ -30,3 +30,193 @@ item.BOW_sample.name=十字弓_范例
 item.SWORD_sample.name=剑_范例
 item.BP_sample.name=枪械箱_范例
 item.BP_sample1.name=枪械箱_范例1
+
+
+# Guide-API Field Manual (English fallback)
+itemGroup.HMGCrafting=HMG Crafting
+itemGroup.HMG_Ores=HMG Ores
+
+# ========================
+# Base Materials / Ingots
+# ========================
+item.steelIngot.name=Steel Ingot
+item.copperIngot.name=Copper Ingot
+item.aluminumIngot.name=Aluminum Ingot
+item.polymer.name=Polymer
+item.springSet.name=Spring Set
+item.ironInfusedCoal.name=Iron-Carbon Alloy
+
+# ========================
+# Gun Racks / Furniture
+# ========================
+item.hmg_handing.name=Gun Rack
+item.hmg_handing2.name=Gun Rack2
+tile.gun_table.name=Gun Smithing Table
+
+# ========================
+# Core Gun Parts
+# ========================
+item.firingPin.name=Firing Pin
+item.triggerAssembly.name=Trigger Assembly
+item.machinedParts.name=Machined Parts
+item.precisionComponents.name=Precision Components
+
+# ========================
+# Receivers
+# ========================
+item.stampedReceiver.name=Stamped Receiver
+item.milledReceiver.name=Milled Receiver
+
+# ========================
+# Bolt Assemblies
+# ========================
+item.blowbackBoltAssembly.name=Blowback Bolt Assembly
+item.rotatingBoltAssembly.name=Rotating Bolt Assembly
+item.heavyBoltCarrierAssembly.name=Heavy Bolt Carrier Assembly
+item.boltActionAssembly.name=Bolt-Action Assembly
+
+# ========================
+# Handgun / Revolver Assemblies
+# ========================
+item.handgunSlideAssembly.name=Handgun Slide Assembly
+item.revolverMechanismAssembly.name=Revolver Mechanism Assembly
+
+# ========================
+# Barrel Kits
+# ========================
+item.lightBarrelKit.name=Light Barrel Kit
+item.rifleBarrelKit.name=Rifle Barrel Kit
+item.heavyBarrelKit.name=Heavy Barrel Kit
+
+# ========================
+# AR / Rifle Components
+# ========================
+item.arUpper.name=AR Upper Receiver
+item.arLower.name=AR Lower Receiver
+
+# ========================
+# Launcher Parts
+# ========================
+item.launcherTube.name=Launcher Tube
+item.launcherFiringAssembly.name=Launcher Firing Assembly
+item.launcherGripFrame.name=Launcher Grip Frame
+
+# ========================
+# Modules / Accessories
+# ========================
+item.gasSystemModule.name=Gas System Module
+item.beltFeedModule.name=Belt Feed Module
+item.pumpLeverActionModule.name=Pump / Lever Action Module
+item.stockMount.name=Stock Mount
+item.opticMount.name=Optic Mount
+item.woodGunFurniture.name=Wood Gun Furniture
+
+# ========================
+# Ores & Blocks
+# ========================
+tile.copperOre.name=Copper Ore
+tile.aluminumOre.name=Aluminum Ore
+tile.copperBlock.name=Copper Block
+tile.aluminumBlock.name=Aluminum Block
+
+
+
+
+
+
+# ========================
+# Guide-API Field Manual
+# ========================
+item.hmg_field_manual.name=HMG Field Manual
+hmg.guide.book.title=HMG-Overdrive Manual
+hmg.guide.book.welcome=Welcome to the HMG-Overdrive Field Manual. Use the categories to learn crafting, part compatibility, handling, ammo, explosives, server balance, and gun-pack creation.
+hmg.guide.command.disabled=The HMG Field Manual is disabled in the HMG GuideBook config category.
+hmg.guide.command.missing=Install Guide-API for the full HMG-Overdrive in-game manual. Basic help: craft gun parts at the Gun Smithing Table, match receivers/assemblies/barrels/ammo by weapon role, and check server configs for recoil, ADS, damage, and explosives.
+hmg.guide.command.registered=Guide-API is installed and the HMG Field Manual has been registered. Look for the HMG-Overdrive Manual guidebook item.
+hmg.guide.command.failed=Guide-API is installed, but HMG failed to register its manual. Check the log for [HMG][GuideAPI].
+hmg.guide.command.pending=Guide-API is installed, but the HMG Field Manual has not reported registration yet. Check the log for [HMG][GuideAPI].
+hmg.guide.category.getting_started=Getting Started
+hmg.guide.category.weapon_basics=Weapon Basics
+hmg.guide.category.receivers_assemblies=Receivers and Assemblies
+hmg.guide.category.barrels_stocks_attachments=Barrels, Stocks, Attachments
+hmg.guide.category.ammo_compatibility=Ammo Types and Compatibility
+hmg.guide.category.handling=Recoil, ADS, Sprint, and Handling
+hmg.guide.category.explosives_damage=Explosives and Damage
+hmg.guide.category.armor_flans=Armor / Flan's Compatibility
+hmg.guide.category.gun_pack_creation=Gun Pack Creation
+hmg.guide.category.server_config_balance=Server Config / Balance
+hmg.guide.category.troubleshooting=Troubleshooting
+hmg.guide.entry.getting_started.overview=Overview
+hmg.guide.entry.getting_started.crafting_materials=Crafting Materials
+hmg.guide.entry.weapon_basics.gun_stats=Gun Stats
+hmg.guide.entry.weapon_basics.magazines_ammo=Magazines and Ammo
+hmg.guide.entry.receivers_assemblies.receivers=Receivers
+hmg.guide.entry.receivers_assemblies.assemblies=Assemblies
+hmg.guide.entry.barrels_stocks_attachments.barrels=Barrels
+hmg.guide.entry.barrels_stocks_attachments.stocks_mounts=Stocks, Mounts, Attachments
+hmg.guide.entry.ammo_compatibility.ammo_types=Ammo Types
+hmg.guide.entry.ammo_compatibility.special_projectiles=Special Projectiles
+hmg.guide.entry.handling.recoil_ads=Recoil and ADS
+hmg.guide.entry.handling.sprint_setup=Sprint and Setup
+hmg.guide.entry.explosives_damage.explosives=Explosives
+hmg.guide.entry.explosives_damage.damage=Damage
+hmg.guide.entry.armor_flans.armor=Armor Interactions
+hmg.guide.entry.armor_flans.flans=Flan's Compatibility
+hmg.guide.entry.gun_pack_creation.folders=Pack Folders
+hmg.guide.entry.gun_pack_creation.metadata=Gun Metadata
+hmg.guide.entry.server_config_balance.config=Live Config Values
+hmg.guide.entry.server_config_balance.crafting=Crafting Balance
+hmg.guide.entry.troubleshooting.missing_manual=Missing Manual
+hmg.guide.entry.troubleshooting.common=Common Issues
+hmg.guide.page.getting_started.overview=HMG-Overdrive adds modular firearms, ammunition, attachments, gun racks, crafting materials, and gun-pack support. Start by gathering metals, polymer, redstone, and the HMG crafting components used by receivers, barrels, and operating assemblies.
+hmg.guide.page.getting_started.crafting=Most modern recipes are built from small reusable components. Craft base materials first, then receivers, bolt or slide assemblies, barrel kits, mounts, and finally pack-defined guns or magazines. Pack recipes can extend or override what appears here.
+hmg.guide.page.materials.polymer=Polymer is a flexible material used for modern furniture, grips, magazines, and lightweight gun components. It is registered as plastic in the Ore Dictionary where possible.
+hmg.guide.page.materials.spring_set=Spring Sets are used by triggers, bolts, slides, pump/lever systems, and launcher firing assemblies. If a recipe describes cycling, recoil return, or firing pins, expect springs.
+hmg.guide.page.materials.machined=Machined Parts are the mid-tier mechanical gate for sturdy receivers, barrels, mounts, and feed systems. They represent general precision metalwork.
+hmg.guide.page.materials.precision=Precision Components are the high-tier accuracy gate. Use them for milled receivers, optics mounts, rotating bolts, heavy barrels, and other parts that need tight tolerances.
+hmg.guide.page.weapon_basics.stats=Gun packs define per-gun power, projectile speed, spread, recoil, reload/cock timing, accepted magazines, attachments, projectile physics, underbarrel weapons, and lock-on behavior. The item you hold inherits those values from its gun definition.
+hmg.guide.page.weapon_basics.generated=The following values are read from the current HMG config at startup.
+hmg.guide.generated.weapon_stats=Max guns in inventory: %s\nMuzzle flash enabled: %s\nBullets may destroy blocks when guns allow it: %s\nDefault knockback: %s horizontal / %s vertical\nThreaded hit checks: %s, split length %s\nGunInfo default recoil: %s standing / %s sneaking\nGunInfo default ADS spread coefficient: %s\nGunInfo default melee attack damage: %s
+hmg.guide.page.ammo.rifle=Rifle ammunition is the baseline for many assault rifles, battle rifles, DMRs, and carbines. A gun can only load magazines or bullet items listed in that gun's definition.
+hmg.guide.page.ammo.handgun=Handgun ammunition is for pistols, revolvers, and compact sidearms. It usually pairs with handgun slide assemblies or revolver mechanisms in recipe design.
+hmg.guide.page.ammo.shotgun=Shotgun ammunition supports pellet-style weapons and shotgun underbarrels. Spread, pellet count, and special shells are controlled by the gun or projectile definition.
+hmg.guide.page.ammo.lmg=LMG ammunition is for sustained-fire weapons and belt-fed designs. It fits naturally with heavy bolt carriers, heavy barrels, and belt-feed modules.
+hmg.guide.page.ammo.rocket=Rocket or launcher ammunition is for RPGs, grenade launchers, and other explosive launchers. It commonly uses launcher tubes, launcher firing assemblies, and launcher grip frames.
+hmg.guide.page.receivers.stamped=Stamped Receivers suit simple, rugged, mass-produced platforms such as SMGs, WW2-style guns, and AK-like patterns. Pair them with blowback or rotating systems depending on the weapon role.
+hmg.guide.page.receivers.milled=Milled Receivers suit modern rifles, DMRs, and precision weapons. They are more expensive and fit recipes that emphasize strength, accuracy, or high-tier parts.
+hmg.guide.page.receivers.ar_upper=AR Upper Receivers represent the upper half of modular rifle platforms. They pair with AR Lower Receivers, gas systems, rifle barrels, and rotating bolts.
+hmg.guide.page.receivers.ar_lower=AR Lower Receivers represent the lower fire-control half of modular rifle platforms. Pair them with AR uppers and compatible rifle operating groups.
+hmg.guide.page.assemblies.blowback=Blowback Bolt Assemblies are for simple pistol-caliber and SMG-style weapons. They pair well with light barrels, stamped receivers, and handgun or SMG ammo roles.
+hmg.guide.page.assemblies.rotating=Rotating Bolt Assemblies are the standard rifle operating group. Pair them with rifle barrels, gas systems, AR or milled receivers, and rifle magazines.
+hmg.guide.page.assemblies.heavy=Heavy Bolt Carrier Assemblies are for LMGs, heavy automatic rifles, and high-recoil systems. Pair them with heavy barrels, belt-feed modules, and larger magazines.
+hmg.guide.page.assemblies.bolt_action=Bolt-Action Assemblies are for manual precision rifles. They pair well with heavy or rifle barrels and milled receivers when a pack wants slow but accurate firing.
+hmg.guide.page.assemblies.handgun=Handgun Slide Assemblies are for semi-auto pistols. Pair them with light barrels, handgun ammo, compact frames, and pistol-style attachments.
+hmg.guide.page.assemblies.revolver=Revolver Mechanism Assemblies cover cylinders, timing, and manual rotation. Pair with handgun ammo and revolver-style pack definitions.
+hmg.guide.page.barrels.light=Light Barrel Kits fit handguns, SMGs, short carbines, and low-weight builds. They usually favor handling and compactness over sustained fire.
+hmg.guide.page.barrels.rifle=Rifle Barrel Kits are the standard barrel choice for carbines, assault rifles, and general-purpose weapons. They balance handling, accuracy, and crafting cost.
+hmg.guide.page.barrels.heavy=Heavy Barrel Kits fit DMRs, AMRs, LMGs, and heat-tolerant weapons. They imply better stability or sustained fire but generally worse handling.
+hmg.guide.page.attachments.stock_mount=Stock Mounts are interfaces for stocks and shoulder furniture. Stocks usually improve recoil control but may increase weight or slow handling depending on pack data.
+hmg.guide.page.attachments.optic_mount=Optic Mounts are interfaces for scopes, red dots, and advanced sights. Optics affect ADS zoom, overlays, and sometimes movement or handling.
+hmg.guide.page.attachments.furniture=Wood Gun Furniture is used for classic stocks, handguards, and grips. It belongs on WW2, hunting, pump/lever, and low-tech recipes.
+hmg.guide.page.attachments.effects=Attachment behavior is item-defined. Grips can reduce recoil/spread and may slow movement; suppressors alter firing sound and muzzle behavior; lasers/lights aid aiming or illumination; optics change ADS views and zoom.
+hmg.guide.page.ammo.compatibility=Compatibility is controlled by each gun definition. Match the gun's accepted magazine or ammo item, then match projectile type to purpose: rifle for general use, handgun for sidearms, shells for pellet weapons, LMG ammo for sustained fire, and rockets/grenades for launchers.
+hmg.guide.page.ammo.special_projectiles=Special projectiles such as AP, HE, frag, thermobaric, flame, AT, or internal-bullet magazines are pack-defined. They can change armor performance, explosive effects, fuse behavior, bounce, gravity, stability, and damage radius.
+hmg.guide.page.handling.recoil_ads=Recoil and spread come from gun definitions and attachment modifiers. ADS generally tightens spread through the gun's ADS spread coefficient, while grips and stocks can reduce recoil or spread. Server settings still decide key behavior and some global defaults.
+hmg.guide.page.handling.generated=The following handling values are read from the current HMG config.
+hmg.guide.generated.handling=ADS toggle: %s\nADS sneaking mode: %s\nSneak by ADS key: %s\nManual gun pickup range: %s blocks\nManual pickup requires line of sight: %s
+hmg.guide.page.handling.sprint_setup=Many guns cannot be fired or handled normally while sprinting, while some placed or setup states use NBT to lock position. If a weapon feels locked, check whether it needs cocking, fixing, setup, or reload actions.
+hmg.guide.page.handling.attachments=Attachments can trade speed for control. A heavy grip, stock, suppressor, or large optic may improve stability but can add slowdown if the attachment definition sets it.
+hmg.guide.page.explosives.overview=Explosive bullets and launcher projectiles use gun/projectile fields such as power, speed, fuse, bounce, gravity, resistance, acceleration, proximity/VT options, and block-destruction rules.
+hmg.guide.page.explosives.generated=The following explosive-related defaults are read from the current HMG config.
+hmg.guide.generated.explosives=Explosions enabled: %s\nBlock destruction enabled: %s\nDefault gravity coefficient: %s\nDefault underbarrel GL power: %s, spread/radius value: %s, recoil: %s\nDefault damage-range field: %s, default fuse: %s
+hmg.guide.page.explosives.damage=Damage starts with gun power and projectile type, then may be altered by pack coefficients, armor, special bullet classes, explosion radius, proximity fuses, knockback, and server balance settings.
+hmg.guide.page.armor_flans.armor=Armor compatibility depends on damage type and installed mods. AP-like projectiles are intended for better armor performance, while explosive and fragmenting rounds affect area damage differently.
+hmg.guide.page.armor_flans.flans=When Flan's content is present, treat HMG weapons as their own item/projectile system. Balance them against Flan's armor, vehicles, and damage expectations with server-side pack values and config multipliers.
+hmg.guide.page.gun_pack.folders=Gun packs are loaded from handmadeguns_Packs and legacy mods/handmadeguns/addgun locations. Common folders include guns, magazines, bullets, attachment, addpackrecipe, addmodel, addtexture, addsounds, addsighttex, and scripts.
+hmg.guide.page.gun_pack.metadata=Gun definitions describe power, speed, recoil, spread, magazines, sounds, sights, attachment positions, underbarrel behavior, projectiles, lock-on behavior, models, and recipes. Keep compatibility explicit: list accepted ammo/magazines and design recipes around the receiver, barrel, and assembly role.
+hmg.guide.page.server_config.generated=The following values are read from the current HMG config at startup.
+hmg.guide.generated.server_config=Guidebook enabled: %s\nManual gun pickup enabled: %s\nManual pickup only guns: %s\nGround physics render: %s\nVBO model rendering: %s
+hmg.guide.page.server_config.balance=For servers, tune recoil/handling in gun pack files first, then use HMG config for global behavior such as ADS keys, block destruction, knockback, manual pickup, rendering toggles, and thread hit checks.
+hmg.guide.page.server_config.crafting=Crafting balance is split between built-in HMG recipes and pack recipes. Receiver and assembly choices should communicate weapon role: stamped/blowback for simple guns, milled/rotating for rifles, heavy/belt-fed for LMGs, launcher parts for explosives.
+hmg.guide.page.troubleshooting.missing_manual=If this manual item is missing, Guide-API may not be installed, the HMG GuideBook config may be false, or registration failed. Use /hmgmanual and check the log for [HMG][GuideAPI] messages.
+hmg.guide.page.troubleshooting.common=Common fixes: verify ammo compatibility, reload/cock/fix the gun, stop sprinting before firing, confirm attachments are allowed by whitelist, check server configs match the client, and ensure gun-pack resources copied correctly.

@@ -22,6 +22,8 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import handmadeguns.blocks.HMGBlockMounter;
 import handmadeguns.command.HMG_CommandReloadparm;
+import handmadeguns.command.HMG_CommandManual;
+import handmadeguns.guide.HMGGuideIntegration;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
 import handmadeguns.event.*;
@@ -156,6 +158,7 @@ public class HandmadeGunsCore {
 	public static boolean manualGunPickupOnlyGuns = true;
 	public static boolean enableGunGroundPhysicsRender = false;
 	public static boolean enableVBOModelRendering = true;
+	public static boolean enableHMGGuideBook = true;
 
 
 	public static Item hmg_bullet;
@@ -250,6 +253,7 @@ public class HandmadeGunsCore {
 		manualGunPickupRequiresLineOfSight = lconf.get("ManualGunPickup", "manualGunPickupRequiresLineOfSight", true, "When true, the server requires the player to be looking at the dropped gun with no block in the way.").getBoolean(true);
 		manualGunPickupOnlyGuns = lconf.get("ManualGunPickup", "manualGunPickupOnlyGuns", true, "When true, only HMG gun items use manual pickup. If false, other HandmadeGuns items may also use it; non-HMG items are never affected.").getBoolean(true);
 		enableGunGroundPhysicsRender = lconf.get("ManualGunPickup", "enableGunGroundPhysicsRender", false, "Client-side only: render dropped HMG guns with a flat, physical-looking orientation when supported by the HMG gun renderer.").getBoolean(false);
+		enableHMGGuideBook = lconf.get("GuideBook", "enableHMGGuideBook", true, "Enable the optional Guide-API HMG Field Manual. HMG still loads without Guide-API; when false, no Guide-API manual is registered even if Guide-API is installed.").getBoolean(true);
 
 		lconf.save();
 
@@ -843,6 +847,7 @@ public class HandmadeGunsCore {
 		HMG_proxy.registerTileEntity();
 		HMG_proxy.InitRendering();
 		HMG_proxy.getEntityPlayerInstance();
+		HMGGuideIntegration.registerIfAvailable();
 	}
 
 	//public static void registerBlocks() {
@@ -1121,6 +1126,7 @@ public class HandmadeGunsCore {
 	public void serverStarting(FMLServerStartingEvent event){
 		HMG_CommandReloadparm hmg_commandReloadparm = new HMG_CommandReloadparm();
 		event.registerServerCommand(hmg_commandReloadparm);
+		event.registerServerCommand(new HMG_CommandManual());
 		net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(hmg_commandReloadparm);
 	}
 
