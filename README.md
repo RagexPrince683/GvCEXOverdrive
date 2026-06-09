@@ -95,15 +95,6 @@ See the complete active-key reference in [`docs/configuration-reference.md`](doc
 - [Command Reference](docs/command-reference.md)
 - [Known Limitations and Documentation Gaps](docs/known-limitations.md)
 
-## Screenshots
-
-No maintained screenshots are currently stored in this repository. Useful screenshot targets for project pages would be:
-
-1. The Gun Smithing Table and HMG crafting materials.
-2. A firearm with attachments and matching magazines/ammo.
-3. A content-pack weapon using custom model, texture, and sound assets.
-4. Manual dropped-gun pickup or placed-gun gameplay.
-
 ## Troubleshooting
 
 ### Guns or magazines are missing
