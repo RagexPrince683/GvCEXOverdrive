@@ -1328,6 +1328,9 @@ public class HMGItem_Unified_Guns extends Item {
 		return bulletinstances;
 	}
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
+		if (HandmadeGunsCore.cfg_SwapFireAndADSKeys) {
+			return par1ItemStack;
+		}
 		checkTags(par1ItemStack);
 		if (HandmadeGunsCore.cfg_SwapFireAndADSKeys) {
 			par1ItemStack.getTagCompound().setBoolean("IsTriggered", false);
