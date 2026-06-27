@@ -1587,7 +1587,6 @@ public class HMGItem_Unified_Guns extends Item {
 			if (insertedShell) {
 				setLoadedAmmo(itemstack, loaded + 1);
 				itemstack.getTagCompound().setInteger("getcurrentMagazine", itemstack.getTagCompound().getInteger("get_selectingMagazine"));
-				markGunStateDirtyAndSync(entity, itemstack);
 			}
 			int newLoaded = insertedShell ? loaded + 1 : loaded;
 			if (!insertedShell || newLoaded >= max || !canreloadBullets(itemstack, world, entity) || shouldInterruptPerShellReload(entity, nbt)) {
@@ -1619,20 +1618,6 @@ public class HMGItem_Unified_Guns extends Item {
 		if (loaded < 0) loaded = 0;
 		if (loaded > max) loaded = max;
 		itemstack.setItemDamage(max - loaded);
-	}
-
-	private void markGunStateDirtyAndSync(Entity entity, ItemStack itemstack) {
-		if (entity instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) entity;
-			player.inventory.markDirty();
-			if (player instanceof EntityPlayerMP) player.inventoryContainer.detectAndSendChanges();
-		} else if (entity != null && entity.riddenByEntity instanceof EntityPlayer) {
-			EntityPlayer player = (EntityPlayer) entity.riddenByEntity;
-			player.inventory.markDirty();
-			if (player instanceof EntityPlayerMP) player.inventoryContainer.detectAndSendChanges();
-		} else if (entity instanceof PlacedGunEntity) {
-			HMGPacketHandler.INSTANCE.sendToAll(new PacketSendPlacedGunStack(entity.getEntityId(), itemstack));
-		}
 	}
 
 	private boolean consumeOneValidShellAmmo(ItemStack itemstack, World world, Entity entity) {
