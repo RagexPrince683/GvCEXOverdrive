@@ -1324,6 +1324,9 @@ public class HMGItem_Unified_Guns extends Item {
 		return bulletinstances;
 	}
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
+		if (HandmadeGunsCore.cfg_SwapFireAndADSKeys) {
+			return par1ItemStack;
+		}
 		checkTags(par1ItemStack);
 		if(!gunInfo.needfix || (par1ItemStack.getTagCompound().getBoolean("HMGfixed"))) {
 			HMG_proxy.resetRightClickTimer();
@@ -1347,6 +1350,20 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
 	{
+		if (HandmadeGunsCore.cfg_SwapFireAndADSKeys) {
+			checkTags(stack);
+			NBTTagCompound nbt = stack.getTagCompound();
+			if (!gunInfo.needfix || nbt.getBoolean("HMGfixed")) {
+				HMG_proxy.resetRightClickTimer();
+				nbt.setBoolean("IsTriggered", true);
+				nbt.setBoolean("set_up", true);
+				nbt.setInteger("set_up_cnt", 10);
+			} else {
+				nbt.setBoolean("set_up", false);
+				nbt.setInteger("set_up_cnt", 3);
+			}
+			return true;
+		}
 		return false;
 	}
 	public int getMaxItemUseDuration(ItemStack p_77626_1_)
