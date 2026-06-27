@@ -615,6 +615,11 @@ public class HMGItem_Unified_Guns extends Item {
 					} else nbt.setBoolean("Cocking", true);
 					boolean is_Bolt_shooting_position = cycleBolt(itemstack) && (!gunInfo.needcock || nbt.getBoolean("Cocking"));
 					boolean isbulletremaining = remain_Bullet(itemstack) > 0;
+					if (isbulletremaining && nbt.getBoolean("IsReloading") && isPerShellReload(itemstack) && shouldInterruptPerShellReload(entity, nbt)) {
+						nbt.setBoolean("IsReloading", false);
+						nbt.setBoolean("WaitReloading", false);
+						nbt.setInteger("RloadTime", 0);
+					}
 					Entity SACLOSCheck = world.getEntityByID(entity.getEntityData().getInteger("SACLOS_HOMING"));
 
 					if (nbt.getBoolean("IsTriggered") && !(SACLOSCheck instanceof HMGEntityBulletBase && ((HMGEntityBulletBase) SACLOSCheck).SACLOS_Homing && this.gunInfo.SACLOS_Homing)) {
@@ -662,7 +667,7 @@ public class HMGItem_Unified_Guns extends Item {
 						}
 					}
 				}
-				if (remain_Bullet(itemstack) <= 0) {
+				if (remain_Bullet(itemstack) <= 0 || (nbt.getBoolean("IsReloading") && isPerShellReload(itemstack))) {
 					nbt.setInteger("CockingTime", 0);
 					nbt.setBoolean("Cocking", true);
 					try {
@@ -673,7 +678,7 @@ public class HMGItem_Unified_Guns extends Item {
 					} catch (NoSuchMethodException e) {
 						e.printStackTrace();
 					}
-					nbt.setBoolean("IsReloading", true);
+					if (!nbt.getBoolean("IsReloading")) nbt.setBoolean("IsReloading", true);
 					if (!nbt.getBoolean("detached")) returnInternalMagazines(itemstack, entity);
 					proceedreload(itemstack, world, entity, nbt, i);
 				}
@@ -1495,9 +1500,11 @@ public class HMGItem_Unified_Guns extends Item {
 		}
 
 		int reloadti = nbt.getInteger("RloadTime");
+		boolean perShellReload = isPerShellReload(itemstack);
+		boolean continuePerShellReload = perShellReload && nbt.getBoolean("IsReloading") && remain_Bullet(itemstack) < max_Bullet(itemstack);
 
-		// Check if current ammo is depleted
-		if (remain_Bullet(itemstack) <= 0) {
+		// Check if current ammo is depleted, or if a shell-fed weapon is between shells.
+		if (remain_Bullet(itemstack) <= 0 || continuePerShellReload) {
 			if (canreloadBullets(itemstack, world, entity)) {
 				if (!world.isRemote && reloadti == 0 && !gunInfo.isOneuse) {
 					HMGPacketHandler.INSTANCE.sendToAll(new PacketPlaysound(entity, gunInfo.soundre.length > nbt.getInteger("getcurrentMagazine") ? gunInfo.soundre[nbt.getInteger("getcurrentMagazine")] : gunInfo.soundre[0], gunInfo.soundrespeed, gunInfo.soundrelevel, true));
@@ -1520,6 +1527,11 @@ public class HMGItem_Unified_Guns extends Item {
 			if (reloadti >= reloadTime(itemstack)) {
 				resetReload(itemstack, world, entity, i);
 
+				boolean keepReloadingNextShell = perShellReload
+						&& remain_Bullet(itemstack) < max_Bullet(itemstack)
+						&& canreloadBullets(itemstack, world, entity)
+						&& !shouldInterruptPerShellReload(entity, nbt);
+
 				// Reset cocking state after reload
 				if (gunInfo.needFirstCock) {
 					nbt.setBoolean("cocking", false);
@@ -1527,7 +1539,7 @@ public class HMGItem_Unified_Guns extends Item {
 					nbt.setBoolean("cocking", true);
 				}
 
-				nbt.setBoolean("IsReloading", false);
+				nbt.setBoolean("IsReloading", keepReloadingNextShell);
 				nbt.setBoolean("WaitReloading", false);
 				nbt.setInteger("RloadTime", 0);
 				nbt.setBoolean("Bursting", false);
@@ -1538,6 +1550,18 @@ public class HMGItem_Unified_Guns extends Item {
 		} else {
 			nbt.setInteger("RloadTime", reloadti);
 		}
+	}
+
+	private boolean isPerShellReload(ItemStack itemStack) {
+		return itemStack != null
+				&& gunInfo.perShellReload
+				&& gunInfo.magazineItemCount > 1
+				&& get_selectingMagazine(itemStack) != null
+				&& !currentMagzine_has_roundOption(itemStack);
+	}
+
+	private boolean shouldInterruptPerShellReload(Entity entity, NBTTagCompound nbt) {
+		return nbt.getBoolean("IsTriggered") && (entity instanceof EntityPlayer || entity.riddenByEntity instanceof EntityPlayer);
 	}
 
 	public void resetReload(ItemStack par1ItemStack, World par2World, Entity entity, int i) {
@@ -1723,10 +1747,11 @@ public class HMGItem_Unified_Guns extends Item {
 	public boolean consumeAndSetMagazine(ItemStack gunStack, World world, IInventory inventory){
 		ItemStack[] magazines = get_loadedMagazineStack(gunStack);
 		StackAndSlot[] stackAndSlots = new StackAndSlot[magazines.length];
-		int magazine_cnt = 0;
+		int magazine_cnt = countLoadedMagazines(magazines);
 		StackAndSlot prevStackAndSlot = null;
 		int cnt_useStackSlot = 0;
-		for (;magazine_cnt < gunInfo.magazineItemCount; magazine_cnt++) {
+		int loadLimit = isPerShellReload(gunStack) ? Math.min(gunInfo.magazineItemCount, magazine_cnt + 1) : gunInfo.magazineItemCount;
+		for (;magazine_cnt < loadLimit; magazine_cnt++) {
 			StackAndSlot stackAndSlot = searchMagazines(gunStack, world, inventory);
 			if(stackAndSlot != null && stackAndSlot.stack.stackSize>0) {
 				magazines[magazine_cnt] = stackAndSlot.stack.copy();
@@ -1755,6 +1780,14 @@ public class HMGItem_Unified_Guns extends Item {
 		if(!currentMagzine_has_roundOption(gunStack))gunStack.setItemDamage((int)((this.getMaxDamage() - this.getMaxDamage() / (float) gunInfo.magazineItemCount * (float)magazine_cnt)));
 		return magazine_cnt != 0;
 	}
+	private int countLoadedMagazines(ItemStack[] magazines) {
+		int magazine_cnt = 0;
+		for (ItemStack magazine : magazines) {
+			if (magazine != null) magazine_cnt++;
+		}
+		return magazine_cnt;
+	}
+
 	public StackAndSlot searchMagazines(ItemStack gunStack, World world, IInventory inventory){
 		int size = inventory.getSizeInventory();
 		Item magItem = get_selectingMagazine(gunStack);

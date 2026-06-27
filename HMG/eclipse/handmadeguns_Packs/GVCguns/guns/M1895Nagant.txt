@@ -68,6 +68,7 @@ RenderCross,false
 Magazine,0,HandmadeGuns,7.6238mmR bullet
 
 MagazineItemCount,7
+PerShellReload,true
 
 Cartridge,false
 DropMagazine,false

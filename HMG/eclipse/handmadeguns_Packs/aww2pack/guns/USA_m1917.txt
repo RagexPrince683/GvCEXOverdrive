@@ -46,6 +46,7 @@ RenderCross,false
 Automatic,false
 Magazine,0,HandmadeGuns,7.62x63mm bullet
 MagazineItemCount,6
+PerShellReload,true
 Tabname,HMG_WW2Guns
 
 AddParts,mat1
@@ -101,26 +102,26 @@ AddParts,mat1
 		AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 
-		//ƒRƒbƒLƒ“ƒOƒ‚[ƒVƒ‡ƒ“
+		//ã‚³ãƒƒã‚­ãƒ³ã‚°ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³
 		AddCockMotionKey,0,0,0,0,0,0,0,		2,0,0,0,0,0,0
-		//ƒ{ƒ‹ƒg‚ğ¶‚É‰ñ‚µ‚Ä
+		//ãƒœãƒ«ãƒˆã‚’å·¦ã«å›ã—ã¦
 		AddCockMotionKey,2,0,0,0,0,0,0,		4,0,0,0,0,0,-90
-		//ˆø‚¢‚Ä
+		//å¼•ã„ã¦
 		AddCockMotionKey,4,0,0,0,0,0,-90,		9,0,0,-0.9,0,0,-90
-		//”rä°‚µ‚Ä
+		//æ’è¢ã—ã¦
 		AddCockMotionKey,9,0,0,-0.9,0,0,-90,	11,0,0,-0.9,0,0,-90
-		//–ß‚µ‚Ä
+		//æˆ»ã—ã¦
 		AddCockMotionKey,11,0,0,-0.9,0,0,-90,	16,0,0,0,0,0,-90
-		//–ß‚·
+		//æˆ»ã™
 		AddCockMotionKey,16,0,0,0,0,0,-90,	18,0,0,0,0,0,0
 
 		AddCockMotionKey,18,0,0,0,0,0,0,		20,0,0,0,0,0,0
 
 
 		AddReloadMotionKey,0,0,0,0,0,0,0,		4,0,0,0,0,0,0
-		//ƒ{ƒ‹ƒg‚ğ¶‚É‰ñ‚µ‚Ä
+		//ãƒœãƒ«ãƒˆã‚’å·¦ã«å›ã—ã¦
 		AddReloadMotionKey,4,0,0,0,0,0,0,		8,0,0,0,0,0,-90
-		//ˆø‚¢‚Ä
+		//å¼•ã„ã¦
 		AddReloadMotionKey,8,0,0,0,0,0,-90,		13,0,0,-0.9,0,0,-90
 
 		AddReloadMotionKey,35,0,0,-0.9,0,0,-90,			40,0,0,-0.9,0,0,-90

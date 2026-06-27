@@ -59,6 +59,7 @@ ScopeTexture,acog.png,acog.png,acog.png
 RenderCross,false
 Magazine,0,HandmadeGuns,bullet_gl
 MagazineItemCount,6
+PerShellReload,true
 DropMagazine,false
 
 

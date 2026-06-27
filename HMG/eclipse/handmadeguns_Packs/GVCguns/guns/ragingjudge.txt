@@ -67,6 +67,7 @@ Magazine,0,HandmadeGuns,ragingjudgeblt
 //7.6238mmR bullet
 
 MagazineItemCount,6
+PerShellReload,true
 
 Cartridge,false
 DropMagazine,false
