@@ -30,6 +30,7 @@ import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -49,6 +50,7 @@ import paulscode.sound.SoundSystemConfig;
 
 import static handmadeguns.HandmadeGunsCore.HMG_proxy;
 import static handmadeguns.HandmadeGunsCore.cfg_ADS_Toggle;
+import static handmadeguns.HandmadeGunsCore.cfg_SwapFireAndADSKeys;
 
 public class ClientProxyHMG extends CommonSideProxyHMG {
 	public static final KeyBinding_mod Reload					= new KeyBinding_mod("Reload Magazine", Keyboard.KEY_R, "HandmadeGuns");
@@ -186,6 +188,10 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 
 		ClientRegistry.registerKeyBinding(Reload.keyBinding);
 		ClientRegistry.registerKeyBinding(Fire_AttachedGun.keyBinding);
+		if (cfg_SwapFireAndADSKeys && ADS.keyBinding.getKeyCode() == -100) {
+			ADS.keyBinding.setKeyCode(-99);
+			KeyBinding.resetKeyBindingArrayAndHash();
+		}
 		ClientRegistry.registerKeyBinding(ADS.keyBinding);
 		ClientRegistry.registerKeyBinding(gunPrepare_modification.keyBinding);
 		gunPrepare_modification.includeNull = true;

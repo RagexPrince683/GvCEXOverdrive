@@ -22,7 +22,7 @@ HMG registers key bindings under the `HandmadeGuns` category. Defaults found in 
 | --- | --- |
 | Reload Magazine | `R` |
 | Fire AttachedGun | `F` |
-| ADS_Key | mouse button `-100` / left-click style binding in the legacy key system |
+| ADS_Key | mouse button `-100` / left-click style binding in the legacy key system; with `cfg_Swap_Fire_And_ADS_Keys=true`, it defaults to mouse button `-99` / right-click style binding. |
 | Gun Prepare Modification Key | Left Alt |
 | Attachment GUI | `X` |
 | Change Magazine Type | `B` |
