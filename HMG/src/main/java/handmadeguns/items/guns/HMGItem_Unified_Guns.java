@@ -1531,7 +1531,7 @@ public class HMGItem_Unified_Guns extends Item {
 				boolean keepReloadingNextShell = perShellReload
 						&& remain_Bullet(itemstack) < max_Bullet(itemstack)
 						&& canreloadBullets(itemstack, world, entity)
-						&& !shouldInterruptPerShellReload(entity, nbt);
+						&& !shouldInterruptPerShellReload(entity, nbt, true);
 
 				// Reset cocking state after reload
 				if (gunInfo.needFirstCock) {
@@ -1585,7 +1585,13 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 
 	private boolean shouldInterruptPerShellReload(Entity entity, NBTTagCompound nbt) {
-		return nbt.getBoolean("IsTriggered") && (entity instanceof EntityPlayer || entity.riddenByEntity instanceof EntityPlayer);
+		return shouldInterruptPerShellReload(entity, nbt, false);
+	}
+
+	private boolean shouldInterruptPerShellReload(Entity entity, NBTTagCompound nbt, boolean shellInsertionComplete) {
+		return nbt.getBoolean("IsTriggered")
+				&& (shellInsertionComplete || nbt.getInteger("RloadTime") == 0)
+				&& (entity instanceof EntityPlayer || entity.riddenByEntity instanceof EntityPlayer);
 	}
 
 	public void resetReload(ItemStack par1ItemStack, World par2World, Entity entity, int i) {
