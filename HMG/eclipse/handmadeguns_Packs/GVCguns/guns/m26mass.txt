@@ -60,6 +60,7 @@ Mat25,true
 CockedLeftHand,true
 ALLCocked,true
 MagazineItemCount,5
+PerShellReload,true
 
 CartridgeType,3
 DropMagazine,false

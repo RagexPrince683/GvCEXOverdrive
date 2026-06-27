@@ -2453,6 +2453,9 @@ public class HMGGunMaker {
 			case "MagazineItemCount":
 				gunInfo.magazineItemCount = parseInt(type[1]);
 				break;
+			case "PerShellReload":
+				gunInfo.perShellReload = parseBoolean(type[1]);
+				break;
 			case "guerrila_cant_use_this":
 				gunInfo.guerrila_can_use = false;
 				break;

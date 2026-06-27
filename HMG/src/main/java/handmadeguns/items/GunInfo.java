@@ -76,6 +76,7 @@ public class GunInfo {
 	public Item[] magazine = new Item[1];
 	public int[] reloadTimes = new int[1];
 	public int magazineItemCount = 1;
+	public boolean perShellReload = false;
 	public String adstexture = "handmadeguns:textures/misc/ironsight";
 	public String adstexturer = "handmadeguns:textures.misc.reddot";
 	public String adstextures = "handmadeguns:textures.misc.scope";

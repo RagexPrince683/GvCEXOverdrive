@@ -1554,6 +1554,7 @@ public class HMGItem_Unified_Guns extends Item {
 
 	private boolean isPerShellReload(ItemStack itemStack) {
 		return itemStack != null
+				&& gunInfo.perShellReload
 				&& gunInfo.magazineItemCount > 1
 				&& get_selectingMagazine(itemStack) != null
 				&& !currentMagzine_has_roundOption(itemStack);
