@@ -1778,10 +1778,17 @@ public class HMGItem_Unified_Guns extends Item {
 		ItemStack[] magazines = get_loadedMagazineStack(gunStack);
 		StackAndSlot[] stackAndSlots = new StackAndSlot[magazines.length];
 		int magazine_cnt = countLoadedMagazines(magazines);
+		int originalMagazineCount = magazine_cnt;
+		boolean perShellReload = isPerShellReload(gunStack);
+		int currentLoadedAmmo = remain_Bullet(gunStack);
+		int maxLoadedAmmo = max_Bullet(gunStack);
 		StackAndSlot prevStackAndSlot = null;
 		int cnt_useStackSlot = 0;
-		int loadLimit = isPerShellReload(gunStack) ? Math.min(gunInfo.magazineItemCount, magazine_cnt + 1) : gunInfo.magazineItemCount;
+		int loadLimit = perShellReload ? Math.min(gunInfo.magazineItemCount, magazine_cnt + 1) : gunInfo.magazineItemCount;
 		for (;magazine_cnt < loadLimit; magazine_cnt++) {
+			if (perShellReload && currentLoadedAmmo >= maxLoadedAmmo) {
+				break;
+			}
 			StackAndSlot stackAndSlot = searchMagazines(gunStack, world, inventory);
 			if(stackAndSlot != null && stackAndSlot.stack.stackSize>0) {
 				magazines[magazine_cnt] = stackAndSlot.stack.copy();
@@ -1802,12 +1809,18 @@ public class HMGItem_Unified_Guns extends Item {
 				} else {
 					inventory.setInventorySlotContents(stackAndSlot.slot, null);
 				}
+				inventory.markDirty();
 			}
 		}
 		set_loadedMagazineStack(gunStack,magazines);
 		gunStack.getTagCompound().setInteger("getcurrentMagazine", gunStack.getTagCompound().getInteger("get_selectingMagazine"));
 
-		if(!currentMagzine_has_roundOption(gunStack))gunStack.setItemDamage((int)((this.getMaxDamage() - this.getMaxDamage() / (float) gunInfo.magazineItemCount * (float)magazine_cnt)));
+		boolean consumedReserveAmmo = magazine_cnt > originalMagazineCount;
+		if(perShellReload && consumedReserveAmmo) {
+			gunStack.setItemDamage(getMaxDamage() - (currentLoadedAmmo + 1));
+		} else if(!currentMagzine_has_roundOption(gunStack)) {
+			gunStack.setItemDamage((int)((this.getMaxDamage() - this.getMaxDamage() / (float) gunInfo.magazineItemCount * (float)magazine_cnt)));
+		}
 		return magazine_cnt != 0;
 	}
 	private int countLoadedMagazines(ItemStack[] magazines) {
