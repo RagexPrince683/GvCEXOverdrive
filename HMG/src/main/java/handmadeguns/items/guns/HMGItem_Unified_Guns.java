@@ -1633,10 +1633,7 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 
 	private boolean isPerShellReload(ItemStack itemStack) {
-		return itemStack != null
-				&& gunInfo.perShellReload
-				&& get_selectingMagazine(itemStack) != null
-				&& !currentMagzine_has_roundOption(itemStack);
+		return itemStack != null && gunInfo.perShellReload;
 	}
 
 	private boolean shouldInterruptPerShellReload(Entity entity, NBTTagCompound nbt) {
@@ -1756,6 +1753,7 @@ public class HMGItem_Unified_Guns extends Item {
 
 	}
 	public void reloadBullets(ItemStack itemstack, World world, Entity entity){
+		if (isPerShellReload(itemstack)) return;
 		itemstack.getTagCompound().setBoolean("detached",false);
 
 		IInventory inventory = getInventory_VehicleCheck(entity);
@@ -2392,6 +2390,7 @@ public class HMGItem_Unified_Guns extends Item {
 		set_loadedMagazineStack(itemStack,magazines);
 	}
 	public void detach_LoadedMagazine(ItemStack itemStack){
+		if (isPerShellReload(itemStack)) return;
 		ItemStack[] magazines = new ItemStack[gunInfo.magazineItemCount];
 		set_loadedMagazineStack(itemStack,magazines);
 		if(!currentMagzine_has_roundOption(itemStack))
@@ -2399,6 +2398,7 @@ public class HMGItem_Unified_Guns extends Item {
 		itemStack.getTagCompound().setBoolean("detached",true);
 	}
 	public void returnInternalMagazines(ItemStack gunstack,Entity shooter){
+		if (isPerShellReload(gunstack)) return;
 		if(!shooter.worldObj.isRemote){
 			int returnmagazineCount = (int)((float) this.gunInfo.magazineItemCount);
 //                            System.out.println("debug" + returnmagazineCount);
