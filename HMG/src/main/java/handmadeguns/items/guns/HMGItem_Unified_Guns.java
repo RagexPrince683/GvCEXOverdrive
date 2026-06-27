@@ -1709,6 +1709,27 @@ public class HMGItem_Unified_Guns extends Item {
 	public void reloadBullets(ItemStack itemstack, World world, Entity entity){
 		itemstack.getTagCompound().setBoolean("detached",false);
 
+		if(isPerShellReload(itemstack)){
+			boolean loadedShell = false;
+			IInventory inventory = getInventory_VehicleCheck(entity);
+			if(inventory != null){
+				loadedShell = consumeAndSetMagazine(itemstack,world,inventory);
+			}
+			if(!loadedShell){
+				inventory = getInventory_fromEntity(entity);
+				if(inventory != null){
+					loadedShell = consumeAndSetMagazine(itemstack,world,inventory);
+				}
+			}
+			if(!loadedShell){
+				NBTTagCompound nbt = itemstack.getTagCompound();
+				nbt.setBoolean("IsReloading", false);
+				nbt.setBoolean("WaitReloading", false);
+				nbt.setInteger("RloadTime", 0);
+			}
+			return;
+		}
+
 		IInventory inventory = getInventory_VehicleCheck(entity);
 		boolean flag = false;
 		if(inventory != null && searchMagazines(itemstack,world,inventory)!= null){
@@ -1778,6 +1799,7 @@ public class HMGItem_Unified_Guns extends Item {
 		ItemStack[] magazines = get_loadedMagazineStack(gunStack);
 		StackAndSlot[] stackAndSlots = new StackAndSlot[magazines.length];
 		int magazine_cnt = countLoadedMagazines(magazines);
+		int initialMagazineCnt = magazine_cnt;
 		StackAndSlot prevStackAndSlot = null;
 		int cnt_useStackSlot = 0;
 		int loadLimit = isPerShellReload(gunStack) ? Math.min(gunInfo.magazineItemCount, magazine_cnt + 1) : gunInfo.magazineItemCount;
@@ -1808,7 +1830,7 @@ public class HMGItem_Unified_Guns extends Item {
 		gunStack.getTagCompound().setInteger("getcurrentMagazine", gunStack.getTagCompound().getInteger("get_selectingMagazine"));
 
 		if(!currentMagzine_has_roundOption(gunStack))gunStack.setItemDamage((int)((this.getMaxDamage() - this.getMaxDamage() / (float) gunInfo.magazineItemCount * (float)magazine_cnt)));
-		return magazine_cnt != 0;
+		return magazine_cnt > initialMagazineCnt;
 	}
 	private int countLoadedMagazines(ItemStack[] magazines) {
 		int magazine_cnt = 0;
