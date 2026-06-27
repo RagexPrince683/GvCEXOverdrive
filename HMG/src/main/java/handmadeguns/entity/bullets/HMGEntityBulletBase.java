@@ -564,26 +564,9 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 					onBreakBlock(var1, var1.blockX, var1.blockY, var1.blockZ, lblock, lmeta);
 				}
 			} else {
-				for (int i = 0; i < 4; ++i) {
-//					worldObj.spawnParticle("snowballpoof", this.posX, this.posY,
-					worldObj.spawnParticle("smoke",
-							var1.hitVec.xCoord, var1.hitVec.yCoord, var1.hitVec.zCoord,
-							0.0D, 0.0D, 0.0D);
-				}
-				Block block = this.worldObj.getBlock(var1.blockX,
-						var1.blockY,
-						var1.blockZ);
-				if(!block.isAir(worldObj,var1.blockX,
-						var1.blockY,
-						var1.blockZ)) {
-					worldObj.playSoundEffect((float) var1.hitVec.xCoord, (float) var1.hitVec.yCoord, (float) var1.hitVec.zCoord, new ResourceLocation(block.stepSound.getStepResourcePath()).getResourcePath(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
-					this.worldObj.spawnParticle("blockcrack_" + Block.getIdFromBlock(block) + "_" +
-									this.worldObj.getBlockMetadata(var1.blockX,
-											var1.blockY,
-											var1.blockZ)
-							, var1.hitVec.xCoord, var1.hitVec.yCoord, var1.hitVec.zCoord, 4.0D * ((double) this.rand.nextFloat() - 0.5D), 0.5D, ((double) this.rand.nextFloat() - 0.5D) * 4.0D);
-				}
+				spawnBlockImpactEffects(var1, lblock, lmeta);
 			}
+
 			if (!this.worldObj.isRemote)
 			{
 				if(!this.canbounce) this.setDead();
@@ -592,6 +575,40 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	}
 	
 	
+	protected void spawnBlockImpactEffects(MovingObjectPosition hit, Block block, int metadata) {
+		if (hit == null || hit.hitVec == null || block == null || block.isAir(worldObj, hit.blockX, hit.blockY, hit.blockZ)) {
+			return;
+		}
+
+		double normalX = 0.0D;
+		double normalY = 0.0D;
+		double normalZ = 0.0D;
+		switch (hit.sideHit) {
+			case 0: normalY = -1.0D; break;
+			case 1: normalY = 1.0D; break;
+			case 2: normalZ = -1.0D; break;
+			case 3: normalZ = 1.0D; break;
+			case 4: normalX = -1.0D; break;
+			case 5: normalX = 1.0D; break;
+		}
+
+		double impactX = hit.hitVec.xCoord + normalX * 0.03D;
+		double impactY = hit.hitVec.yCoord + normalY * 0.03D;
+		double impactZ = hit.hitVec.zCoord + normalZ * 0.03D;
+		String blockParticle = "blockcrack_" + Block.getIdFromBlock(block) + "_" + metadata;
+
+		worldObj.playSoundEffect(impactX, impactY, impactZ, new ResourceLocation(block.stepSound.getStepResourcePath()).getResourcePath(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound.getPitch() * 0.8F);
+		for (int i = 0; i < 12; ++i) {
+			double scatterX = normalX * (0.08D + this.rand.nextDouble() * 0.18D) + (this.rand.nextDouble() - 0.5D) * 0.35D;
+			double scatterY = normalY * (0.08D + this.rand.nextDouble() * 0.18D) + this.rand.nextDouble() * 0.25D;
+			double scatterZ = normalZ * (0.08D + this.rand.nextDouble() * 0.18D) + (this.rand.nextDouble() - 0.5D) * 0.35D;
+			worldObj.spawnParticle(blockParticle, impactX, impactY, impactZ, scatterX, scatterY, scatterZ);
+		}
+		for (int i = 0; i < 4; ++i) {
+			worldObj.spawnParticle("smoke", impactX, impactY, impactZ, normalX * 0.02D, 0.02D + normalY * 0.02D, normalZ * 0.02D);
+		}
+	}
+
 	@Override
 	public void setDead() {
 		if (damageRange > 0) {
