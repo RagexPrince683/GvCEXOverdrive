@@ -1534,12 +1534,16 @@ public class HMGItem_Unified_Guns extends Item {
 		// Perform reload logic when reload time reaches its limit
 		if (!world.isRemote) {
 			if (reloadti >= reloadTime(itemstack)) {
-				resetReload(itemstack, world, entity, i);
+				boolean shellCommitted = false;
 				if (perShellReload) {
+					shellCommitted = commitOnePerShellReload(itemstack, world, entity);
 					syncCurrentGunStack(itemstack, entity, i);
+				} else {
+					resetReload(itemstack, world, entity, i);
 				}
 
 				boolean hasNextPerShellReload = perShellReload
+						&& shellCommitted
 						&& remain_Bullet(itemstack) < max_Bullet(itemstack)
 						&& canreloadBullets(itemstack, world, entity);
 
@@ -1599,8 +1603,7 @@ public class HMGItem_Unified_Guns extends Item {
 		return itemStack != null
 				&& gunInfo.perShellReload
 				&& gunInfo.magazineItemCount > 1
-				&& get_selectingMagazine(itemStack) != null
-				&& !currentMagzine_has_roundOption(itemStack);
+				&& get_selectingMagazine(itemStack) != null;
 	}
 
 	private boolean shouldInterruptPerShellReload(Entity entity, NBTTagCompound nbt) {
@@ -1654,6 +1657,77 @@ public class HMGItem_Unified_Guns extends Item {
 			}
 			inventory.markDirty();
 		}
+	}
+
+	public boolean commitOnePerShellReload(ItemStack itemstack, World world, Entity entity) {
+		int currentLoadedAmmo = remain_Bullet(itemstack);
+		if (currentLoadedAmmo >= max_Bullet(itemstack)) {
+			return false;
+		}
+
+		IInventory inventory = getInventory_VehicleCheck(entity);
+		if (inventory != null && commitOnePerShellReload(itemstack, world, inventory, currentLoadedAmmo)) {
+			return true;
+		}
+
+		inventory = getInventory_fromEntity(entity);
+		return inventory != null && commitOnePerShellReload(itemstack, world, inventory, currentLoadedAmmo);
+	}
+
+	private boolean commitOnePerShellReload(ItemStack itemstack, World world, IInventory inventory, int currentLoadedAmmo) {
+		StackAndSlot reserveShell = searchMagazines(itemstack, world, inventory);
+		if (reserveShell == null || reserveShell.stack == null || reserveShell.stack.stackSize <= 0) {
+			return false;
+		}
+
+		ItemStack[] magazines = null;
+		int loadedMagazineSlot = -1;
+		if (currentMagzine_has_roundOption(itemstack)) {
+			magazines = get_loadedMagazineStack(itemstack);
+			Item selectedMagazine = get_selectingMagazine(itemstack);
+			for (int magazineSlot = 0; magazineSlot < magazines.length; magazineSlot++) {
+				ItemStack magazine = magazines[magazineSlot];
+				if (magazine != null && magazine.getItem() == selectedMagazine && magazine.getItemDamage() > 0) {
+					loadedMagazineSlot = magazineSlot;
+					break;
+				}
+			}
+			if (loadedMagazineSlot < 0) {
+				for (int magazineSlot = 0; magazineSlot < magazines.length; magazineSlot++) {
+					if (magazines[magazineSlot] == null) {
+						loadedMagazineSlot = magazineSlot;
+						break;
+					}
+				}
+			}
+			if (loadedMagazineSlot < 0) {
+				return false;
+			}
+		}
+
+		reserveShell.stack.stackSize--;
+		if (reserveShell.stack.stackSize <= 0) {
+			inventory.setInventorySlotContents(reserveShell.slot, null);
+		} else {
+			inventory.setInventorySlotContents(reserveShell.slot, reserveShell.stack);
+		}
+		inventory.markDirty();
+
+		if (currentMagzine_has_roundOption(itemstack)) {
+			ItemStack loadedMagazine = magazines[loadedMagazineSlot];
+			if (loadedMagazine == null) {
+				loadedMagazine = new ItemStack(get_selectingMagazine(itemstack), 1);
+				loadedMagazine.setItemDamage(loadedMagazine.getMaxDamage() - 1);
+				magazines[loadedMagazineSlot] = loadedMagazine;
+			} else {
+				loadedMagazine.setItemDamage(loadedMagazine.getItemDamage() - 1);
+			}
+			set_loadedMagazineStack(itemstack, magazines);
+		} else {
+			itemstack.setItemDamage(itemstack.getMaxDamage() - (currentLoadedAmmo + 1));
+		}
+		itemstack.getTagCompound().setInteger("getcurrentMagazine", itemstack.getTagCompound().getInteger("get_selectingMagazine"));
+		return true;
 	}
 
 	public void resetReload(ItemStack par1ItemStack, World par2World, Entity entity, int i) {
