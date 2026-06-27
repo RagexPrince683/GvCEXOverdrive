@@ -33,17 +33,13 @@ public class MessageCatcher_returnMagazineItem implements IMessageHandler<Packet
                     ItemStack itemStack = ((EntityLivingBase) shooter).getHeldItem();
                     if(gunitem instanceof HMGItem_Unified_Guns){
                         HMGItem_Unified_Guns unifiedGun = (HMGItem_Unified_Guns) gunitem;
-                        if (!unifiedGun.startPerShellReloadFromKey(itemStack, world, shooter) && unifiedGun.remain_Bullet(itemStack) > 0) {
-                            unifiedGun.returnInternalMagazines(itemStack,shooter);
-                        }
+                        unifiedGun.startReloadFromKey(itemStack, world, shooter);
                     }
                 }else if(shooter != null && shooter.ridingEntity instanceof PlacedGunEntity){
                     HMGItem_Unified_Guns gunitem = ((PlacedGunEntity) shooter.ridingEntity).gunItem;
                     ItemStack itemStack = ((PlacedGunEntity) shooter.ridingEntity).gunStack;
                     if(gunitem != null && itemStack != null){
-                        if (!gunitem.startPerShellReloadFromKey(itemStack, world, shooter) && gunitem.remain_Bullet(itemStack) > 0) {
-                            gunitem.returnInternalMagazines(itemStack,shooter);
-                        }
+                        gunitem.startReloadFromKey(itemStack, world, shooter);
                     }
                 }
             }

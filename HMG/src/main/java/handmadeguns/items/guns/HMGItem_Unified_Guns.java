@@ -667,7 +667,9 @@ public class HMGItem_Unified_Guns extends Item {
 						}
 					}
 				}
-				if (remain_Bullet(itemstack) <= 0 || (nbt.getBoolean("IsReloading") && isPerShellReload(itemstack))) {
+				boolean reloadRequested = nbt.getBoolean("IsReloading");
+				boolean canAutoReload = !requiresManualReload(entity);
+				if (reloadRequested || (canAutoReload && remain_Bullet(itemstack) <= 0)) {
 					nbt.setInteger("CockingTime", 0);
 					nbt.setBoolean("Cocking", true);
 					try {
@@ -679,7 +681,7 @@ public class HMGItem_Unified_Guns extends Item {
 						e.printStackTrace();
 					}
 					if (!nbt.getBoolean("IsReloading")) nbt.setBoolean("IsReloading", true);
-					if (!nbt.getBoolean("detached")) returnInternalMagazines(itemstack, entity);
+					if (!isPerShellReload(itemstack) && !nbt.getBoolean("detached")) returnInternalMagazines(itemstack, entity);
 					proceedreload(itemstack, world, entity, nbt, i);
 				}
 				nbt.setBoolean("IsTriggered", false);
@@ -1501,10 +1503,9 @@ public class HMGItem_Unified_Guns extends Item {
 
 		int reloadti = nbt.getInteger("RloadTime");
 		boolean perShellReload = isPerShellReload(itemstack);
-		boolean continuePerShellReload = perShellReload && nbt.getBoolean("IsReloading") && remain_Bullet(itemstack) < max_Bullet(itemstack);
 
-		// Check if current ammo is depleted, or if a shell-fed weapon is between shells.
-		if (remain_Bullet(itemstack) <= 0 || continuePerShellReload) {
+		// Advance only an explicit/manual reload for players; non-player users may still be auto-started by gunProcess.
+		if (nbt.getBoolean("IsReloading") && (remain_Bullet(itemstack) < max_Bullet(itemstack) || gunInfo.isOneuse)) {
 			if (canreloadBullets(itemstack, world, entity)) {
 				if (!world.isRemote && reloadti == 0 && !gunInfo.isOneuse) {
 					HMGPacketHandler.INSTANCE.sendToAll(new PacketPlaysound(entity, gunInfo.soundre.length > nbt.getInteger("getcurrentMagazine") ? gunInfo.soundre[nbt.getInteger("getcurrentMagazine")] : gunInfo.soundre[0], gunInfo.soundrespeed, gunInfo.soundrelevel, true));
@@ -1553,27 +1554,26 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 
 	public boolean startPerShellReloadFromKey(ItemStack itemstack, World world, Entity entity) {
+		return startReloadFromKey(itemstack, world, entity);
+	}
+
+	public boolean startReloadFromKey(ItemStack itemstack, World world, Entity entity) {
 		checkTags(itemstack);
 		NBTTagCompound nbt = itemstack.getTagCompound();
-		if (!isPerShellReload(itemstack) || remain_Bullet(itemstack) >= max_Bullet(itemstack) || !canreloadBullets(itemstack, world, entity)) {
+		if (nbt.getBoolean("IsReloading") || remain_Bullet(itemstack) >= max_Bullet(itemstack) || !canreloadBullets(itemstack, world, entity)) {
 			return false;
 		}
 
-		reloadBullets(itemstack, world, entity);
-		boolean keepReloadingNextShell = remain_Bullet(itemstack) < max_Bullet(itemstack)
-				&& canreloadBullets(itemstack, world, entity);
-
-		nbt.setBoolean("IsReloading", keepReloadingNextShell);
+		nbt.setBoolean("IsReloading", true);
 		nbt.setBoolean("WaitReloading", false);
 		nbt.setInteger("RloadTime", 0);
 		nbt.setBoolean("Bursting", false);
 		nbt.setInteger("RemainBurstround", getburstCount(nbt.getInteger("HMGMode")));
-		if (gunInfo.needFirstCock) {
-			nbt.setBoolean("cocking", false);
-		} else {
-			nbt.setBoolean("cocking", true);
-		}
 		return true;
+	}
+
+	private boolean requiresManualReload(Entity entity) {
+		return entity instanceof EntityPlayer || entity.riddenByEntity instanceof EntityPlayer;
 	}
 
 	private boolean isPerShellReload(ItemStack itemStack) {
