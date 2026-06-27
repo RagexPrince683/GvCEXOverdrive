@@ -10,6 +10,7 @@ The active config file is generated from the `HandmadeGuns` mod id, usually as `
 | `cfg_MuzzleFlash` | boolean | `true` | Enables muzzle flash behavior. |
 | `cfg_ADS_Sneaking` | integer | `0` | Controls ADS/sneaking interaction mode. Exact modes are legacy and should be tested with your key setup. |
 | `cfg_ADS_Key_Toggle` | boolean | `true` | Makes ADS key behavior toggle-style when enabled. |
+| `cfg_Swap_Fire_And_ADS_Keys` | boolean | `false` | Swaps held-gun fire and ADS mouse behavior: fire uses attack/left-click, and `ADS_Key` defaults to use-item/right-click. |
 | `cfg_Sneak_ByADSKey` | boolean | `false` | Allows the ADS key to trigger sneaking behavior. |
 | `cfg_Avoid_ALL_ConflictKeys` | boolean | `true` | Enables HMG's conflict-avoidance handling for key input. |
 | `cfg_blockdestroy` | boolean | `true` | Allows HMG explosive/projectile block destruction when the projectile also permits it. Disable for safer servers. |

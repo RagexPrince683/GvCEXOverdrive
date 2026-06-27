@@ -391,6 +391,10 @@ public class HMGItem_Unified_Guns extends Item {
 							if(!guntemp.connectedTurret){
 								HMG_proxy.force_render_item_position(itemstack, i);
 							}
+							if (HandmadeGunsCore.cfg_SwapFireAndADSKeys && HMG_proxy.fireKeyDown()) {
+								triggerHeldGun(itemstack);
+								HMGPacketHandler.INSTANCE.sendToServer(new PacketTriggerHeld(entity.getEntityId()));
+							}
 							if (!gunInfo.isOneuse && HMG_proxy.ReloadKey_isPressed()) {
 								HMGPacketHandler.INSTANCE.sendToServer(new PacketreturnMgazineItem(entity.getEntityId()));
 								nbt.setInteger("RloadTime", 0);
@@ -1325,16 +1329,26 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 	public ItemStack onItemRightClick(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer) {
 		checkTags(par1ItemStack);
-		if(!gunInfo.needfix || (par1ItemStack.getTagCompound().getBoolean("HMGfixed"))) {
-			HMG_proxy.resetRightClickTimer();
-			par1ItemStack.getTagCompound().setBoolean("IsTriggered", true);
-			par1ItemStack.getTagCompound().setBoolean("set_up", true);
-			par1ItemStack.getTagCompound().setInteger("set_up_cnt", 10);
-		}else {
-			par1ItemStack.getTagCompound().setBoolean("set_up", false);
-			par1ItemStack.getTagCompound().setInteger("set_up_cnt", 3);
+		if (HandmadeGunsCore.cfg_SwapFireAndADSKeys) {
+			par1ItemStack.getTagCompound().setBoolean("IsTriggered", false);
+			return par1ItemStack;
 		}
+		triggerHeldGun(par1ItemStack);
 		return par1ItemStack;
+	}
+
+	public void triggerHeldGun(ItemStack itemStack) {
+		checkTags(itemStack);
+		NBTTagCompound nbt = itemStack.getTagCompound();
+		if(!gunInfo.needfix || nbt.getBoolean("HMGfixed")) {
+			HMG_proxy.resetRightClickTimer();
+			nbt.setBoolean("IsTriggered", true);
+			nbt.setBoolean("set_up", true);
+			nbt.setInteger("set_up_cnt", 10);
+		}else {
+			nbt.setBoolean("set_up", false);
+			nbt.setInteger("set_up_cnt", 3);
+		}
 	}
 
 
@@ -1347,7 +1361,7 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 	public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
 	{
-		return false;
+		return HandmadeGunsCore.cfg_SwapFireAndADSKeys;
 	}
 	public int getMaxItemUseDuration(ItemStack p_77626_1_)
 	{

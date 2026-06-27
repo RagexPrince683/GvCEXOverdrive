@@ -141,6 +141,7 @@ public class HandmadeGunsCore {
 
 	public static int cfg_ADS_Sneaking;
 	public static boolean cfg_ADS_Toggle;
+	public static boolean cfg_SwapFireAndADSKeys;
 	public static boolean cfg_Avoid_ALL_ConflictKeys;
 	public static boolean cfg_Sneak_ByADSKey;
 	public static String cfg_Avoid_Hit_Entitys;
@@ -239,6 +240,7 @@ public class HandmadeGunsCore {
 		cfg_muzzleflash	= lconf.get("Gun", "cfg_MuzzleFlash", true).getBoolean(true);
 		cfg_ADS_Sneaking	= lconf.get("Gun", "cfg_ADS_Sneaking",  0).getInt(0);
 		cfg_ADS_Toggle	= lconf.get("Gun", "cfg_ADS_Key_Toggle",  true).getBoolean(true);
+		cfg_SwapFireAndADSKeys	= lconf.get("Gun", "cfg_Swap_Fire_And_ADS_Keys", false, "When true, swaps the held-gun fire and ADS mouse buttons: fire uses the attack/left-click key and ADS_Key defaults to the use-item/right-click key.").getBoolean(false);
 		cfg_Sneak_ByADSKey	= lconf.get("Gun", "cfg_Sneak_ByADSKey",  false).getBoolean(false);
 		cfg_Avoid_ALL_ConflictKeys	= lconf.get("Gun", "cfg_Avoid_ALL_ConflictKeys",  true).getBoolean(true);
 		cfg_blockdestroy = lconf.get("Gun", "cfg_blockdestroy",  true).getBoolean(true);

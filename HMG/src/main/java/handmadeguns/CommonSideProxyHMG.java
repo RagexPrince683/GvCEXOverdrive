@@ -132,6 +132,10 @@ public class CommonSideProxyHMG {
 		return false;
 	}
 
+	public boolean fireKeyDown(){
+		return false;
+	}
+
 	public void playerSounded(Entity entity){
 		GunSoundEvent.post(entity);
 	}
