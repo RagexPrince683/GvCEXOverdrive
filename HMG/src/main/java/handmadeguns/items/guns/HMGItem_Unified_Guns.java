@@ -65,6 +65,8 @@ import static net.minecraft.util.MathHelper.wrapAngleTo180_float;
 import static net.minecraft.world.World.MAX_ENTITY_RADIUS;
 
 public class HMGItem_Unified_Guns extends Item {
+	private static final String PER_SHELL_INTERRUPT_TIME_TAG = "PerShellInterruptTime";
+	private static final int DEFAULT_PER_SHELL_INTERRUPT_TICKS = 4;
 
 
 	//the main GUN item class.
@@ -622,7 +624,7 @@ public class HMGItem_Unified_Guns extends Item {
 					}
 					Entity SACLOSCheck = world.getEntityByID(entity.getEntityData().getInteger("SACLOS_HOMING"));
 
-					if (nbt.getBoolean("IsTriggered") && !(SACLOSCheck instanceof HMGEntityBulletBase && ((HMGEntityBulletBase) SACLOSCheck).SACLOS_Homing && this.gunInfo.SACLOS_Homing)) {
+					if (nbt.getBoolean("IsTriggered") && !isPerShellInsertionInProgress(itemstack, nbt) && !(SACLOSCheck instanceof HMGEntityBulletBase && ((HMGEntityBulletBase) SACLOSCheck).SACLOS_Homing && this.gunInfo.SACLOS_Homing)) {
 //						System.out.println("debug");
 						if (!gunInfo.needfix || nbt.getBoolean("HMGfixed")) {
 							if (!nbt.getBoolean("TriggerBacked")) {
@@ -667,21 +669,24 @@ public class HMGItem_Unified_Guns extends Item {
 						}
 					}
 				}
+				boolean perShellInterruptWindow = isPerShellReload(itemstack) && nbt.getInteger(PER_SHELL_INTERRUPT_TIME_TAG) > 0;
 				boolean reloadRequested = nbt.getBoolean("IsReloading");
 				boolean canAutoReload = !requiresManualReload(entity);
-				if (reloadRequested || (canAutoReload && remain_Bullet(itemstack) <= 0)) {
+				if (reloadRequested || perShellInterruptWindow || (canAutoReload && remain_Bullet(itemstack) <= 0)) {
 					nbt.setInteger("CockingTime", 0);
 					nbt.setBoolean("Cocking", true);
-					try {
-						if (guntemp.invocable != null)
-							guntemp.invocable.invokeFunction("startreload", this, itemstack, nbt, entity);
-					} catch (ScriptException e) {
-						e.printStackTrace();
-					} catch (NoSuchMethodException e) {
-						e.printStackTrace();
+					if (!perShellInterruptWindow) {
+						try {
+							if (guntemp.invocable != null)
+								guntemp.invocable.invokeFunction("startreload", this, itemstack, nbt, entity);
+						} catch (ScriptException e) {
+							e.printStackTrace();
+						} catch (NoSuchMethodException e) {
+							e.printStackTrace();
+						}
+						if (!nbt.getBoolean("IsReloading")) nbt.setBoolean("IsReloading", true);
+						if (!isPerShellReload(itemstack) && !nbt.getBoolean("detached")) returnInternalMagazines(itemstack, entity);
 					}
-					if (!nbt.getBoolean("IsReloading")) nbt.setBoolean("IsReloading", true);
-					if (!isPerShellReload(itemstack) && !nbt.getBoolean("detached")) returnInternalMagazines(itemstack, entity);
 					proceedreload(itemstack, world, entity, nbt, i);
 				}
 				nbt.setBoolean("IsTriggered", false);
@@ -1492,6 +1497,10 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 	public void proceedreload(ItemStack itemstack , World world , Entity entity , NBTTagCompound nbt, int i){
 		nbt.setInteger("getcurrentMagazine", nbt.getInteger("get_selectingMagazine"));
+		boolean perShellReload = isPerShellReload(itemstack);
+		if (perShellReload && handlePerShellInterruptWindow(itemstack, world, entity, nbt)) {
+			return;
+		}
 
 		try {
 			if(guntemp.invocable != null) {
@@ -1502,7 +1511,6 @@ public class HMGItem_Unified_Guns extends Item {
 		}
 
 		int reloadti = nbt.getInteger("RloadTime");
-		boolean perShellReload = isPerShellReload(itemstack);
 
 		// Advance only an explicit/manual reload for players; non-player users may still be auto-started by gunProcess.
 		if (nbt.getBoolean("IsReloading") && (remain_Bullet(itemstack) < max_Bullet(itemstack) || gunInfo.isOneuse)) {
@@ -1527,11 +1535,13 @@ public class HMGItem_Unified_Guns extends Item {
 		if (!world.isRemote) {
 			if (reloadti >= reloadTime(itemstack)) {
 				resetReload(itemstack, world, entity, i);
+				if (perShellReload) {
+					syncCurrentGunStack(itemstack, entity, i);
+				}
 
-				boolean keepReloadingNextShell = perShellReload
+				boolean hasNextPerShellReload = perShellReload
 						&& remain_Bullet(itemstack) < max_Bullet(itemstack)
-						&& canreloadBullets(itemstack, world, entity)
-						&& !shouldInterruptPerShellReload(entity, nbt, true);
+						&& canreloadBullets(itemstack, world, entity);
 
 				// Reset cocking state after reload
 				if (gunInfo.needFirstCock) {
@@ -1540,9 +1550,10 @@ public class HMGItem_Unified_Guns extends Item {
 					nbt.setBoolean("cocking", true);
 				}
 
-				nbt.setBoolean("IsReloading", keepReloadingNextShell);
+				nbt.setBoolean("IsReloading", false);
 				nbt.setBoolean("WaitReloading", false);
 				nbt.setInteger("RloadTime", 0);
+				nbt.setInteger(PER_SHELL_INTERRUPT_TIME_TAG, hasNextPerShellReload ? getPerShellInterruptTicks(nbt) : 0);
 				nbt.setBoolean("Bursting", false);
 				nbt.setInteger("RemainBurstround", getburstCount(nbt.getInteger("HMGMode")));
 			} else if (nbt.getBoolean("IsReloading")) {
@@ -1560,6 +1571,13 @@ public class HMGItem_Unified_Guns extends Item {
 	public boolean startReloadFromKey(ItemStack itemstack, World world, Entity entity) {
 		checkTags(itemstack);
 		NBTTagCompound nbt = itemstack.getTagCompound();
+		if (isPerShellReload(itemstack) && nbt.getInteger(PER_SHELL_INTERRUPT_TIME_TAG) > 0) {
+			nbt.setInteger(PER_SHELL_INTERRUPT_TIME_TAG, 0);
+			nbt.setBoolean("IsReloading", false);
+			nbt.setBoolean("WaitReloading", false);
+			nbt.setInteger("RloadTime", 0);
+			return true;
+		}
 		if (nbt.getBoolean("IsReloading") || remain_Bullet(itemstack) >= max_Bullet(itemstack) || !canreloadBullets(itemstack, world, entity)) {
 			return false;
 		}
@@ -1567,6 +1585,7 @@ public class HMGItem_Unified_Guns extends Item {
 		nbt.setBoolean("IsReloading", true);
 		nbt.setBoolean("WaitReloading", false);
 		nbt.setInteger("RloadTime", 0);
+		nbt.setInteger(PER_SHELL_INTERRUPT_TIME_TAG, 0);
 		nbt.setBoolean("Bursting", false);
 		nbt.setInteger("RemainBurstround", getburstCount(nbt.getInteger("HMGMode")));
 		return true;
@@ -1592,6 +1611,49 @@ public class HMGItem_Unified_Guns extends Item {
 		return nbt.getBoolean("IsTriggered")
 				&& (shellInsertionComplete || nbt.getInteger("RloadTime") == 0)
 				&& (entity instanceof EntityPlayer || entity.riddenByEntity instanceof EntityPlayer);
+	}
+
+	private boolean isPerShellInsertionInProgress(ItemStack itemstack, NBTTagCompound nbt) {
+		return isPerShellReload(itemstack) && nbt.getBoolean("IsReloading") && nbt.getInteger("RloadTime") > 0;
+	}
+
+	private boolean handlePerShellInterruptWindow(ItemStack itemstack, World world, Entity entity, NBTTagCompound nbt) {
+		int interruptTime = nbt.getInteger(PER_SHELL_INTERRUPT_TIME_TAG);
+		if (interruptTime <= 0) {
+			return false;
+		}
+		nbt.setBoolean("IsReloading", false);
+		nbt.setBoolean("WaitReloading", false);
+		nbt.setInteger("RloadTime", 0);
+		if (shouldInterruptPerShellReload(entity, nbt, true)) {
+			nbt.setInteger(PER_SHELL_INTERRUPT_TIME_TAG, 0);
+			return true;
+		}
+		interruptTime--;
+		nbt.setInteger(PER_SHELL_INTERRUPT_TIME_TAG, interruptTime);
+		if (interruptTime <= 0 && remain_Bullet(itemstack) < max_Bullet(itemstack) && canreloadBullets(itemstack, world, entity)) {
+			nbt.setBoolean("IsReloading", true);
+			nbt.setBoolean("WaitReloading", false);
+			nbt.setInteger("RloadTime", 0);
+		}
+		return true;
+	}
+
+	private int getPerShellInterruptTicks(NBTTagCompound nbt) {
+		if (nbt.hasKey("PerShellInterruptTicks")) {
+			return Math.max(0, nbt.getInteger("PerShellInterruptTicks"));
+		}
+		return DEFAULT_PER_SHELL_INTERRUPT_TICKS;
+	}
+
+	private void syncCurrentGunStack(ItemStack itemstack, Entity entity, int slot) {
+		IInventory inventory = getInventory_fromEntity(entity);
+		if (inventory != null) {
+			if (slot >= 0 && slot < inventory.getSizeInventory()) {
+				inventory.setInventorySlotContents(slot, itemstack);
+			}
+			inventory.markDirty();
+		}
 	}
 
 	public void resetReload(ItemStack par1ItemStack, World par2World, Entity entity, int i) {
