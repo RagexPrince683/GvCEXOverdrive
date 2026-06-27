@@ -1709,6 +1709,27 @@ public class HMGItem_Unified_Guns extends Item {
 	public void reloadBullets(ItemStack itemstack, World world, Entity entity){
 		itemstack.getTagCompound().setBoolean("detached",false);
 
+		if(isPerShellReload(itemstack)){
+			boolean loadedShell = false;
+			IInventory inventory = getInventory_VehicleCheck(entity);
+			if(inventory != null){
+				loadedShell = consumeAndSetMagazine(itemstack,world,inventory);
+			}
+			if(!loadedShell){
+				inventory = getInventory_fromEntity(entity);
+				if(inventory != null){
+					loadedShell = consumeAndSetMagazine(itemstack,world,inventory);
+				}
+			}
+			if(!loadedShell){
+				NBTTagCompound nbt = itemstack.getTagCompound();
+				nbt.setBoolean("IsReloading", false);
+				nbt.setBoolean("WaitReloading", false);
+				nbt.setInteger("RloadTime", 0);
+			}
+			return;
+		}
+
 		IInventory inventory = getInventory_VehicleCheck(entity);
 		boolean flag = false;
 		if(inventory != null && searchMagazines(itemstack,world,inventory)!= null){
