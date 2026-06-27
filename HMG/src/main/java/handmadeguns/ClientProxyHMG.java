@@ -573,6 +573,15 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		//return false;
 	}
 
+	@Override
+	public boolean fireKeyDown(){
+		Minecraft mc = Minecraft.getMinecraft();
+		if (mc.currentScreen != null && !mc.currentScreen.allowUserInput) {
+			return false;
+		}
+		return mc.gameSettings.keyBindAttack.getIsKeyPressed();
+	}
+
 	public String getFixkey(){
 		return GameSettings.getKeyDisplayString(Fix.keyBinding.getKeyCode()) + " + " + GameSettings.getKeyDisplayString(gunPrepare_modification.keyBinding.getKeyCode());
 	}

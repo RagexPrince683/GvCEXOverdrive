@@ -41,6 +41,8 @@ public class HMGPacketHandler {
                 Side.SERVER);
         INSTANCE.registerMessage(MessageCatcher_TriggerUnder.class, PacketTriggerUnder.class, ++id,
                 Side.SERVER);
+        INSTANCE.registerMessage(MessageCatcher_TriggerHeld.class, PacketTriggerHeld.class, ++id,
+                Side.SERVER);
         INSTANCE.registerMessage(MessageCatcher_SeekerOpen.class, PacketSeekerOpen.class, ++id,
                 Side.SERVER);
         INSTANCE.registerMessage(MessageCatcher_FixGun.class, PacketFixGun.class, ++id,
