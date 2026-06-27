@@ -31,14 +31,19 @@ public class MessageCatcher_returnMagazineItem implements IMessageHandler<Packet
                 if(shooter instanceof EntityPlayer && ((EntityLivingBase) shooter).getHeldItem() != null) {
                     Item gunitem = ((EntityLivingBase) shooter).getHeldItem().getItem();
                     ItemStack itemStack = ((EntityLivingBase) shooter).getHeldItem();
-                    if(gunitem instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) gunitem).remain_Bullet(itemStack) > 0){
-                        ((HMGItem_Unified_Guns) gunitem).returnInternalMagazines(itemStack,shooter);
+                    if(gunitem instanceof HMGItem_Unified_Guns){
+                        HMGItem_Unified_Guns unifiedGun = (HMGItem_Unified_Guns) gunitem;
+                        if (!unifiedGun.startPerShellReloadFromKey(itemStack, world, shooter) && unifiedGun.remain_Bullet(itemStack) > 0) {
+                            unifiedGun.returnInternalMagazines(itemStack,shooter);
+                        }
                     }
                 }else if(shooter != null && shooter.ridingEntity instanceof PlacedGunEntity){
                     HMGItem_Unified_Guns gunitem = ((PlacedGunEntity) shooter.ridingEntity).gunItem;
                     ItemStack itemStack = ((PlacedGunEntity) shooter.ridingEntity).gunStack;
-                    if(gunitem != null && itemStack != null && gunitem.remain_Bullet(itemStack) > 0){
-                        gunitem.returnInternalMagazines(itemStack,shooter);
+                    if(gunitem != null && itemStack != null){
+                        if (!gunitem.startPerShellReloadFromKey(itemStack, world, shooter) && gunitem.remain_Bullet(itemStack) > 0) {
+                            gunitem.returnInternalMagazines(itemStack,shooter);
+                        }
                     }
                 }
             }

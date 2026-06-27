@@ -1552,6 +1552,30 @@ public class HMGItem_Unified_Guns extends Item {
 		}
 	}
 
+	public boolean startPerShellReloadFromKey(ItemStack itemstack, World world, Entity entity) {
+		checkTags(itemstack);
+		NBTTagCompound nbt = itemstack.getTagCompound();
+		if (!isPerShellReload(itemstack) || remain_Bullet(itemstack) >= max_Bullet(itemstack) || !canreloadBullets(itemstack, world, entity)) {
+			return false;
+		}
+
+		reloadBullets(itemstack, world, entity);
+		boolean keepReloadingNextShell = remain_Bullet(itemstack) < max_Bullet(itemstack)
+				&& canreloadBullets(itemstack, world, entity);
+
+		nbt.setBoolean("IsReloading", keepReloadingNextShell);
+		nbt.setBoolean("WaitReloading", false);
+		nbt.setInteger("RloadTime", 0);
+		nbt.setBoolean("Bursting", false);
+		nbt.setInteger("RemainBurstround", getburstCount(nbt.getInteger("HMGMode")));
+		if (gunInfo.needFirstCock) {
+			nbt.setBoolean("cocking", false);
+		} else {
+			nbt.setBoolean("cocking", true);
+		}
+		return true;
+	}
+
 	private boolean isPerShellReload(ItemStack itemStack) {
 		return itemStack != null
 				&& gunInfo.perShellReload
