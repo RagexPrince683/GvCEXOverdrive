@@ -31,14 +31,33 @@ public class MessageCatcher_returnMagazineItem implements IMessageHandler<Packet
                 if(shooter instanceof EntityPlayer && ((EntityLivingBase) shooter).getHeldItem() != null) {
                     Item gunitem = ((EntityLivingBase) shooter).getHeldItem().getItem();
                     ItemStack itemStack = ((EntityLivingBase) shooter).getHeldItem();
-                    if(gunitem instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) gunitem).remain_Bullet(itemStack) > 0){
-                        ((HMGItem_Unified_Guns) gunitem).returnInternalMagazines(itemStack,shooter);
+                    if(gunitem instanceof HMGItem_Unified_Guns){
+                        HMGItem_Unified_Guns unifiedGun = (HMGItem_Unified_Guns) gunitem;
+                        if(unifiedGun.gunInfo.perShellReload){
+                            unifiedGun.checkTags(itemStack);
+                            if(unifiedGun.remain_Bullet(itemStack) < unifiedGun.max_Bullet(itemStack) && unifiedGun.canreloadBullets(itemStack, world, shooter)){
+                                itemStack.getTagCompound().setBoolean("IsReloading", true);
+                                itemStack.getTagCompound().setBoolean("WaitReloading", false);
+                                itemStack.getTagCompound().setInteger("RloadTime", 0);
+                            }
+                        }else if(unifiedGun.remain_Bullet(itemStack) > 0){
+                            unifiedGun.returnInternalMagazines(itemStack,shooter);
+                        }
                     }
                 }else if(shooter != null && shooter.ridingEntity instanceof PlacedGunEntity){
                     HMGItem_Unified_Guns gunitem = ((PlacedGunEntity) shooter.ridingEntity).gunItem;
                     ItemStack itemStack = ((PlacedGunEntity) shooter.ridingEntity).gunStack;
-                    if(gunitem != null && itemStack != null && gunitem.remain_Bullet(itemStack) > 0){
-                        gunitem.returnInternalMagazines(itemStack,shooter);
+                    if(gunitem != null && itemStack != null){
+                        if(gunitem.gunInfo.perShellReload){
+                            gunitem.checkTags(itemStack);
+                            if(gunitem.remain_Bullet(itemStack) < gunitem.max_Bullet(itemStack) && gunitem.canreloadBullets(itemStack, world, shooter)){
+                                itemStack.getTagCompound().setBoolean("IsReloading", true);
+                                itemStack.getTagCompound().setBoolean("WaitReloading", false);
+                                itemStack.getTagCompound().setInteger("RloadTime", 0);
+                            }
+                        }else if(gunitem.remain_Bullet(itemStack) > 0){
+                            gunitem.returnInternalMagazines(itemStack,shooter);
+                        }
                     }
                 }
             }

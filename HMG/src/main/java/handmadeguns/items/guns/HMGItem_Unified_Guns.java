@@ -391,6 +391,10 @@ public class HMGItem_Unified_Guns extends Item {
 							}
 							if (!gunInfo.isOneuse && HMG_proxy.ReloadKey_isPressed()) {
 								HMGPacketHandler.INSTANCE.sendToServer(new PacketreturnMgazineItem(entity.getEntityId()));
+								if (isPerShellReload(itemstack) && remain_Bullet(itemstack) < max_Bullet(itemstack)) {
+									nbt.setBoolean("IsReloading", true);
+									nbt.setBoolean("WaitReloading", false);
+								}
 								nbt.setInteger("RloadTime", 0);
 							}
 							if(((EntityPlayer) entity).inventory.getStackInSlot(i) != null && ((EntityPlayer) entity).inventory.getStackInSlot(i).getItem() instanceof HMGItem_Unified_Guns) {
@@ -534,6 +538,10 @@ public class HMGItem_Unified_Guns extends Item {
 					if(world.isRemote && entity.riddenByEntity != null && entity.riddenByEntity == HMG_proxy.getEntityPlayerInstance()){
 						if (!gunInfo.isOneuse && HMG_proxy.ReloadKey_isPressed()) {
 							HMGPacketHandler.INSTANCE.sendToServer(new PacketreturnMgazineItem(entity.riddenByEntity.getEntityId()));
+							if (isPerShellReload(itemstack) && remain_Bullet(itemstack) < max_Bullet(itemstack)) {
+								nbt.setBoolean("IsReloading", true);
+								nbt.setBoolean("WaitReloading", false);
+							}
 							nbt.setInteger("RloadTime", 0);
 						}
 						{
