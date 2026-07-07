@@ -93,7 +93,7 @@ dependencies {
 	compile project(":depend")
 	compile fileTree(dir: "lib", include: ["*.jar"])
 
-	compile files("libs/unimixins-all-1.7.10-0.3.1.jar")
+	compile files("libs/+unimixins-all-1.7.10-0.3.1.jar")
 
 	compile "javax.vecmath:vecmath:1.5.2"
 }
@@ -124,11 +124,31 @@ processResources {
 // JAR CONFIG
 // ===========================
 
+def hmgMixinRefmap = "${tasks.compileJava.temporaryDir}/mixins.hmg_overdrive.refmap.json"
+def hmgMixinSrg = "${tasks.compileJava.temporaryDir}/mixins.hmg_overdrive.srg"
+
 jar {
 	dependsOn updateVersion
 
 	baseName = "HandmadeGunsOverdrive"
 	version = project.version
+	manifest {
+		attributes(
+				"MixinConfigs": "mixins.hmg_overdrive.json",
+				"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+				"TweakOrder": 0,
+				"FMLCorePluginContainsFMLMod": "true",
+				"ForceLoadAsMod": "true"
+		)
+	}
+	from hmgMixinRefmap
+}
+
+afterEvaluate {
+	tasks.compileJava.options.compilerArgs += ["-AreobfSrgFile=${tasks.reobf.srg}", "-AoutSrgFile=${hmgMixinSrg}", "-AoutRefMapFile=${hmgMixinRefmap}"]
+	reobf {
+		addExtraSrgFile hmgMixinSrg
+	}
 }
 
 // ===========================
