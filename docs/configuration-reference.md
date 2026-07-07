@@ -33,18 +33,45 @@ The active config file is generated from the `HandmadeGuns` mod id, usually as `
 
 ## `ClientCamera`
 
-Client-side visual camera options for the UniMixins first-person Overdrive camera. Gameplay recoil is intentionally not exposed through client configuration; recoil tuning remains code-side/server-balance data so players cannot reduce recoil by editing local config files.
+Client-side only visual camera options for the UniMixins first-person Overdrive camera. These options do not change server movement, player rotation state, aiming, spread, or hit detection.
 
 | Key | Type | Default | Effect |
 | --- | --- | --- | --- |
-| `enableOverdriveCamera` | boolean | `true` | Master switch for visual first-person camera transforms. Gameplay recoil remains active; disabling this preserves the legacy visual recoil path. |
-| `enableAngelicaCompat` | boolean | `true` | Detects Angelica (`modid: angelica`) and enables guarded compatibility hooks. |
-| `disableAngelicaViewBobbingCompat` | boolean | `true` | When Angelica compatibility is active, forces vanilla/Angelica view bobbing off so HMG is the single owner of first-person step bob. |
-| `disableAngelicaDynamicFovCompat` | boolean | `true` | When Angelica compatibility is active, forces Angelica dynamic FOV to `NONE` while HMG handles FOV inertia. |
-| `useLegacyRecoilWhenCameraDisabled` | boolean | `true` | Keeps the previous `RenderTickSmoothing` recoil behavior when the Overdrive visual camera is disabled. This does not disable recoil. |
-| `debugCamera` | boolean | `false` | Prints soft-fail diagnostics for Angelica reflection hooks and camera compatibility behavior. |
-
-Movement bob, movement tilt, FOV inertia, recoil punch, recoil recovery, explosion shake, and other feel values are internal constants rather than public config values.
+| `masterEnabled` | boolean | `true` | Master switch for all custom first-person camera transforms. |
+| `rotationSmoothingEnabled` | boolean | `true` | Enables visual yaw/pitch smoothing from frame-to-frame view deltas without writing player rotation. |
+| `smoothingStrength` | double | `0.18` | Lerp factor used by the visual rotation smoothing. |
+| `maxYawOffset` | double | `3.0` | Clamp for visual yaw smoothing, in degrees. |
+| `maxPitchOffset` | double | `3.0` | Clamp for visual pitch smoothing, in degrees. |
+| `motionTiltEnabled` | boolean | `true` | Enables visual roll/pitch tilt from strafing, sprinting, jumping, falling, and landing. |
+| `maxRoll` | double | `4.0` | Clamp for movement roll, in degrees. |
+| `maxMovementPitch` | double | `3.0` | Clamp for movement pitch, in degrees. |
+| `tiltReturnSpeed` | double | `0.15` | Return/lerp speed for movement tilt. |
+| `movementDeadzone` | double | `0.03` | Ignores tiny movement/input changes before camera tilt smoothing to prevent WASD micro-jitter. |
+| `motionInputSmoothing` | double | `0.18` | Lerp factor for smoothed movement inputs used by visual roll/pitch. |
+| `maxOffsetChange` | double | `0.45` | Maximum visual camera offset change per rendered frame, in degrees. |
+| `customBobEnabled` | boolean | `true` | Enables smoother custom camera bob transforms. |
+| `replaceVanillaBob` | boolean | `false` | When true, cancels vanilla view bobbing and applies only HMG custom bob; when false, adds custom bob after vanilla bob. |
+| `bobStrength` | double | `0.45` | Custom bob amount. |
+| `bobSpeed` | double | `9.0` | Custom bob phase speed. |
+| `sprintBobMultiplier` | double | `1.25` | Bob speed multiplier while sprinting. |
+| `adsBobMultiplier` | double | `0.35` | Bob strength multiplier while ADS is active. |
+| `fovInertiaEnabled` | boolean | `true` | Smooths client-only FOV transitions without writing `gameSettings.fovSetting`. |
+| `fovLerpSpeed` | double | `0.12` | General FOV inertia lerp factor. |
+| `sprintFovBoost` | double | `3.0` | Additive visual sprint FOV boost. |
+| `adsFovSpeed` | double | `0.22` | FOV lerp factor while ADS is active. |
+| `shakeEnabled` | boolean | `true` | Enables additive stacked camera shake sources. |
+| `maxShakePitch` | double | `5.0` | Clamp for shake pitch, in degrees. |
+| `maxShakeYaw` | double | `3.0` | Clamp for shake yaw, in degrees. |
+| `maxShakeRoll` | double | `4.0` | Clamp for shake roll, in degrees. |
+| `shakeDecaySpeed` | double | `0.18` | Decay/return speed for shake sources. |
+| `shakeFrequency` | double | `1.0` | Frequency multiplier for deterministic shake waves; lower values make explosions heavier and less jittery. |
+| `recoilShakeMultiplier` | double | `0.08` | Multiplier for visual recoil shake impulses. |
+| `explosionShakeMultiplier` | double | `0.45` | Multiplier for explosion shake impulses. |
+| `landingShakeMultiplier` | double | `0.8` | Multiplier for hard-landing shake impulses. |
+| `damageShakeMultiplier` | double | `0.7` | Multiplier for damage shake impulses. |
+| `customHurtCameraEnabled` | boolean | `true` | Enables HMG custom hurt-camera supplement/replacement behavior. |
+| `replaceVanillaHurtCamera` | boolean | `false` | When true, cancels vanilla hurt camera effect and applies the HMG visual shake path; when false, supplements vanilla. |
+| `debugCamera` | boolean | `false` | Reserved debug switch for camera diagnostics. |
 
 ## `Cartridge`
 

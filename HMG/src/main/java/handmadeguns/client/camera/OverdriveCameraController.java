@@ -8,48 +8,11 @@ import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
 public final class OverdriveCameraController {
-    private static final float ROTATION_SMOOTHING = 0.18F;
-    private static final float MAX_YAW_OFFSET = 3.0F;
-    private static final float MAX_PITCH_OFFSET = 3.0F;
-    private static final float MAX_ROLL = 4.0F;
-    private static final float MAX_MOVEMENT_PITCH = 3.0F;
-    private static final float MOVEMENT_DEADZONE = 0.03F;
-    private static final float MOVEMENT_TRANSITION_SPEED = 0.16F;
-    private static final float MOVEMENT_ACCEL_LIMIT = 0.10F;
-    private static final float MAX_OFFSET_CHANGE = 0.45F;
-    private static final float STEP_BOB_STRENGTH = 0.72F;
-    private static final float STEP_BOB_SPEED = 11.5F;
-    private static final float SPRINT_STEP_MULTIPLIER = 1.35F;
-    private static final float ADS_BOB_MULTIPLIER = 0.20F;
-    private static final float FOV_LERP_SPEED = 0.12F;
-    private static final float SPRINT_FOV_BOOST = 3.0F;
-    private static final float ADS_FOV_SPEED = 0.22F;
-    private static final float MAX_SHAKE_PITCH = 7.0F;
-    private static final float MAX_SHAKE_YAW = 4.0F;
-    private static final float MAX_SHAKE_ROLL = 6.0F;
-    private static final float SHAKE_DECAY_SPEED = 0.18F;
-    private static final float RECOIL_FIRST_SHOT_MULTIPLIER = 1.45F;
-    private static final float RECOIL_SUSTAINED_MULTIPLIER = 0.23F;
-    private static final float RECOIL_HORIZONTAL_WANDER = 0.42F;
-    private static final float RECOIL_PATTERN_STRENGTH = 0.28F;
-    private static final float RECOIL_CAMERA_PUNCH = 0.16F;
-    private static final float RECOIL_RECOVERY_DELAY_TICKS = 3.0F;
-    private static final float RECOIL_RECOVERY_SPEED = 0.22F;
-    private static final float RECOIL_MAX_ACCUMULATED_PITCH = 9.0F;
-    private static final float RECOIL_MAX_ACCUMULATED_YAW = 3.0F;
-    private static final float EXPLOSION_SHAKE_MULTIPLIER = 0.85F;
-    private static final float LANDING_SHAKE_MULTIPLIER = 0.8F;
-    private static final float DAMAGE_SHAKE_MULTIPLIER = 0.7F;
-
     private static float yawOffset, pitchOffset, rollOffset, movementPitch, bobPhase, fovOffset;
     private static float shakePitch, shakeYaw, shakeRoll;
     private static float recoilShake, explosionShake, landingShake, damageShake;
     private static float smoothedForward, smoothedStrafe, smoothedVertical;
-    private static float shakeTime, explosionPhase, smoothedSpeed, sprintBlend;
-    private static float recoilPitch, recoilYaw, recoilVisualPitch, recoilVisualYaw, recoilVisualRoll;
-    private static int recoilBurstShots;
-    private static float recoilCooldown;
-    private static int recoilSeed = 0x51F15EED;
+    private static float shakeTime, explosionPhase;
     private static double lastMotionY;
     private static boolean wasOnGround = true;
     private static int lastHurtTime;
@@ -62,11 +25,8 @@ public final class OverdriveCameraController {
         yawOffset = pitchOffset = rollOffset = movementPitch = bobPhase = fovOffset = 0.0F;
         shakePitch = shakeYaw = shakeRoll = 0.0F;
         recoilShake = explosionShake = landingShake = damageShake = 0.0F;
-        smoothedForward = smoothedStrafe = smoothedVertical = smoothedSpeed = sprintBlend = 0.0F;
+        smoothedForward = smoothedStrafe = smoothedVertical = 0.0F;
         shakeTime = explosionPhase = 0.0F;
-        recoilPitch = recoilYaw = recoilVisualPitch = recoilVisualYaw = recoilVisualRoll = 0.0F;
-        recoilBurstShots = 0;
-        recoilCooldown = 0.0F;
         lastMotionY = 0.0D;
         wasOnGround = true;
         lastHurtTime = 0;
@@ -77,17 +37,16 @@ public final class OverdriveCameraController {
             reset();
             return;
         }
-        AngelicaCameraCompat.apply(mc);
         EntityLivingBase player = mc.thePlayer;
-        float smooth = ROTATION_SMOOTHING;
+        float smooth = clamp01(HandmadeGunsCore.cfg_ClientCamera_SmoothingStrength);
         if (HandmadeGunsCore.cfg_ClientCamera_RotationSmoothingEnabled) {
             float yawDelta = MathHelper.wrapAngleTo180_float(player.rotationYaw - player.prevRotationYaw);
             float pitchDelta = player.rotationPitch - player.prevRotationPitch;
-            yawOffset = approachLimited(yawOffset, clamp(-yawDelta * 0.35F, -MAX_YAW_OFFSET, MAX_YAW_OFFSET), smooth, MAX_OFFSET_CHANGE);
-            pitchOffset = approachLimited(pitchOffset, clamp(-pitchDelta * 0.25F, -MAX_PITCH_OFFSET, MAX_PITCH_OFFSET), smooth, MAX_OFFSET_CHANGE);
+            yawOffset = approachLimited(yawOffset, clamp(-yawDelta * 0.35F, -HandmadeGunsCore.cfg_ClientCamera_MaxYawOffset, HandmadeGunsCore.cfg_ClientCamera_MaxYawOffset), smooth, HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange);
+            pitchOffset = approachLimited(pitchOffset, clamp(-pitchDelta * 0.25F, -HandmadeGunsCore.cfg_ClientCamera_MaxPitchOffset, HandmadeGunsCore.cfg_ClientCamera_MaxPitchOffset), smooth, HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange);
         } else {
-            yawOffset = approachLimited(yawOffset, 0.0F, 0.3F, MAX_OFFSET_CHANGE);
-            pitchOffset = approachLimited(pitchOffset, 0.0F, 0.3F, MAX_OFFSET_CHANGE);
+            yawOffset = approachLimited(yawOffset, 0.0F, 0.3F, HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange);
+            pitchOffset = approachLimited(pitchOffset, 0.0F, 0.3F, HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange);
         }
 
         double interpX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
@@ -109,28 +68,24 @@ public final class OverdriveCameraController {
             inputForward = MathHelper.sin(player.rotationYaw * 0.017453292F) * (float) dx - MathHelper.cos(player.rotationYaw * 0.017453292F) * (float) dz;
             inputStrafe = MathHelper.cos(player.rotationYaw * 0.017453292F) * (float) dx + MathHelper.sin(player.rotationYaw * 0.017453292F) * (float) dz;
         }
-        inputForward = applyDeadzone(inputForward, MOVEMENT_DEADZONE);
-        inputStrafe = applyDeadzone(inputStrafe, MOVEMENT_DEADZONE);
-        float vertical = applyDeadzone((float) dy, MOVEMENT_DEADZONE * 0.25F);
-        smoothedForward = approachLimited(smoothedForward, inputForward, MOVEMENT_TRANSITION_SPEED, MOVEMENT_ACCEL_LIMIT);
-        smoothedStrafe = approachLimited(smoothedStrafe, inputStrafe, MOVEMENT_TRANSITION_SPEED, MOVEMENT_ACCEL_LIMIT);
-        smoothedVertical = approachLimited(smoothedVertical, vertical, MOVEMENT_TRANSITION_SPEED, 0.04F);
+        inputForward = applyDeadzone(inputForward, HandmadeGunsCore.cfg_ClientCamera_MovementDeadzone);
+        inputStrafe = applyDeadzone(inputStrafe, HandmadeGunsCore.cfg_ClientCamera_MovementDeadzone);
+        float vertical = applyDeadzone((float) dy, HandmadeGunsCore.cfg_ClientCamera_MovementDeadzone * 0.25F);
+        smoothedForward = approachLimited(smoothedForward, inputForward, HandmadeGunsCore.cfg_ClientCamera_MotionInputSmoothing, 0.12F);
+        smoothedStrafe = approachLimited(smoothedStrafe, inputStrafe, HandmadeGunsCore.cfg_ClientCamera_MotionInputSmoothing, 0.12F);
+        smoothedVertical = approachLimited(smoothedVertical, vertical, HandmadeGunsCore.cfg_ClientCamera_MotionInputSmoothing, 0.04F);
 
         if (HandmadeGunsCore.cfg_ClientCamera_MotionTiltEnabled) {
-            rollOffset = approachLimited(rollOffset, clamp(-smoothedStrafe * MAX_ROLL, -MAX_ROLL, MAX_ROLL), clamp01(MOVEMENT_TRANSITION_SPEED), MAX_OFFSET_CHANGE);
-            float targetPitch = clamp(-smoothedForward * MAX_MOVEMENT_PITCH - smoothedVertical * 24.0F, -MAX_MOVEMENT_PITCH, MAX_MOVEMENT_PITCH);
-            movementPitch = approachLimited(movementPitch, targetPitch, clamp01(MOVEMENT_TRANSITION_SPEED), MAX_OFFSET_CHANGE);
+            rollOffset = approachLimited(rollOffset, clamp(-smoothedStrafe * HandmadeGunsCore.cfg_ClientCamera_MaxRoll, -HandmadeGunsCore.cfg_ClientCamera_MaxRoll, HandmadeGunsCore.cfg_ClientCamera_MaxRoll), clamp01(HandmadeGunsCore.cfg_ClientCamera_TiltReturnSpeed), HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange);
+            float targetPitch = clamp(-smoothedForward * HandmadeGunsCore.cfg_ClientCamera_MaxMovementPitch - smoothedVertical * 24.0F, -HandmadeGunsCore.cfg_ClientCamera_MaxMovementPitch, HandmadeGunsCore.cfg_ClientCamera_MaxMovementPitch);
+            movementPitch = approachLimited(movementPitch, targetPitch, clamp01(HandmadeGunsCore.cfg_ClientCamera_TiltReturnSpeed), HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange);
         } else {
-            rollOffset = approachLimited(rollOffset, 0.0F, 0.3F, MAX_OFFSET_CHANGE);
-            movementPitch = approachLimited(movementPitch, 0.0F, 0.3F, MAX_OFFSET_CHANGE);
+            rollOffset = approachLimited(rollOffset, 0.0F, 0.3F, HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange);
+            movementPitch = approachLimited(movementPitch, 0.0F, 0.3F, HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange);
         }
 
         float speed = MathHelper.sqrt_double(dx * dx + dz * dz);
-        smoothedSpeed = approachLimited(smoothedSpeed, speed, 0.28F, 0.025F);
-        sprintBlend = approachLimited(sprintBlend, player.isSprinting() ? 1.0F : 0.0F, 0.14F, 0.08F);
-        float inputMagnitude = clamp01(MathHelper.sqrt_float(smoothedForward * smoothedForward + smoothedStrafe * smoothedStrafe));
-        bobPhase += smoothedSpeed * STEP_BOB_SPEED * (1.0F + (SPRINT_STEP_MULTIPLIER - 1.0F) * sprintBlend) * (0.35F + inputMagnitude * 0.65F);
-        updateRecoilRecovery();
+        bobPhase += speed * HandmadeGunsCore.cfg_ClientCamera_BobSpeed * (player.isSprinting() ? HandmadeGunsCore.cfg_ClientCamera_SprintBobMultiplier : 1.0F);
         if (!wasOnGround && player.onGround && lastMotionY < -0.35D) addLandingShake((float) Math.min(1.5D, -lastMotionY));
         wasOnGround = player.onGround;
         if (player.hurtTime > lastHurtTime) addDamageShake(1.0F);
@@ -141,19 +96,16 @@ public final class OverdriveCameraController {
 
     public static void applyCameraRotations() {
         if (!HandmadeGunsCore.cfg_ClientCamera_MasterEnabled) return;
-        GL11.glRotatef(clamp(pitchOffset + movementPitch + recoilVisualPitch + shakePitch, -MAX_PITCH_OFFSET - MAX_SHAKE_PITCH - RECOIL_MAX_ACCUMULATED_PITCH, MAX_PITCH_OFFSET + MAX_SHAKE_PITCH + RECOIL_MAX_ACCUMULATED_PITCH), 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(clamp(yawOffset + recoilVisualYaw + shakeYaw, -MAX_YAW_OFFSET - MAX_SHAKE_YAW - RECOIL_MAX_ACCUMULATED_YAW, MAX_YAW_OFFSET + MAX_SHAKE_YAW + RECOIL_MAX_ACCUMULATED_YAW), 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(clamp(rollOffset + recoilVisualRoll + shakeRoll, -MAX_ROLL - MAX_SHAKE_ROLL, MAX_ROLL + MAX_SHAKE_ROLL), 0.0F, 0.0F, 1.0F);
+        GL11.glRotatef(clamp(pitchOffset + movementPitch + shakePitch, -HandmadeGunsCore.cfg_ClientCamera_MaxPitchOffset - HandmadeGunsCore.cfg_ClientCamera_MaxShakePitch, HandmadeGunsCore.cfg_ClientCamera_MaxPitchOffset + HandmadeGunsCore.cfg_ClientCamera_MaxShakePitch), 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(clamp(yawOffset + shakeYaw, -HandmadeGunsCore.cfg_ClientCamera_MaxYawOffset - HandmadeGunsCore.cfg_ClientCamera_MaxShakeYaw, HandmadeGunsCore.cfg_ClientCamera_MaxYawOffset + HandmadeGunsCore.cfg_ClientCamera_MaxShakeYaw), 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(clamp(rollOffset + shakeRoll, -HandmadeGunsCore.cfg_ClientCamera_MaxRoll - HandmadeGunsCore.cfg_ClientCamera_MaxShakeRoll, HandmadeGunsCore.cfg_ClientCamera_MaxRoll + HandmadeGunsCore.cfg_ClientCamera_MaxShakeRoll), 0.0F, 0.0F, 1.0F);
     }
 
     public static void applyCustomBob(float partialTicks) {
         if (!HandmadeGunsCore.cfg_ClientCamera_MasterEnabled || !HandmadeGunsCore.cfg_ClientCamera_CustomBobEnabled) return;
-        float ads = isAdsDown() ? ADS_BOB_MULTIPLIER : 1.0F;
-        float speedScale = clamp(smoothedSpeed * 9.0F, 0.0F, 1.0F);
-        float sprintScale = 1.0F + 0.35F * sprintBlend;
-        float directionSway = clamp(smoothedStrafe * 0.35F - smoothedForward * 0.12F, -0.45F, 0.45F);
-        float amount = STEP_BOB_STRENGTH * ads * speedScale * sprintScale;
-        GL11.glTranslatef((MathHelper.sin(bobPhase) + directionSway) * amount * 0.045F, -Math.abs(MathHelper.cos(bobPhase)) * amount * 0.045F, 0.0F);
+        float ads = isAdsDown() ? HandmadeGunsCore.cfg_ClientCamera_ADSBobMultiplier : 1.0F;
+        float amount = HandmadeGunsCore.cfg_ClientCamera_BobStrength * ads;
+        GL11.glTranslatef(MathHelper.sin(bobPhase) * amount * 0.04F, -Math.abs(MathHelper.cos(bobPhase)) * amount * 0.035F, 0.0F);
         GL11.glRotatef(MathHelper.sin(bobPhase * 0.5F) * amount * 1.5F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(MathHelper.cos(bobPhase) * amount * 0.8F, 1.0F, 0.0F, 0.0F);
     }
@@ -162,78 +114,37 @@ public final class OverdriveCameraController {
         if (!HandmadeGunsCore.cfg_ClientCamera_MasterEnabled || !HandmadeGunsCore.cfg_ClientCamera_FovInertiaEnabled) return baseFov;
         Minecraft mc = Minecraft.getMinecraft();
         float target = 0.0F;
-        if (mc != null && mc.thePlayer != null && mc.thePlayer.isSprinting()) target += SPRINT_FOV_BOOST;
-        float speed = isAdsDown() ? ADS_FOV_SPEED : FOV_LERP_SPEED;
+        if (mc != null && mc.thePlayer != null && mc.thePlayer.isSprinting()) target += HandmadeGunsCore.cfg_ClientCamera_SprintFovBoost;
+        float speed = isAdsDown() ? HandmadeGunsCore.cfg_ClientCamera_ADSFovSpeed : HandmadeGunsCore.cfg_ClientCamera_FovLerpSpeed;
         fovOffset = approach(fovOffset, target, clamp01(speed));
         return baseFov + fovOffset;
     }
 
     public static void applyHurtCamera(float partialTicks) { applyCameraRotations(); }
-    public static void addRecoilShake(float strength) {
-        if (!HandmadeGunsCore.cfg_ClientCamera_MasterEnabled) return;
-        float s = Math.max(0.0F, strength);
-        if (recoilCooldown <= 0.0F) {
-            recoilBurstShots = 0;
-            recoilSeed = recoilSeed * 1664525 + 1013904223;
-        }
-        recoilBurstShots++;
-        recoilCooldown = RECOIL_RECOVERY_DELAY_TICKS;
-        float first = recoilBurstShots == 1 ? RECOIL_FIRST_SHOT_MULTIPLIER : 1.0F;
-        float sustained = 1.0F + Math.min(2.0F, recoilBurstShots * RECOIL_SUSTAINED_MULTIPLIER);
-        float ads = isAdsDown() ? 0.62F : 1.0F;
-        float crouch = Minecraft.getMinecraft() != null && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer.isSneaking() ? 0.78F : 1.0F;
-        float pattern = MathHelper.sin((recoilSeed + recoilBurstShots * 37) * 0.017453292F) * RECOIL_PATTERN_STRENGTH;
-        float wander = (nextRecoilNoise() * 2.0F - 1.0F) * RECOIL_HORIZONTAL_WANDER;
-        float pitchKick = s * first * sustained * ads * crouch;
-        float yawKick = s * (wander + pattern) * ads * crouch;
-        recoilPitch = clamp(recoilPitch + pitchKick, 0.0F, RECOIL_MAX_ACCUMULATED_PITCH);
-        recoilYaw = clamp(recoilYaw + yawKick, -RECOIL_MAX_ACCUMULATED_YAW, RECOIL_MAX_ACCUMULATED_YAW);
-        recoilVisualPitch = clamp(recoilVisualPitch + pitchKick * RECOIL_CAMERA_PUNCH, -RECOIL_MAX_ACCUMULATED_PITCH, RECOIL_MAX_ACCUMULATED_PITCH);
-        recoilVisualYaw = clamp(recoilVisualYaw + yawKick * RECOIL_CAMERA_PUNCH, -RECOIL_MAX_ACCUMULATED_YAW, RECOIL_MAX_ACCUMULATED_YAW);
-        recoilVisualRoll = clamp(recoilVisualRoll - yawKick * 0.18F, -MAX_SHAKE_ROLL, MAX_SHAKE_ROLL);
-        recoilShake += s * 0.10F;
-    }
-    public static void addExplosionShake(float strength) { explosionShake += Math.max(0.0F, strength) * EXPLOSION_SHAKE_MULTIPLIER; }
-    public static void addLandingShake(float strength) { landingShake += Math.max(0.0F, strength) * LANDING_SHAKE_MULTIPLIER; }
-    public static void addDamageShake(float strength) { damageShake += Math.max(0.0F, strength) * DAMAGE_SHAKE_MULTIPLIER; }
+    public static void addRecoilShake(float strength) { recoilShake += Math.max(0.0F, strength) * HandmadeGunsCore.cfg_ClientCamera_RecoilShakeMultiplier; }
+    public static void addExplosionShake(float strength) { explosionShake += Math.max(0.0F, strength) * HandmadeGunsCore.cfg_ClientCamera_ExplosionShakeMultiplier; }
+    public static void addLandingShake(float strength) { landingShake += Math.max(0.0F, strength) * HandmadeGunsCore.cfg_ClientCamera_LandingShakeMultiplier; }
+    public static void addDamageShake(float strength) { damageShake += Math.max(0.0F, strength) * HandmadeGunsCore.cfg_ClientCamera_DamageShakeMultiplier; }
 
     private static void updateShake(float partialTicks) {
-        float frequency = 0.75F;
+        float frequency = Math.max(0.1F, HandmadeGunsCore.cfg_ClientCamera_ShakeFrequency);
         shakeTime += 0.05F * frequency;
         explosionPhase += 0.035F * frequency;
 
         float trauma = HandmadeGunsCore.cfg_ClientCamera_ShakeEnabled ? recoilShake + landingShake + damageShake : 0.0F;
         float impulse = HandmadeGunsCore.cfg_ClientCamera_ShakeEnabled ? explosionShake : 0.0F;
-        float targetPitch = clamp(MathHelper.sin(shakeTime * 2.10F) * trauma * 0.70F - MathHelper.sin(explosionPhase) * impulse, -MAX_SHAKE_PITCH, MAX_SHAKE_PITCH);
-        float targetYaw = clamp(MathHelper.sin(shakeTime * 1.37F + 1.7F) * trauma * 0.45F + MathHelper.sin(explosionPhase * 0.83F + 0.6F) * impulse * 0.55F, -MAX_SHAKE_YAW, MAX_SHAKE_YAW);
-        float targetRoll = clamp(MathHelper.sin(shakeTime * 1.73F + 2.4F) * trauma * 0.55F + MathHelper.sin(explosionPhase * 0.71F + 1.2F) * impulse * 0.70F, -MAX_SHAKE_ROLL, MAX_SHAKE_ROLL);
-        shakePitch = approachLimited(shakePitch, targetPitch, 0.35F, MAX_OFFSET_CHANGE * 1.5F);
-        shakeYaw = approachLimited(shakeYaw, targetYaw, 0.35F, MAX_OFFSET_CHANGE * 1.5F);
-        shakeRoll = approachLimited(shakeRoll, targetRoll, 0.35F, MAX_OFFSET_CHANGE * 1.5F);
+        float targetPitch = clamp(MathHelper.sin(shakeTime * 2.10F) * trauma * 0.70F - MathHelper.sin(explosionPhase) * impulse, -HandmadeGunsCore.cfg_ClientCamera_MaxShakePitch, HandmadeGunsCore.cfg_ClientCamera_MaxShakePitch);
+        float targetYaw = clamp(MathHelper.sin(shakeTime * 1.37F + 1.7F) * trauma * 0.45F + MathHelper.sin(explosionPhase * 0.83F + 0.6F) * impulse * 0.55F, -HandmadeGunsCore.cfg_ClientCamera_MaxShakeYaw, HandmadeGunsCore.cfg_ClientCamera_MaxShakeYaw);
+        float targetRoll = clamp(MathHelper.sin(shakeTime * 1.73F + 2.4F) * trauma * 0.55F + MathHelper.sin(explosionPhase * 0.71F + 1.2F) * impulse * 0.70F, -HandmadeGunsCore.cfg_ClientCamera_MaxShakeRoll, HandmadeGunsCore.cfg_ClientCamera_MaxShakeRoll);
+        shakePitch = approachLimited(shakePitch, targetPitch, 0.35F, HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange * 1.5F);
+        shakeYaw = approachLimited(shakeYaw, targetYaw, 0.35F, HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange * 1.5F);
+        shakeRoll = approachLimited(shakeRoll, targetRoll, 0.35F, HandmadeGunsCore.cfg_ClientCamera_MaxOffsetChange * 1.5F);
 
-        float decay = clamp01(SHAKE_DECAY_SPEED);
+        float decay = clamp01(HandmadeGunsCore.cfg_ClientCamera_ShakeDecaySpeed);
         recoilShake = approach(recoilShake, 0.0F, decay);
         explosionShake = approach(explosionShake, 0.0F, decay * 0.45F);
         landingShake = approach(landingShake, 0.0F, decay * 0.75F);
         damageShake = approach(damageShake, 0.0F, decay);
-    }
-
-
-    private static void updateRecoilRecovery() {
-        if (recoilCooldown > 0.0F) {
-            recoilCooldown -= 1.0F;
-        } else {
-            recoilPitch = approach(recoilPitch, 0.0F, RECOIL_RECOVERY_SPEED);
-            recoilYaw = approach(recoilYaw, 0.0F, RECOIL_RECOVERY_SPEED);
-        }
-        recoilVisualPitch = approach(recoilVisualPitch, recoilPitch * 0.20F, RECOIL_RECOVERY_SPEED * 0.65F);
-        recoilVisualYaw = approach(recoilVisualYaw, recoilYaw * 0.25F, RECOIL_RECOVERY_SPEED * 0.65F);
-        recoilVisualRoll = approach(recoilVisualRoll, 0.0F, RECOIL_RECOVERY_SPEED);
-    }
-
-    private static float nextRecoilNoise() {
-        recoilSeed = recoilSeed * 1103515245 + 12345;
-        return ((recoilSeed >>> 8) & 0xFFFF) / 65535.0F;
     }
 
     private static boolean isAdsDown() { Minecraft mc = Minecraft.getMinecraft(); return mc != null && mc.thePlayer != null && HandmadeGunsCore.Key_ADS(mc.thePlayer); }
