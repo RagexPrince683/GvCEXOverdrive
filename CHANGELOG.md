@@ -7,6 +7,10 @@
 - Added a UniMixins-based, client-only first-person Overdrive camera controller for visual smoothing, movement tilt, custom bobbing, FOV inertia, and stacked shake impulses.
 - Added configurable `ClientCamera` options in `HandmadeGuns.cfg`, plus visual recoil shake integration for existing HMG recoil packets.
 
+### Changed
+
+- Reworked HandmadeGunsOverdrive Gradle versioning to read `mod_version` and `build_number` from `HMG/version.properties`, expose semantic and build display values, and persist build-number increments only after successful artifact builds.
+
 ### Documentation
 
 - Refocused root and extended documentation on the actively maintained `HMG/` module, Handmade Guns Overdrive.
