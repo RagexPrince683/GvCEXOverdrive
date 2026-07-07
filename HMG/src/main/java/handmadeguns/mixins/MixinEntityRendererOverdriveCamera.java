@@ -1,7 +1,6 @@
 package handmadeguns.mixins;
 
 import handmadeguns.HandmadeGunsCore;
-import handmadeguns.client.camera.AngelicaCameraCompat;
 import handmadeguns.client.camera.OverdriveCameraController;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -30,7 +29,7 @@ public abstract class MixinEntityRendererOverdriveCamera {
     private void hmgOverdrive$replaceBobbing(float partialTicks, CallbackInfo ci) {
         if (HandmadeGunsCore.cfg_ClientCamera_MasterEnabled
                 && HandmadeGunsCore.cfg_ClientCamera_CustomBobEnabled
-                && (HandmadeGunsCore.cfg_ClientCamera_ReplaceVanillaBob || AngelicaCameraCompat.shouldOwnBobbing())) {
+                && HandmadeGunsCore.cfg_ClientCamera_ReplaceVanillaBob) {
             OverdriveCameraController.applyCustomBob(partialTicks);
             ci.cancel();
         }
@@ -40,7 +39,7 @@ public abstract class MixinEntityRendererOverdriveCamera {
     private void hmgOverdrive$additiveBobbing(float partialTicks, CallbackInfo ci) {
         if (HandmadeGunsCore.cfg_ClientCamera_MasterEnabled
                 && HandmadeGunsCore.cfg_ClientCamera_CustomBobEnabled
-                && !HandmadeGunsCore.cfg_ClientCamera_ReplaceVanillaBob && !AngelicaCameraCompat.shouldOwnBobbing()) {
+                && !HandmadeGunsCore.cfg_ClientCamera_ReplaceVanillaBob) {
             OverdriveCameraController.applyCustomBob(partialTicks);
         }
     }
