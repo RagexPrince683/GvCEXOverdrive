@@ -1,5 +1,11 @@
 # Changelog
 
+## HMG Overdrive first-person camera overhaul
+- Replaced the experimental HMG bob waveform with an internal reproduction of the vanilla waveform that Angelica/NotFine gates for camera/hand bob modes, keeping ADS scaling and HMG ownership without re-enabling Angelica bobbing.
+- Routed active HMG sight/scope magnification through Overdrive FOV inertia when the camera system is enabled, preserving legacy FOVUpdate zoom when Overdrive FOV is disabled.
+- Added internal-only scope zoom transition tuning, subtle scoped breathing sway for unstabilized first-person ADS, spring-based movement lean inertia, step-weighted HMG bobbing, and stronger low-frequency explosion camera impulses.
+
+
 ## Unreleased
 
 ### Added

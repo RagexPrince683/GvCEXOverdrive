@@ -2,6 +2,7 @@ package handmadeguns.event;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import handmadeguns.HandmadeGunsCore;
+import handmadeguns.client.camera.OverdriveCameraController;
 import handmadeguns.entity.PlacedGunEntity;
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
@@ -314,7 +315,7 @@ public class HMGEventZoom {
 			}
 			if (itemstack != null && itemstack.getItem() instanceof HMGItem_Unified_Guns) {
 				HMGItem_Unified_Guns gunbase = (HMGItem_Unified_Guns) itemstack.getItem();
-				if (firstPerson_ADSState && prevADSState)
+				if (firstPerson_ADSState && prevADSState && !OverdriveCameraController.isHandlingScopeFov())
 				{
 					((HMGItem_Unified_Guns) itemstack.getItem()).checkTags(itemstack);
 					ItemStack[] items = new ItemStack[6];
