@@ -123,26 +123,33 @@ def hmgMixinRefmap = "${tasks.compileJava.temporaryDir}/mixins.hmg_overdrive.ref
 def hmgMixinSrg = "${tasks.compileJava.temporaryDir}/mixins.hmg_overdrive.srg"
 
 jar {
-		baseName = "HandmadeGunsOverdrive"
-		version = project.version
+	dependsOn updateVersion
 
-		manifest {
-			attributes(
-					"Implementation-Version": project.version,
-					"Implementation-Build": project.ext.buildNumber.toString(),
-					"Implementation-Display-Version": project.ext.displayVersion,
-					"MixinConfigs": "mixins.hmg_overdrive.json",
-					"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-					"TweakOrder": "0",
-					"FMLCorePluginContainsFMLMod": "true",
-					"ForceLoadAsMod": "true"
-			)
-		}
+jar {
+	baseName = "HandmadeGunsOverdrive"
+	version = project.version
 
-		from(hmgMixinRefmap) {
-			into ""
-		}
+	manifest {
+		attributes(
+<<<<<<< Updated upstream
+=======
+				"Implementation-Version": project.version,
+				"Implementation-Build": project.ext.buildNumber.toString(),
+				"Implementation-Display-Version": project.ext.displayVersion,
+>>>>>>> Stashed changes
+				"MixinConfigs": "mixins.hmg_overdrive.json",
+				"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+				"TweakOrder": "0",
+				"FMLCorePluginContainsFMLMod": "true",
+				"ForceLoadAsMod": "true"
+		)
 	}
+
+	from(hmgMixinRefmap) {
+		into ""
+	}
+}
+
 afterEvaluate {
 	tasks.compileJava.options.compilerArgs += ["-AreobfSrgFile=${tasks.reobf.srg}", "-AoutSrgFile=${hmgMixinSrg}", "-AoutRefMapFile=${hmgMixinRefmap}"]
 	reobf {
@@ -164,13 +171,12 @@ tasks.withType(JavaCompile) {
 // RUNCLIENT JVM FIX
 // ===========================
 
-	tasks.withType(JavaExec) {
-		if (name == "runClient") {
-			jvmArgs "-Djinput.useDefaultPlugin=false"
-			jvmArgs "-Djinput.plugins=none"
-			jvmArgs "-Djinput.loglevel=OFF"
+tasks.withType(JavaExec) {
+	if (name == "runClient") {
+		jvmArgs "-Djinput.useDefaultPlugin=false"
+		jvmArgs "-Djinput.plugins=none"
+		jvmArgs "-Djinput.loglevel=OFF"
 
-			args "--tweakClass", "org.spongepowered.asm.launch.MixinTweaker"
-			args "--mixin", "mixins.hmg_overdrive.json"
-		}
+		args "--tweakClass", "org.spongepowered.asm.launch.MixinTweaker"
 	}
+}
