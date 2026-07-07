@@ -35,8 +35,7 @@ ext.loadVersionProperties = {
 def versionState = loadVersionProperties()
 version = versionState.modVersion
 ext.buildNumber = versionState.buildNumber
-ext.displayVersion = "${versionState.modVersion}.${versionState.buildNumber})"
-
+ext.displayVersion = "${versionState.modVersion}.${versionState.buildNumber}"
 def artifactTaskNames = ['build', 'jar'] as Set
 def requestedArtifactBuild = gradle.startParameter.taskNames.any { requested ->
 	def normalized = requested == null ? '' : requested.toLowerCase(Locale.ENGLISH)
@@ -86,16 +85,7 @@ repositories {
 // ===========================
 
 dependencies {
-	/*
-     * Do not hardwire old ChickenBones NEI/CCL here.
-     *
-     * For GTNH/Angelica runClient testing, put matching dev/deobf jars in:
-     *   eclipse/mods/
-     *
-     * Put compile-only API jars in:
-     *   libs/compileOnly/
-     */
-
+	compile files("libs/unimixins-all-1.7.10-0.3.1.jar")
 	compileOnly fileTree(dir: "libs/compileOnly", include: ["*.jar"])
 
 	compileOnly "inventorytweaks:InventoryTweaks:1.59-dev:deobf"
@@ -103,8 +93,6 @@ dependencies {
 
 	compile project(":depend")
 	compile fileTree(dir: "lib", include: ["*.jar"])
-
-	compile files("libs/+unimixins-all-1.7.10-0.3.1.jar")
 
 	compile "javax.vecmath:vecmath:1.5.2"
 }
@@ -115,21 +103,15 @@ dependencies {
 
 processResources {
 	inputs.property "version", project.version
-	inputs.property "buildNumber", project.buildNumber
-	inputs.property "displayVersion", project.displayVersion
+	inputs.property "buildNumber", project.ext.buildNumber
+	inputs.property "displayVersion", project.ext.displayVersion
 
-	from(sourceSets.main.resources.srcDirs) {
-		include "mcmod.info"
-
-		expand([
+	filesMatching("mcmod.info") {
+		expand(
 				version: project.version,
-				buildNumber: project.buildNumber,
-				displayVersion: project.displayVersion
-		])
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "mcmod.info"
+				buildNumber: project.ext.buildNumber,
+				displayVersion: project.ext.displayVersion
+		)
 	}
 }
 
@@ -146,16 +128,26 @@ jar {
 jar {
 	baseName = "HandmadeGunsOverdrive"
 	version = project.version
+
 	manifest {
 		attributes(
+<<<<<<< Updated upstream
+=======
+				"Implementation-Version": project.version,
+				"Implementation-Build": project.ext.buildNumber.toString(),
+				"Implementation-Display-Version": project.ext.displayVersion,
+>>>>>>> Stashed changes
 				"MixinConfigs": "mixins.hmg_overdrive.json",
 				"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
-				"TweakOrder": 0,
+				"TweakOrder": "0",
 				"FMLCorePluginContainsFMLMod": "true",
 				"ForceLoadAsMod": "true"
 		)
 	}
-	from hmgMixinRefmap
+
+	from(hmgMixinRefmap) {
+		into ""
+	}
 }
 
 afterEvaluate {
@@ -184,5 +176,7 @@ tasks.withType(JavaExec) {
 		jvmArgs "-Djinput.useDefaultPlugin=false"
 		jvmArgs "-Djinput.plugins=none"
 		jvmArgs "-Djinput.loglevel=OFF"
+
+		args "--tweakClass", "org.spongepowered.asm.launch.MixinTweaker"
 	}
 }
