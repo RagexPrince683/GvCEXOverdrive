@@ -61,15 +61,10 @@ public final class AngelicaCameraCompat {
             Object option = optionField.get(setting);
             Object current = invoke(option, "getStore");
             if (!(current instanceof Enum)) return;
-
-            Enum<?> currentEnum = (Enum<?>) current;
-            Enum<?> target = Enum.valueOf((Class) currentEnum.getDeclaringClass(), enumName);
-
-            if (currentEnum == target) return;
-
+            Enum<?> target = Enum.valueOf((Class<Enum>) current.getDeclaringClass(), enumName);
+            if (current == target) return;
             Method setValue = option.getClass().getMethod("setValue", Object.class);
             setValue.invoke(option, target);
-
             Method applyChanges = option.getClass().getMethod("applyChanges");
             applyChanges.invoke(option);
             debug("Angelica camera compat forced " + setting + " to " + enumName + ".");
