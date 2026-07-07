@@ -25,21 +25,17 @@ public abstract class MixinEntityRendererOverdriveCamera {
         OverdriveCameraController.applyCameraRotations();
     }
 
-    @Inject(method = "setupViewBobbing(F)V", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "applyBobbing(F)V", at = @At("HEAD"), cancellable = true)
     private void hmgOverdrive$replaceBobbing(float partialTicks, CallbackInfo ci) {
-        if (HandmadeGunsCore.cfg_ClientCamera_MasterEnabled
-                && HandmadeGunsCore.cfg_ClientCamera_CustomBobEnabled
-                && HandmadeGunsCore.cfg_ClientCamera_ReplaceVanillaBob) {
+        if (HandmadeGunsCore.cfg_ClientCamera_MasterEnabled && HandmadeGunsCore.cfg_ClientCamera_CustomBobEnabled && HandmadeGunsCore.cfg_ClientCamera_ReplaceVanillaBob) {
             OverdriveCameraController.applyCustomBob(partialTicks);
             ci.cancel();
         }
     }
 
-    @Inject(method = "setupViewBobbing(F)V", at = @At("RETURN"))
+    @Inject(method = "applyBobbing(F)V", at = @At("RETURN"))
     private void hmgOverdrive$additiveBobbing(float partialTicks, CallbackInfo ci) {
-        if (HandmadeGunsCore.cfg_ClientCamera_MasterEnabled
-                && HandmadeGunsCore.cfg_ClientCamera_CustomBobEnabled
-                && !HandmadeGunsCore.cfg_ClientCamera_ReplaceVanillaBob) {
+        if (HandmadeGunsCore.cfg_ClientCamera_MasterEnabled && HandmadeGunsCore.cfg_ClientCamera_CustomBobEnabled && !HandmadeGunsCore.cfg_ClientCamera_ReplaceVanillaBob) {
             OverdriveCameraController.applyCustomBob(partialTicks);
         }
     }
