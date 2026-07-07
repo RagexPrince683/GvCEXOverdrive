@@ -18,7 +18,6 @@ The mod adds a firearms framework rather than a single fixed weapon list: gun pa
 - **Ammunition/projectile framework** covering standard bullets, rockets, grenades, torpedoes, AP, frag, TE, AT, HE, flame, cartridges, lasers, and placed guns.
 - **Attachment and magazine systems** with pack-defined compatibility.
 - **Client controls** for reload, ADS, attachment GUI, magazine switching, gun fixing, zeroing, seeker controls, selector cycling, and optional manual pickup.
-- **Overdrive first-person camera** keeps camera tuning internal while smoothing HMG scope FOV transitions, procedural step bob, movement lean inertia, recoil/explosion motion, and Angelica-compatible bob/FOV ownership.
 - **Optional Guide-API integration** for an in-game HMG Field Manual, plus `/hmgmanual` status help.
 - **Ore/material support** for copper, aluminum, steel, polymer, and gun-part crafting materials.
 - **Server balance controls** for block destruction, cartridge ejection, ADS behavior, knockback, threaded hit checks, LMM friendly fire, and manual pickup.
