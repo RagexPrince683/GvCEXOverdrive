@@ -1,7 +1,6 @@
 package handmadeguns;
 
 import handmadeguns.client.HMGManualGunPickupClientHandler;
-import handmadeguns.client.camera.OverdriveCameraController;
 
 
 import java.io.File;
@@ -213,7 +212,6 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		}
 		MinecraftForge.EVENT_BUS.register(new HMGParticles());
 		MinecraftForge.EVENT_BUS.register(new HMGFovHandler());
-		OverdriveCameraController.initClient();
 
 
 		try {
