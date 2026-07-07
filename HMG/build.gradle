@@ -3,52 +3,63 @@
 // VERSION HANDLING
 // ===========================
 
-def versionFile = file('version.properties')
+ext.versionFile = file('version.properties')
+ext.defaultModVersion = '1.0.0'
+ext.defaultBuildNumber = 0
 
-int major = 2
-int minor = 7
-int revision = 0
+ext.loadVersionProperties = {
+	Properties props = new Properties()
 
-if (versionFile.exists()) {
-	def text = versionFile.text.trim()
-
-	if (!text.matches("\\d+\\.\\d+\\.\\d+")) {
-		throw new GradleException("Invalid version format in version.properties. Expected: major.minor.revision")
+	if (!versionFile.exists()) {
+		props.setProperty('mod_version', defaultModVersion)
+		props.setProperty('build_number', defaultBuildNumber.toString())
+		versionFile.withWriter('UTF-8') { writer -> props.store(writer, 'HandmadeGunsOverdrive version state') }
 	}
 
-	def parts = text.tokenize('.')
-	major = parts[0].toInteger()
-	minor = parts[1].toInteger()
-	revision = parts[2].toInteger()
-}
+	versionFile.withInputStream { stream -> props.load(stream) }
 
-def isBuildTask = gradle.startParameter.taskNames.any {
-	it.equalsIgnoreCase("build") || it.equalsIgnoreCase("jar")
-}
+	def modVersion = props.getProperty('mod_version')
+	def buildNumberText = props.getProperty('build_number')
 
-if (isBuildTask) {
-	revision++
-
-	if (revision >= 10) {
-		revision = 0
-		minor++
+	if (modVersion == null || !modVersion.matches(/\d+\.\d+\.\d+/)) {
+		throw new GradleException("Invalid HMG/version.properties: mod_version must be present and use semantic x.y.z format, for example mod_version=1.0.0")
 	}
 
-	if (minor >= 10) {
-		minor = 0
-		major++
+	if (buildNumberText == null || !buildNumberText.matches(/\d+/)) {
+		throw new GradleException("Invalid HMG/version.properties: build_number must be present and be a non-negative integer, for example build_number=0")
+	}
+
+	return [modVersion: modVersion, buildNumber: buildNumberText.toInteger()]
+}
+
+def versionState = loadVersionProperties()
+version = versionState.modVersion
+ext.buildNumber = versionState.buildNumber
+ext.displayVersion = "${versionState.modVersion}.${versionState.buildNumber})"
+
+def artifactTaskNames = ['build', 'jar'] as Set
+def requestedArtifactBuild = gradle.startParameter.taskNames.any { requested ->
+	def normalized = requested == null ? '' : requested.toLowerCase(Locale.ENGLISH)
+	artifactTaskNames.any { artifactTask ->
+		normalized == artifactTask || normalized.endsWith(':' + artifactTask)
 	}
 }
 
-def computedVersion = "${major}.${minor}.${revision}"
-version = computedVersion
+gradle.taskGraph.whenReady { graph ->
+	def artifactTaskSelected = graph.allTasks.any { task ->
+		task.project == project && artifactTaskNames.contains(task.name)
+	}
+	ext.shouldIncrementBuildNumber = requestedArtifactBuild && artifactTaskSelected
+}
 
-task updateVersion {
-	onlyIf { isBuildTask }
-
-	doLast {
-		versionFile.text = computedVersion
-		println "Version bumped to ${computedVersion}"
+gradle.buildFinished { result ->
+	if (project.ext.has('shouldIncrementBuildNumber') && project.ext.shouldIncrementBuildNumber && result.failure == null) {
+		def latest = loadVersionProperties()
+		Properties props = new Properties()
+		props.setProperty('mod_version', latest.modVersion)
+		props.setProperty('build_number', (latest.buildNumber + 1).toString())
+		versionFile.withWriter('UTF-8') { writer -> props.store(writer, 'HandmadeGunsOverdrive version state') }
+		println "Build number incremented to ${latest.buildNumber + 1} for mod version ${latest.modVersion}"
 	}
 }
 
@@ -103,15 +114,17 @@ dependencies {
 // ===========================
 
 processResources {
-	dependsOn updateVersion
-
 	inputs.property "version", project.version
+	inputs.property "buildNumber", project.buildNumber
+	inputs.property "displayVersion", project.displayVersion
 
 	from(sourceSets.main.resources.srcDirs) {
 		include "mcmod.info"
 
 		expand([
-				version: project.version
+				version: project.version,
+				buildNumber: project.buildNumber,
+				displayVersion: project.displayVersion
 		])
 	}
 
@@ -128,12 +141,13 @@ def hmgMixinRefmap = "${tasks.compileJava.temporaryDir}/mixins.hmg_overdrive.ref
 def hmgMixinSrg = "${tasks.compileJava.temporaryDir}/mixins.hmg_overdrive.srg"
 
 jar {
-	dependsOn updateVersion
-
 	baseName = "HandmadeGunsOverdrive"
 	version = project.version
 	manifest {
 		attributes(
+				"Implementation-Version": project.version,
+				"Implementation-Build": project.buildNumber.toString(),
+				"Implementation-Display-Version": project.displayVersion,
 				"MixinConfigs": "mixins.hmg_overdrive.json",
 				"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
 				"TweakOrder": 0,
