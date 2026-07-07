@@ -4,9 +4,12 @@
 
 ### Added
 
+- Added Angelica camera compatibility that detects `angelica`, safely forces conflicting Angelica view bob/dynamic FOV options off when enabled, and lets HMG own first-person bob/FOV behavior.
+- Added stronger HMG procedural step bob with smoothed movement-direction transitions, sprint blending, ADS bob reduction, dynamic recoil punch/wander/recovery, and heavier low-frequency explosion shake.
+
 - Smoothed the UniMixins camera movement pass to remove WASD micro-jitter and changed explosion shake to a damped low-frequency impulse.
 - Added a UniMixins-based, client-only first-person Overdrive camera controller for visual smoothing, movement tilt, custom bobbing, FOV inertia, and stacked shake impulses.
-- Added configurable `ClientCamera` options in `HandmadeGuns.cfg`, plus visual recoil shake integration for existing HMG recoil packets.
+- Reduced public `ClientCamera` configuration to the supported compatibility and master switches, keeping camera/recoil tuning internal to avoid client-side recoil abuse.
 
 ### Documentation
 
