@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Added
+
+- Smoothed the UniMixins camera movement pass to remove WASD micro-jitter and changed explosion shake to a damped low-frequency impulse.
+- Added a UniMixins-based, client-only first-person Overdrive camera controller for visual smoothing, movement tilt, custom bobbing, FOV inertia, and stacked shake impulses.
+- Added configurable `ClientCamera` options in `HandmadeGuns.cfg`, plus visual recoil shake integration for existing HMG recoil packets.
+
 ### Documentation
 
 - Refocused root and extended documentation on the actively maintained `HMG/` module, Handmade Guns Overdrive.
