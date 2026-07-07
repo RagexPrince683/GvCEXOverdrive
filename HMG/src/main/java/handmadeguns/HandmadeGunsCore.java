@@ -169,6 +169,9 @@ public class HandmadeGunsCore {
 	public static float cfg_ClientCamera_MaxRoll = 4.0F;
 	public static float cfg_ClientCamera_MaxMovementPitch = 3.0F;
 	public static float cfg_ClientCamera_TiltReturnSpeed = 0.15F;
+	public static float cfg_ClientCamera_MovementDeadzone = 0.03F;
+	public static float cfg_ClientCamera_MotionInputSmoothing = 0.18F;
+	public static float cfg_ClientCamera_MaxOffsetChange = 0.45F;
 	public static boolean cfg_ClientCamera_CustomBobEnabled = true;
 	public static boolean cfg_ClientCamera_ReplaceVanillaBob = false;
 	public static float cfg_ClientCamera_BobStrength = 0.45F;
@@ -184,6 +187,7 @@ public class HandmadeGunsCore {
 	public static float cfg_ClientCamera_MaxShakeYaw = 3.0F;
 	public static float cfg_ClientCamera_MaxShakeRoll = 4.0F;
 	public static float cfg_ClientCamera_ShakeDecaySpeed = 0.18F;
+	public static float cfg_ClientCamera_ShakeFrequency = 1.0F;
 	public static float cfg_ClientCamera_RecoilShakeMultiplier = 0.08F;
 	public static float cfg_ClientCamera_ExplosionShakeMultiplier = 0.45F;
 	public static float cfg_ClientCamera_LandingShakeMultiplier = 0.8F;
@@ -297,6 +301,9 @@ public class HandmadeGunsCore {
 		cfg_ClientCamera_MaxRoll = (float) lconf.get(cameraCategory, "maxRoll", 4.0D).getDouble(4.0D);
 		cfg_ClientCamera_MaxMovementPitch = (float) lconf.get(cameraCategory, "maxMovementPitch", 3.0D).getDouble(3.0D);
 		cfg_ClientCamera_TiltReturnSpeed = (float) lconf.get(cameraCategory, "tiltReturnSpeed", 0.15D).getDouble(0.15D);
+		cfg_ClientCamera_MovementDeadzone = (float) lconf.get(cameraCategory, "movementDeadzone", 0.03D, "Ignores tiny movement/input changes before camera tilt smoothing to prevent WASD micro-jitter.").getDouble(0.03D);
+		cfg_ClientCamera_MotionInputSmoothing = (float) lconf.get(cameraCategory, "motionInputSmoothing", 0.18D, "Lerp factor for smoothed movement inputs used by visual roll/pitch.").getDouble(0.18D);
+		cfg_ClientCamera_MaxOffsetChange = (float) lconf.get(cameraCategory, "maxOffsetChange", 0.45D, "Maximum visual camera offset change per rendered frame, in degrees.").getDouble(0.45D);
 		cfg_ClientCamera_CustomBobEnabled = lconf.get(cameraCategory, "customBobEnabled", true).getBoolean(true);
 		cfg_ClientCamera_ReplaceVanillaBob = lconf.get(cameraCategory, "replaceVanillaBob", false, "When false, custom bob is additive and vanilla bobbing remains intact.").getBoolean(false);
 		cfg_ClientCamera_BobStrength = (float) lconf.get(cameraCategory, "bobStrength", 0.45D).getDouble(0.45D);
@@ -312,6 +319,7 @@ public class HandmadeGunsCore {
 		cfg_ClientCamera_MaxShakeYaw = (float) lconf.get(cameraCategory, "maxShakeYaw", 3.0D).getDouble(3.0D);
 		cfg_ClientCamera_MaxShakeRoll = (float) lconf.get(cameraCategory, "maxShakeRoll", 4.0D).getDouble(4.0D);
 		cfg_ClientCamera_ShakeDecaySpeed = (float) lconf.get(cameraCategory, "shakeDecaySpeed", 0.18D).getDouble(0.18D);
+		cfg_ClientCamera_ShakeFrequency = (float) lconf.get(cameraCategory, "shakeFrequency", 1.0D, "Frequency multiplier for deterministic camera shake waves. Lower values make explosions feel heavier and less jittery.").getDouble(1.0D);
 		cfg_ClientCamera_RecoilShakeMultiplier = (float) lconf.get(cameraCategory, "recoilShakeMultiplier", 0.08D).getDouble(0.08D);
 		cfg_ClientCamera_ExplosionShakeMultiplier = (float) lconf.get(cameraCategory, "explosionShakeMultiplier", 0.45D).getDouble(0.45D);
 		cfg_ClientCamera_LandingShakeMultiplier = (float) lconf.get(cameraCategory, "landingShakeMultiplier", 0.8D).getDouble(0.8D);

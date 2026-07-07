@@ -46,6 +46,9 @@ Client-side only visual camera options for the UniMixins first-person Overdrive 
 | `maxRoll` | double | `4.0` | Clamp for movement roll, in degrees. |
 | `maxMovementPitch` | double | `3.0` | Clamp for movement pitch, in degrees. |
 | `tiltReturnSpeed` | double | `0.15` | Return/lerp speed for movement tilt. |
+| `movementDeadzone` | double | `0.03` | Ignores tiny movement/input changes before camera tilt smoothing to prevent WASD micro-jitter. |
+| `motionInputSmoothing` | double | `0.18` | Lerp factor for smoothed movement inputs used by visual roll/pitch. |
+| `maxOffsetChange` | double | `0.45` | Maximum visual camera offset change per rendered frame, in degrees. |
 | `customBobEnabled` | boolean | `true` | Enables smoother custom camera bob transforms. |
 | `replaceVanillaBob` | boolean | `false` | When true, cancels vanilla view bobbing and applies only HMG custom bob; when false, adds custom bob after vanilla bob. |
 | `bobStrength` | double | `0.45` | Custom bob amount. |
@@ -61,6 +64,7 @@ Client-side only visual camera options for the UniMixins first-person Overdrive 
 | `maxShakeYaw` | double | `3.0` | Clamp for shake yaw, in degrees. |
 | `maxShakeRoll` | double | `4.0` | Clamp for shake roll, in degrees. |
 | `shakeDecaySpeed` | double | `0.18` | Decay/return speed for shake sources. |
+| `shakeFrequency` | double | `1.0` | Frequency multiplier for deterministic shake waves; lower values make explosions heavier and less jittery. |
 | `recoilShakeMultiplier` | double | `0.08` | Multiplier for visual recoil shake impulses. |
 | `explosionShakeMultiplier` | double | `0.45` | Multiplier for explosion shake impulses. |
 | `landingShakeMultiplier` | double | `0.8` | Multiplier for hard-landing shake impulses. |

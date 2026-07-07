@@ -141,13 +141,13 @@ def hmgMixinRefmap = "${tasks.compileJava.temporaryDir}/mixins.hmg_overdrive.ref
 def hmgMixinSrg = "${tasks.compileJava.temporaryDir}/mixins.hmg_overdrive.srg"
 
 jar {
+	dependsOn updateVersion
+
+jar {
 	baseName = "HandmadeGunsOverdrive"
 	version = project.version
 	manifest {
 		attributes(
-				"Implementation-Version": project.version,
-				"Implementation-Build": project.buildNumber.toString(),
-				"Implementation-Display-Version": project.displayVersion,
 				"MixinConfigs": "mixins.hmg_overdrive.json",
 				"TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
 				"TweakOrder": 0,
