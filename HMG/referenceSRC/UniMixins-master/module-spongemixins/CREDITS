@@ -1,0 +1,17 @@
+Source: https://github.com/GTNewHorizons/GTNHMixins/tree/2.1.13
+
+Classes used:
+
+ru.timeconqueror.spongemixins.*
+com.gtnewhorizon.gtnhmixins.GTNHMixins (modified to not have @Mod annotation)
+
+License: LGPL3 (see LICENSE.LGPLv3)
+
+
+Source: https://github.com/GTNewHorizons/SpongeMixins/tree/1.5.0
+
+Classes used:
+
+ru.timeconqueror.spongemixins.core.SpongeMixinsCore (removed Mixin bootstrap, added 1.8+ @Mod and @IFMLPlugin annotations)
+
+License: MIT (see LICENSE.SpongeMixins)

@@ -1,0 +1,226 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+buildscript {
+	repositories {
+		gradlePluginPortal()
+	}
+	dependencies {
+		classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+	}
+}
+
+def versionBase = version
+archivesBaseName = archivesBaseName.replace("-1.7.10", "-mixin-1.7.10")
+
+configurations.archives.artifacts.clear()
+
+dependencies {
+	compileOnly("org.spongepowered:mixin:$spongepoweredMixinVersion")
+	compileOnly(project(":module-common")) {
+		transitive = false
+	}
+}
+
+apply plugin: "com.github.johnrengelman.shadow"
+
+def flavors = (!project.hasProperty("enableAltMixin") ? [] : ["spongepowered", "fabric"]) + ["unimix"]
+
+flavors.each {
+	def mixinFlavor = it
+	def _flavor = it.capitalize()
+	def mixinFlavorClassifier = "UNKNOWN"
+	def mixinFlavorCapitalized = [spongepowered: "SpongePowered", fabric: "Fabric", unimix: "UniMix"][mixinFlavor]
+	def mixinVersion = "UNKNOWN"
+
+	configurations.create("shadow$_flavor")
+	configurations.create("shadowBridge$_flavor")
+	configurations.create("shadowSources$_flavor")
+
+	dependencies {
+		add("shadow$_flavor", project(":module-common"), {
+			transitive = false
+		})
+	}
+
+    if (mixinFlavor == "fabric" || mixinFlavor == "unimix") {
+        def uniLocal = mixinFlavor == "unimix" && project.hasProperty("local")
+        mixinVersion = mixinFlavor == "fabric" ? fabricMixinVersion : unimixMixinVersion
+        if (uniLocal) {
+            mixinVersion += "-local"
+        }
+
+        def mixinGroup = mixinFlavor == "fabric" ? "net.fabricmc" : "io.github.legacymoddingmc"
+        def mixinArtifactId = "sponge-mixin"
+        def mixinDepVersion = mixinVersion
+        def mixinDep = "$mixinGroup:$mixinArtifactId:$mixinDepVersion"
+
+        mixinFlavorClassifier = "$mixinFlavor.${mixinVersion.replace('+', '-')}"
+
+        dependencies {
+            add("shadow$_flavor", "$mixinDep", {
+                exclude group: "org.ow2.asm"
+            })
+            add("shadow$_flavor", "org.ow2.asm:asm-tree:$asmVersion")
+            add("shadow$_flavor", "org.ow2.asm:asm-commons:$asmVersion")
+            add("shadow$_flavor", "org.ow2.asm:asm-util:$asmVersion")
+
+            add("shadowBridge$_flavor", "$mixinDep", {
+                transitive = false
+            })
+
+            add("shadowSources$_flavor", "$mixinDep:sources", {
+                transitive = false
+            })
+        }
+    } else if(mixinFlavor == "spongepowered") {
+        mixinVersion = spongepoweredMixinVersion
+
+        mixinFlavorClassifier = "spongepowered.$mixinVersion"
+
+        dependencies {
+            add("shadow$_flavor", "org.spongepowered:mixin:$mixinVersion")
+            add("shadowBridge$_flavor", "org.spongepowered:mixin:$mixinVersion", {
+                transitive = false
+            })
+            add("shadow$_flavor", "com.google.guava:guava:21.0")
+            add("shadow$_flavor", "com.google.code.gson:gson:2.2.4")
+            add("shadow$_flavor", "org.ow2.asm:asm-tree:$asmVersion")
+            add("shadow$_flavor", "org.ow2.asm:asm-commons:$asmVersion")
+            add("shadow$_flavor", "org.ow2.asm:asm-util:$asmVersion")
+
+            add("shadowSources$_flavor", "org.spongepowered:mixin:$mixinVersion:sources")
+        }
+    }
+
+    // We want to *not* relocate ASM in the bridge classes. So we use a multi-step
+    // build procedure:
+
+    // 1. Create relocated Mixin jar, without the bridge classes
+    task("mixinJar$_flavor", type: ShadowJar) {
+        destinationDirectory = file("build/tmp")
+        classifier = "tmpMixin$_flavor"
+        configurations = [project.configurations."shadow$_flavor"]
+
+        relocate 'org.objectweb.asm', 'org.spongepowered.asm.lib'
+        relocate 'com.google', 'org.spongepowered.libraries.com.google'
+
+        exclude 'org/spongepowered/asm/bridge/RemapperAdapter.class'
+        exclude 'org/spongepowered/asm/bridge/RemapperAdapterFML.class'
+
+        // Exclude stuff that's compiled for Java 16
+
+        exclude 'org/spongepowered/asm/service/modlauncher/*'
+        exclude 'org/spongepowered/asm/launch/MixinTransformationServiceLegacy*'
+        exclude 'org/spongepowered/asm/launch/MixinLaunchPlugin*'
+        exclude 'org/spongepowered/asm/launch/MixinTransformationService*'
+        exclude 'org/spongepowered/asm/launch/platform/container/ContainerHandleModLauncherEx*'
+
+        exclude 'META-INF/services/cpw.mods.modlauncher.api.ITransformationService'
+        exclude 'META-INF/services/cpw.mods.modlauncher.serviceapi.ILaunchPluginService'
+
+        exclude '**/module-info.class'
+
+        // Exclude jar-specific stuff
+
+        exclude 'META-INF/MANIFEST.MF', 'META-INF/maven/**', 'META-INF/*.RSA', 'META-INF/*.SF'
+    }
+
+    // 2. Create Mixin jar without relocation, with *only* the bridge classes
+    task("bridgeJar$_flavor", type: ShadowJar) {
+        destinationDirectory = file("build/tmp")
+        classifier = "tmpBridge$_flavor"
+        configurations = [project.configurations."shadowBridge$_flavor"]
+
+        include '*.jar'
+        include 'org/spongepowered/asm/bridge/*'
+    }
+
+    // 3. Combine the two jars
+    task("shadowJar$_flavor", type: ShadowJar) {
+        version = versionBase + "+" + mixinFlavorClassifier
+        from(sourceSets.main.output) {
+            exclude "mcmod.info"
+        }
+
+        relocate 'io.github.legacymoddingmc.unimixins.common', 'io.github.legacymoddingmc.unimixins.mixin.repackage.common'
+
+        dependsOn "mixinJar$_flavor"
+        dependsOn "bridgeJar$_flavor"
+        dependsOn "mixinJar$_flavor"
+        dependsOn "bridgeJar$_flavor"
+
+        from zipTree(tasks."mixinJar$_flavor".archiveFile).matching {
+            exclude 'module-info.class'
+            eachFile {
+                if(it.path.startsWith("META-INF/services/")) {
+                    it.filter({l -> !l.startsWith("org.spongepowered.asm.service.modlauncher.") ? l : null})
+                }
+            }
+        }
+        from zipTree(tasks."bridgeJar$_flavor".archiveFile).matching { include 'org/spongepowered/asm/bridge/*' }
+
+        doLast {
+            delete tasks."mixinJar$_flavor".archiveFile
+            delete tasks."bridgeJar$_flavor".archiveFile
+        }
+    }
+    
+    jar.dependsOn("shadowJar$_flavor")
+
+	task("createMcmodInfo$_flavor", type: Copy) {
+		outputs.upToDateWhen { false }
+		from 'src/main/resources/mcmod.info'
+		into "build/tmp/mcmod.${mixinFlavor}.info"
+		filter {
+			line -> line.replaceAll('@MIXIN_CLASSIFIER@', mixinFlavorClassifier).replaceAll('@MIXIN_SOURCE_CAPITALIZED@', mixinFlavorCapitalized).replaceAll('@VERSION@', "$versionBase+$mixinFlavorClassifier").replaceAll('@PROJECT_URL@', project.project_url)
+		}
+	}
+
+	tasks."shadowJar$_flavor" {
+		dependsOn("createMcmodInfo$_flavor")
+		from "build/tmp/mcmod.${mixinFlavor}.info/mcmod.info"
+		
+		manifest {
+			attributes(
+				'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+				'FMLCorePluginContainsFMLMod': 'true',
+				'ForceLoadAsMod': 'true',
+				'FMLCorePlugin': 'io.github.legacymoddingmc.unimixins.mixin.MixinCore',
+				'Premain-Class': 'org.spongepowered.tools.agent.MixinAgent',
+				'Agent-Class': 'org.spongepowered.tools.agent.MixinAgent',
+				'Can-Redefine-Classes': true,
+				'Can-Retransform-Classes': true,
+				'Implementation-Version': mixinVersion
+			)
+		}
+	}
+
+	task("shadowSourcesJar$_flavor", type: ShadowJar) {
+		from sourceSets.main.allSource
+		
+		version = versionBase + "+" + mixinFlavorClassifier
+		classifier = "sources"
+		configurations = [project.configurations."shadowSources$_flavor"]
+	}
+
+	jar.dependsOn("shadowSourcesJar$_flavor")
+	
+	if(publishModuleToMaven){
+		publishing {
+			publications {
+				create("maven$_flavor", MavenPublication) {
+					artifact tasks."shadowJar$_flavor"
+					artifact tasks."shadowSourcesJar$_flavor"
+
+					artifactId = archivesBaseName.substring(1).replace("-1.7.10", mavenIdSuffix) + (mixinFlavor == "unimix" ? "" : "-" + mixinFlavor)
+					groupId = mavenGroupId
+				}
+			}
+		}
+	}
+}
+
+// Obfuscation is unnecessary since this module does not reference Minecraft classes
+reobf.enabled = false
+
+jar.enabled = false

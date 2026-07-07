@@ -1,0 +1,222 @@
+plugins {
+	id "com.github.breadmoirai.github-release" version "2.2.12"
+	id "com.matthewprenger.cursegradle" version "1.4.0"
+	id "com.modrinth.minotaur" version "2.+"
+}
+
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
+
+def runCommand(cmd) {
+	def commitHashProc = cmd.execute(null, file("${projectDir}"))
+	commitHashProc.waitFor()
+	if(commitHashProc.exitValue() == 0){
+		def commitHash = commitHashProc.text.trim()
+
+		return commitHash
+	} else {
+		println commitHashProc.err.text
+		println(cmd + " exited with non-zero return value")
+		return null
+	}
+}
+
+def getCommitVersion() {
+	def ver = null
+
+	def versionPath = "version.txt"
+	if(file(versionPath).isFile()) {
+		ver = file(versionPath).text
+	} else {
+		ver = runCommand("git describe --tags --dirty") ?: "UNKNOWN-" + runCommand("git describe --always --dirty") ?: "UNKNOWN"
+	}
+
+	ver = ver.trim()
+	if(ver.charAt(0) == 'v') {
+		ver = ver.substring(1)
+	}
+
+	return ver
+}
+
+def buildVersion = getCommitVersion()
+def changeLogFile = new File("${projectDir}/changelog.md")
+def changeLog = changeLogFile.exists() ? changeLogFile.getText('UTF-8') : ""
+
+def readConfigs() {
+	def configs = [:]
+	file('.').eachFileMatch(groovy.io.FileType.FILES, ~/publish-.*\.properties/, {
+		def props = new Properties()
+		it.withInputStream { props.load(it) }
+		def name = it.name.split("\\.properties")[0].split("-")[1]
+		configs[name] = props
+	})
+	return configs
+}
+
+ext.configs = readConfigs()
+ext.gameVersions = configs.keySet()
+
+ext.githubToken = System.getenv("GITHUB_TOKEN")
+ext.curseToken = System.getenv("CURSEFORGE_TOKEN")
+ext.modrinthToken = System.getenv("MODRINTH_TOKEN")
+
+def debugPublish = project.hasProperty("debugPublish")
+
+def useVPrefixForTag = project.hasProperty("useVPrefixForTag") && project.useVPrefixForTag.toBoolean()
+
+task build {}
+task assemble {}
+
+if(githubToken != null){
+	githubRelease {
+		token project.githubToken // This is your personal access token with Repo permissions
+							 // You get this from your user settings > developer settings > Personal Access Tokens
+		owner project.githubOwner // default is the last part of your group. Eg group: "com.github.breadmoirai" => owner: "breadmoirai"
+		repo project.githubRepo // by default this is set to your project name
+		tagName ((useVPrefixForTag ? "v" : "") + "${buildVersion}") // by default this is set to "v${project.version}"
+		targetCommitish "master" // by default this is set to "master"
+		releaseName "${buildVersion}"
+		body changeLog // by default this is empty
+		draft false // by default this is false
+		prerelease false // by default this is false
+		releaseAssets getFiles() // this points to which files you want to upload as assets with your release
+
+		overwrite false // by default false; if set to true, will delete an existing release with the same tag and name
+		dryRun debugPublish // by default false; you can use this to see what actions would be taken without making a release
+		apiEndpoint "https://api.github.com" // should only change for github enterprise users
+		client new OkHttpClient.Builder()
+			.writeTimeout(5, TimeUnit.MINUTES)
+			.readTimeout(5, TimeUnit.MINUTES)
+			.build() // Added because I kept getting SocketTimeoutExceptions
+	}
+}
+
+def getMainFile(files) {
+	def shortest = null
+	files.each {
+		if (shortest == null || it.name.length() < shortest.name.length()) {
+			shortest = it
+		}
+	}
+	return shortest
+}
+
+task publishCurseForge {}
+task publishModrinth {}
+
+if(curseToken != null) {
+	project.gameVersions.forEach {
+		task("publishCurseForge-$it", type: GradleBuild) {
+			tasks = ["curseforge"]
+			startParameter.projectProperties = gradle.startParameter.projectProperties + [gameVersion: it]
+		}
+		publishCurseForge.dependsOn "publishCurseForge-$it"
+	}
+}
+
+if(modrinthToken != null) {
+	project.gameVersions.forEach {
+		task("publishModrinth-$it", type: GradleBuild) {
+			tasks = ["modrinth"]
+			startParameter.projectProperties = gradle.startParameter.projectProperties + [gameVersion: it]
+		}
+		publishModrinth.dependsOn "publishModrinth-$it"
+	}
+}
+
+gameVersions.each {
+	def gameVersion = it
+	def files = getFiles(gameVersion)
+	def mainFile = getMainFile(files)
+	def extraFiles = files - mainFile
+
+	if(debugPublish) {
+		println("Main file: " + mainFile)
+		println("Additional files: " + extraFiles)
+	}
+
+	if(curseToken != null) {
+		curseforge {
+			apiKey = project.curseToken
+			project {
+				id = project.curseID
+				changelogType = 'markdown'
+				changelog = changeLog
+				releaseType = 'release'
+				addGameVersion gameVersion
+				addGameVersion "Forge"
+
+				mainArtifact(mainFile) {
+					displayName = "$releaseName $buildVersion"
+
+					relations {
+						configs[gameVersion]['curseForgeRelations'].split(';').each {
+							def kv = it.split(':')
+							def k = kv[0]
+							def v = kv[1]
+
+							if (k == 'requiredDependency') {
+								requiredDependency v
+							} else if (k == 'embeddedLibrary') {
+								embeddedLibrary v
+							} else if (k == 'optionalDependency') {
+								optionalDependency v
+							} else if (k == 'tool') {
+								tool v
+							} else if (k == 'incompatible') {
+								incompatible v
+							} else {
+								throw new IllegalArgumentException(k)
+							}
+						}
+					}
+				}
+				extraFiles.each { addArtifact(it) }
+			}
+			options {
+				debug = debugPublish
+				javaIntegration = false
+				forgeGradleIntegration = false
+				javaVersionAutoDetect = false
+			}
+		}
+	}
+	
+	if(modrinthToken != null) {
+		modrinth {
+			token = project.modrinthToken
+			projectId = project.modrinthID
+			versionNumber = "$gameVersion-$buildVersion"
+			versionName = "$releaseName $buildVersion"
+			uploadFile = mainFile
+			gameVersions = [gameVersion]
+			additionalFiles = extraFiles
+			loaders = ['forge']
+			changelog = changeLog
+			detectLoaders = false
+			debugMode = debugPublish
+			dependencies {
+				// TODO
+			}
+		}
+	}
+}
+
+def getFiles(ver) {
+	def files = []
+	new File('.', configs[ver]['buildPath']).eachFile(groovy.io.FileType.FILES, {
+		if(!(it.name.endsWith("-sources.jar") || it.name.endsWith("-dev.jar"))){
+			files << it
+		}
+	})
+	return files
+}
+
+def getFiles() {
+	def files = []
+	project.gameVersions.each {
+		files += getFiles(it)
+	}
+	return files
+}

@@ -93,6 +93,8 @@ dependencies {
 	compile project(":depend")
 	compile fileTree(dir: "lib", include: ["*.jar"])
 
+	compile files("libs/unimixins-all-1.7.10-0.3.1.jar")
+
 	compile "javax.vecmath:vecmath:1.5.2"
 }
 
