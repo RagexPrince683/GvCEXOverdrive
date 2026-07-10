@@ -8,6 +8,7 @@ import handmadeguns.entity.HMGEntityParticles;
 import handmadeguns.client.render.HMGRenderItemGun_U;
 import handmadeguns.client.render.HMGRenderItemGun_U_NEW;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
+import handmadeguns.compat.HMGRecoilBridge;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -52,6 +53,8 @@ public class RenderTickSmoothing {
 	private static final float RECOIL_DAMPING = 0.74f;
 	private static final float HORIZONTAL_RECOIL_RATIO = 0.15f;
 	private static final Random RECOIL_RANDOM = new Random();
+	private static int lastRecoilWeaponKey = 0;
+	private static int lastRecoilDimension = Integer.MIN_VALUE;
 
 	public static void addSmoothRecoilPitch(float recoilAmount)
 	{
@@ -191,9 +194,9 @@ public class RenderTickSmoothing {
 
 		if (HMG_proxy.getEntityPlayerInstance() == null) return;
 		EntityPlayer entityPlayer = HMG_proxy.getEntityPlayerInstance();
-		applySmoothRecoil(entityPlayer);
-
 		ItemStack held = entityPlayer.getCurrentEquippedItem();
+		resetCombativesRecoilStateIfNeeded(entityPlayer, held);
+		applySmoothRecoil(entityPlayer);
 
 		// --------------------------------------------------
 		// Reload state
@@ -300,6 +303,25 @@ public class RenderTickSmoothing {
 		//		}
 		//	}
 		//}
+	}
+
+	private void resetCombativesRecoilStateIfNeeded(EntityPlayer entityPlayer, ItemStack held)
+	{
+		int dimension = entityPlayer.worldObj == null ? Integer.MIN_VALUE : entityPlayer.worldObj.provider.dimensionId;
+		int weaponKey = held == null || held.getItem() == null ? 0 : System.identityHashCode(held.getItem()) * 31 + held.getItemDamage();
+		if (!entityPlayer.isEntityAlive() || dimension != lastRecoilDimension || weaponKey != lastRecoilWeaponKey) {
+			HMGRecoilBridge.resetWeaponState();
+			lastRecoilDimension = dimension;
+			lastRecoilWeaponKey = weaponKey;
+		}
+	}
+
+	public static void clearPendingLegacyRecoil()
+	{
+		pendingRecoilPitch = 0.0f;
+		pendingRecoilYaw = 0.0f;
+		recoilVelocityPitch = 0.0f;
+		recoilVelocityYaw = 0.0f;
 	}
 
 	private void applySmoothRecoil(EntityPlayer entityPlayer)
