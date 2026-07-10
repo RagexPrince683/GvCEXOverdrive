@@ -58,8 +58,15 @@ The active config file is generated from the `HandmadeGuns` mod id, usually as `
 
 | Key | Type | Default | Effect |
 | --- | --- | --- | --- |
-| `enableCombativesRecoilIntegration` | boolean | `true` | Client-side: when Combatives is installed and its camera API is active, first-person HMG weapon recoil is submitted to Combatives as camera impulses. When Combatives is absent, disabled, unavailable, or rejects the base shot impulse, HMG uses its legacy look-rotation recoil fallback. |
-| `enableCombativesRecoilDebug` | boolean | `false` | Client-side: enables verbose HMG-to-Combatives recoil diagnostics, including submitted impulse channels, timings, stacking mode, acceptance, fallback, and weapon-state reset logs. Leave disabled during normal gameplay. |
+| `enableCombativesRecoilIntegration` | boolean | `true` | Client-side: when Combatives is installed and its camera API is active, first-person HMG weapon recoil is submitted to Combatives as visual camera impulses. When Combatives is absent, disabled, unavailable, or rejects the base shot impulse, HMG uses its legacy look-rotation recoil fallback. |
+| `enableCombativesAimRecoilIntegration` | boolean | `true` | Client-side: when a Combatives visual shot is accepted, HMG also applies actual local pitch/yaw aim recoil with delayed contribution-based recovery. |
+| `combativesAimRecoilVerticalScale` | double | `0.55` | Scales real vertical aim displacement derived from HMG weapon recoil stats. |
+| `combativesAimRecoilHorizontalScale` | double | `0.45` | Scales real horizontal aim displacement derived from the deterministic burst drift. |
+| `combativesAimRecoilRecoveryDelayMs` | integer | `120` | Delay after the most recent accepted shot before controller-owned aim recoil begins recovering. |
+| `combativesAimRecoilRecoverySpeed` | double | `3.0` | Recovery speed for controller-owned aim recoil; higher values recover faster. |
+| `combativesAimRecoilMaxPitch` | double | `14.0` | Maximum controller-owned vertical aim recoil, in degrees. |
+| `combativesAimRecoilMaxYaw` | double | `5.0` | Maximum controller-owned horizontal aim recoil, in degrees. |
+| `enableCombativesRecoilDebug` | boolean | `false` | Client-side: enables verbose HMG-to-Combatives recoil diagnostics, including submitted visual impulse channels, timings, stacking mode, acceptance, fallback, weapon-state reset logs, aim-recoil pending/applied/recovered state, detected mouse deltas, and ownership. Leave disabled during normal gameplay. |
 
 ## `LMM`
 

@@ -84,7 +84,7 @@ public final class HMGRecoilBridge {
         float build = 1.0F + Math.min(shotIndex, 4.0F) * (0.045F + fireRateNorm * 0.025F);
         float sustained = STATE.consecutiveShots > 5 ? 0.94F + random.nextFloat() * 0.10F : build;
         float perShotRateScale = 1.0F - fireRateNorm * 0.22F;
-        float pitch = clamp(baseline * firstShot * sustained * perShotRateScale * 1.65F, 0.65F, 7.5F);
+        float pitch = clamp(baseline * firstShot * sustained * perShotRateScale * 0.95F, 0.35F, 5.0F);
 
         float horizontalBase = pitch * (0.12F + heavyNorm * 0.04F);
         float targetDirection = STATE.previousHorizontalDirection;
@@ -103,7 +103,7 @@ public final class HMGRecoilBridge {
             return false;
         }
 
-        submitImpulse(PUNCH_ID, -pitch * 0.18F, yaw * 0.22F, roll * 0.18F, 0.0F, 0.0F, rearward * 0.30F, 0.11F, 0.0F, 22.0F + fireRateNorm * 10.0F, "SMOOTH", "NORMAL", "ADD");
+        submitImpulse(PUNCH_ID, -pitch * 0.12F, yaw * 0.22F, roll * 0.18F, 0.0F, 0.0F, rearward * 0.30F, 0.11F, 0.0F, 22.0F + fireRateNorm * 10.0F, "SMOOTH", "NORMAL", "ADD");
         updateSustainedFire(player, gunInfo);
         return true;
     }
@@ -113,7 +113,7 @@ public final class HMGRecoilBridge {
         float rpm = gunInfo.rpm > 0 ? gunInfo.rpm : 600.0F;
         float fireRateNorm = clamp((rpm - 300.0F) / 900.0F, 0.0F, 1.0F);
         float pressure = clamp(0.01F + fireRateNorm * 0.025F + Math.min(STATE.consecutiveShots, 10) * 0.002F, 0.01F, 0.055F);
-        submitImpulse(SUSTAINED_ID, -pressure * 18.0F, STATE.horizontalDrift * pressure * 5.0F, -STATE.horizontalDrift * pressure * 2.5F, 0.0F, 0.0F, -pressure, 0.12F, 0.0F, 12.0F + fireRateNorm * 10.0F, "SMOOTH", "BACKGROUND", "ADD");
+        submitImpulse(SUSTAINED_ID, -pressure * 4.0F, STATE.horizontalDrift * pressure * 5.0F, -STATE.horizontalDrift * pressure * 2.5F, 0.0F, 0.0F, -pressure, 0.12F, 0.0F, 12.0F + fireRateNorm * 10.0F, "SMOOTH", "BACKGROUND", "ADD");
     }
 
     public static void resetWeaponState() {
@@ -197,7 +197,7 @@ public final class HMGRecoilBridge {
 
     private static void logRecoilFallback(String reason) {
         if (HandmadeGunsCore.enableCombativesRecoilDebug) {
-            HandmadeGunsCore.Debug("Combatives recoil fallback used: %s", reason);
+            HandmadeGunsCore.Debug("Combatives recoil fallback used: %s ownership=legacy-look-rotation", reason);
         }
     }
 

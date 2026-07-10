@@ -1,5 +1,12 @@
 # Changelog
 
+## HMG → Combatives aim recoil ownership
+
+- Added a dedicated client-side HMG aim-recoil controller for accepted Combatives shots so sustained fire now changes actual local pitch/yaw instead of relying only on short-lived visual camera impulses.
+- Added contribution-based recoil recovery, burst accumulation caps, deterministic horizontal drift, mouse counter-recoil accounting, and safe reset behavior for invalid players, death, and dimension changes.
+- Tuned Combatives visual recoil to remain a punch/roll/translation layer with reduced sustained pitch so persistent aim climb is owned by the HMG aim controller.
+- Documented the actual aim recoil, visual recoil, delayed recovery, diagnostics, configuration, and legacy fallback split.
+
 ## HMG Combatives Camera Recoil Integration
 
 - Added optional Combatives camera recoil integration for HMG first-person weapon fire.

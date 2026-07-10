@@ -9,6 +9,7 @@ import handmadeguns.client.render.HMGRenderItemGun_U;
 import handmadeguns.client.render.HMGRenderItemGun_U_NEW;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadeguns.compat.HMGRecoilBridge;
+import handmadeguns.compat.HMGAimRecoilController;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -196,6 +197,7 @@ public class RenderTickSmoothing {
 		EntityPlayer entityPlayer = HMG_proxy.getEntityPlayerInstance();
 		ItemStack held = entityPlayer.getCurrentEquippedItem();
 		resetCombativesRecoilStateIfNeeded(entityPlayer, held);
+		HMGAimRecoilController.onClientTick(entityPlayer);
 		applySmoothRecoil(entityPlayer);
 
 		// --------------------------------------------------
@@ -311,6 +313,11 @@ public class RenderTickSmoothing {
 		int weaponKey = held == null || held.getItem() == null ? 0 : System.identityHashCode(held.getItem()) * 31 + held.getItemDamage();
 		if (!entityPlayer.isEntityAlive() || dimension != lastRecoilDimension || weaponKey != lastRecoilWeaponKey) {
 			HMGRecoilBridge.resetWeaponState();
+			if (!entityPlayer.isEntityAlive() || dimension != lastRecoilDimension) {
+				HMGAimRecoilController.reset("player-death-or-dimension-change");
+			} else if (weaponKey != lastRecoilWeaponKey) {
+				HMGAimRecoilController.resetWeaponBuildUp();
+			}
 			lastRecoilDimension = dimension;
 			lastRecoilWeaponKey = weaponKey;
 		}

@@ -161,6 +161,13 @@ public class HandmadeGunsCore {
 	public static boolean enableVBOModelRendering = true;
 	public static boolean enableHMGGuideBook = true;
 	public static boolean enableCombativesRecoilIntegration = true;
+	public static boolean enableCombativesAimRecoilIntegration = true;
+	public static double combativesAimRecoilVerticalScale = 0.55D;
+	public static double combativesAimRecoilHorizontalScale = 0.45D;
+	public static int combativesAimRecoilRecoveryDelayMs = 120;
+	public static double combativesAimRecoilRecoverySpeed = 3.0D;
+	public static double combativesAimRecoilMaxPitch = 14.0D;
+	public static double combativesAimRecoilMaxYaw = 5.0D;
 	public static boolean enableCombativesRecoilDebug = false;
 
 
@@ -259,6 +266,13 @@ public class HandmadeGunsCore {
 		enableGunGroundPhysicsRender = lconf.get("ManualGunPickup", "enableGunGroundPhysicsRender", false, "Client-side only: render dropped HMG guns with a flat, physical-looking orientation when supported by the HMG gun renderer.").getBoolean(false);
 		enableHMGGuideBook = lconf.get("GuideBook", "enableHMGGuideBook", true, "Enable the optional Guide-API HMG Field Manual. HMG still loads without Guide-API; when false, no Guide-API manual is registered even if Guide-API is installed.").getBoolean(true);
 		enableCombativesRecoilIntegration = lconf.get("Compatibility", "enableCombativesRecoilIntegration", true, "Client-side only: when Combatives is installed and its camera API is active, route first-person visual weapon recoil through Combatives instead of HMG legacy look-rotation recoil.").getBoolean(true);
+		enableCombativesAimRecoilIntegration = lconf.get("Compatibility", "enableCombativesAimRecoilIntegration", true, "Client-side only: when Combatives visual recoil is accepted, apply HMG recoil as actual local pitch/yaw displacement with delayed recovery instead of relying on visual camera offsets for aim climb.").getBoolean(true);
+		combativesAimRecoilVerticalScale = lconf.get("Compatibility", "combativesAimRecoilVerticalScale", 0.55D, "Client-side scale for real pitch displacement added by HMG-to-Combatives aim recoil.", 0.0D, 4.0D).getDouble(0.55D);
+		combativesAimRecoilHorizontalScale = lconf.get("Compatibility", "combativesAimRecoilHorizontalScale", 0.45D, "Client-side scale for real yaw displacement added by HMG-to-Combatives aim recoil.", 0.0D, 4.0D).getDouble(0.45D);
+		combativesAimRecoilRecoveryDelayMs = lconf.get("Compatibility", "combativesAimRecoilRecoveryDelayMs", 120, "Client-side delay after the most recent accepted shot before real aim recoil starts recovering, in milliseconds.", 0, 1000).getInt(120);
+		combativesAimRecoilRecoverySpeed = lconf.get("Compatibility", "combativesAimRecoilRecoverySpeed", 3.0D, "Client-side recovery speed for real aim recoil contribution. Higher values recover faster.", 0.1D, 12.0D).getDouble(3.0D);
+		combativesAimRecoilMaxPitch = lconf.get("Compatibility", "combativesAimRecoilMaxPitch", 14.0D, "Client-side maximum controller-owned vertical aim recoil, in degrees.", 0.5D, 60.0D).getDouble(14.0D);
+		combativesAimRecoilMaxYaw = lconf.get("Compatibility", "combativesAimRecoilMaxYaw", 5.0D, "Client-side maximum controller-owned horizontal aim recoil, in degrees.", 0.25D, 30.0D).getDouble(5.0D);
 		enableCombativesRecoilDebug = lconf.get("Compatibility", "enableCombativesRecoilDebug", false, "Client-side only: verbose diagnostics for HMG-to-Combatives recoil impulse submission and fallback decisions. Leave disabled during normal gameplay.").getBoolean(false);
 
 		lconf.save();
