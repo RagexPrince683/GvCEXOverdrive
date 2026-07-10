@@ -1,0 +1,14 @@
+[{
+  "modid": "combatives",
+  "name": "${modName}",
+  "description": "A Battlefield-inspired movement and camera overhaul foundation for Forge 1.7.10.",
+  "version": "${version}",
+  "mcversion": "1.7.10",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["GlowingFederal"],
+  "credits": "Aqua Acrobatics Legacy, for being a great reference tool on how to port modern swimming and crawling.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}]

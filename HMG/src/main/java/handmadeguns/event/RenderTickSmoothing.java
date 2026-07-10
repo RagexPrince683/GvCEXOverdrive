@@ -327,6 +327,13 @@ public class RenderTickSmoothing {
 	private void applySmoothRecoil(EntityPlayer entityPlayer)
 	{
 		if (entityPlayer == null) return;
+		if (HMGRecoilBridge.isCombativesCameraActive()) {
+			pendingRecoilPitch = 0.0f;
+			pendingRecoilYaw = 0.0f;
+			recoilVelocityPitch = 0.0f;
+			recoilVelocityYaw = 0.0f;
+			return;
+		}
 		if (pendingRecoilPitch == 0.0f && recoilVelocityPitch == 0.0f
 				&& pendingRecoilYaw == 0.0f && recoilVelocityYaw == 0.0f) return;
 

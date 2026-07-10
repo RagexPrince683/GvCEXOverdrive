@@ -1,0 +1,16 @@
+{
+  "required": false,
+  "minVersion": "0.7.11",
+  "package": "com.glowingfederal.combatives.mixin",
+  "refmap": "mixins.combatives.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "EntityPlayerMixin",
+    "EntityMixin",
+    "EntityLivingBaseMixin",
+    "EntityPlayerMPMixin"
+  ],
+  "client": [],
+  "server": []
+}
