@@ -6,7 +6,7 @@ import java.util.Set;
 
 public final class CombativesCameraAPI {
     public static final int API_VERSION = 1;
-    private static final Set<CameraCapability> CAPABILITIES = EnumSet.allOf(CameraCapability.class);
+    private static final Set<CameraCapability> CAPABILITIES = EnumSet.of(CameraCapability.ROTATION_PITCH, CameraCapability.ROTATION_YAW, CameraCapability.ROTATION_ROLL, CameraCapability.TRANSLATION, CameraCapability.FOV, CameraCapability.POSITIONAL_FALLOFF, CameraCapability.CONTINUOUS_EFFECTS, CameraCapability.PRESET_EFFECTS, CameraCapability.CUSTOM_IMPULSES, CameraCapability.CLIENT_NETWORK_HELPERS);
     private CombativesCameraAPI() {}
     public static int getApiVersion(){return API_VERSION;}
     public static Set<CameraCapability> getCapabilities(){return EnumSet.copyOf(CAPABILITIES);}

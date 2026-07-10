@@ -58,15 +58,19 @@ public final class CameraController {
         GL11.glTranslatef(xOffset, yOffset, zOffset);
 
         float pitch = 0.0F;
+        float yaw = 0.0F;
         float roll = 0.0F;
         if (CombativesConfig.enableCameraRotations) {
             float ambientPitch = clamp(bobPitch * bobScale + leanPitch, -MAX_CAMERA_PITCH_DEGREES, MAX_CAMERA_PITCH_DEGREES);
             float ambientRoll = clamp(bobRoll * bobScale + leanRoll, -MAX_CAMERA_ROLL_DEGREES, MAX_CAMERA_ROLL_DEGREES);
+            yaw = clamp(CameraEffectManager.getYaw(), -CombativesConfig.maxCameraYawDegrees, CombativesConfig.maxCameraYawDegrees);
             pitch = ambientPitch + clamp(shakePitch + CameraEffectManager.getPitch(), -MAX_IMPACT_PITCH_DEGREES, MAX_IMPACT_PITCH_DEGREES);
             roll = ambientRoll + clamp(shakeRoll + CameraEffectManager.getRoll(), -MAX_IMPACT_ROLL_DEGREES, MAX_IMPACT_ROLL_DEGREES);
             GL11.glRotatef(pitch, 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(yaw, 0.0F, 1.0F, 0.0F);
             GL11.glRotatef(roll, 0.0F, 0.0F, 1.0F);
         }
+        if (Combatives.logger != null && CombativesConfig.verboseCameraDebug) Combatives.logger.info("Combatives camera final render transform pitch={} yaw={} roll={} translation=({},{},{}) fov={}", pitch, yaw, roll, xOffset, yOffset, zOffset, getFovModifier());
     }
 
     public void applyHandTransforms(float partialTicks) {

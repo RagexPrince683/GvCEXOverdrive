@@ -16,6 +16,7 @@ public final class CombativesConfig {
     public static boolean enableMovementFov = CombativesConfigDefaults.ENABLE_MOVEMENT_FOV;
     public static boolean enableCameraRotations = CombativesConfigDefaults.ENABLE_CAMERA_ROTATIONS;
     public static boolean enableCameraShake = CombativesConfigDefaults.ENABLE_CAMERA_SHAKE;
+    public static float maxCameraYawDegrees = CombativesConfigDefaults.MAX_CAMERA_YAW_DEGREES;
     public static boolean enableMouseDeltaClamp = CombativesConfigDefaults.ENABLE_MOUSE_DELTA_CLAMP;
     public static int maxMouseDelta = CombativesConfigDefaults.MAX_MOUSE_DELTA;
     public static boolean enableLandingCameraFeedback = CombativesConfigDefaults.ENABLE_LANDING_CAMERA_FEEDBACK;
@@ -37,6 +38,7 @@ public final class CombativesConfig {
         enableMovementFov = CombativesConfigDefaults.ENABLE_MOVEMENT_FOV;
         enableCameraRotations = CombativesConfigDefaults.ENABLE_CAMERA_ROTATIONS;
         enableCameraShake = CombativesConfigDefaults.ENABLE_CAMERA_SHAKE;
+        maxCameraYawDegrees = CombativesConfigDefaults.MAX_CAMERA_YAW_DEGREES;
         enableMouseDeltaClamp = CombativesConfigDefaults.ENABLE_MOUSE_DELTA_CLAMP;
         maxMouseDelta = CombativesConfigDefaults.MAX_MOUSE_DELTA;
         enableLandingCameraFeedback = CombativesConfigDefaults.ENABLE_LANDING_CAMERA_FEEDBACK;
@@ -81,6 +83,7 @@ public final class CombativesConfig {
         enableMovementFov = config.getBoolean("enableMovementFov", CATEGORY_CAMERA, enableMovementFov, "Enable subtle movement-driven FOV changes.");
         enableCameraRotations = config.getBoolean("enableCameraRotations", CATEGORY_CAMERA, enableCameraRotations, "Emergency diagnostic toggle: when false, Combatives applies only camera translations and FOV, never pitch or roll rotations.");
         enableCameraShake = config.getBoolean("enableCameraShake", CATEGORY_CAMERA, enableCameraShake, "Enable the Combatives camera shake framework for movement impulses.");
+        maxCameraYawDegrees = config.getFloat("maxCameraYawDegrees", CATEGORY_CAMERA, maxCameraYawDegrees, 0.0F, 12.0F, "Hard clamp in degrees for visual-only Combatives yaw offsets. Tuned independently from pitch and roll.");
         enableMouseDeltaClamp = config.getBoolean("enableMouseDeltaClamp", CATEGORY_CAMERA, enableMouseDeltaClamp, "Clamp pathological raw LWJGL mouse deltas before vanilla camera sensitivity scaling consumes them.");
         maxMouseDelta = config.getInt("maxMouseDelta", CATEGORY_CAMERA, maxMouseDelta, 1, 10000, "Maximum absolute raw mouse delta accepted from LWJGL per mouseXYChange call.");
         enableLandingCameraFeedback = config.getBoolean("enableLandingCameraFeedback", CATEGORY_CAMERA, enableLandingCameraFeedback, "Enable visual-only landing camera dip and recovery impulses.");
@@ -124,6 +127,7 @@ public final class CombativesConfig {
         logger.info("Combatives config: enableMovementFov={}", enableMovementFov);
         logger.info("Combatives config: enableCameraRotations={}", enableCameraRotations);
         logger.info("Combatives config: enableCameraShake={}", enableCameraShake);
+        logger.info("Combatives config: maxCameraYawDegrees={}", maxCameraYawDegrees);
         logger.info("Combatives config: enableMouseDeltaClamp={}", enableMouseDeltaClamp);
         logger.info("Combatives config: maxMouseDelta={}", maxMouseDelta);
         logger.info("Combatives config: enableLandingCameraFeedback={}", enableLandingCameraFeedback);
