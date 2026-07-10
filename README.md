@@ -69,6 +69,8 @@ This repository uses legacy ForgeGradle 1.2 conventions for Minecraft 1.7.10:
 ./gradlew build
 ```
 
+HMG releases are versioned from `HMG/version.properties`. Edit only `mod_version=x.y.z` when preparing a new release; production packaging tasks such as `build`, `jar`, and `reobfJar` automatically reserve the next `build_number` and produce jars with the computed `mod_version.build_number` value. Development tasks such as `runClient`, `runServer`, `test`, and workspace/IDE setup do not increment the build number. If a production build fails, Gradle restores the previous build number so failed builds do not consume release iterations.
+
 If your environment uses a different ForgeGradle 1.2 setup task, use the equivalent workspace-generation task for your IDE.
 
 ## Configuration Overview
