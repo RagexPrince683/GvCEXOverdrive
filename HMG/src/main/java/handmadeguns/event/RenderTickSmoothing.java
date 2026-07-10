@@ -316,6 +316,14 @@ public class RenderTickSmoothing {
 		}
 	}
 
+	public static void clearPendingLegacyRecoil()
+	{
+		pendingRecoilPitch = 0.0f;
+		pendingRecoilYaw = 0.0f;
+		recoilVelocityPitch = 0.0f;
+		recoilVelocityYaw = 0.0f;
+	}
+
 	private void applySmoothRecoil(EntityPlayer entityPlayer)
 	{
 		if (entityPlayer == null) return;

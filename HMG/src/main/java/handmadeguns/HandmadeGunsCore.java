@@ -161,6 +161,7 @@ public class HandmadeGunsCore {
 	public static boolean enableVBOModelRendering = true;
 	public static boolean enableHMGGuideBook = true;
 	public static boolean enableCombativesRecoilIntegration = true;
+	public static boolean enableCombativesRecoilDebug = false;
 
 
 	public static Item hmg_bullet;
@@ -258,6 +259,7 @@ public class HandmadeGunsCore {
 		enableGunGroundPhysicsRender = lconf.get("ManualGunPickup", "enableGunGroundPhysicsRender", false, "Client-side only: render dropped HMG guns with a flat, physical-looking orientation when supported by the HMG gun renderer.").getBoolean(false);
 		enableHMGGuideBook = lconf.get("GuideBook", "enableHMGGuideBook", true, "Enable the optional Guide-API HMG Field Manual. HMG still loads without Guide-API; when false, no Guide-API manual is registered even if Guide-API is installed.").getBoolean(true);
 		enableCombativesRecoilIntegration = lconf.get("Compatibility", "enableCombativesRecoilIntegration", true, "Client-side only: when Combatives is installed and its camera API is active, route first-person visual weapon recoil through Combatives instead of HMG legacy look-rotation recoil.").getBoolean(true);
+		enableCombativesRecoilDebug = lconf.get("Compatibility", "enableCombativesRecoilDebug", false, "Client-side only: verbose diagnostics for HMG-to-Combatives recoil impulse submission and fallback decisions. Leave disabled during normal gameplay.").getBoolean(false);
 
 		lconf.save();
 

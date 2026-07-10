@@ -6,6 +6,8 @@
 - Routed compatible recoil through Combatives camera impulses with dynamic first-shot punch, sustained-fire pressure, horizontal drift continuity, and burst reset/recovery behavior.
 - Preserved HMG legacy recoil as the fallback when Combatives is absent, disabled, or its camera API is unavailable.
 - Added `Compatibility.enableCombativesRecoilIntegration` with a default of `true`.
+- Corrected Combatives recoil ownership so legacy recoil is only suppressed after a shot impulse is accepted, strengthened the independent base pitch kick for single shots and shotguns, split kick/punch/sustained source IDs, and documented full yaw recoil support.
+- Added `Compatibility.enableCombativesRecoilDebug` diagnostics for impulse submission, fallback, and weapon-state reset investigation.
 
 ## Unreleased
 

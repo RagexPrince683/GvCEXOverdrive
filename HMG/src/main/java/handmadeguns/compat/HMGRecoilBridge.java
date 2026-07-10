@@ -16,8 +16,9 @@ import java.util.Random;
  * without Combatives on the classpath.
  */
 public final class HMGRecoilBridge {
-    private static final String SOURCE_ID = "hmg_overdrive:weapon_recoil";
-    private static final String PUNCH_ID = "hmg_overdrive:weapon_recoil/punch";
+    private static final String KICK_ID = "hmg_overdrive:hmg_recoil_kick";
+    private static final String PUNCH_ID = "hmg_overdrive:hmg_recoil_punch";
+    private static final String SUSTAINED_ID = "hmg_overdrive:hmg_recoil_sustained";
     private static final long BURST_RESET_MS = 180L;
 
     private static boolean availabilityChecked;
@@ -83,7 +84,7 @@ public final class HMGRecoilBridge {
         float build = 1.0F + Math.min(shotIndex, 4.0F) * (0.045F + fireRateNorm * 0.025F);
         float sustained = STATE.consecutiveShots > 5 ? 0.94F + random.nextFloat() * 0.10F : build;
         float perShotRateScale = 1.0F - fireRateNorm * 0.22F;
-        float pitch = clamp(baseline * firstShot * sustained * perShotRateScale, 0.04F, 9.0F);
+        float pitch = clamp(baseline * firstShot * sustained * perShotRateScale * 1.65F, 0.65F, 7.5F);
 
         float horizontalBase = pitch * (0.12F + heavyNorm * 0.04F);
         float targetDirection = STATE.previousHorizontalDirection;
@@ -91,15 +92,20 @@ public final class HMGRecoilBridge {
         if (random.nextFloat() < 0.16F + Math.min(STATE.consecutiveShots, 8) * 0.015F) targetDirection = -targetDirection;
         STATE.horizontalDrift = clamp(STATE.horizontalDrift * 0.72F + targetDirection * (0.28F + random.nextFloat() * 0.18F), -1.0F, 1.0F);
         STATE.previousHorizontalDirection = STATE.horizontalDrift >= 0.0F ? 1.0F : -1.0F;
-        float yaw = clamp(horizontalBase * STATE.horizontalDrift, -2.0F, 2.0F);
+        float yaw = clamp(horizontalBase * STATE.horizontalDrift * 1.25F, -2.0F, 2.0F);
         float roll = clamp(-yaw * 0.55F, -2.2F, 2.2F);
         float rearward = clamp(-0.018F * pitch * (1.0F + heavyNorm * 0.35F), -0.14F, -0.006F);
-        float duration = clamp(0.13F + heavyNorm * 0.09F, 0.10F, 0.25F);
+        float duration = clamp(0.16F + heavyNorm * 0.06F, 0.15F, 0.24F);
 
-        boolean main = submitImpulse(SOURCE_ID, -pitch, yaw, roll, 0.0F, ads ? -0.004F : 0.0F, rearward, duration, 0.0F, 0.0F, "SMOOTH", "STRONG", "ADD");
-        boolean punch = submitImpulse(PUNCH_ID, -pitch * 0.30F, yaw * 0.35F, roll * 0.25F, 0.0F, 0.0F, rearward * 0.45F, 0.055F, 0.0F, 34.0F + fireRateNorm * 12.0F, "SMOOTH", "NORMAL", "ADD");
+        boolean kick = submitImpulse(KICK_ID, -pitch, yaw, roll, 0.0F, ads ? -0.004F : 0.0F, rearward, duration, 0.0F, 0.0F, "SMOOTH", "STRONG", "ADD");
+        if (!kick) {
+            logRecoilFallback("base kick rejected");
+            return false;
+        }
+
+        submitImpulse(PUNCH_ID, -pitch * 0.18F, yaw * 0.22F, roll * 0.18F, 0.0F, 0.0F, rearward * 0.30F, 0.11F, 0.0F, 22.0F + fireRateNorm * 10.0F, "SMOOTH", "NORMAL", "ADD");
         updateSustainedFire(player, gunInfo);
-        return main || punch;
+        return true;
     }
 
     public static void updateSustainedFire(EntityPlayer player, GunInfo gunInfo) {
@@ -107,11 +113,21 @@ public final class HMGRecoilBridge {
         float rpm = gunInfo.rpm > 0 ? gunInfo.rpm : 600.0F;
         float fireRateNorm = clamp((rpm - 300.0F) / 900.0F, 0.0F, 1.0F);
         float pressure = clamp(0.01F + fireRateNorm * 0.025F + Math.min(STATE.consecutiveShots, 10) * 0.002F, 0.01F, 0.055F);
-        submitImpulse("hmg_overdrive:weapon_recoil/pressure", -pressure * 18.0F, STATE.horizontalDrift * pressure * 4.0F, -STATE.horizontalDrift * pressure * 2.5F, 0.0F, 0.0F, -pressure, 0.09F, 0.0F, 18.0F + fireRateNorm * 18.0F, "SMOOTH", "BACKGROUND", "ADD");
+        submitImpulse(SUSTAINED_ID, -pressure * 18.0F, STATE.horizontalDrift * pressure * 5.0F, -STATE.horizontalDrift * pressure * 2.5F, 0.0F, 0.0F, -pressure, 0.12F, 0.0F, 12.0F + fireRateNorm * 10.0F, "SMOOTH", "BACKGROUND", "ADD");
     }
 
     public static void resetWeaponState() {
         STATE.resetAll();
+    }
+
+    public static boolean submitDiagnosticPitchOnlyImpulse() {
+        if (!HandmadeGunsCore.enableCombativesRecoilDebug || !isCombativesCameraActive()) return false;
+        return submitImpulse("hmg_overdrive:hmg_recoil_diag_pitch", -7.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.16F, 0.0F, 0.0F, "SMOOTH", "STRONG", "ADD");
+    }
+
+    public static boolean submitDiagnosticYawOnlyImpulse() {
+        if (!HandmadeGunsCore.enableCombativesRecoilDebug || !isCombativesCameraActive()) return false;
+        return submitImpulse("hmg_overdrive:hmg_recoil_diag_yaw", 0.0F, 4.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.16F, 0.0F, 0.0F, "SMOOTH", "NORMAL", "ADD");
     }
 
     private static boolean loadCameraApi() {
@@ -143,8 +159,11 @@ public final class HMGRecoilBridge {
             builderClass.getMethod("priority", priorityClass).invoke(builder, enumValue(priorityClass, priority));
             builderClass.getMethod("stackingMode", stackingModeClass).invoke(builder, enumValue(stackingModeClass, stacking));
             Object impulse = builderClass.getMethod("build").invoke(builder);
-            return Boolean.TRUE.equals(submitImpulseMethod.invoke(null, impulse));
+            boolean accepted = Boolean.TRUE.equals(submitImpulseMethod.invoke(null, impulse));
+            logRecoilImpulse(id, pitch, yaw, roll, x, y, z, duration, attack, frequency, decay, priority, stacking, accepted);
+            return accepted;
         } catch (Throwable t) {
+            logRecoilImpulse(id, pitch, yaw, roll, x, y, z, duration, attack, frequency, decay, priority, stacking, false);
             return false;
         }
     }
@@ -170,6 +189,18 @@ public final class HMGRecoilBridge {
         return value < min ? min : value > max ? max : value;
     }
 
+    private static void logRecoilImpulse(String id, float pitch, float yaw, float roll, float x, float y, float z, float duration, float attack, float frequency, String decay, String priority, String stacking, boolean accepted) {
+        if (HandmadeGunsCore.enableCombativesRecoilDebug) {
+            HandmadeGunsCore.Debug("Combatives recoil impulse id=%s pitch=%.3f yaw=%.3f roll=%.3f translate=(%.3f,%.3f,%.3f) duration=%.3f attack=%.3f frequency=%.3f decay=%s priority=%s stacking=%s accepted=%s", id, pitch, yaw, roll, x, y, z, duration, attack, frequency, decay, priority, stacking, accepted);
+        }
+    }
+
+    private static void logRecoilFallback(String reason) {
+        if (HandmadeGunsCore.enableCombativesRecoilDebug) {
+            HandmadeGunsCore.Debug("Combatives recoil fallback used: %s", reason);
+        }
+    }
+
     private static void logEnabledOnce() {
         if (!loggedEnabled) {
             loggedEnabled = true;
@@ -193,6 +224,9 @@ public final class HMGRecoilBridge {
         int weaponKey;
 
         void resetBurst(int weaponKey, long seed) {
+            if (HandmadeGunsCore.enableCombativesRecoilDebug) {
+                HandmadeGunsCore.Debug("Combatives recoil weapon state reset weaponKey=%s previousShots=%s", weaponKey, consecutiveShots);
+            }
             this.consecutiveShots = 0;
             this.lastShotTime = 0L;
             this.horizontalDrift = 0.0F;

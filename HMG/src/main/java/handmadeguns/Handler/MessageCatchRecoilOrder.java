@@ -62,14 +62,18 @@ public class MessageCatchRecoilOrder implements IMessageHandler<PacketRecoil, IM
                             if(items[4] != null && items[4].getItem() instanceof HMGItemAttachment_grip)
                                 reduceRecoilLevel = ((HMGItemAttachment_grip) items[4].getItem()).reduceRecoilLevel_ADS;
                             float recoil = (float) (((HMGItem_Unified_Guns) item).gunInfo.recoil_sneak * reduceRecoilLevel);
-                            if (!HMGRecoilBridge.applyShotRecoil(entityPlayer, stack, ((HMGItem_Unified_Guns) item).gunInfo, recoil, true)) {
+                            if (HMGRecoilBridge.applyShotRecoil(entityPlayer, stack, ((HMGItem_Unified_Guns) item).gunInfo, recoil, true)) {
+                                RenderTickSmoothing.clearPendingLegacyRecoil();
+                            } else {
                                 RenderTickSmoothing.addSmoothRecoil(recoil);
                             }
                         }else {
                             if(items[4] != null && items[4].getItem() instanceof HMGItemAttachment_grip)
                                 reduceRecoilLevel = ((HMGItemAttachment_grip) items[4].getItem()).reduceRecoilLevel;
                             float recoil = (float) (((HMGItem_Unified_Guns) item).gunInfo.recoil * reduceRecoilLevel);
-                            if (!HMGRecoilBridge.applyShotRecoil(entityPlayer, stack, ((HMGItem_Unified_Guns) item).gunInfo, recoil, false)) {
+                            if (HMGRecoilBridge.applyShotRecoil(entityPlayer, stack, ((HMGItem_Unified_Guns) item).gunInfo, recoil, false)) {
+                                RenderTickSmoothing.clearPendingLegacyRecoil();
+                            } else {
                                 RenderTickSmoothing.addSmoothRecoil(recoil);
                             }
                         }
