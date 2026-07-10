@@ -1,54 +1,118 @@
-
 // ===========================
 // VERSION HANDLING
 // ===========================
 
-def versionFile = file('version.properties')
+ext.versionFile = file('version.properties')
 
-int major = 2
-int minor = 7
-int revision = 0
+ext.defaultModVersion = '2.7.0'
+ext.defaultBuildNumber = 0
 
-if (versionFile.exists()) {
-	def text = versionFile.text.trim()
-
-	if (!text.matches("\\d+\\.\\d+\\.\\d+")) {
-		throw new GradleException("Invalid version format in version.properties. Expected: major.minor.revision")
+ext.readVersionProperties = { File propsFile ->
+	if (!propsFile.exists()) {
+		return [modVersion: defaultModVersion, buildNumber: defaultBuildNumber]
 	}
 
-	def parts = text.tokenize('.')
-	major = parts[0].toInteger()
-	minor = parts[1].toInteger()
-	revision = parts[2].toInteger()
-}
+	def text = propsFile.getText('UTF-8')
+	def modMatcher = (text =~ /(?m)^\s*mod_version\s*=\s*([^\s#]+)\s*(?:#.*)?$/)
+	def buildMatcher = (text =~ /(?m)^\s*build_number\s*=\s*(\d+)\s*(?:#.*)?$/)
+	def hasModVersion = modMatcher.find()
+	def hasBuildNumber = buildMatcher.find()
 
-def isBuildTask = gradle.startParameter.taskNames.any {
-	it.equalsIgnoreCase("build") || it.equalsIgnoreCase("jar")
-}
-
-if (isBuildTask) {
-	revision++
-
-	if (revision >= 10) {
-		revision = 0
-		minor++
+	// Backward-compatible migration from the previous single-value HMG version file.
+	if (!hasModVersion && !hasBuildNumber && text.trim() ==~ /\d+\.\d+\.\d+/) {
+		return [modVersion: text.trim(), buildNumber: defaultBuildNumber]
 	}
 
-	if (minor >= 10) {
-		minor = 0
-		major++
+	if (!hasModVersion) {
+		throw new GradleException("Missing mod_version in ${propsFile}. Expected: mod_version=x.y.z")
+	}
+	if (!hasBuildNumber) {
+		throw new GradleException("Missing build_number in ${propsFile}. Expected: build_number=n")
+	}
+
+	return [modVersion: modMatcher.group(1), buildNumber: buildMatcher.group(1).toInteger()]
+}
+
+ext.validateVersionProperties = { values ->
+	if (!(values.modVersion ==~ /\d+\.\d+\.\d+/)) {
+		throw new GradleException("Invalid mod_version '${values.modVersion}' in ${versionFile}. Expected semantic version: x.y.z")
+	}
+	if (values.buildNumber < 0) {
+		throw new GradleException("Invalid build_number '${values.buildNumber}' in ${versionFile}. Expected a non-negative integer")
 	}
 }
 
-def computedVersion = "${major}.${minor}.${revision}"
-version = computedVersion
+ext.writeInitialVersionFile = { File propsFile, values ->
+	propsFile.text = """# Handmade Guns Overdrive version state.
+# Edit mod_version for releases; build_number is managed automatically by Gradle production builds.
+mod_version=${values.modVersion}
+build_number=${values.buildNumber}
+"""
+}
 
-task updateVersion {
-	onlyIf { isBuildTask }
+ext.replaceOrAppendProperty = { String text, String key, Object value ->
+	def pattern = ~/(?m)^(\s*${java.util.regex.Pattern.quote(key)}\s*=\s*)[^\r\n#]*(.*)$/
+	if ((text =~ pattern).find()) {
+		return text.replaceAll(pattern) { match, prefix, suffix ->
+			return "${prefix}${value}${suffix}"
+		}
+	}
+	def separator = text.endsWith('\n') || text.length() == 0 ? '' : System.lineSeparator()
+	return text + separator + "${key}=${value}" + System.lineSeparator()
+}
 
-	doLast {
-		versionFile.text = computedVersion
-		println "Version bumped to ${computedVersion}"
+ext.writeBuildNumberPreservingFormatting = { File propsFile, int buildNumber ->
+	def text = propsFile.exists() ? propsFile.getText('UTF-8') : ''
+	propsFile.write(replaceOrAppendProperty(text, 'build_number', buildNumber), 'UTF-8')
+}
+
+if (!versionFile.exists()) {
+	writeInitialVersionFile(versionFile, [modVersion: defaultModVersion, buildNumber: defaultBuildNumber])
+}
+
+def loadedVersionValues = readVersionProperties(versionFile)
+validateVersionProperties(loadedVersionValues)
+
+ext.isProductionVersionTask = { String requestedTask ->
+	def taskName = requestedTask.tokenize(':').last()
+	def normalized = taskName.toLowerCase(Locale.ROOT)
+	def developmentTasks = [
+		'runclient', 'runserver', 'test', 'setupdecompworkspace', 'setupdevworkspace',
+		'setupciworkspace', 'eclipse', 'idea', 'genintellijruns', 'genEclipseRuns'.toLowerCase(Locale.ROOT)
+	]
+	if (developmentTasks.contains(normalized) || normalized.startsWith('run')) {
+		return false
+	}
+	return normalized in ['build', 'jar', 'assemble', 'uploadarchives'] ||
+		normalized == 'reobf' ||
+		normalized == 'reobfjar' ||
+		normalized.startsWith('reobf') ||
+		normalized.endsWith('jar')
+}
+
+def productionVersionBuild = gradle.startParameter.taskNames.any { isProductionVersionTask(it) }
+def originalBuildNumber = loadedVersionValues.buildNumber
+def effectiveBuildNumber = productionVersionBuild ? originalBuildNumber + 1 : originalBuildNumber
+
+def computedVersion = "${loadedVersionValues.modVersion}.${effectiveBuildNumber}"
+
+ext.modVersion = loadedVersionValues.modVersion
+ext.buildNumber = effectiveBuildNumber
+ext.fullVersion = computedVersion
+
+version = fullVersion
+
+gradle.taskGraph.whenReady { graph ->
+	if (productionVersionBuild) {
+		writeBuildNumberPreservingFormatting(versionFile, effectiveBuildNumber)
+		println "HMG production build version: ${fullVersion}"
+	}
+}
+
+gradle.buildFinished { result ->
+	if (productionVersionBuild && result.failure != null) {
+		writeBuildNumberPreservingFormatting(versionFile, originalBuildNumber)
+		println "HMG production build failed; restored build_number to ${originalBuildNumber}"
 	}
 }
 
@@ -101,7 +165,6 @@ dependencies {
 // ===========================
 
 processResources {
-	dependsOn updateVersion
 
 	inputs.property "version", project.version
 
@@ -123,7 +186,6 @@ processResources {
 // ===========================
 
 jar {
-	dependsOn updateVersion
 
 	baseName = "HandmadeGunsOverdrive"
 	version = project.version

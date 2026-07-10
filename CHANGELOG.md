@@ -1,5 +1,12 @@
 # Changelog
 
+## HMG semantic version and automatic build numbers
+
+- Added `HMG/version.properties` with manually managed `mod_version` and Gradle-managed `build_number` values.
+- Updated the HMG Gradle build to compute `mod_version.build_number`, expose `modVersion`, `buildNumber`, and `fullVersion`, and apply the computed version to generated jars.
+- Added production-build-only build number increments with rollback on failed builds so failed packaging attempts do not consume version numbers.
+- Documented the release workflow so future releases only require editing `mod_version`.
+
 ## HMG → Combatives aim recoil ownership
 
 - Added a dedicated client-side HMG aim-recoil controller for accepted Combatives shots so sustained fire now changes actual local pitch/yaw instead of relying only on short-lived visual camera impulses.
