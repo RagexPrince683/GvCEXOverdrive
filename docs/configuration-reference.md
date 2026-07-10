@@ -54,6 +54,12 @@ The active config file is generated from the `HandmadeGuns` mod id, usually as `
 | --- | --- | --- | --- |
 | `enableHMGGuideBook` | boolean | `true` | Enables optional Guide-API HMG Field Manual registration. HMG still loads without Guide-API. |
 
+## `Compatibility`
+
+| Key | Type | Default | Effect |
+| --- | --- | --- | --- |
+| `enableCombativesRecoilIntegration` | boolean | `true` | Client-side: when Combatives is installed and its camera API is active, first-person HMG weapon recoil is submitted to Combatives as camera impulses. When Combatives is absent, disabled, or unavailable, HMG uses its legacy look-rotation recoil fallback. |
+
 ## `LMM`
 
 | Key | Type | Default | Effect |
