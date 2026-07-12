@@ -1076,7 +1076,7 @@ public class HMGGunMaker {
 							else if(check instanceof HMGXItemGun_Sword){
 								newgun = (HMGXItemGun_Sword) check;
 							}
-							System.out.println("debug" + newgun.getUnlocalizedName());
+							HandmadeGunsCore.Debug("Registered gun: %s", newgun.getUnlocalizedName());
 
 							if(displayNamegun != null){
 								LanguageRegistry.instance().addNameForObject(newgun, "en_US", displayNamegun);
@@ -1286,8 +1286,7 @@ public class HMGGunMaker {
 										'i', itemi
 								);
 
-								System.out.println("[HMG] Loaded crafting recipe for: "
-										+ type[1] + ":" + type[2] + " x" + num);
+								HandmadeGunsCore.Debug("Loaded crafting recipe for: %s:%s x%s", type[1], type[2], num);
 
 								/**
 								 * // --- ALSO register with HMG's ammo registry for GUI (deterministic) ---
@@ -1396,7 +1395,7 @@ public class HMGGunMaker {
 
 	private static void logLoadTiming(File file, int parsedLines, int modelRegistrations, long startNanos) {
 		long elapsedMs = (System.nanoTime() - startNanos) / 1000000L;
-		System.out.println("[HMG][Timing] gun TXT parse " + file.getName() + " lines=" + parsedLines + " modelRegistrations=" + modelRegistrations + " took " + elapsedMs + " ms");
+		HandmadeGunsCore.Debug("[Timing] gun TXT parse %s lines=%s modelRegistrations=%s took %s ms", file.getName(), parsedLines, modelRegistrations, elapsedMs);
 	}
 
 	//TODO:INJECTING

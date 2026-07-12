@@ -68,6 +68,12 @@ The active config file is generated from the `HandmadeGuns` mod id, usually as `
 | `combativesAimRecoilMaxYaw` | double | `5.0` | Maximum controller-owned horizontal aim recoil, in degrees. |
 | `enableCombativesRecoilDebug` | boolean | `false` | Client-side: enables verbose HMG-to-Combatives recoil diagnostics, including submitted visual impulse channels, timings, stacking mode, acceptance, fallback, weapon-state reset logs, aim-recoil pending/applied/recovered state, detected mouse deltas, and ownership. Leave disabled during normal gameplay. |
 
+## `Logging`
+
+| Key | Type | Default | Effect |
+| --- | --- | --- | --- |
+| `enableDebugLogging` | boolean | `false` | Enables verbose HMG startup and content-pack diagnostics, including per-pack resource confirmations, registration timing summaries, script confirmations, per-file gun parse timings, and recipe success messages. Errors, warnings, and concise content-pack registration-complete summaries still log when this is disabled. |
+
 ## `LMM`
 
 | Key | Type | Default | Effect |

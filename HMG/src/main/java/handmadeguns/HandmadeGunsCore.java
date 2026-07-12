@@ -116,7 +116,7 @@ public class HandmadeGunsCore {
 
 	public static GunSmithTable blockGunTable;
 
-	public static boolean isDebugMessage = true;
+	public static boolean isDebugMessage = false;
 	public static boolean islmmloaded;
 	public static boolean isgvcloaded;
 
@@ -274,6 +274,7 @@ public class HandmadeGunsCore {
 		combativesAimRecoilMaxPitch = lconf.get("Compatibility", "combativesAimRecoilMaxPitch", 14.0D, "Client-side maximum controller-owned vertical aim recoil, in degrees.", 0.5D, 60.0D).getDouble(14.0D);
 		combativesAimRecoilMaxYaw = lconf.get("Compatibility", "combativesAimRecoilMaxYaw", 5.0D, "Client-side maximum controller-owned horizontal aim recoil, in degrees.", 0.25D, 30.0D).getDouble(5.0D);
 		enableCombativesRecoilDebug = lconf.get("Compatibility", "enableCombativesRecoilDebug", false, "Client-side only: verbose diagnostics for HMG-to-Combatives recoil impulse submission and fallback decisions. Leave disabled during normal gameplay.").getBoolean(false);
+		isDebugMessage = lconf.get("Logging", "enableDebugLogging", false, "Enables verbose HMG startup/content-pack diagnostics such as per-pack resource confirmations, registration timings, script confirmations, and recipe success messages. Errors and warnings still log when this is false.").getBoolean(false);
 
 		lconf.save();
 
@@ -338,7 +339,7 @@ public class HandmadeGunsCore {
 					File[] addscripts = getFileList(aPacklist, "addscripts");
 					if (addscripts != null && addscripts.length > 0) {
 						for (File aScript : addscripts) {
-							System.out.println("debug" + aScript);
+							Debug("Loading script: %s", aScript);
 							try {
 								ScriptEngine script = SCRIPT_ENGINE_MANAGER.getEngineByName("js");
 								try {
@@ -365,7 +366,7 @@ public class HandmadeGunsCore {
 					File[] addscripts_2 = getFileList(aPacklist, "scripts");
 					if (addscripts_2 != null && addscripts_2.length > 0) {
 						for (File aScript : addscripts_2) {
-							System.out.println("debug" + aScript);
+							Debug("Loading script: %s", aScript);
 							try {
 								ScriptEngine script = SCRIPT_ENGINE_MANAGER.getEngineByName("js");
 								try {
@@ -500,13 +501,13 @@ public class HandmadeGunsCore {
 					e.printStackTrace();
 				}
 				// Add the directory to the content pack list
-				System.out.println("Loaded content pack resource : " + file.getName());
+				Debug("Loaded content pack resource: %s", file.getName());
 			}
 		}
 		if(isClient){
 			Minecraft.getMinecraft().refreshResources();
 		}
-		System.out.println("[HMG][Timing] config/resource scan " + packdir.getPath() + " packs=" + packlist.length + " copiedResources=" + copiedResources + " took " + ((System.nanoTime() - startNanos) / 1000000L) + " ms");
+		Debug("[Timing] config/resource scan %s packs=%s copiedResources=%s took %s ms", packdir.getPath(), packlist.length, copiedResources, ((System.nanoTime() - startNanos) / 1000000L));
 	}
 
 	public void readPack(File packdir,boolean isClient){
@@ -670,11 +671,12 @@ public class HandmadeGunsCore {
 
 			}
 		}
-		System.out.println("[HMG][Timing] attachment registration files=" + attachmentFiles + " took " + (attachmentNanos / 1000000L) + " ms");
-		System.out.println("[HMG][Timing] magazine registration files=" + magazineFiles + " took " + (magazineNanos / 1000000L) + " ms");
-		System.out.println("[HMG][Timing] bullet registration files=" + bulletFiles + " took " + (bulletNanos / 1000000L) + " ms");
-		System.out.println("[HMG][Timing] gun TXT parse/item registration files=" + gunFiles + " took " + (gunNanos / 1000000L) + " ms");
-		System.out.println("[HMG][Timing] pack load " + packdir.getPath() + " packs=" + packlist.length + " took " + ((System.nanoTime() - startNanos) / 1000000L) + " ms");
+		System.out.println("[HMG] Content pack registration complete for " + packdir.getPath() + ": attachments=" + attachmentFiles + ", magazines=" + magazineFiles + ", bullets=" + bulletFiles + ", guns=" + gunFiles);
+		Debug("[Timing] attachment registration files=%s took %s ms", attachmentFiles, (attachmentNanos / 1000000L));
+		Debug("[Timing] magazine registration files=%s took %s ms", magazineFiles, (magazineNanos / 1000000L));
+		Debug("[Timing] bullet registration files=%s took %s ms", bulletFiles, (bulletNanos / 1000000L));
+		Debug("[Timing] gun TXT parse/item registration files=%s took %s ms", gunFiles, (gunNanos / 1000000L));
+		Debug("[Timing] pack load %s packs=%s took %s ms", packdir.getPath(), packlist.length, ((System.nanoTime() - startNanos) / 1000000L));
 	}
 
 	public static void copyFile(File in, File out) throws IOException {
@@ -851,7 +853,7 @@ public class HandmadeGunsCore {
 		}
 
 		for(int count = 0 ; count < scripts.size() ; count++){
-			System.out.println("Output : "+(Invocable)scripts.get(count));
+			Debug("Script output target: %s", (Invocable)scripts.get(count));
 			try{
 				((Invocable)scripts.get(count)).invokeFunction("init", pEvent);
 			}catch(ScriptException e){
@@ -1077,7 +1079,7 @@ public class HandmadeGunsCore {
 		//TODO:INJCT
 		//AddScript
 		for(int count = 0 ; count < scripts.size() ; count++){
-			System.out.println("Output : "+(Invocable)scripts.get(count));
+			Debug("Script output target: %s", (Invocable)scripts.get(count));
 			try{
 				((Invocable)scripts.get(count)).invokeFunction("postInit", event);
 			}catch(ScriptException e){
@@ -1128,7 +1130,7 @@ public class HandmadeGunsCore {
 							HMGGunMaker.addRecipe(recipeFile); // original crafting system
 							GunSmithRecipeRegistry.registerFromFile(recipeFile); // GUI system
 							recipeFiles++;
-							System.out.println("[HMG] Loaded recipe: " + recipeFile.getAbsolutePath());
+							Debug("Loaded recipe: %s", recipeFile.getAbsolutePath());
 
 						} catch (Exception e) {
 							System.out.println("[HMG] ERROR: Failed to load recipe: " + recipeFile.getAbsolutePath());
@@ -1138,7 +1140,7 @@ public class HandmadeGunsCore {
 				}
 			}
 		}
-		System.out.println("[HMG][Timing] recipe registration " + packdir.getPath() + " files=" + recipeFiles + " took " + ((System.nanoTime() - startNanos) / 1000000L) + " ms");
+		Debug("[Timing] recipe registration %s files=%s took %s ms", packdir.getPath(), recipeFiles, ((System.nanoTime() - startNanos) / 1000000L));
 	}
 
 

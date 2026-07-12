@@ -23,6 +23,12 @@
 - Corrected Combatives recoil ownership so legacy recoil is only suppressed after a shot impulse is accepted, strengthened the independent base pitch kick for single shots and shotguns, split kick/punch/sustained source IDs, and documented full yaw recoil support.
 - Added `Compatibility.enableCombativesRecoilDebug` diagnostics for impulse submission, fallback, and weapon-state reset investigation.
 
+## Gate spam logging behind debug config
+
+- Added `Logging.enableDebugLogging` for verbose HMG startup/content-pack diagnostics.
+- Gated content-pack resource confirmations, script confirmations, recipe success logs, and registration timing summaries behind debug logging while preserving errors, warnings, and concise registration-complete summaries by default.
+- Updated configuration and server administration documentation for the quieter default logging behavior.
+
 ## Unreleased
 
 ### Documentation
