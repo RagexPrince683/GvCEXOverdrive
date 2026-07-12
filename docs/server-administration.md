@@ -46,7 +46,7 @@ When updating packs:
 1. Back up the world and pack directory.
 2. Stop the server.
 3. Update the pack on server and clients.
-4. Restart and watch the console for `[HMG][Timing]` messages and pack-load errors.
+4. Restart and watch the console for pack-load errors and warnings. If you need verbose content-pack confirmation or timing details, temporarily enable `Logging.enableDebugLogging` and then watch for `[Timing]` messages.
 5. Test representative guns, magazines, bullets, recipes, sounds, and models before reopening the server.
 
 ## Commands for Admins

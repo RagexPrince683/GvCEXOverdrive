@@ -709,8 +709,7 @@ public class HMGAddAttachment
 										'i', itemi
 								);
 
-								System.out.println("[HMG] Loaded crafting recipe for: "
-										+ type[1] + ":" + type[2] + " x" + kazu1);
+								HandmadeGunsCore.Debug("Loaded crafting recipe for: %s:%s x%s", type[1], type[2], kazu1);
 
 								// --- ALSO register with HMG's ammo registry for GUI (deterministic) ---
 								ItemStack output = new ItemStack(additem, kazu1);
