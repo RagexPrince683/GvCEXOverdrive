@@ -29,6 +29,12 @@
 - Gated content-pack resource confirmations, script confirmations, recipe success logs, and registration timing summaries behind debug logging while preserving errors, warnings, and concise registration-complete summaries by default.
 - Updated configuration and server administration documentation for the quieter default logging behavior.
 
+## Gun Smithing Table ore dictionary recipes
+
+- Added ore dictionary slot support for Gun Smithing Table pack recipes using `ore:`, `oredict:`, or `OreDictionary:` slot prefixes.
+- Updated Gun Smithing Table client availability checks and server-side crafting consumption so registered ore equivalents satisfy those recipe inputs at craft time.
+- Documented ore dictionary pack recipe syntax for content authors.
+
 ## Unreleased
 
 ### Documentation

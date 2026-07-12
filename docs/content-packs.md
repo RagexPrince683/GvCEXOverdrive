@@ -62,6 +62,20 @@ handmadeguns_Packs/
 | `scripts/` | JavaScript files evaluated during pre-init. |
 | `additionalSettings.txt` | Optional pack-level multipliers such as `damageCof` and `speedCof`. |
 
+## Pack Recipe Ore Dictionary Inputs
+
+Gun Smithing Table recipes loaded from `addpackrecipe/` support ore dictionary slot ingredients in addition to exact item IDs. Use an ore dictionary prefix in a `SlotN` line:
+
+```text
+AddRecipe
+Slot1,ore:ingotSteel
+Slot2,oredict:ingotCopper
+Slot3,OreDictionary:ingotAnyPlastic
+CraftItem,HandmadeGuns:ExampleGun:0:1
+```
+
+Supported prefixes are `ore:`, `oredict:`, and `OreDictionary:`. Ore dictionary lookups are resolved when the table checks the player's inventory and consumes ingredients, so recipes can accept compatible items registered by other mods even when normal pre-init recipe registration cannot be represented as an ore recipe.
+
 ## `additionalSettings.txt`
 
 Recognized keys found in source:

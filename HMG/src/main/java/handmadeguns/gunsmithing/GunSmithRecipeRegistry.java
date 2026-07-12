@@ -3,6 +3,7 @@ package handmadeguns.gunsmithing;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,10 +19,16 @@ public class GunSmithRecipeRegistry {
     public static class GunRecipeEntry {
         public final ItemStack result;
         public final ItemStack[] inputs;
+        public final String[] oreInputs;
 
         public GunRecipeEntry(ItemStack result, ItemStack[] inputs) {
+            this(result, inputs, null);
+        }
+
+        public GunRecipeEntry(ItemStack result, ItemStack[] inputs, String[] oreInputs) {
             this.result = result;
             this.inputs = inputs;
+            this.oreInputs = oreInputs;
         }
     }
 
@@ -42,6 +49,13 @@ public class GunSmithRecipeRegistry {
         ItemStack[] normalized = inputs;
         if (normalized == null) normalized = new ItemStack[0];
         RECIPES.add(new GunRecipeEntry(result, normalized));
+    }
+
+    public static void register(ItemStack result, ItemStack[] inputs, String[] oreInputs) {
+        if (result == null) return;
+        ItemStack[] normalized = inputs == null ? new ItemStack[0] : inputs;
+        String[] normalizedOres = oreInputs == null ? null : oreInputs;
+        RECIPES.add(new GunRecipeEntry(result, normalized, normalizedOres));
     }
 
     public static List<GunRecipeEntry> getAll() {
@@ -277,6 +291,7 @@ public class GunSmithRecipeRegistry {
         try {
             String line;
             ItemStack[] grid = new ItemStack[9]; // slots 0..8 map to Slot1..Slot9
+            String[] oreGrid = new String[9];
             ItemStack result = null;
             boolean readingRecipe = false;
 
@@ -287,6 +302,7 @@ public class GunSmithRecipeRegistry {
                 // start marker
                 if (line.equalsIgnoreCase("AddRecipe")) {
                     grid = new ItemStack[9];
+                    oreGrid = new String[9];
                     result = null;
                     readingRecipe = true;
                     continue;
@@ -311,8 +327,15 @@ public class GunSmithRecipeRegistry {
                     }
                     if (slotIndex < 0 || slotIndex > 8) continue;
 
-                    ItemStack s = parseSlotItemString(itemPart);
-                    grid[slotIndex] = s;
+                    String oreName = parseOreDictionaryName(itemPart);
+                    if (oreName != null) {
+                        oreGrid[slotIndex] = oreName;
+                        grid[slotIndex] = getOrePreviewStack(oreName);
+                    } else {
+                        ItemStack s = parseSlotItemString(itemPart);
+                        grid[slotIndex] = s;
+                        oreGrid[slotIndex] = null;
+                    }
                     continue;
                 }
 
@@ -328,7 +351,7 @@ public class GunSmithRecipeRegistry {
                     // register now if result present
                     if (result != null) {
                         // determine inputs array length (trim trailing nulls if you want)
-                        register(result, grid);
+                        register(result, grid, oreGrid);
                     }
 
                     readingRecipe = false; // finished this block
@@ -340,6 +363,41 @@ public class GunSmithRecipeRegistry {
         } finally {
             br.close();
         }
+    }
+
+    /**
+     * Parse ore dictionary slot strings. Supported forms are:
+     *   ore:ingotSteel
+     *   oredict:ingotSteel
+     *   OreDictionary:ingotSteel
+     */
+    private static String parseOreDictionaryName(String s) {
+        if (s == null) return null;
+        s = s.trim();
+        if (s.isEmpty()) return null;
+        s = s.replace(',', ':');
+
+        String lower = s.toLowerCase();
+        String prefix = null;
+        if (lower.startsWith("ore:")) prefix = "ore:";
+        else if (lower.startsWith("oredict:")) prefix = "oredict:";
+        else if (lower.startsWith("oredictionary:")) prefix = "oredictionary:";
+
+        if (prefix == null) return null;
+
+        String oreName = s.substring(prefix.length()).trim();
+        while (oreName.endsWith(":")) oreName = oreName.substring(0, oreName.length() - 1);
+        if (oreName.isEmpty()) return null;
+        return oreName;
+    }
+
+    private static ItemStack getOrePreviewStack(String oreName) {
+        if (oreName == null || oreName.isEmpty()) return null;
+        List<ItemStack> ores = OreDictionary.getOres(oreName);
+        if (ores == null || ores.isEmpty()) return null;
+        ItemStack stack = ores.get(0);
+        if (stack == null) return null;
+        return stack.copy();
     }
 
     /**
