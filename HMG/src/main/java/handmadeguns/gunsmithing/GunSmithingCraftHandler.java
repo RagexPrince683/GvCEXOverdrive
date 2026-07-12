@@ -2,8 +2,8 @@ package handmadeguns.gunsmithing;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GunSmithingCraftHandler {
@@ -16,31 +16,21 @@ public class GunSmithingCraftHandler {
         if (entry == null) return;
 
         // Verify materials
-        for (ItemStack req : entry.inputs) {
-            if (req == null) continue;
-            int owned = 0;
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                ItemStack inv = player.inventory.getStackInSlot(i);
-                if (inv != null && inv.getItem() == req.getItem() && inv.getItemDamage() == req.getItemDamage()) {
-                    owned += inv.stackSize;
-                }
-            }
-            if (owned < req.stackSize) return; // abort
+        for (int reqIndex = 0; reqIndex < getIngredientCount(entry); reqIndex++) {
+            ItemStack req = getInput(entry, reqIndex);
+            String oreName = getOreInput(entry, reqIndex);
+            if (req == null && oreName == null) continue;
+            int needed = getRequiredCount(req);
+            int owned = countMatchingItems(player, req, oreName);
+            if (owned < needed) return; // abort
         }
 
         // consume
-        for (ItemStack req : entry.inputs) {
-            if (req == null) continue;
-            int remaining = req.stackSize;
-            for (int i = 0; i < player.inventory.getSizeInventory() && remaining > 0; i++) {
-                ItemStack inv = player.inventory.getStackInSlot(i);
-                if (inv != null && inv.getItem() == req.getItem() && inv.getItemDamage() == req.getItemDamage()) {
-                    int take = Math.min(inv.stackSize, remaining);
-                    inv.stackSize -= take;
-                    remaining -= take;
-                    if (inv.stackSize <= 0) player.inventory.setInventorySlotContents(i, null);
-                }
-            }
+        for (int reqIndex = 0; reqIndex < getIngredientCount(entry); reqIndex++) {
+            ItemStack req = getInput(entry, reqIndex);
+            String oreName = getOreInput(entry, reqIndex);
+            if (req == null && oreName == null) continue;
+            consumeMatchingItems(player, req, oreName);
         }
 
         // give result
@@ -75,51 +65,26 @@ public class GunSmithingCraftHandler {
             return;
         }
 
-        for (ItemStack req : entry.inputs) {
-            if (req == null) continue;
+        for (int reqIndex = 0; reqIndex < getIngredientCount(entry); reqIndex++) {
+            ItemStack req = getInput(entry, reqIndex);
+            String oreName = getOreInput(entry, reqIndex);
+            if (req == null && oreName == null) continue;
 
-            int owned = 0;
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                ItemStack slot = player.inventory.getStackInSlot(i);
-                if (slot != null &&
-                        slot.getItem() == req.getItem() &&
-                        slot.getItemDamage() == req.getItemDamage()) {
-
-                    owned += slot.stackSize;
-                }
-            }
-
-            if (owned < req.stackSize) {
+            int needed = getRequiredCount(req);
+            int owned = countMatchingItems(player, req, oreName);
+            if (owned < needed) {
                 System.out.println("[GunSmith] NOT ENOUGH: " +
-                        req.getDisplayName() + " needs " + req.stackSize + " owned " + owned);
+                        getIngredientName(req, oreName) + " needs " + needed + " owned " + owned);
                 return;
             }
         }
 
         // === CONSUME INPUTS ===
-        for (ItemStack req : entry.inputs) {
-            if (req == null) continue;
-
-            int remaining = req.stackSize;
-
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                ItemStack slot = player.inventory.getStackInSlot(i);
-                if (slot == null) continue;
-
-                if (slot.getItem() == req.getItem() &&
-                        slot.getItemDamage() == req.getItemDamage()) {
-
-                    int remove = Math.min(remaining, slot.stackSize);
-                    slot.stackSize -= remove;
-                    remaining -= remove;
-
-                    if (slot.stackSize <= 0) {
-                        player.inventory.setInventorySlotContents(i, null);
-                    }
-
-                    if (remaining <= 0) break;
-                }
-            }
+        for (int reqIndex = 0; reqIndex < getIngredientCount(entry); reqIndex++) {
+            ItemStack req = getInput(entry, reqIndex);
+            String oreName = getOreInput(entry, reqIndex);
+            if (req == null && oreName == null) continue;
+            consumeMatchingItems(player, req, oreName);
         }
 
         // === GIVE RESULT ===
@@ -136,5 +101,67 @@ public class GunSmithingCraftHandler {
         System.out.println("[GunSmith] CRAFTED: " + entry.result.getDisplayName());
     }
 
+
+    private static int getIngredientCount(GunSmithRecipeRegistry.GunRecipeEntry entry) {
+        int inputLength = entry.inputs == null ? 0 : entry.inputs.length;
+        int oreLength = entry.oreInputs == null ? 0 : entry.oreInputs.length;
+        return Math.max(inputLength, oreLength);
+    }
+
+    private static ItemStack getInput(GunSmithRecipeRegistry.GunRecipeEntry entry, int index) {
+        if (entry == null || entry.inputs == null || index < 0 || index >= entry.inputs.length) return null;
+        return entry.inputs[index];
+    }
+
+    private static String getOreInput(GunSmithRecipeRegistry.GunRecipeEntry entry, int index) {
+        if (entry == null || entry.oreInputs == null || index < 0 || index >= entry.oreInputs.length) return null;
+        return entry.oreInputs[index];
+    }
+
+    private static int countMatchingItems(EntityPlayer player, ItemStack req, String oreName) {
+        int owned = 0;
+        for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
+            ItemStack inv = player.inventory.getStackInSlot(i);
+            if (matchesIngredient(inv, req, oreName)) owned += inv.stackSize;
+        }
+        return owned;
+    }
+
+    private static void consumeMatchingItems(EntityPlayer player, ItemStack req, String oreName) {
+        int remaining = getRequiredCount(req);
+        for (int i = 0; i < player.inventory.getSizeInventory() && remaining > 0; i++) {
+            ItemStack inv = player.inventory.getStackInSlot(i);
+            if (!matchesIngredient(inv, req, oreName)) continue;
+
+            int take = Math.min(inv.stackSize, remaining);
+            inv.stackSize -= take;
+            remaining -= take;
+            if (inv.stackSize <= 0) player.inventory.setInventorySlotContents(i, null);
+        }
+    }
+
+    private static boolean matchesIngredient(ItemStack stack, ItemStack req, String oreName) {
+        if (stack == null) return false;
+
+        if (oreName != null && !oreName.isEmpty()) {
+            List<ItemStack> ores = OreDictionary.getOres(oreName);
+            if (ores == null) return false;
+            for (ItemStack ore : ores) {
+                if (ore != null && OreDictionary.itemMatches(ore, stack, false)) return true;
+            }
+            return false;
+        }
+
+        return req != null && stack.getItem() == req.getItem() && stack.getItemDamage() == req.getItemDamage();
+    }
+
+    private static int getRequiredCount(ItemStack req) {
+        return req == null ? 1 : req.stackSize;
+    }
+
+    private static String getIngredientName(ItemStack req, String oreName) {
+        if (oreName != null && !oreName.isEmpty()) return "ore:" + oreName;
+        return req == null ? "unknown" : req.getDisplayName();
+    }
 
 }
