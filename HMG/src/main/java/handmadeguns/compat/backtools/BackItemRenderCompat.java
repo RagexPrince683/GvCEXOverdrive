@@ -29,6 +29,7 @@ public final class BackItemRenderCompat {
     private static final float BACK_GUN_ALIGN_X = 0.0F;
     private static final float BACK_GUN_ALIGN_Y = 90.0F;
     private static final float BACK_GUN_DIRECTION_Z = -105.0F;
+    private static final float BACK_GUN_ROLL_X = 90.0F;
     private static final long DEBUG_THROTTLE_MS = 5000L;
     private static final Map<String, String> LAST_DEBUG_STATE = new HashMap<String, String>();
     private static final Map<String, Long> LAST_DEBUG_TIME = new HashMap<String, Long>();
@@ -95,18 +96,20 @@ public final class BackItemRenderCompat {
         }
     }
 
-    public static void logCandidate(EntityPlayer player, ItemStack remembered, ItemStack held, boolean sameAsHeld) {
+    public static void logCandidate(EntityPlayer player, ItemStack remembered, ItemStack held, boolean holdingAnyHmgGun) {
         logState(player, remembered, held, remembered != null && remembered.getItem() instanceof HMGItem_Unified_Guns,
-                false, null, "ENTITY", false, "candidate sameAsHeld=" + sameAsHeld, remembered == null ? 0 : System.identityHashCode(remembered));
+                false, null, "ENTITY", holdingAnyHmgGun, "candidate holdingAnyHmgGun=" + holdingAnyHmgGun, remembered == null ? 0 : System.identityHashCode(remembered));
     }
 
     private static void applyBackGunCorrection() {
         GL11.glTranslatef(BACK_GUN_X, BACK_GUN_Y, BACK_GUN_Z);
         // HMG ENTITY renders use the model's long/barrel axis in the local Z-depth direction.
-        // Y alignment rolls that axis into the player's back plane; Z direction then makes a barrel-down diagonal.
+        // Y alignment rolls that axis into the player's back plane; Z direction makes a barrel-down diagonal.
+        // The final X roll keeps that diagonal but turns the grip/bottom down instead of into the player's back.
         GL11.glRotatef(BACK_GUN_ALIGN_X, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(BACK_GUN_ALIGN_Y, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(BACK_GUN_DIRECTION_Z, 0.0F, 0.0F, 1.0F);
+        GL11.glRotatef(BACK_GUN_ROLL_X, 1.0F, 0.0F, 0.0F);
         GL11.glScalef(BACK_GUN_SCALE, BACK_GUN_SCALE, BACK_GUN_SCALE);
     }
 

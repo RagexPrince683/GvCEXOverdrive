@@ -58,3 +58,9 @@
 - Fixed HMG BackTools back rendering to copy and render only BackTools' remembered stack, skipping the back render when it matches the currently held stack.
 - Removed render-time mutation of BackTools' stored item map to avoid current-weapon substitution and flicker.
 - Adjusted the global back-mounted HMG gun pose so models lie flatter against the player back, and disabled culling only inside the isolated custom render path.
+
+## BackTools HMG held-gun suppression and roll fix
+
+- Suppressed HMG back rendering whenever the player is currently holding any HMG gun, preventing held weapons from appearing on the back.
+- Restored the scoped BackTools legacy-icon suppression while HMG custom back rendering is active so only the 3D model appears after switching away from HMG guns.
+- Added a final back-gun roll adjustment so the grip/bottom points downward while preserving the back-plane alignment and diagonal barrel pose.
