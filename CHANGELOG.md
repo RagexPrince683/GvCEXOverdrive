@@ -46,3 +46,9 @@
 - Documented HMG commands `/reloadSettings` and `/hmgmanual` with permission levels and practical usage notes.
 - Added a content-pack guide for `handmadeguns_Packs`, legacy pack paths, supported pack folders, resource handling, and `additionalSettings.txt`.
 - Recorded HMG-specific undocumented systems discovered during the pass and remaining documentation gaps.
+
+## BackTools HMG 3D back rendering
+
+- Added a client-side BackTools compatibility bridge that reuses HMG Overdrive gun item renderers for guns shown on a player back.
+- Preserved BackTools legacy back rendering for vanilla and non-HMG items, and safely falls back when a gun renderer is missing or fails.
+- Added throttled diagnostic logging for custom back-render decisions and failures.
