@@ -29,6 +29,13 @@
 - Gated content-pack resource confirmations, script confirmations, recipe success logs, and registration timing summaries behind debug logging while preserving errors, warnings, and concise registration-complete summaries by default.
 - Updated configuration and server administration documentation for the quieter default logging behavior.
 
+## Gun Smithing Table ore dictionary recipes
+
+- Reworked Gun Smithing Table recipe ingredients to store exact-stack and ore-dictionary requirements explicitly instead of converting ore entries into a preview stack.
+- Added deterministic shared inventory allocation for Gun Smithing Table GUI checks, gun crafting, and ammunition crafting so mixed-mod ore equivalents are validated and consumed consistently server-side.
+- Added debug-only diagnostics and a development verification helper for exact, ore dictionary, mixed-stack, wildcard/metadata, late-registration, failed-validation, and no-double-count allocation scenarios.
+- Documented ore dictionary pack recipe syntax for content authors, including optional required amounts such as `ore:ingotCopper:5`.
+
 ## Unreleased
 
 ### Documentation

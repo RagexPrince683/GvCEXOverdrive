@@ -3,48 +3,26 @@ package handmadeguns.gunsmithing;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GunSmithingCraftHandler {
 
     //gun craft handler
     public static void handleCraft(EntityPlayer player, int recipeIndex) {
+        if (player == null) return;
         List<GunSmithRecipeRegistry.GunRecipeEntry> list = GunSmithRecipeRegistry.getAll();
         if (list == null || recipeIndex < 0 || recipeIndex >= list.size()) return;
         GunSmithRecipeRegistry.GunRecipeEntry entry = list.get(recipeIndex);
-        if (entry == null) return;
+        if (entry == null || entry.result == null) return;
 
-        // Verify materials
-        for (ItemStack req : entry.inputs) {
-            if (req == null) continue;
-            int owned = 0;
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                ItemStack inv = player.inventory.getStackInSlot(i);
-                if (inv != null && inv.getItem() == req.getItem() && inv.getItemDamage() == req.getItemDamage()) {
-                    owned += inv.stackSize;
-                }
-            }
-            if (owned < req.stackSize) return; // abort
-        }
+        GunTableInventoryAllocator.AllocationResult allocation =
+                GunTableInventoryAllocator.allocate(player, entry.ingredients);
+        if (!allocation.success) return;
+        if (!GunTableInventoryAllocator.consume(player, allocation)) return;
 
-        // consume
-        for (ItemStack req : entry.inputs) {
-            if (req == null) continue;
-            int remaining = req.stackSize;
-            for (int i = 0; i < player.inventory.getSizeInventory() && remaining > 0; i++) {
-                ItemStack inv = player.inventory.getStackInSlot(i);
-                if (inv != null && inv.getItem() == req.getItem() && inv.getItemDamage() == req.getItemDamage()) {
-                    int take = Math.min(inv.stackSize, remaining);
-                    inv.stackSize -= take;
-                    remaining -= take;
-                    if (inv.stackSize <= 0) player.inventory.setInventorySlotContents(i, null);
-                }
-            }
-        }
-
-        // give result
         player.inventory.addItemStackToInventory(entry.result.copy());
+        player.inventory.markDirty();
+        if (player.inventoryContainer != null) player.inventoryContainer.detectAndSendChanges();
     }
 
     // ---------------- SERVER-SIDE AMMO CRAFT ----------------
@@ -69,58 +47,16 @@ public class GunSmithingCraftHandler {
             return;
         }
 
-        // === VALIDATE INPUTS ===
-        if (entry.inputs == null) {
-            System.out.println("[GunSmith] Ammo recipe has no inputs!");
+        GunTableInventoryAllocator.AllocationResult allocation =
+                GunTableInventoryAllocator.allocate(player, entry.ingredients);
+        if (!allocation.success) {
+            if (allocation.failedIngredient != null) {
+                System.out.println("[GunSmith] NOT ENOUGH: " +
+                        allocation.failedIngredient.getDisplayName() + " missing " + allocation.missingAmount);
+            }
             return;
         }
-
-        for (ItemStack req : entry.inputs) {
-            if (req == null) continue;
-
-            int owned = 0;
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                ItemStack slot = player.inventory.getStackInSlot(i);
-                if (slot != null &&
-                        slot.getItem() == req.getItem() &&
-                        slot.getItemDamage() == req.getItemDamage()) {
-
-                    owned += slot.stackSize;
-                }
-            }
-
-            if (owned < req.stackSize) {
-                System.out.println("[GunSmith] NOT ENOUGH: " +
-                        req.getDisplayName() + " needs " + req.stackSize + " owned " + owned);
-                return;
-            }
-        }
-
-        // === CONSUME INPUTS ===
-        for (ItemStack req : entry.inputs) {
-            if (req == null) continue;
-
-            int remaining = req.stackSize;
-
-            for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-                ItemStack slot = player.inventory.getStackInSlot(i);
-                if (slot == null) continue;
-
-                if (slot.getItem() == req.getItem() &&
-                        slot.getItemDamage() == req.getItemDamage()) {
-
-                    int remove = Math.min(remaining, slot.stackSize);
-                    slot.stackSize -= remove;
-                    remaining -= remove;
-
-                    if (slot.stackSize <= 0) {
-                        player.inventory.setInventorySlotContents(i, null);
-                    }
-
-                    if (remaining <= 0) break;
-                }
-            }
-        }
+        if (!GunTableInventoryAllocator.consume(player, allocation)) return;
 
         // === GIVE RESULT ===
         ItemStack resultCopy = entry.result.copy();
@@ -131,10 +67,9 @@ public class GunSmithingCraftHandler {
             player.dropPlayerItemWithRandomChoice(resultCopy, false);
         }
 
-        player.inventoryContainer.detectAndSendChanges();
+        player.inventory.markDirty();
+        if (player.inventoryContainer != null) player.inventoryContainer.detectAndSendChanges();
 
         System.out.println("[GunSmith] CRAFTED: " + entry.result.getDisplayName());
     }
-
-
 }
