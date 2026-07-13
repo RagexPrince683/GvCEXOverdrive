@@ -7,8 +7,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 public class GunSmithRecipeRegistry {
@@ -72,11 +70,60 @@ public class GunSmithRecipeRegistry {
         return inputs;
     }
 
+    /**
+     * Legacy adapter for callers that still provide parallel exact-stack and
+     * Ore Dictionary arrays.
+     *
+     * oreInputs[i] takes priority over inputs[i]. The corresponding input stack,
+     * when present, supplies the required amount for the ore ingredient.
+     */
     public static void register(ItemStack result, ItemStack[] inputs, String[] oreInputs) {
-        if (result == null) return;
-        ItemStack[] normalized = inputs == null ? new ItemStack[0] : inputs;
-        String[] normalizedOres = oreInputs == null ? null : oreInputs;
-        RECIPES.add(new GunRecipeEntry(result, normalized, normalizedOres));
+        if (result == null) {
+            return;
+        }
+
+        int inputLength = inputs == null ? 0 : inputs.length;
+        int oreLength = oreInputs == null ? 0 : oreInputs.length;
+        int ingredientLength = Math.max(inputLength, oreLength);
+
+        GunTableIngredient[] ingredients =
+                new GunTableIngredient[ingredientLength];
+
+        for (int i = 0; i < ingredientLength; i++) {
+            ItemStack input =
+                    inputs != null && i < inputs.length
+                            ? inputs[i]
+                            : null;
+
+            String oreName =
+                    oreInputs != null && i < oreInputs.length
+                            ? oreInputs[i]
+                            : null;
+
+            if (oreName != null) {
+                oreName = oreName.trim();
+            }
+
+            if (oreName != null && !oreName.isEmpty()) {
+                int requiredAmount =
+                        input != null
+                                ? Math.max(1, input.stackSize)
+                                : 1;
+
+                ingredients[i] =
+                        new OreDictionaryIngredient(oreName, requiredAmount);
+            } else if (input != null) {
+                ingredients[i] =
+                        new ExactStackIngredient(input.copy());
+            }
+        }
+
+        RECIPES.add(
+                new GunRecipeEntry(
+                        result.copy(),
+                        ingredients
+                )
+        );
     }
 
     public static List<GunRecipeEntry> getAll() {
