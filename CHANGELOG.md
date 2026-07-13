@@ -64,3 +64,7 @@
 - Suppressed HMG back rendering whenever the player is currently holding any HMG gun, preventing held weapons from appearing on the back.
 - Restored the scoped BackTools legacy-icon suppression while HMG custom back rendering is active so only the 3D model appears after switching away from HMG guns.
 - Added a final back-gun roll adjustment so the grip/bottom points downward while preserving the back-plane alignment and diagonal barrel pose.
+
+## BackTools HMG back-gun transform correction
+
+- Restored the working back-plane alignment for HMG back guns and moved the grip/bottom roll before the diagonal direction rotation so the model stays flat against the player's back.
