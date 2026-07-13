@@ -27,6 +27,7 @@ import handmadeguns.guide.HMGGuideIntegration;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
 import handmadeguns.event.*;
+import handmadeguns.compat.backtools.BackToolsRenderBridge;
 import handmadeguns.gunsmithing.GunSmithNetwork;
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunSmithTable;
@@ -814,7 +815,10 @@ public class HandmadeGunsCore {
 		Block mounter = new HMGBlockMounter(1).setBlockName("ItemHolder").setBlockTextureName("handmadeguns:camp");
 		GameRegistry.registerBlock(mounter, "ItemHolder");
 
-		if(pEvent.getSide().isClient())MinecraftForge.EVENT_BUS.register(new HMGEventZoom());
+		if(pEvent.getSide().isClient()) {
+			MinecraftForge.EVENT_BUS.register(new HMGEventZoom());
+			MinecraftForge.EVENT_BUS.register(new BackToolsRenderBridge());
+		}
 
 		HMGLivingUpdateEvent hmgLivingUpdateEvent = new HMGLivingUpdateEvent();
 		FMLCommonHandler.instance().bus().register(hmgLivingUpdateEvent);
