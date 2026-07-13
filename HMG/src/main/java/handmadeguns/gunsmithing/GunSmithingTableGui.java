@@ -108,16 +108,8 @@ public class GunSmithingTableGui extends GuiContainer {
     }
 
     private boolean canCraft(GunSmithRecipeRegistry.GunRecipeEntry entry) {
-        if (entry == null || (entry.inputs == null && entry.oreInputs == null)) return false;
-
-        for (int reqIndex = 0; reqIndex < getIngredientCount(entry); reqIndex++) {
-            ItemStack req = getInput(entry, reqIndex);
-            String oreName = getOreInput(entry, reqIndex);
-            if (req == null && oreName == null) continue;
-            int owned = countInInventory(req, oreName);
-            if (owned < getRequiredCount(req)) return false;
-        }
-        return true;
+        if (entry == null) return false;
+        return GunTableInventoryAllocator.canCraft(player, entry.ingredients);
     }
 
     private void drawScrollbar(int totalEntries) {
@@ -233,25 +225,31 @@ public class GunSmithingTableGui extends GuiContainer {
         // --- draw 2D input icons (unchanged) ---
         RenderHelper.enableGUIStandardItemLighting();
 
-        if (entry.inputs != null) {
-            for (int i = 0; i < entry.inputs.length; i++) {
-                ItemStack stack = entry.inputs[i];
-                String oreName = getOreInput(entry, i);
-                if (stack == null) stack = getOrePreviewStack(oreName);
-                if (stack == null) continue;
+        if (entry.ingredients != null) {
+            for (int i = 0; i < entry.ingredients.length; i++) {
+                GunTableIngredient ingredient = entry.ingredients[i];
+                if (ingredient == null) continue;
+                ItemStack stack = ingredient.getDisplayStack();
 
                 int x = previewX + (i % 3) * 22;
                 int y = previewY + (i / 3) * 22;
 
-                try {
-                    itemRender.renderItemIntoGUI(fontRendererObj, mc.getTextureManager(), stack, x, y);
-                } catch (Throwable ignored) {}
+                if (stack != null) {
+                    try {
+                        itemRender.renderItemIntoGUI(fontRendererObj, mc.getTextureManager(), stack, x, y);
+                    } catch (Throwable ignored) {}
+                } else {
+                    fontRendererObj.drawString("Ore", x, y + 4, 0x55AAFF);
+                }
 
                 // tooltip
                 if (mouseX >= x && mouseX <= x + 16 && mouseY >= y && mouseY <= y + 16) {
-                    List list = stack.getTooltip(player, false);
-                    if (oreName != null && !oreName.isEmpty()) {
-                        list.add(EnumChatFormatting.GRAY + "Ore Dictionary: " + oreName);
+                    List list = new ArrayList();
+                    if (stack != null) list.addAll(stack.getTooltip(player, false));
+                    if (ingredient.isOreDictionary()) {
+                        list.add(EnumChatFormatting.GRAY + ingredient.getDisplayName());
+                    } else if (list.isEmpty()) {
+                        list.add(EnumChatFormatting.WHITE + ingredient.getDisplayName());
                     }
                     for (int t = 0; t < list.size(); t++) {
                         if (t == 0) list.set(t, EnumChatFormatting.WHITE + (String) list.get(t));
@@ -260,8 +258,8 @@ public class GunSmithingTableGui extends GuiContainer {
                     drawHoveringText(list, mouseX, mouseY, fontRendererObj);
                 }
 
-                int owned = countInInventory(stack, oreName);
-                int needed = getRequiredCount(stack);
+                int owned = GunTableInventoryAllocator.countMatches(player, ingredient);
+                int needed = ingredient.getRequiredAmount();
                 boolean missing = owned < needed;
 
                 String txt = owned + "/" + needed;
@@ -517,61 +515,6 @@ public class GunSmithingTableGui extends GuiContainer {
         return list == null ? new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>() : list;
     }
 
-    private int countInInventory(ItemStack target, String oreName) {
-        if (player == null) return 0;
-        int count = 0;
-        for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
-            ItemStack inv = player.inventory.getStackInSlot(i);
-            if (matchesIngredient(inv, target, oreName)) {
-                count += inv.stackSize;
-            }
-        }
-        return count;
-    }
-
-    private int getIngredientCount(GunSmithRecipeRegistry.GunRecipeEntry entry) {
-        int inputLength = entry.inputs == null ? 0 : entry.inputs.length;
-        int oreLength = entry.oreInputs == null ? 0 : entry.oreInputs.length;
-        return Math.max(inputLength, oreLength);
-    }
-
-    private ItemStack getInput(GunSmithRecipeRegistry.GunRecipeEntry entry, int index) {
-        if (entry == null || entry.inputs == null || index < 0 || index >= entry.inputs.length) return null;
-        return entry.inputs[index];
-    }
-
-    private String getOreInput(GunSmithRecipeRegistry.GunRecipeEntry entry, int index) {
-        if (entry == null || entry.oreInputs == null || index < 0 || index >= entry.oreInputs.length) return null;
-        return entry.oreInputs[index];
-    }
-
-    private boolean matchesIngredient(ItemStack stack, ItemStack target, String oreName) {
-        if (stack == null) return false;
-
-        if (oreName != null && !oreName.isEmpty()) {
-            List<ItemStack> ores = OreDictionary.getOres(oreName);
-            if (ores == null) return false;
-            for (ItemStack ore : ores) {
-                if (ore != null && OreDictionary.itemMatches(ore, stack, false)) return true;
-            }
-            return false;
-        }
-
-        return target != null && stack.getItem() == target.getItem() && stack.getItemDamage() == target.getItemDamage();
-    }
-
-    private int getRequiredCount(ItemStack target) {
-        return target == null ? 1 : target.stackSize;
-    }
-
-    private ItemStack getOrePreviewStack(String oreName) {
-        if (oreName == null || oreName.isEmpty()) return null;
-        List<ItemStack> ores = OreDictionary.getOres(oreName);
-        if (ores == null || ores.isEmpty()) return null;
-        ItemStack stack = ores.get(0);
-        return stack == null ? null : stack.copy();
-    }
-
     private boolean entriesMatch(GunSmithRecipeRegistry.GunRecipeEntry a, GunSmithRecipeRegistry.GunRecipeEntry b) {
         if (a == null || b == null) return false;
         if (a.result == null || b.result == null) return false;
@@ -584,19 +527,19 @@ public class GunSmithingTableGui extends GuiContainer {
             return false;
         }
 
-        ItemStack[] inA = a.inputs == null ? new ItemStack[0] : a.inputs;
-        ItemStack[] inB = b.inputs == null ? new ItemStack[0] : b.inputs;
+        GunTableIngredient[] inA = a.ingredients == null ? new GunTableIngredient[0] : a.ingredients;
+        GunTableIngredient[] inB = b.ingredients == null ? new GunTableIngredient[0] : b.ingredients;
 
         if (inA.length != inB.length) return false;
 
         for (int i = 0; i < inA.length; i++) {
-            ItemStack sa = inA[i];
-            ItemStack sb = inB[i];
-            if (sa == null && sb == null) continue;
-            if (sa == null || sb == null) return false;
-            if (sa.getItem() != sb.getItem()) return false;
-            if (sa.getItemDamage() != sb.getItemDamage()) return false;
-            if (sa.stackSize != sb.stackSize) return false;
+            GunTableIngredient ia = inA[i];
+            GunTableIngredient ib = inB[i];
+            if (ia == null && ib == null) continue;
+            if (ia == null || ib == null) return false;
+            if (ia.isOreDictionary() != ib.isOreDictionary()) return false;
+            if (ia.getRequiredAmount() != ib.getRequiredAmount()) return false;
+            if (!ia.getDisplayName().equals(ib.getDisplayName())) return false;
         }
 
         return true;
