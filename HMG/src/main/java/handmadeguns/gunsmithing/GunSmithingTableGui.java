@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.oredict.OreDictionary;
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.gui.GuiTextField;
