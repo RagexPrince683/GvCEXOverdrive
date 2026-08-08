@@ -68,3 +68,10 @@
 ## BackTools HMG back-gun transform correction
 
 - Restored the working back-plane alignment for HMG back guns and moved the grip/bottom roll before the diagonal direction rotation so the model stays flat against the player's back.
+
+## (5f21dfc Update Combatives camera recoil integration)
+
+- Audited HMG recoil against the current Combatives camera API and documented its capabilities, validation, render semantics, continuous-effect tradeoffs, and future firearm integration opportunities.
+- Added cached API-version and capability discovery with conservative degradation for missing or older optional camera surfaces.
+- Fixed exact-shot recoil ownership so an active Combatives installation can no longer erase legacy recoil queued after a rejected submission.
+- Added capability-gated yaw, roll, translation, and FOV construction plus burst cleanup on trigger release and reload, while retaining existing death, dimension, and weapon-switch cleanup.
