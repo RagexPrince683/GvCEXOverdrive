@@ -1,6 +1,7 @@
 package com.glowingfederal.combatives.network;
 
 import com.glowingfederal.combatives.entity.player.ICombativesPlayerPose;
+import com.glowingfederal.combatives.entity.player.PlayerStepHeight;
 import com.glowingfederal.combatives.movement.MovementDiagnostics;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -13,8 +14,10 @@ public class PoseSyncEvents {
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
         if (event.entity instanceof EntityPlayerMP) {
+            PlayerStepHeight.restoreVanillaStepHeight((EntityPlayer) event.entity, "server join world");
             this.logPoseStateCheck((EntityPlayer) event.entity, "server login/runtime");
         } else if (event.entity instanceof EntityPlayer && event.world.isRemote) {
+            PlayerStepHeight.restoreVanillaStepHeight((EntityPlayer) event.entity, "client join world");
             this.logPoseStateCheck((EntityPlayer) event.entity, "client login/runtime");
         }
     }
@@ -28,6 +31,7 @@ public class PoseSyncEvents {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        PlayerStepHeight.restoreVanillaStepHeight(event.player, "server login");
         this.logPoseStateCheck(event.player, "server login");
         if (event.player instanceof EntityPlayerMP) {
             PoseSync.broadcastAuthoritativePose((EntityPlayerMP) event.player, true);
@@ -36,6 +40,7 @@ public class PoseSyncEvents {
 
     @SubscribeEvent
     public void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        PlayerStepHeight.restoreVanillaStepHeight(event.player, "server respawn");
         if (event.player instanceof EntityPlayerMP) {
             PoseSync.broadcastAuthoritativePose((EntityPlayerMP) event.player, true);
         }
@@ -43,6 +48,7 @@ public class PoseSyncEvents {
 
     @SubscribeEvent
     public void onPlayerChangedDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        PlayerStepHeight.restoreVanillaStepHeight(event.player, "server dimension change");
         if (event.player instanceof EntityPlayerMP) {
             PoseSync.broadcastAuthoritativePose((EntityPlayerMP) event.player, true);
         }

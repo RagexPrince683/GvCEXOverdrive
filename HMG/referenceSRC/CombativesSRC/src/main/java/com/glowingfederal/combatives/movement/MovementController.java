@@ -60,14 +60,17 @@ public final class MovementController {
         }
 
         double deltaLength = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
+        boolean speedClampRan = false;
         if (deltaLength > accel && deltaLength > 1.0E-8D) {
             double scale = accel / deltaLength;
             deltaX *= scale;
             deltaZ *= scale;
+            speedClampRan = true;
         }
 
         double resultX = currentX + deltaX;
         double resultZ = currentZ + deltaZ;
+        double appliedDrag = hasInput ? 1.0D : profile.frictionDrag;
         if (!hasInput) {
             resultX *= profile.frictionDrag;
             resultZ *= profile.frictionDrag;
@@ -87,7 +90,7 @@ public final class MovementController {
         MovementSnapshot snapshot = new MovementSnapshot(resultX, resultZ, currentX, currentZ, resultX - currentX, resultZ - currentZ, speed,
             clamp(speed / targetSpeed, 0.0D, 1.0D), wishX, wishZ, grounded, player.isSprinting(), player.isSneaking(), crawling, swimming,
             underwater, !grounded, !previous.grounded && grounded && player.fallDistance > 0.0F, turnAmount, turnRate);
-        return new MovementResult(resultX, resultZ, snapshot);
+        return new MovementResult(resultX, resultZ, snapshot, profile, targetSpeed, accel, Math.sqrt(deltaX * deltaX + deltaZ * deltaZ), appliedDrag, speedClampRan);
     }
 
     public static MovementProfile selectProfile(EntityPlayer player) {
@@ -117,11 +120,23 @@ public final class MovementController {
         public final double motionX;
         public final double motionZ;
         public final MovementSnapshot snapshot;
+        public final MovementProfile profile;
+        public final double targetSpeed;
+        public final double accelerationLimit;
+        public final double appliedHorizontalDelta;
+        public final double appliedDrag;
+        public final boolean speedClampRan;
 
-        private MovementResult(double motionX, double motionZ, MovementSnapshot snapshot) {
+        private MovementResult(double motionX, double motionZ, MovementSnapshot snapshot, MovementProfile profile, double targetSpeed, double accelerationLimit, double appliedHorizontalDelta, double appliedDrag, boolean speedClampRan) {
             this.motionX = motionX;
             this.motionZ = motionZ;
             this.snapshot = snapshot;
+            this.profile = profile;
+            this.targetSpeed = targetSpeed;
+            this.accelerationLimit = accelerationLimit;
+            this.appliedHorizontalDelta = appliedHorizontalDelta;
+            this.appliedDrag = appliedDrag;
+            this.speedClampRan = speedClampRan;
         }
     }
 }

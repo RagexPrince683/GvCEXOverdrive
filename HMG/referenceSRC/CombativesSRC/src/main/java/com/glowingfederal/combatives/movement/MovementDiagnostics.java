@@ -59,7 +59,7 @@ public final class MovementDiagnostics {
         return Combatives.logger != null && (CombativesConfig.debugMovement || CombativesConfig.verboseMovementDebug);
     }
 
-    private static boolean isVerboseEnabled() {
+    public static boolean isVerboseEnabled() {
         return Combatives.logger != null && CombativesConfig.verboseMovementDebug;
     }
 }

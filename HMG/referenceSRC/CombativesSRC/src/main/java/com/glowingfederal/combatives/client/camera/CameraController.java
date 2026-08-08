@@ -3,6 +3,7 @@ package com.glowingfederal.combatives.client.camera;
 import com.glowingfederal.combatives.Combatives;
 import com.glowingfederal.combatives.config.CombativesConfig;
 import com.glowingfederal.combatives.client.camera.internal.CameraEffectManager;
+import com.glowingfederal.combatives.client.camera.internal.EntityCameraBehaviorManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import org.lwjgl.opengl.GL11;
@@ -27,6 +28,7 @@ public final class CameraController {
     private static final float MAX_IMPACT_Z_OFFSET = 0.16F;
 
     private float leanRoll, leanPitch, bobVertical, bobSway, bobPitch, bobRoll, shakeVertical, shakeForward, shakeLateral, shakePitch, shakeRoll, fovModifier;
+    private float lastTranslationY;
 
     private CameraController() {}
 
@@ -38,6 +40,7 @@ public final class CameraController {
         if (CombativesConfig.enableProceduralBob) bob.update(movement); else bob.reset();
         if (CombativesConfig.enableMovementFov) fov.update(movement); else fov.reset();
         if (CombativesConfig.enableCameraShake) shake.update(movement, partialTicks); else shake.reset();
+        EntityCameraBehaviorManager.INSTANCE.update(player, partialTicks);
         CameraEffectManager.update(player);
         leanRoll = lean.getRoll(); leanPitch = lean.getPitch(); bobVertical = bob.getVertical(); bobSway = bob.getSway(); bobPitch = bob.getPitch(); bobRoll = bob.getRoll();
         shakeVertical = shake.getVertical(); shakeForward = shake.getForward(); shakeLateral = shake.getLateral(); shakePitch = shake.getPitch(); shakeRoll = shake.getRoll(); fovModifier = fov.getModifier();
@@ -54,6 +57,7 @@ public final class CameraController {
         float impactZ = clamp(shakeForward + CameraEffectManager.getZ(), -MAX_IMPACT_Z_OFFSET, MAX_IMPACT_Z_OFFSET);
         float xOffset = ambientX + impactX;
         float yOffset = ambientY + impactY;
+        this.lastTranslationY = yOffset;
         float zOffset = impactZ;
         GL11.glTranslatef(xOffset, yOffset, zOffset);
 
@@ -94,7 +98,7 @@ public final class CameraController {
         return value < min ? min : value > max ? max : value;
     }
 
-    public void reset() { lean.reset(); bob.reset(); fov.reset(); shake.reset(); CameraEffectManager.reset(); leanRoll = leanPitch = bobVertical = bobSway = bobPitch = bobRoll = shakeVertical = shakeForward = shakeLateral = shakePitch = shakeRoll = fovModifier = 0.0F; }
+    public void reset() { EntityCameraBehaviorManager.INSTANCE.reset(Minecraft.getMinecraft() == null ? null : Minecraft.getMinecraft().thePlayer); lean.reset(); bob.reset(); fov.reset(); shake.reset(); CameraEffectManager.reset(); leanRoll = leanPitch = bobVertical = bobSway = bobPitch = bobRoll = shakeVertical = shakeForward = shakeLateral = shakePitch = shakeRoll = fovModifier = lastTranslationY = 0.0F; }
 
     public void addExplosionFeedback(EntityPlayerSP player, double x, double y, double z, float strength) {
         if (!CombativesConfig.enableCombativesCamera || !CombativesConfig.enableCameraShake || !CombativesConfig.enableExplosionCameraFeedback || player == null) {
@@ -128,4 +132,5 @@ public final class CameraController {
         shake.addExplosionImpulse(response, localForward, localRight, localVertical);
     }
     public float getFovModifier() { return fovModifier + CameraEffectManager.getFov() * 0.01F; }
+    public float getLastTranslationY() { return lastTranslationY; }
 }

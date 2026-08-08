@@ -7,10 +7,6 @@ import com.glowingfederal.combatives.entity.player.ICombativesPlayerPose;
 import com.glowingfederal.combatives.movement.MovementDiagnostics;
 import com.glowingfederal.combatives.network.NetworkHandler;
 import com.glowingfederal.combatives.network.message.PacketCrawlKeyState;
-import com.glowingfederal.combatives.util.math.AxisAlignedBBSpliterator;
-import java.util.stream.StreamSupport;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.potion.Potion;
@@ -74,53 +70,6 @@ public abstract class EntityPlayerSPMixin implements ICombativesClientPlayerSwim
     @Override
     public boolean isMovingForward(float moveForward, float moveStrafe) {
         return moveForward > 1.0E-5F;
-    }
-
-    @Inject(method = "func_145771_j", at = @At("HEAD"), cancellable = true)
-    private void combatives$pushOutOfBlocks(double x, double y, double z, CallbackInfoReturnable<Boolean> cir) {
-        EntityPlayerSP self = (EntityPlayerSP) (Object) this;
-        if (!self.noClip) {
-            this.combatives$setPlayerOffsetMotion(x, z);
-        }
-        cir.setReturnValue(false);
-    }
-
-    private void combatives$setPlayerOffsetMotion(double x, double z) {
-        EntityPlayerSP self = (EntityPlayerSP) (Object) this;
-        int blockX = (int) Math.floor(x);
-        int blockZ = (int) Math.floor(z);
-        if (this.combatives$shouldBlockPushPlayer(blockX, blockZ)) {
-            double localX = x - blockX;
-            double localZ = z - blockZ;
-            double closest = Double.MAX_VALUE;
-            int bestX = 0;
-            int bestZ = 0;
-            int[][] directions = new int[][] { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
-            for (int[] direction : directions) {
-                boolean xAxis = direction[0] != 0;
-                double distance = direction[0] + direction[1] > 0 ? 1.0D - (xAxis ? localX : localZ) : (xAxis ? localX : localZ);
-                if (distance < closest && !this.combatives$shouldBlockPushPlayer(blockX + direction[0], blockZ + direction[1])) {
-                    closest = distance;
-                    bestX = direction[0];
-                    bestZ = direction[1];
-                }
-            }
-            if (bestX != 0 || bestZ != 0) {
-                self.motionX = 0.1D * bestX;
-                self.motionZ = 0.1D * bestZ;
-                MovementDiagnostics.verbose(self, "client exact collision push-out applied for crawl/swim clearance");
-            }
-        }
-    }
-
-    private boolean combatives$shouldBlockPushPlayer(int x, int z) {
-        EntityPlayerSP self = (EntityPlayerSP) (Object) this;
-        AxisAlignedBB aabb = AxisAlignedBB.getBoundingBox(x, self.boundingBox.minY, z, x + 1.0D, self.boundingBox.maxY, z + 1.0D);
-        return !this.combatives$isAxisAlignedBBNotClear(self.worldObj, self, aabb.expand(-1.0E-7D, -1.0E-7D, -1.0E-7D));
-    }
-
-    private boolean combatives$isAxisAlignedBBNotClear(net.minecraft.world.World world, Entity entity, AxisAlignedBB aabb) {
-        return !StreamSupport.stream(new AxisAlignedBBSpliterator(world, entity, aabb), false).findAny().isPresent();
     }
 
     @Inject(method = "onLivingUpdate", at = @At("HEAD"))
@@ -238,7 +187,7 @@ public abstract class EntityPlayerSPMixin implements ICombativesClientPlayerSwim
         boolean wasSneaking = this.combatives$movementStorage.sneak;
         boolean wasSwimmingMove = this.isUsingSwimmingAnimation(this.combatives$movementStorage.moveForward, this.combatives$movementStorage.moveStrafe);
         boolean sprintEnvironment = ((EntityPlayerSP) (Object) this).onGround || this.canSwimClient() || this.combatives$movementStorage.isFlying;
-        boolean sprintKeyDown = this.mc != null && this.mc.gameSettings.keyBindSprint.getIsKeyPressed();
+        boolean sprintKeyDown = this.mc != null && Minecraft.getMinecraft().gameSettings.keyBindSprint.getIsKeyPressed();
         if (sprintEnvironment && !wasSneaking && !wasSwimmingMove && this.isUsingSwimmingAnimation() && !((EntityPlayerSP) (Object) this).isSprinting()
             && isSaturated && !((EntityPlayerSP) (Object) this).isPotionActive(Potion.blindness)) {
             if (this.combatives$movementStorage.sprintToggleTimer <= 0 && !sprintKeyDown) {

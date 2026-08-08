@@ -6,6 +6,7 @@ import java.util.Map;
 import com.glowingfederal.combatives.entity.EntitySize;
 import com.glowingfederal.combatives.entity.Pose;
 import com.glowingfederal.combatives.entity.player.ICombativesPlayerPose;
+import com.glowingfederal.combatives.entity.player.PlayerStepHeight;
 import com.glowingfederal.combatives.movement.ICombativesMovementState;
 import com.glowingfederal.combatives.movement.MovementController;
 import com.glowingfederal.combatives.movement.MovementDiagnostics;
@@ -17,6 +18,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
@@ -66,7 +68,12 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
     private boolean crawlKeyDown;
     private Pose combativesPose = Pose.STANDING;
     private boolean combativesPoseWatcherReady;
+    private int combativesLastStepHeightWarningTick = -200;
     private MovementSnapshot combativesMovementSnapshot = MovementSnapshot.EMPTY;
+    private Entity combativesLastRidingEntity;
+    private Entity combativesDismountedEntity;
+    private boolean combativesDismountHandoff;
+    private int combativesLastMountWaitLogTick = -20;
 
     public EntityPlayerMixin(World world) {
         super(world);
@@ -79,6 +86,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
         this.combativesPose = Pose.STANDING;
         this.getDataWatcher().addObject(POSE_WATCHER_ID, Pose.STANDING.ordinal());
         this.combativesPoseWatcherReady = true;
+        PlayerStepHeight.restoreVanillaStepHeight(this.getPlayer(), "EntityPlayer<init>");
     }
 
 
@@ -160,6 +168,7 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
             }
         }
         this.combativesSize = newSize;
+        this.combatives$warnUnexpectedStepHeight("recalculateSize");
     }
 
     private void recalculateSize(EntitySize oldSize, EntitySize newSize) {
@@ -195,7 +204,8 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
     private float getEyeHeight(Pose pose, EntitySize size) { return pose == Pose.SLEEPING || pose == Pose.DYING ? 0.2F : this.getStandingEyeHeight(pose, size); }
     @Override public boolean isActuallySneaking() { return this.isSneaking(); }
     @Override public float getStandingEyeHeight(Pose pose, EntitySize size) {
-        if (pose == Pose.SWIMMING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK) return this.eyeHeight;
+        if (pose == Pose.SWIMMING) return 0.28F;
+        if (pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK) return this.eyeHeight;
         if (pose == Pose.CROUCHING) return 0.35F;
         return this.eyeHeight;
     }
@@ -206,8 +216,14 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
             MovementDiagnostics.verbose(this.getPlayer(), "setPose " + old + " -> " + pose + " via " + this.combatives$getPoseCaller());
         }
         this.combativesPose = pose;
+        if (this.worldObj != null && this.worldObj.isRemote) {
+            this.yOffset = pose == Pose.SWIMMING ? 0.28F : 1.62F;
+        }
         if (this.combativesPoseWatcherReady) {
             this.getDataWatcher().updateObject(POSE_WATCHER_ID, pose.ordinal());
+        }
+        if (old != pose) {
+            this.recalculateEyeHeight();
         }
     }
 
@@ -267,10 +283,19 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
             this.crawlKeyDown = false;
             return;
         }
-        if (this.crawlKeyDown != down) {
+        boolean changed = this.crawlKeyDown != down;
+        if (changed) {
             MovementDiagnostics.debug(this.getPlayer(), "crawl request " + (down ? "accepted" : "released"));
         }
         this.crawlKeyDown = down;
+        if (changed && this.worldObj != null && this.worldObj.isRemote) {
+            if (down) {
+                this.setPose(Pose.SWIMMING);
+            } else if (!this.isSwimming() && this.getPose() == Pose.SWIMMING && this.isPoseClear(Pose.STANDING)) {
+                this.setPose(Pose.STANDING);
+            }
+            this.recalculateSize();
+        }
     }
 
     @Inject(method = "getEyeHeight", at = @At("HEAD"), cancellable = true)
@@ -289,7 +314,9 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
 
     @Inject(method = "onUpdate", at = @At(value = "INVOKE", target = "cpw/mods/fml/common/FMLCommonHandler.onPlayerPostTick(Lnet/minecraft/entity/player/EntityPlayer;)V", shift = At.Shift.AFTER, remap = false))
     private void combatives$postPostTick(CallbackInfo ci) {
+        this.combatives$updateMountLifecycle();
         this.updatePose();
+        this.combatives$warnUnexpectedStepHeight("post-player-tick");
         if (this.eyeHeight != this.previousEyeHeight) this.recalculateEyeHeight();
     }
 
@@ -304,8 +331,36 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
             return;
         }
 
-        if (this.isRiding() || this.capabilities.isFlying || this.isOnLadder()) {
-            if (this.isCrawlKeyDown()) {
+        if (this.isRiding()) {
+            // A rider overlapping its mount is normal. Entity collision must not
+            // keep Combatives' prone box alive across the vanilla mount lifecycle.
+            if (this.crawlKeyDown) {
+                this.setCrawlKeyDown(false);
+            }
+            this.combatives$setSwimming(false, "mounted");
+            this.combatives$selectPose(Pose.STANDING);
+            return;
+        }
+
+        if (this.combativesDismountHandoff) {
+            if (!this.isPoseClear(Pose.STANDING)) {
+                // Preserve vanilla's full player box while vanilla or the mount
+                // resolves its exit position. Shrinking here lets a player slide
+                // into vehicle collision that a vanilla-sized rider cannot enter.
+                this.combatives$selectPose(Pose.STANDING);
+                if (this.ticksExisted - this.combativesLastMountWaitLogTick >= 20) {
+                    this.combativesLastMountWaitLogTick = this.ticksExisted;
+                    this.combatives$logMountState("dismount handoff waiting for standing clearance", this.combativesDismountedEntity);
+                }
+                return;
+            }
+            this.combativesDismountHandoff = false;
+            this.combatives$logMountState("dismount handoff complete", this.combativesDismountedEntity);
+            this.combativesDismountedEntity = null;
+        }
+
+        if (this.capabilities.isFlying || this.isOnLadder()) {
+            if (this.crawlKeyDown) {
                 this.setCrawlKeyDown(false);
             }
             this.combatives$selectPose(this.isPoseClear(Pose.STANDING) ? Pose.STANDING : this.getPose());
@@ -359,6 +414,47 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
         this.combatives$selectPose(finalPose);
     }
 
+    private void combatives$updateMountLifecycle() {
+        Entity current = this.ridingEntity;
+        if (current == this.combativesLastRidingEntity) {
+            return;
+        }
+        if (this.combativesLastRidingEntity != null && current == null) {
+            this.combativesDismountedEntity = this.combativesLastRidingEntity;
+            this.combativesDismountHandoff = true;
+            this.combatives$logMountState("dismount detected", this.combativesDismountedEntity);
+        } else if (current != null) {
+            this.combativesDismountHandoff = false;
+            this.combativesDismountedEntity = null;
+            this.combatives$logMountState(this.combativesLastRidingEntity == null ? "mount detected" : "riding entity changed", current);
+        }
+        this.combativesLastRidingEntity = current;
+    }
+
+    private void combatives$logMountState(String event, Entity mount) {
+        if (!MovementDiagnostics.isVerboseEnabled()) {
+            return;
+        }
+        AxisAlignedBB playerBox = this.boundingBox;
+        AxisAlignedBB mountBox = mount == null ? null : mount.boundingBox;
+        int collisions = this.worldObj.getCollidingBoundingBoxes(this, this.getBoundingBox(Pose.STANDING)).size();
+        MovementDiagnostics.verbose(this.getPlayer(), event
+            + " side=" + (this.worldObj.isRemote ? "client" : "server")
+            + " tick=" + this.ticksExisted
+            + " playerId=" + this.getEntityId()
+            + " mountId=" + (mount == null ? "none" : mount.getEntityId())
+            + " mountClass=" + (mount == null ? "none" : mount.getClass().getName())
+            + " riding=" + (this.ridingEntity != null)
+            + " pose=" + this.getPose()
+            + " crawlRequest=" + this.crawlKeyDown
+            + " size=" + this.width + "x" + this.height
+            + " pos=" + this.posX + "," + this.posY + "," + this.posZ
+            + " playerAABB=" + playerBox
+            + " mountAABB=" + mountBox
+            + " standingCollisions=" + collisions
+            + " intersectsMount=" + (playerBox != null && mountBox != null && playerBox.intersectsWith(mountBox)));
+    }
+
     private void combatives$selectPose(Pose pose) {
         Pose current = this.getPose();
         boolean poseChanged = pose != current;
@@ -381,6 +477,17 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
         }
         this.lastLoggedPose = pose;
         this.recalculateSize();
+    }
+
+    private void combatives$warnUnexpectedStepHeight(String source) {
+        if (this.ticksExisted - this.combativesLastStepHeightWarningTick < 100) {
+            return;
+        }
+        float before = this.stepHeight;
+        PlayerStepHeight.warnIfUnexpected(this.getPlayer(), source);
+        if (before != PlayerStepHeight.VANILLA_PLAYER_STEP_HEIGHT) {
+            this.combativesLastStepHeightWarningTick = this.ticksExisted;
+        }
     }
 
     private AxisAlignedBB getBoundingBox(Pose pose) {
@@ -406,23 +513,8 @@ public abstract class EntityPlayerMixin extends EntityLivingBase implements ICom
         if (customCrawling && !MovementController.shouldBypassUnsafe(this.getPlayer())) {
             this.combatives$moveCrawlingWithHeading(strafe, forward);
         } else if (!this.capabilities.isFlying && this.isInWater()) {
-            float drag = this.isSprinting() ? 0.9F : 0.8F;
-            double currentX = this.motionX;
-            double currentZ = this.motionZ;
-            this.moveFlying(strafe, forward, 0.02F);
-            if (!MovementController.shouldBypassUnsafe(this.getPlayer())) {
-                MovementController.MovementResult result = MovementController.shape(this.getPlayer(), strafe, forward, this.rotationYaw, currentX, currentZ, this.motionX, this.motionZ);
-                this.motionX = result.motionX;
-                this.motionZ = result.motionZ;
-                this.setCombativesMovementSnapshot(result.snapshot);
-            }
-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
-            if (this.isCollidedHorizontally && this.isOnLadder()) this.motionY = 0.2D;
-            this.motionX *= drag;
-            this.motionY *= 0.8D;
-            this.motionZ *= drag;
-            if (!this.isSprinting()) this.motionY -= 0.005D;
-            this.updateCombativesLimbSwing();
+            MovementDiagnostics.verbose(this.getPlayer(), "ordinary water travel delegated to vanilla: motionY=" + this.motionY + " onGround=" + this.onGround + " collidedH=" + this.isCollidedHorizontally + " collidedV=" + this.isCollidedVertically + " crawl=" + this.isCrawlKeyDown() + " swim=" + this.isSwimming());
+            super.moveEntityWithHeading(strafe, forward);
         } else {
             super.moveEntityWithHeading(strafe, forward);
         }
