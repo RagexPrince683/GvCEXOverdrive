@@ -26,7 +26,7 @@ public class HMGRecipeApplyGunSkin implements IRecipe {
             else if (stack.getItem() instanceof HMGItemGunSkin && skin == null) skin = (HMGItemGunSkin) stack.getItem();
             else return null;
         }
-        if (gun == null || skin == null || !skin.supports(HMGGunSkinRegistry.gunId(gun))) return null;
+        if (gun == null || skin == null || !skin.isValid() || !skin.supports(gun.getItem())) return null;
         ItemStack output = gun.copy();
         if (output.getTagCompound() == null) output.setTagCompound(new NBTTagCompound());
         output.getTagCompound().setString(HMGGunSkinRegistry.NBT_KEY, skin.getSkinId());

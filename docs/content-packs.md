@@ -113,8 +113,8 @@ GunSkinItem,my_skin
 ```
 
 `GunSkinItem` is the stable registered item/skin identifier; it is also what is stored
-in the gun's `GunSkin` NBT value. `SkinTarget` accepts a comma-separated list of stable
-registry identifiers (the legacy bare HMG item identifier is also accepted). The
+in the gun's `GunSkin` NBT value. `SkinTarget` accepts a comma-separated list of exact,
+case-sensitive `mod-id:item-name` Forge registry identifiers. The
 overlay resolves through the pack resource domain. With the path above it must be at
 `assets/handmadeguns/textures/model/skins/my_gun_overlay.png`; an explicit resource
 such as `othermod:textures/model/skin.png` is also supported.
@@ -124,3 +124,11 @@ UV layout as every target gun's base model texture. Fully transparent pixels lea
 base gun unchanged. Craft one compatible gun with one skin item in any arrangement to
 copy the gun, preserve all of its NBT, and set or replace its selected skin. Missing,
 removed, and incompatible skin identifiers simply leave the base gun unskinned.
+
+Compatibility resolves each `SkinTarget` through Forge's item registry and compares
+the resulting shared `Item` object. Damage, ammunition, attachments, custom names,
+and all other per-stack NBT therefore have no effect on whether the recipe matches.
+
+Definitions load on both client and server because crafting needs their IDs and
+targets. Overlay existence is checked only by the client renderer and is not stored in
+shared skin metadata; an unavailable resource safely leaves the base gun unskinned.

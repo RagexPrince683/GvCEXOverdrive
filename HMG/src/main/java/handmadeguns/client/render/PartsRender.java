@@ -113,7 +113,7 @@ public abstract class PartsRender {
 			if(!skip) {
 				parts.currentGroup_parts.render();
 				if (gunSkinTexture != null && pass == 1 && !parts.isattachpart && !parts.isbullet) {
-					GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_POLYGON_BIT);
+					GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_POLYGON_BIT);
 					FMLClientHandler.instance().getClient().getTextureManager().bindTexture(gunSkinTexture);
 					GL11.glEnable(GL11.GL_BLEND);
 					GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
