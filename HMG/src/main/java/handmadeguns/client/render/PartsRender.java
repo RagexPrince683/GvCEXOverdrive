@@ -19,6 +19,8 @@ public abstract class PartsRender {
 	public ResourceLocation texture;
 	public float gunPartsScale = 1;
 	public int pass;
+	/** Set for a single gun render; never inherited by separately rendered attachment models. */
+	public ResourceLocation gunSkinTexture;
 	
 
 	public abstract void partSidentification(Object... data);
@@ -110,6 +112,21 @@ public abstract class PartsRender {
 			float lastBrightnessY = OpenGlHelper.lastBrightnessY;
 			if(!skip) {
 				parts.currentGroup_parts.render();
+				if (gunSkinTexture != null && pass == 1 && !parts.isattachpart && !parts.isbullet) {
+					GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_POLYGON_BIT);
+					FMLClientHandler.instance().getClient().getTextureManager().bindTexture(gunSkinTexture);
+					GL11.glEnable(GL11.GL_BLEND);
+					GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+					GL11.glEnable(GL11.GL_ALPHA_TEST);
+					GL11.glAlphaFunc(GL11.GL_GREATER, 0.0F);
+					GL11.glDepthMask(false);
+					GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+					GL11.glPolygonOffset(-1.0F, -1.0F);
+					GL11.glColor4f(1, 1, 1, 1);
+					parts.currentGroup_parts.render();
+					GL11.glPopAttrib();
+					FMLClientHandler.instance().getClient().getTextureManager().bindTexture(texture);
+				}
 				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
 				parts.currentGroup_light.render();
 				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) lastBrightnessX, (float) lastBrightnessY);

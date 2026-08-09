@@ -3,6 +3,7 @@ package handmadeguns.client.render;
 import handmadeguns.client.HMGDroppedGunRenderHelper;
 
 import handmadeguns.HandmadeGunsCore;
+import handmadeguns.HMGGunSkinRegistry;
 import handmadeguns.gui.HMGContainerInventoryItem;
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
@@ -426,6 +427,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		float scala = this.modelscala;
 		gunitem.checkTags(gunstack);
 		nbt = gunstack.getTagCompound();
+		partsRender_gun.gunSkinTexture = HMGGunSkinRegistry.appliedTexture(gunstack);
 		items[0] = null;
 		items[1] = null;
 		items[2] = null;

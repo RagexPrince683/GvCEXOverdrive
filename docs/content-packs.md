@@ -97,3 +97,30 @@ The file is read per pack. The current source switch lacks `break` statements be
 - Ship client assets with the pack and test on a clean client.
 - Test `/reloadSettings` during development, but do full restarts before release validation.
 - Avoid relying on undocumented parser behavior; HMG definition parsers are legacy and forgiving in some places but not uniformly validated.
+## Data-driven gun skins
+
+Gun skins are normal pack items and may be declared in an `attachment/*.txt` file. The
+item icon still uses the ordinary `Texture` key and belongs in
+`assets/handmadeguns/textures/items/`. A minimal definition is:
+
+```text
+Texture,my_skin_item
+Name,My Gun Skin
+GunSkin,true
+SkinTexture,skins/my_gun_overlay.png
+SkinTarget,HandmadeGuns:my_gun
+GunSkinItem,my_skin
+```
+
+`GunSkinItem` is the stable registered item/skin identifier; it is also what is stored
+in the gun's `GunSkin` NBT value. `SkinTarget` accepts a comma-separated list of stable
+registry identifiers (the legacy bare HMG item identifier is also accepted). The
+overlay resolves through the pack resource domain. With the path above it must be at
+`assets/handmadeguns/textures/model/skins/my_gun_overlay.png`; an explicit resource
+such as `othermod:textures/model/skin.png` is also supported.
+
+The overlay is separate from the inventory icon and must have the same dimensions and
+UV layout as every target gun's base model texture. Fully transparent pixels leave the
+base gun unchanged. Craft one compatible gun with one skin item in any arrangement to
+copy the gun, preserve all of its NBT, and set or replace its selected skin. Missing,
+removed, and incompatible skin identifiers simply leave the base gun unskinned.
