@@ -4,6 +4,7 @@ import handmadeguns.client.HMGDroppedGunRenderHelper;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import handmadeguns.HandmadeGunsCore;
+import handmadeguns.HMGGunSkinRegistry;
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
 import net.minecraft.client.Minecraft;
@@ -43,6 +44,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 
 	public IModelCustom modeling;
 	public ResourceLocation guntexture;
+	private ResourceLocation gunSkinTexture;
 	public static float smoothing;
 	public ModelBiped modelBipedMain;
 	public float modelscala;
@@ -442,6 +444,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 	float rotex;
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+		gunSkinTexture = HMGGunSkinRegistry.appliedTexture(item);
 		GL11.glEnable(GL_BLEND);
 		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glShadeModel(GL11.GL_SMOOTH);
@@ -1617,6 +1620,19 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 					GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 					try {
 						this.modeling.renderAll();
+						if (gunSkinTexture != null) {
+							GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_POLYGON_BIT);
+							Minecraft.getMinecraft().renderEngine.bindTexture(gunSkinTexture);
+							GL11.glEnable(GL11.GL_BLEND);
+							GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+							GL11.glAlphaFunc(GL11.GL_GREATER, 0.0F);
+							GL11.glDepthMask(false);
+							GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+							GL11.glPolygonOffset(-1.0F, -1.0F);
+							this.modeling.renderAll();
+							GL11.glPopAttrib();
+							Minecraft.getMinecraft().renderEngine.bindTexture(guntexture);
+						}
 					} catch (Throwable t) {
 						// fallback: do nothing - don't crash the GUI
 						System.out.println("[HMG] model-as-icon render failed: " + t.getMessage());
@@ -2338,6 +2354,19 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 	}
 	public void renderpartofmodel(String name){
 		modeling.renderPart(name);
+		if (gunSkinTexture != null) {
+			GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_POLYGON_BIT);
+			Minecraft.getMinecraft().renderEngine.bindTexture(gunSkinTexture);
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GL11.glAlphaFunc(GL11.GL_GREATER, 0.0F);
+			GL11.glDepthMask(false);
+			GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
+			GL11.glPolygonOffset(-1.0F, -1.0F);
+			modeling.renderPart(name);
+			GL11.glPopAttrib();
+			Minecraft.getMinecraft().renderEngine.bindTexture(guntexture);
+		}
 		float lastBrightnessX = OpenGlHelper.lastBrightnessX;
 		float lastBrightnessY = OpenGlHelper.lastBrightnessY;
 

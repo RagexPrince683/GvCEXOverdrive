@@ -94,6 +94,9 @@ public class HMGAddAttachment
 		float reduceSpreadLevel_ADS = 1f;
 		boolean isbase = false;
 		String tabname = null;
+		boolean gunSkin = false;
+		String skinTexture = null;
+		List<String> skinTargets = new ArrayList<String>();
 		try {
 			File file = file1;
 			//File file = new File(configfile,"hmg_handmadeguns.txt");
@@ -240,6 +243,15 @@ public class HMGAddAttachment
 							case "Tabname":
 								tabname = type[1];
 								break;
+							case "GunSkin":
+								gunSkin = Boolean.parseBoolean(type[1]);
+								break;
+							case "SkinTexture":
+								skinTexture = type[1];
+								break;
+							case "SkinTarget":
+								for (int target = 1; target < type.length; target++) skinTargets.add(type[target]);
+								break;
 							case "GunRotation":
 								for (int i = 0; i < 3; i++)
 									gunrotation[i] = Float.parseFloat(type[i + 1]);
@@ -247,7 +259,13 @@ public class HMGAddAttachment
 								break;
 						}
 						Item newitem = null;
-						if(type[0].equals("Model_Sight")){
+						if(type[0].equals("GunSkinItem") && gunSkin && skinTexture != null && !skinTargets.isEmpty()){
+							GunName = type[1];
+							newitem = new HMGItemGunSkin(GunName, skinTexture, skinTargets).setUnlocalizedName(GunName)
+									.setTextureName("handmadeguns:" + texture);
+							if(Namegun != null) LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
+							else LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);
+						}else if(type[0].equals("Model_Sight")){
 							GunName = type[1];
 							newitem	= new HMGItemSightBase().setUnlocalizedName(GunName)
 									.setTextureName("handmadeguns:"+ texture).setCreativeTab(HandmadeGunsCore.tabhmg);
@@ -557,6 +575,18 @@ public class HMGAddAttachment
 								((HMGItemCustomMagazine)newitem).gra = gra;
 							}
 							GameRegistry.registerItem(newitem, GunName);
+							if (newitem instanceof HMGItemGunSkin) {
+								HMGItemGunSkin skin = (HMGItemGunSkin)newitem;
+								if (isClient && skin.getOverlayTexture() != null) {
+									try {
+										net.minecraft.client.Minecraft.getMinecraft().getResourceManager().getResource(skin.getOverlayTexture()).getInputStream().close();
+									} catch (IOException missingOverlay) {
+										skin.setOverlayAvailable(false);
+										System.err.println("[HMG] Gun skin " + skin.getSkinId() + " has no overlay resource; base gun rendering will be used");
+									}
+								}
+								HMGGunSkinRegistry.register(skin);
+							}
 						}
 
 

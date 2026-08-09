@@ -702,6 +702,7 @@ public class HandmadeGunsCore {
 	public void init(FMLInitializationEvent pEvent) {
 
 		HGGunRecipes.init();
+		GameRegistry.addRecipe(new handmadeguns.recipes.HMGRecipeApplyGunSkin());
 		GameRegistry.registerWorldGenerator(new HGWorldGen(), 0);
 
 		int D = Short.MAX_VALUE;
@@ -1186,5 +1187,4 @@ public class HandmadeGunsCore {
 	//END
 
 }
-
 

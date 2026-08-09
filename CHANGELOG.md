@@ -1,5 +1,12 @@
 # Changelog
 
+## Data-driven gun skins
+
+- Added ordinary content-pack gun skin items with stable identifiers, cached overlay resources, and per-skin compatible gun registry identifiers.
+- Added one generic shapeless skin application recipe that copies the gun and changes only its `GunSkin` NBT value.
+- Added transparent base-model overlay rendering to the legacy and current unified gun renderers, with isolated fixed-function OpenGL state.
+- Documented the skin pack keys, texture layout, crafting behavior, and an Addfixing attachment template.
+
 ## HMG semantic version and automatic build numbers
 
 - Added `HMG/version.properties` with manually managed `mod_version` and Gradle-managed `build_number` values.
