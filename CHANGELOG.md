@@ -1,18 +1,5 @@
 # Changelog
 
-## Fix the HMG gun skin pipeline
-
-- Corrected the Addfixing sample so its inventory icon, exact `HandmadeGuns:AR_sample`
-  registry target, and model texture all resolve through existing pack resources.
-- Fixed the sample's root failure: `SkinTexture` named an overlay PNG that was never
-  included in Addfixing, so the loader disabled the overlay before rendering.
-- Moved missing-resource fallback to a cached client render-time check instead of
-  storing client resource state on shared skin metadata.
-- Standardized compatibility checks on exact Forge registry identifiers and kept
-  texture-path construction common/server safe.
-- Reset the legacy overlay pass color to white while retaining isolated blend, depth,
-  and polygon-offset state.
-
 ## Data-driven gun skins
 
 - Added ordinary content-pack gun skin items with stable identifiers, cached overlay resources, and per-skin compatible gun registry identifiers.

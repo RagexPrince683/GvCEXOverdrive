@@ -427,7 +427,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		float scala = this.modelscala;
 		gunitem.checkTags(gunstack);
 		nbt = gunstack.getTagCompound();
-		partsRender_gun.gunSkinTexture = HMGGunSkinTextures.available(HMGGunSkinRegistry.appliedTexture(gunstack));
+		partsRender_gun.gunSkinTexture = HMGGunSkinRegistry.appliedTexture(gunstack);
 		items[0] = null;
 		items[1] = null;
 		items[2] = null;

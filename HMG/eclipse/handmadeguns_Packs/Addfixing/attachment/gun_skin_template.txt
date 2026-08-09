@@ -1,10 +1,10 @@
-// Working sample for the Addfixing AR_sample gun.
 // Inventory icon: assets/handmadeguns/textures/items/AR_sample.png
-// The overlay is resolved from the same pack model-texture directory as ObjTexture.
+// Overlay required at: assets/handmadeguns/textures/model/skins/ar_sample_overlay.png
+// The overlay PNG must be transparent and use AR_sample's model texture UV layout.
 Texture,AR_sample
 Stack,64
 Name,AR Sample Gun Skin
 GunSkin,true
-SkinTexture,ar.png
+SkinTexture,skins/ar_sample_overlay.png
 SkinTarget,HandmadeGuns:AR_sample
 GunSkinItem,ar_sample_skin

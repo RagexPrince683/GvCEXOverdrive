@@ -575,8 +575,18 @@ public class HMGAddAttachment
 								((HMGItemCustomMagazine)newitem).gra = gra;
 							}
 							GameRegistry.registerItem(newitem, GunName);
-							if (newitem instanceof HMGItemGunSkin)
-								HMGGunSkinRegistry.register((HMGItemGunSkin)newitem);
+							if (newitem instanceof HMGItemGunSkin) {
+								HMGItemGunSkin skin = (HMGItemGunSkin)newitem;
+								if (isClient && skin.getOverlayTexture() != null) {
+									try {
+										net.minecraft.client.Minecraft.getMinecraft().getResourceManager().getResource(skin.getOverlayTexture()).getInputStream().close();
+									} catch (IOException missingOverlay) {
+										skin.setOverlayAvailable(false);
+										System.err.println("[HMG] Gun skin " + skin.getSkinId() + " has no overlay resource; base gun rendering will be used");
+									}
+								}
+								HMGGunSkinRegistry.register(skin);
+							}
 						}
 
 
