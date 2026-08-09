@@ -1,5 +1,6 @@
 package handmadeguns.items;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import handmadeguns.HMGGunSkinRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -13,7 +14,6 @@ public class HMGItemGunSkin extends Item {
     private final String skinId;
     private final ResourceLocation overlayTexture;
     private final Set<String> targets;
-    private boolean overlayAvailable = true;
 
     public HMGItemGunSkin(String skinId, String texture, Collection<String> targets) {
         this.skinId = skinId;
@@ -23,12 +23,19 @@ public class HMGItemGunSkin extends Item {
     }
 
     public String getSkinId() { return skinId; }
-    public ResourceLocation getOverlayTexture() { return overlayAvailable ? overlayTexture : null; }
-    public void setOverlayAvailable(boolean available) { this.overlayAvailable = available; }
-    public boolean supports(String gunId) {
-        if (gunId == null) return false;
-        if (targets.contains(gunId)) return true;
-        int separator = gunId.indexOf(':');
-        return separator >= 0 && targets.contains(gunId.substring(separator + 1));
+    public ResourceLocation getOverlayTexture() { return overlayTexture; }
+    public boolean isValid() { return skinId != null && skinId.length() > 0 && overlayTexture != null && !targets.isEmpty(); }
+
+    /** Resolve exact Forge registry names and compare the shared Item identity, never stack state. */
+    public boolean supports(Item gunItem) {
+        if (gunItem == null) return false;
+        for (String target : targets) {
+            int separator = target.indexOf(':');
+            if (separator <= 0 || separator == target.length() - 1) continue;
+            Item targetItem = GameRegistry.findItem(target.substring(0, separator), target.substring(separator + 1));
+            if (targetItem == gunItem) return true;
+        }
+        return false;
     }
+
 }

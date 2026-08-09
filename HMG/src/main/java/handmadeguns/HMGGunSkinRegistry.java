@@ -27,15 +27,16 @@ public final class HMGGunSkinRegistry {
     public static ResourceLocation appliedTexture(ItemStack gun) {
         if (gun == null || gun.getTagCompound() == null || !gun.getTagCompound().hasKey(NBT_KEY)) return null;
         HMGItemGunSkin skin = get(gun.getTagCompound().getString(NBT_KEY));
-        return skin != null && skin.supports(gunId(gun)) ? skin.getOverlayTexture() : null;
+        return skin != null && skin.isValid() && skin.supports(gun.getItem()) ? skin.getOverlayTexture() : null;
     }
 
     public static ResourceLocation textureLocation(String value) {
         if (value == null || value.trim().length() == 0) return null;
         String path = value.trim();
-        if (path.indexOf(':') >= 0) return HMGGunMaker.getCachedResourceLocation(path);
+        path = path.replace('\\', '/');
+        if (path.indexOf(':') >= 0) return new ResourceLocation(path);
         if (!path.endsWith(".png")) path += ".png";
         if (!path.startsWith("textures/")) path = "textures/model/" + path;
-        return HMGGunMaker.getCachedResourceLocation("handmadeguns:" + path);
+        return new ResourceLocation("handmadeguns", path);
     }
 }
