@@ -444,7 +444,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 	float rotex;
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-		gunSkinTexture = HMGGunSkinRegistry.appliedTexture(item);
+		gunSkinTexture = HMGGunSkinTextures.available(HMGGunSkinRegistry.appliedTexture(item));
 		GL11.glEnable(GL_BLEND);
 		GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glShadeModel(GL11.GL_SMOOTH);
@@ -1629,6 +1629,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 							GL11.glDepthMask(false);
 							GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
 							GL11.glPolygonOffset(-1.0F, -1.0F);
+							GL11.glColor4f(1, 1, 1, 1);
 							this.modeling.renderAll();
 							GL11.glPopAttrib();
 							Minecraft.getMinecraft().renderEngine.bindTexture(guntexture);
@@ -2363,6 +2364,7 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 			GL11.glDepthMask(false);
 			GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
 			GL11.glPolygonOffset(-1.0F, -1.0F);
+			GL11.glColor4f(1, 1, 1, 1);
 			modeling.renderPart(name);
 			GL11.glPopAttrib();
 			Minecraft.getMinecraft().renderEngine.bindTexture(guntexture);

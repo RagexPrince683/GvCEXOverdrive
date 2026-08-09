@@ -33,9 +33,10 @@ public final class HMGGunSkinRegistry {
     public static ResourceLocation textureLocation(String value) {
         if (value == null || value.trim().length() == 0) return null;
         String path = value.trim();
-        if (path.indexOf(':') >= 0) return HMGGunMaker.getCachedResourceLocation(path);
+        path = path.replace('\\', '/');
+        if (path.indexOf(':') >= 0) return new ResourceLocation(path);
         if (!path.endsWith(".png")) path += ".png";
         if (!path.startsWith("textures/")) path = "textures/model/" + path;
-        return HMGGunMaker.getCachedResourceLocation("handmadeguns:" + path);
+        return new ResourceLocation("handmadeguns", path);
     }
 }
