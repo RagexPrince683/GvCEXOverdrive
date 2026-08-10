@@ -702,6 +702,8 @@ public class HandmadeGunsCore {
 	public void init(FMLInitializationEvent pEvent) {
 
 		HGGunRecipes.init();
+		// Removal must precede application so a gun crafted with its currently applied skin removes it.
+		GameRegistry.addRecipe(new handmadeguns.recipes.HMGRecipeRemoveGunSkin());
 		GameRegistry.addRecipe(new handmadeguns.recipes.HMGRecipeApplyGunSkin());
 		FMLLog.info("[HMG] Loaded %d gun skins.", HMGGunSkinRegistry.size());
 		GameRegistry.registerWorldGenerator(new HGWorldGen(), 0);

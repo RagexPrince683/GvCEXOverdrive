@@ -1,5 +1,14 @@
 # Changelog
 
+## Add crafting-based gun skin removal
+
+- Add a dynamic shapeless recipe that removes an applied gun skin when its gun is
+  crafted with the same stable-ID skin item or with one dye.
+- Accept vanilla dyes and modded dyes using standard Forge `dye*` Ore Dictionary
+  entries while rejecting different skins and unrelated extra ingredients.
+- Copy the complete gun stack and remove only the root `GunSkin` NBT value so all
+  ammunition, attachment, damage, naming, and firing state remains intact.
+
 ## Fix Gun Smithing Table crafting and add NEI recipe support
 
 - Deliver Gun Smithing Table outputs immediately from the server, drop only an
