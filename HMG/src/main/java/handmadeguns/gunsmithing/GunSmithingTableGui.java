@@ -32,9 +32,6 @@ public class GunSmithingTableGui extends GuiContainer {
     private GuiButton gunsTab;
     private GuiButton ammoTab;
 
-    // === AMMO CACHE (client side display only) ===
-    private List<GunSmithRecipeRegistry.GunRecipeEntry> ammoRecipes;
-
     private int selectedIndex = -1;
     private int scrollOffset = 0;
     private static final int LIST_X = 20;       // offset inside GUI
@@ -55,7 +52,7 @@ public class GunSmithingTableGui extends GuiContainer {
     private GuiButton craftButton;
 
     private GuiTextField searchBox;
-    private List<GunSmithRecipeRegistry.GunRecipeEntry> filteredRecipes;
+    private List<GunSmithRecipe> filteredRecipes;
 
     // choose GUI size large enough for list + preview
     public GunSmithingTableGui(EntityPlayer player) {
@@ -71,28 +68,25 @@ public class GunSmithingTableGui extends GuiContainer {
     // ---------- Build / filter recipes ----------
     private void updateSearchResults() {
         String q = (searchBox == null) ? "" : searchBox.getText().toLowerCase();
-        filteredRecipes = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
+        filteredRecipes = new ArrayList<GunSmithRecipe>();
 
-        List<GunSmithRecipeRegistry.GunRecipeEntry> source;
+        List<GunSmithRecipe> source;
 
         if (currentPage == PAGE_GUNS) {
-            source = GunSmithRecipeRegistry.getAll();
+            source = GunSmithRecipeRegistry.getGunRecipes();
         } else {
-            if (ammoRecipes == null) {
-                ammoRecipes = buildAmmoRecipes();
-            }
-            source = ammoRecipes;
+            source = GunSmithRecipeRegistry.getAmmoRecipes();
         }
 
         if (source == null) return;
 
-        for (GunSmithRecipeRegistry.GunRecipeEntry e : source) {
-            if (e == null || e.result == null) continue;
+        for (GunSmithRecipe e : source) {
+            if (e == null || e.getOutput() == null) continue;
 
             // defensive: get display name safely
             String name;
             try {
-                name = e.result.getDisplayName();
+                name = e.getOutput().getDisplayName();
             } catch (Throwable t) {
                 continue;
             }
@@ -107,9 +101,9 @@ public class GunSmithingTableGui extends GuiContainer {
         selectedIndex = -1;
     }
 
-    private boolean canCraft(GunSmithRecipeRegistry.GunRecipeEntry entry) {
+    private boolean canCraft(GunSmithRecipe entry) {
         if (entry == null) return false;
-        return GunTableInventoryAllocator.canCraft(player, entry.ingredients);
+        return GunTableInventoryAllocator.canCraft(player, entry.getIngredients());
     }
 
     private void drawScrollbar(int totalEntries) {
@@ -159,8 +153,8 @@ public class GunSmithingTableGui extends GuiContainer {
         if (searchBox != null) searchBox.drawTextBox();
         if (filteredRecipes == null) updateSearchResults();
 
-        List<GunSmithRecipeRegistry.GunRecipeEntry> recipes = filteredRecipes;
-        if (recipes == null) recipes = new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
+        List<GunSmithRecipe> recipes = filteredRecipes;
+        if (recipes == null) recipes = new ArrayList<GunSmithRecipe>();
 
         String title = (currentPage == PAGE_GUNS) ? "Gun Smithing Table" : "Ammo Crafting";
         drawCenteredString(fontRendererObj, title, this.guiLeft + this.xSize / 2, this.guiTop + 8, 0xFFFFFF);
@@ -183,12 +177,12 @@ public class GunSmithingTableGui extends GuiContainer {
         int end = Math.min(recipes.size(), scrollOffset + maxVisible);
 
         for (int i = scrollOffset; i < end; i++) {
-            GunSmithRecipeRegistry.GunRecipeEntry entry = recipes.get(i);
-            if (entry == null || entry.result == null) continue;
+            GunSmithRecipe entry = recipes.get(i);
+            if (entry == null || entry.getOutput() == null) continue;
 
             String name;
             try {
-                name = entry.result.getDisplayName();
+                name = entry.getOutput().getDisplayName();
             } catch (Throwable t) {
                 continue;
             }
@@ -210,8 +204,8 @@ public class GunSmithingTableGui extends GuiContainer {
         }
 
         // right panel preview
-        GunSmithRecipeRegistry.GunRecipeEntry entry = recipes.get(selectedIndex);
-        if (entry == null || entry.result == null) {
+        GunSmithRecipe entry = recipes.get(selectedIndex);
+        if (entry == null || entry.getOutput() == null) {
             return;
         }
 
@@ -219,15 +213,16 @@ public class GunSmithingTableGui extends GuiContainer {
         int previewY = this.guiTop + 40;
 
         try {
-            drawCenteredString(fontRendererObj, entry.result.getDisplayName(), previewX + 40, this.guiTop + 30, 0xFFFFFF);
+            drawCenteredString(fontRendererObj, entry.getOutput().getDisplayName(), previewX + 40, this.guiTop + 30, 0xFFFFFF);
         } catch (Throwable ignored) {}
 
         // --- draw 2D input icons (unchanged) ---
         RenderHelper.enableGUIStandardItemLighting();
 
-        if (entry.ingredients != null) {
-            for (int i = 0; i < entry.ingredients.length; i++) {
-                GunTableIngredient ingredient = entry.ingredients[i];
+        GunTableIngredient[] ingredients = entry.getIngredients();
+        if (ingredients != null) {
+            for (int i = 0; i < ingredients.length; i++) {
+                GunTableIngredient ingredient = ingredients[i];
                 if (ingredient == null) continue;
                 ItemStack stack = ingredient.getDisplayStack();
 
@@ -271,7 +266,7 @@ public class GunSmithingTableGui extends GuiContainer {
         // --- 3D gun preview (ONLY if this item has the gun renderer) ---
         try {
             // copy so we don't mutate the original recipe ItemStack
-            ItemStack previewStack = entry.result.copy();
+            ItemStack previewStack = entry.getOutput();
 
             // ensure NBT exists (some renderers expect it)
             if (previewStack.getTagCompound() == null) {
@@ -443,106 +438,19 @@ public class GunSmithingTableGui extends GuiContainer {
         if (button.id == 0) { // craft
             if (filteredRecipes == null) return;
             if (selectedIndex < 0 || selectedIndex >= filteredRecipes.size()) return;
-            GunSmithRecipeRegistry.GunRecipeEntry entry = filteredRecipes.get(selectedIndex);
+            GunSmithRecipe entry = filteredRecipes.get(selectedIndex);
             if (entry == null) return;
             if (!canCraft(entry)) return;
 
             if (currentPage == PAGE_GUNS) {
-                int realIndex = GunSmithRecipeRegistry.getAll().indexOf(entry);
+                int realIndex = GunSmithRecipeRegistry.getGunRecipes().indexOf(entry);
                 if (realIndex >= 0) GunSmithNetwork.sendCraftRequestToServer(realIndex);
                 return;
             }
 
-            // ========== AMMO PATH ==========
-            if (ammoRecipes == null) ammoRecipes = buildAmmoRecipes();
-            if (ammoRecipes == null || ammoRecipes.isEmpty()) {
-                player.addChatMessage(new net.minecraft.util.ChatComponentText(
-                        EnumChatFormatting.RED + "No ammo recipes available."));
-                return;
-            }
-
-            // 1) try identity lookup (fast)
-            int idx = -1;
-            for (int i = 0; i < ammoRecipes.size(); i++) {
-                if (ammoRecipes.get(i) == entry) {
-                    idx = i;
-                    break;
-                }
-            }
-
-            // 2) strict match by result+inputs
-            if (idx < 0) {
-                for (int i = 0; i < ammoRecipes.size(); i++) {
-                    GunSmithRecipeRegistry.GunRecipeEntry cand = ammoRecipes.get(i);
-                    if (cand == null) continue;
-                    if (entriesMatch(entry, cand)) {
-                        idx = i;
-                        break;
-                    }
-                }
-            }
-
-            // 3) match by result item+meta only
-            if (idx < 0) {
-                ItemStack target = entry.result;
-                if (target != null) {
-                    for (int i = 0; i < ammoRecipes.size(); i++) {
-                        GunSmithRecipeRegistry.GunRecipeEntry cand = ammoRecipes.get(i);
-                        if (cand == null || cand.result == null) continue;
-                        if (cand.result.getItem() == target.getItem()
-                                && cand.result.getItemDamage() == target.getItemDamage()) {
-                            idx = i;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (idx >= 0) {
-                GunSmithNetwork.sendAmmoCraftRequestToServer(idx);
-            } else {
-                player.addChatMessage(new net.minecraft.util.ChatComponentText(
-                        EnumChatFormatting.RED + "Failed to locate ammo recipe to craft."));
-                System.out.println("[GunSmith] actionPerformed: failed to find ammo index for selected recipe: " +
-                        (entry.result == null ? "null" : entry.result.getDisplayName()));
-            }
+            int index = GunSmithRecipeRegistry.getAmmoRecipes().indexOf(entry);
+            if (index >= 0) GunSmithNetwork.sendAmmoCraftRequestToServer(index);
         }
-    }
-
-    // ---------- Build ammo recipes safely (client) ----------
-    private List<GunSmithRecipeRegistry.GunRecipeEntry> buildAmmoRecipes() {
-        List<GunSmithRecipeRegistry.GunRecipeEntry> list = GunSmithRecipeRegistry.getCombinedAmmoRecipes();
-        return list == null ? new java.util.ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>() : list;
-    }
-
-    private boolean entriesMatch(GunSmithRecipeRegistry.GunRecipeEntry a, GunSmithRecipeRegistry.GunRecipeEntry b) {
-        if (a == null || b == null) return false;
-        if (a.result == null || b.result == null) return false;
-
-        try {
-            if (a.result.getItem() != b.result.getItem()) return false;
-            if (a.result.getItemDamage() != b.result.getItemDamage()) return false;
-            if (a.result.stackSize != b.result.stackSize) return false;
-        } catch (Throwable ignored) {
-            return false;
-        }
-
-        GunTableIngredient[] inA = a.ingredients == null ? new GunTableIngredient[0] : a.ingredients;
-        GunTableIngredient[] inB = b.ingredients == null ? new GunTableIngredient[0] : b.ingredients;
-
-        if (inA.length != inB.length) return false;
-
-        for (int i = 0; i < inA.length; i++) {
-            GunTableIngredient ia = inA[i];
-            GunTableIngredient ib = inB[i];
-            if (ia == null && ib == null) continue;
-            if (ia == null || ib == null) return false;
-            if (ia.isOreDictionary() != ib.isOreDictionary()) return false;
-            if (ia.getRequiredAmount() != ib.getRequiredAmount()) return false;
-            if (!ia.getDisplayName().equals(ib.getDisplayName())) return false;
-        }
-
-        return true;
     }
 
     @Override

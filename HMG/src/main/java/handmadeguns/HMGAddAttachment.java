@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
+import handmadeguns.gunsmithing.GunSmithRecipeCategory;
 import handmadeguns.items.*;
 import handmadeguns.client.render.HMGRenderItemCustom;
 import net.minecraft.item.Item;
@@ -760,7 +761,8 @@ public class HMGAddAttachment
 										itemi != null ? new ItemStack(itemi) : null
 								};
 
-								GunSmithRecipeRegistry.registerAmmoRecipe(output, inputs);
+								GunSmithRecipeRegistry.register(output,
+										GunSmithRecipeCategory.AMMO, inputs);
 
 								// Clear after successful register
 								itema = itemb = itemc = itemd = iteme = itemf = itemg = itemh = itemi = null;

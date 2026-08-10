@@ -1,5 +1,15 @@
 # Changelog
 
+## Gun Smithing Table recipe system refactor and NEI integration fix
+
+- Replace the split gun/ammunition lists and global crafting-recipe scan with one
+  canonical, category-aware Gun Smithing Table recipe model and immutable queries.
+- Make the GUI, server crafting transactions, pack loaders, and NEI recipe/usage
+  lookups consume the same exact-stack and Ore Dictionary ingredient definitions.
+- Keep every distinct duplicate-output recipe and expose both Guns and Ammo through
+  NEI's dedicated, localized `Gun Smithing Table` category without fake crafting
+  recipes or name-based ammunition heuristics.
+
 ## Tune gun weight mouse sensitivity diagnostics
 
 - Retuned gun-weight mouse sensitivity for mass-like content-pack values, including

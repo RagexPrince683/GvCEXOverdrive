@@ -222,3 +222,5 @@ hmg.guide.page.troubleshooting.common=Common fixes: verify ammo compatibility, r
 hmg.tooltip.gun_skin.apply=與相容槍械合成以套用。
 hmg.tooltip.gun_skin.compatibility.universal=相容：所有 HMG 統一槍械
 hmg.tooltip.gun_skin.invalid=相容性：造型資料無效
+
+nei.handmadeguns.gunsmithing=Gun Smithing Table

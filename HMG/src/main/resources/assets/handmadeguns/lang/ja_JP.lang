@@ -193,3 +193,5 @@ hmg.guide.page.troubleshooting.common=Common fixes: verify ammo compatibility, r
 hmg.tooltip.gun_skin.apply=対応する銃とクラフトして適用します。
 hmg.tooltip.gun_skin.compatibility.universal=対応: すべてのHMG統合銃
 hmg.tooltip.gun_skin.invalid=対応: スキンデータが無効です
+
+nei.handmadeguns.gunsmithing=Gun Smithing Table

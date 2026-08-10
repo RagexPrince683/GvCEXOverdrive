@@ -1,647 +1,183 @@
 package handmadeguns.gunsmithing;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import handmadeguns.HandmadeGunsCore;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class GunSmithRecipeRegistry {
+/** Authoritative, common-side registry for every Gun Smithing Table recipe. */
+public final class GunSmithRecipeRegistry {
+    private static final List<GunSmithRecipe> RECIPES = new ArrayList<GunSmithRecipe>();
 
-    private static final List<GunRecipeEntry> AMMO_RECIPES = new ArrayList<>();
+    private GunSmithRecipeRegistry() {}
 
+    public static synchronized void register(GunSmithRecipe recipe) {
+        if (recipe != null) RECIPES.add(recipe);
+    }
 
-    public static class GunRecipeEntry {
-        public final ItemStack result;
-        public final ItemStack[] inputs;
-        public final GunTableIngredient[] ingredients;
+    public static void register(ItemStack output, GunTableIngredient[] ingredients,
+                                GunSmithRecipeCategory category) {
+        if (output != null) register(new GunSmithRecipe(output, ingredients, category));
+    }
 
-        public GunRecipeEntry(ItemStack result, ItemStack[] inputs) {
-            this(result, makeExactIngredients(inputs));
+    public static void register(ItemStack output, GunSmithRecipeCategory category, ItemStack... inputs) {
+        register(output, exactIngredients(inputs), category);
+    }
+
+    /** Compatibility adapter for old pack-facing callers; gun is the historical default. */
+    @Deprecated
+    public static void register(ItemStack output, ItemStack... inputs) {
+        register(output, GunSmithRecipeCategory.GUNS, inputs);
+    }
+
+    /** Compatibility adapter for old pack-facing callers; gun is the historical default. */
+    @Deprecated
+    public static void register(ItemStack output, GunTableIngredient[] ingredients) {
+        register(output, ingredients, GunSmithRecipeCategory.GUNS);
+    }
+
+    /** Compatibility adapter for the former parallel exact/ore arrays. */
+    @Deprecated
+    public static void register(ItemStack output, ItemStack[] inputs, String[] oreInputs) {
+        int length = Math.max(inputs == null ? 0 : inputs.length, oreInputs == null ? 0 : oreInputs.length);
+        GunTableIngredient[] ingredients = new GunTableIngredient[Math.min(length, GunSmithRecipe.SLOT_COUNT)];
+        for (int i = 0; i < ingredients.length; i++) {
+            ItemStack input = inputs != null && i < inputs.length ? inputs[i] : null;
+            String ore = oreInputs != null && i < oreInputs.length ? oreInputs[i] : null;
+            if (ore != null && !ore.trim().isEmpty()) {
+                ingredients[i] = new OreDictionaryIngredient(ore.trim(), input == null ? 1 : Math.max(1, input.stackSize));
+            } else if (input != null) {
+                ingredients[i] = new ExactStackIngredient(input);
+            }
         }
+        register(output, ingredients, GunSmithRecipeCategory.GUNS);
+    }
 
-        public GunRecipeEntry(ItemStack result, GunTableIngredient[] ingredients) {
-            this.result = result;
-            this.ingredients = ingredients == null ? new GunTableIngredient[0] : ingredients;
-            this.inputs = makeDisplayInputs(this.ingredients);
+    public static synchronized List<GunSmithRecipe> getAll() {
+        return Collections.unmodifiableList(new ArrayList<GunSmithRecipe>(RECIPES));
+    }
+
+    public static synchronized List<GunSmithRecipe> getRecipes(GunSmithRecipeCategory category) {
+        List<GunSmithRecipe> found = new ArrayList<GunSmithRecipe>();
+        for (GunSmithRecipe recipe : RECIPES) if (recipe.getCategory() == category) found.add(recipe);
+        return Collections.unmodifiableList(found);
+    }
+
+    public static List<GunSmithRecipe> getGunRecipes() { return getRecipes(GunSmithRecipeCategory.GUNS); }
+    public static List<GunSmithRecipe> getAmmoRecipes() { return getRecipes(GunSmithRecipeCategory.AMMO); }
+
+    public static synchronized List<GunSmithRecipe> findByOutput(ItemStack output) {
+        List<GunSmithRecipe> found = new ArrayList<GunSmithRecipe>();
+        if (output != null) for (GunSmithRecipe recipe : RECIPES) {
+            ItemStack candidate = recipe.getOutput();
+            if (OreDictionary.itemMatches(candidate, output, false)
+                    && ItemStack.areItemStackTagsEqual(candidate, output)) found.add(recipe);
         }
+        return Collections.unmodifiableList(found);
+    }
+
+    public static synchronized List<GunSmithRecipe> findByIngredient(ItemStack stack) {
+        List<GunSmithRecipe> found = new ArrayList<GunSmithRecipe>();
+        if (stack != null) for (GunSmithRecipe recipe : RECIPES) {
+            for (GunTableIngredient ingredient : recipe.getIngredients()) {
+                if (ingredient != null && ingredient.matches(stack)) { found.add(recipe); break; }
+            }
+        }
+        return Collections.unmodifiableList(found);
     }
 
     public static void registerFromFile(File recipeFile) {
         try {
             parseAndRegisterAddRecipeFile(recipeFile);
-        } catch (Exception e) {
-            System.out.println("[GunSmith] Failed to parse: " + recipeFile.getName());
-            e.printStackTrace();
+        } catch (IOException e) {
+            HandmadeGunsCore.Debug("[GunSmith] Failed to parse %s: %s", recipeFile.getName(), e.getMessage());
         }
     }
 
-    private static final List<GunRecipeEntry> RECIPES = new ArrayList<>();
-
-    public static void register(ItemStack result, ItemStack... inputs) {
-        if (result == null) return;
-        RECIPES.add(new GunRecipeEntry(result, inputs));
-    }
-
-    public static void register(ItemStack result, GunTableIngredient[] ingredients) {
-        if (result == null) return;
-        RECIPES.add(new GunRecipeEntry(result, ingredients));
-    }
-
-
-    private static GunTableIngredient[] makeExactIngredients(ItemStack[] inputs) {
-        if (inputs == null) return new GunTableIngredient[0];
-        GunTableIngredient[] ingredients = new GunTableIngredient[inputs.length];
-        for (int i = 0; i < inputs.length; i++) {
+    private static GunTableIngredient[] exactIngredients(ItemStack[] inputs) {
+        GunTableIngredient[] ingredients = new GunTableIngredient[GunSmithRecipe.SLOT_COUNT];
+        if (inputs != null) for (int i = 0; i < Math.min(inputs.length, ingredients.length); i++) {
             if (inputs[i] != null) ingredients[i] = new ExactStackIngredient(inputs[i]);
         }
         return ingredients;
     }
 
-    private static ItemStack[] makeDisplayInputs(GunTableIngredient[] ingredients) {
-        if (ingredients == null) return new ItemStack[0];
-        ItemStack[] inputs = new ItemStack[ingredients.length];
-        for (int i = 0; i < ingredients.length; i++) {
-            if (ingredients[i] != null) inputs[i] = ingredients[i].getDisplayStack();
-        }
-        return inputs;
-    }
-
-    /**
-     * Legacy adapter for callers that still provide parallel exact-stack and
-     * Ore Dictionary arrays.
-     *
-     * oreInputs[i] takes priority over inputs[i]. The corresponding input stack,
-     * when present, supplies the required amount for the ore ingredient.
-     */
-    public static void register(ItemStack result, ItemStack[] inputs, String[] oreInputs) {
-        if (result == null) {
-            return;
-        }
-
-        int inputLength = inputs == null ? 0 : inputs.length;
-        int oreLength = oreInputs == null ? 0 : oreInputs.length;
-        int ingredientLength = Math.max(inputLength, oreLength);
-
-        GunTableIngredient[] ingredients =
-                new GunTableIngredient[ingredientLength];
-
-        for (int i = 0; i < ingredientLength; i++) {
-            ItemStack input =
-                    inputs != null && i < inputs.length
-                            ? inputs[i]
-                            : null;
-
-            String oreName =
-                    oreInputs != null && i < oreInputs.length
-                            ? oreInputs[i]
-                            : null;
-
-            if (oreName != null) {
-                oreName = oreName.trim();
-            }
-
-            if (oreName != null && !oreName.isEmpty()) {
-                int requiredAmount =
-                        input != null
-                                ? Math.max(1, input.stackSize)
-                                : 1;
-
-                ingredients[i] =
-                        new OreDictionaryIngredient(oreName, requiredAmount);
-            } else if (input != null) {
-                ingredients[i] =
-                        new ExactStackIngredient(input.copy());
-            }
-        }
-
-        RECIPES.add(
-                new GunRecipeEntry(
-                        result.copy(),
-                        ingredients
-                )
-        );
-    }
-
-    public static List<GunRecipeEntry> getAll() {
-        return RECIPES;
-    }
-
-    /**
-     * Register an ammo-type crafting recipe so the GUI can list it.
-     * result and inputs are stored as copies for safety.
-     */
-    public static void registerAmmoRecipe(ItemStack result, ItemStack[] inputs) {
-        if (result == null) return;
-        ItemStack resCopy = result.copy();
-        ItemStack[] normalized = inputs == null ? new ItemStack[0] : inputs.clone();
-        // clone inner stacks defensively
-        for (int i = 0; i < normalized.length; i++) {
-            if (normalized[i] != null) normalized[i] = normalized[i].copy();
-        }
-        AMMO_RECIPES.add(new GunRecipeEntry(resCopy, normalized));
-    }
-
-    public static void registerAmmoRecipe(ItemStack result, GunTableIngredient[] ingredients) {
-        if (result == null) return;
-        AMMO_RECIPES.add(new GunRecipeEntry(result.copy(), ingredients));
-    }
-
-
-    /** Return a copy of the registered ammo recipes (so callers can't mutate internal list). */
-    public static List<GunRecipeEntry> getAmmoRecipes() {
-        return new ArrayList<GunRecipeEntry>(AMMO_RECIPES);
-    }
-
-
-    /** Clears ammo recipes (call before reloading packs if you ever support reload). */
-    //not needed
-    public static void clearAmmoRecipes() {
-        AMMO_RECIPES.clear();
-    }
-
-    /**
-     * Build a combined ammo recipe list:
-     *  - Start with registered ammo recipes (AMMO_RECIPES)
-     *  - Then append ammo-like recipes discovered via CraftingManager (shaped + shapeless)
-     *  - Avoid duplicate RESULT item+meta entries (so same result doesn't appear twice)
-     *
-     * Returns defensive copies (so callers can mutate safely).
-     */
-    // Helper: build counts map and sample map from an ItemStack[] (condenses repeated slots)
-    private static java.util.Map<String, Integer> buildCountMap(net.minecraft.item.ItemStack[] arr,
-                                                                java.util.Map<String, net.minecraft.item.ItemStack> sampleMap) {
-        java.util.Map<String, Integer> counts = new java.util.HashMap<String, Integer>();
-        if (arr == null) return counts;
-        for (net.minecraft.item.ItemStack s : arr) {
-            if (s == null) continue;
-            String key;
-            try {
-                String nbt = (s.hasTagCompound() && s.getTagCompound() != null) ? s.getTagCompound().toString() : "";
-                int id = 0;
-                try {
-                    id = net.minecraft.item.Item.getIdFromItem(s.getItem());
-                } catch (Throwable tt) {
-                    // fallback to unlocalized name if getIdFromItem isn't available
-                }
-                if (id != 0) {
-                    key = id + ":" + s.getItemDamage() + ":" + nbt;
-                } else {
-                    key = (s.getItem() == null ? "null" : s.getItem().getUnlocalizedName()) + ":" + s.getItemDamage() + ":" + nbt;
-                }
-            } catch (Throwable t) {
-                // very defensive fallback
-                key = (s.getItem() == null ? "null" : s.getItem().toString()) + ":" + s.getItemDamage();
-            }
-            int prev = counts.containsKey(key) ? counts.get(key) : 0;
-            counts.put(key, prev + s.stackSize);
-            if (!sampleMap.containsKey(key)) {
-                try {
-                    sampleMap.put(key, s.copy());
-                } catch (Throwable ignored) {
-                    sampleMap.put(key, s);
-                }
-            }
-        }
-        return counts;
-    }
-
-    // Helper: make an ItemStack[] from counts + sampleMap (sets stackSize to aggregated count)
-    //no longer needed?
-    //private static net.minecraft.item.ItemStack[] makeInputsFromMaps(java.util.Map<String, Integer> counts,
-    //                                                                 java.util.Map<String, net.minecraft.item.ItemStack> sampleMap) {
-    //    java.util.List<net.minecraft.item.ItemStack> list = new java.util.ArrayList<net.minecraft.item.ItemStack>();
-    //    for (java.util.Map.Entry<String, Integer> e : counts.entrySet()) {
-    //        String key = e.getKey();
-    //        int cnt = e.getValue();
-    //        net.minecraft.item.ItemStack sample = sampleMap.get(key);
-    //        if (sample == null) continue;
-    //        net.minecraft.item.ItemStack s = sample.copy();
-    //        s.stackSize = cnt;
-    //        list.add(s);
-    //    }
-    //    return list.toArray(new net.minecraft.item.ItemStack[list.size()]);
-    //}
-
-    // helper: count non-null slots in a 3x3 grid
-    private static int countFilledSlots(net.minecraft.item.ItemStack[] grid) {
-        if (grid == null) return 0;
-        int c = 0;
-        for (net.minecraft.item.ItemStack s : grid) if (s != null) c++;
-        return c;
-    }
-
-    public static List<GunRecipeEntry> getCombinedAmmoRecipes() {
-        List<GunRecipeEntry> out = new ArrayList<GunRecipeEntry>();
-
-        // 1) Add registered ammo recipes FIRST (already 3x3)
-        List<GunRecipeEntry> reg = getAmmoRecipes();
-        if (reg != null) {
-            for (GunRecipeEntry e : reg) {
-                if (e == null || e.result == null) continue;
-
-                // copy into a strict 3x3 grid
-                GunTableIngredient[] ingredients = new GunTableIngredient[9];
-                if (e.ingredients != null) {
-                    for (int i = 0; i < Math.min(9, e.ingredients.length); i++) {
-                        ingredients[i] = e.ingredients[i];
-                    }
-                }
-
-                out.add(new GunRecipeEntry(e.result.copy(), ingredients));
-            }
-        }
-
-        // 2) Scan CraftingManager
-        List rawList = net.minecraft.item.crafting.CraftingManager.getInstance().getRecipeList();
-        if (rawList == null) return out;
-
-        for (Object obj : rawList) {
-            try {
-                net.minecraft.item.ItemStack result = null;
-                net.minecraft.item.ItemStack[] grid = new net.minecraft.item.ItemStack[9];
-
-                if (obj instanceof net.minecraft.item.crafting.ShapedRecipes) {
-                    net.minecraft.item.crafting.ShapedRecipes r =
-                            (net.minecraft.item.crafting.ShapedRecipes) obj;
-
-                    result = r.getRecipeOutput();
-                    if (result == null) continue;
-
-                    net.minecraft.item.ItemStack[] src = r.recipeItems;
-                    if (src != null) {
-                        // place recipe items into the 3x3 grid starting at index 0 (top-left),
-                        // copying at most 9 slots. This preserves shape placement as used elsewhere.
-                        for (int i = 0; i < Math.min(9, src.length); i++) {
-                            if (src[i] != null) grid[i] = src[i].copy();
-                        }
-                    }
-
-                } else if (obj instanceof net.minecraft.item.crafting.ShapelessRecipes) {
-                    // Shapeless -> lay items left-to-right like vanilla preview
-                    net.minecraft.item.crafting.ShapelessRecipes r =
-                            (net.minecraft.item.crafting.ShapelessRecipes) obj;
-
-                    result = r.getRecipeOutput();
-                    if (result == null) continue;
-
-                    int idx = 0;
-                    for (Object o : r.recipeItems) {
-                        if (idx >= 9) break;
-                        if (o instanceof net.minecraft.item.ItemStack) {
-                            grid[idx++] = ((net.minecraft.item.ItemStack) o).copy();
-                        }
-                    }
-                } else {
-                    continue; // skip other recipe types
-                }
-
-                net.minecraft.item.Item it = result.getItem();
-                if (it == null) continue;
-
-                // Ammo heuristic (same as you had)
-                String name = "";
-                try { name = result.getDisplayName().toLowerCase(); } catch (Throwable ignored) {}
-                String un = "";
-                try { un = it.getUnlocalizedName().toLowerCase(); } catch (Throwable ignored) {}
-
-                if (!(name.contains("ammo") || name.contains("bullet") || name.contains("round")
-                        || un.contains("ammo") || un.contains("bullet") || un.contains("round")
-                        || un.contains("hmg") || un.contains("handmade"))) {
-                    continue;
-                }
-
-                // 3) Avoid duplicate RESULT item+meta BUT prefer the recipe that fills more grid slots
-                int foundIndex = -1;
-                for (int i = 0; i < out.size(); i++) {
-                    GunRecipeEntry e = out.get(i);
-                    if (e == null || e.result == null) continue;
-                    try {
-                        if (e.result.getItem() == result.getItem()
-                                && e.result.getItemDamage() == result.getItemDamage()) {
-                            foundIndex = i;
-                            break;
-                        }
-                    } catch (Throwable ignored) {}
-                }
-
-                if (foundIndex != -1) {
-                    // Decide whether to replace existing entry with this one
-                    GunRecipeEntry existing = out.get(foundIndex);
-                    int existingFilled = countFilledSlots(existing.inputs);
-                    int newFilled = countFilledSlots(grid);
-
-                    // Replace only if the new recipe fills strictly more slots (so shaped 3x3 wins)
-                    if (newFilled > existingFilled) {
-                        out.set(foundIndex, new GunRecipeEntry(result.copy(), grid));
-                    }
-                    // otherwise keep existing (do not add a second entry)
-                    continue;
-                }
-
-                // Not found yet -> add the new recipe (defensive copy already done)
-                out.add(new GunRecipeEntry(result.copy(), grid));
-
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }
-
-        return out;
-    }
-
-
-
-
-
-
-    //  Parse a single recipe file that follows the "AddRecipe/Slot*/CraftItem" format (based on the example provided).
-    private static void parseAndRegisterAddRecipeFile(File recipeFile) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(recipeFile), "UTF-8"));
+    private static void parseAndRegisterAddRecipeFile(File file) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
         try {
             String line;
-            GunTableIngredient[] ingredients = new GunTableIngredient[9]; // slots 0..8 map to Slot1..Slot9
-            ItemStack result = null;
-            boolean readingRecipe = false;
-
-            while ((line = br.readLine()) != null) {
+            GunTableIngredient[] ingredients = new GunTableIngredient[GunSmithRecipe.SLOT_COUNT];
+            boolean reading = false;
+            while ((line = reader.readLine()) != null) {
                 line = line.trim();
                 if (line.isEmpty() || line.startsWith("#")) continue;
-
-                // start marker
                 if (line.equalsIgnoreCase("AddRecipe")) {
-                    ingredients = new GunTableIngredient[9];
-                    result = null;
-                    readingRecipe = true;
-                    continue;
-                }
-
-                if (!readingRecipe) continue;
-
-                // Slot line, expecting "SlotN,<item-spec>"
-                if (line.toLowerCase().startsWith("slot")) {
+                    ingredients = new GunTableIngredient[GunSmithRecipe.SLOT_COUNT];
+                    reading = true;
+                } else if (reading && line.toLowerCase().startsWith("slot")) {
                     String[] parts = line.split(",", 2);
-                    if (parts.length < 2) continue;
-
-                    String slotPart = parts[0].trim(); // e.g. "Slot1"
-                    String itemPart = parts[1].trim();
-
-                    // parse slot number (Slot1 -> index 0)
-                    int slotIndex;
-                    try {
-                        slotIndex = Integer.parseInt(slotPart.substring(4)) - 1;
-                    } catch (Exception ex) {
-                        continue;
-                    }
-                    if (slotIndex < 0 || slotIndex > 8) continue;
-
-                    ingredients[slotIndex] = parseSlotIngredient(itemPart, recipeFile, slotIndex);
-                    continue;
-                }
-
-                // Result line: "CraftItem,<modid>:<name>:<meta>:<count>"
-                if (line.toLowerCase().startsWith("craftitem")) {
+                    if (parts.length == 2) try {
+                        int slot = Integer.parseInt(parts[0].trim().substring(4)) - 1;
+                        if (slot >= 0 && slot < ingredients.length) ingredients[slot] = parseIngredient(parts[1], file, slot);
+                    } catch (NumberFormatException ignored) { }
+                } else if (reading && line.toLowerCase().startsWith("craftitem")) {
                     String[] parts = line.split(",", 2);
-                    if (parts.length < 2) {
-                        readingRecipe = false;
-                        continue;
-                    }
-                    result = parseResultWeaponString(parts[1].trim());
-
-                    // register now if result present
-                    if (result != null) {
-                        // determine inputs array length (trim trailing nulls if you want)
-                        register(result, ingredients);
-                    }
-
-                    readingRecipe = false; // finished this block
-                    continue;
+                    ItemStack output = parts.length == 2 ? parseStack(parts[1]) : null;
+                    if (output != null) register(output, ingredients, GunSmithRecipeCategory.GUNS);
+                    reading = false;
                 }
-
-                // If file contains other blocks (Recipe1 / ItemA etc) we ignore them
             }
-        } finally {
-            br.close();
-        }
+        } finally { reader.close(); }
     }
 
-    private static GunTableIngredient parseSlotIngredient(String raw, File recipeFile, int slotIndex) {
-        if (raw == null || raw.trim().isEmpty()) {
-            logRecipeReject(recipeFile, slotIndex, "empty ingredient syntax");
-            return null;
-        }
-
-        ParsedOreIngredient ore = parseOreDictionaryIngredient(raw, recipeFile, slotIndex);
-        if (ore != null) {
-            handmadeguns.HandmadeGunsCore.Debug("[GunSmith] parsed ore ingredient recipe=%s slot=%d ore=%s amount=%d", recipeFile.getName(), slotIndex + 1, ore.oreName, ore.amount);
-            return new OreDictionaryIngredient(ore.oreName, ore.amount);
-        }
-
-        if (hasOreDictionaryPrefix(raw)) return null;
-
-        ItemStack stack = parseSlotItemString(raw);
-        if (stack == null) {
-            logRecipeReject(recipeFile, slotIndex, "could not resolve exact item ingredient: " + raw);
-            return null;
-        }
-        handmadeguns.HandmadeGunsCore.Debug("[GunSmith] parsed exact ingredient recipe=%s slot=%d stack=%s amount=%d", recipeFile.getName(), slotIndex + 1, stack.getDisplayName(), stack.stackSize);
-        return new ExactStackIngredient(stack);
-    }
-
-    private static final class ParsedOreIngredient {
-        final String oreName;
-        final int amount;
-
-        ParsedOreIngredient(String oreName, int amount) {
-            this.oreName = oreName;
-            this.amount = amount;
-        }
-    }
-
-    private static ParsedOreIngredient parseOreDictionaryIngredient(String raw, File recipeFile, int slotIndex) {
-        String s = raw.trim();
-        String lower = s.toLowerCase();
-        String prefix = null;
-        if (lower.startsWith("ore:")) prefix = s.substring(0, 4);
-        else if (lower.startsWith("oredict:")) prefix = s.substring(0, 8);
-        else if (lower.startsWith("oredictionary:")) prefix = s.substring(0, 14);
-
-        if (prefix == null) return null;
-
-        String rest = s.substring(prefix.length()).trim();
-        if (rest.isEmpty()) {
-            logRecipeReject(recipeFile, slotIndex, "empty Ore Dictionary name");
-            return null;
-        }
-
-        int amount = 1;
-        String oreName = rest;
-        int countSep = rest.lastIndexOf(':');
-        if (countSep >= 0) {
-            oreName = rest.substring(0, countSep).trim();
-            String countText = rest.substring(countSep + 1).trim();
-            if (oreName.isEmpty()) {
-                logRecipeReject(recipeFile, slotIndex, "empty Ore Dictionary name");
-                return null;
+    private static GunTableIngredient parseIngredient(String value, File file, int slot) {
+        String text = value.trim();
+        String lower = text.toLowerCase();
+        int prefix = lower.startsWith("ore:") ? 4 : lower.startsWith("oredict:") ? 8
+                : lower.startsWith("oredictionary:") ? 14 : 0;
+        if (prefix > 0) {
+            String spec = text.substring(prefix).trim();
+            int amount = 1;
+            int separator = spec.lastIndexOf(':');
+            if (separator >= 0) try {
+                amount = Integer.parseInt(spec.substring(separator + 1).trim());
+                spec = spec.substring(0, separator).trim();
+            } catch (NumberFormatException e) {
+                reject(file, slot, "invalid Ore Dictionary count"); return null;
             }
-            try {
-                amount = Integer.parseInt(countText);
-            } catch (NumberFormatException ex) {
-                logRecipeReject(recipeFile, slotIndex, "invalid Ore Dictionary ingredient count: " + countText);
-                return null;
-            }
+            if (!spec.isEmpty() && amount > 0) return new OreDictionaryIngredient(spec, amount);
+            reject(file, slot, "invalid Ore Dictionary ingredient"); return null;
         }
-
-        if (oreName.isEmpty()) {
-            logRecipeReject(recipeFile, slotIndex, "empty Ore Dictionary name");
-            return null;
-        }
-        if (amount <= 0) {
-            logRecipeReject(recipeFile, slotIndex, "invalid Ore Dictionary ingredient count: " + amount);
-            return null;
-        }
-
-        return new ParsedOreIngredient(oreName, amount);
+        ItemStack stack = parseStack(text);
+        if (stack == null) reject(file, slot, "could not resolve " + text);
+        return stack == null ? null : new ExactStackIngredient(stack);
     }
 
-    private static boolean hasOreDictionaryPrefix(String raw) {
-        if (raw == null) return false;
-        String lower = raw.trim().toLowerCase();
-        return lower.startsWith("ore:") || lower.startsWith("oredict:") || lower.startsWith("oredictionary:");
+    private static ItemStack parseStack(String value) {
+        String text = value.trim().replace(',', ':');
+        while (text.endsWith(":")) text = text.substring(0, text.length() - 1);
+        String[] parts = text.split(":");
+        if (parts.length < 2 || parts.length > 4) return null;
+        int meta = 0, count = 1;
+        try {
+            if (parts.length > 2) meta = Integer.parseInt(parts[2].trim());
+            if (parts.length > 3) count = Integer.parseInt(parts[3].trim());
+        } catch (NumberFormatException e) { return null; }
+        Item item = GameRegistry.findItem(parts[0].trim(), parts[1].trim());
+        return item == null || count <= 0 ? null : new ItemStack(item, count, meta);
     }
 
-    private static void logRecipeReject(File recipeFile, int slotIndex, String reason) {
-        System.out.println("[GunSmith] Rejecting recipe ingredient in " +
-                (recipeFile == null ? "<unknown>" : recipeFile.getName()) +
-                " Slot" + (slotIndex + 1) + ": " + reason);
-    }
-
-    /**
-     * Parse ore dictionary slot strings. Supported forms are:
-     *   ore:ingotSteel
-     *   oredict:ingotSteel
-     *   OreDictionary:ingotSteel
-     */
-    private static String parseOreDictionaryName(String s) {
-        if (s == null) return null;
-        s = s.trim();
-        if (s.isEmpty()) return null;
-        s = s.replace(',', ':');
-
-        String lower = s.toLowerCase();
-        String prefix = null;
-        if (lower.startsWith("ore:")) prefix = "ore:";
-        else if (lower.startsWith("oredict:")) prefix = "oredict:";
-        else if (lower.startsWith("oredictionary:")) prefix = "oredictionary:";
-
-        if (prefix == null) return null;
-
-        String oreName = s.substring(prefix.length()).trim();
-        while (oreName.endsWith(":")) oreName = oreName.substring(0, oreName.length() - 1);
-        if (oreName.isEmpty()) return null;
-        return oreName;
-    }
-
-    private static ItemStack getOrePreviewStack(String oreName) {
-        if (oreName == null || oreName.isEmpty()) return null;
-        List<ItemStack> ores = OreDictionary.getOres(oreName);
-        if (ores == null || ores.isEmpty()) return null;
-        ItemStack stack = ores.get(0);
-        if (stack == null) return null;
-        return stack.copy();
-    }
-
-    /**
-     * Parse slot item strings like:
-     *   minecraft:iron_ingot:
-     *   modid:itemname:meta:count
-     *   minecraft,iron_ingot
-     *
-     * Returns null if cannot resolve item.
-     */
-    private static ItemStack parseSlotItemString(String s) {
-
-        if (s == null) return null;
-        s = s.trim();
-        if (s.isEmpty()) return null;
-
-        // replace comma with colon to support both formats
-        s = s.replace(',', ':');
-
-        // remove trailing colons (some lines end with :)
-        while (s.endsWith(":")) s = s.substring(0, s.length() - 1);
-
-        String[] p = s.split(":");
-        if (p.length < 2 || p.length > 4) return null;
-
-        String modid = p[0].trim();
-        String name = p[1].trim();
-        int meta = 0;
-        int count = 1;
-
-        if (p.length >= 3) {
-            try {
-                meta = Integer.parseInt(p[2].trim());
-            } catch (NumberFormatException ex) {
-                return null;
-            }
-        }
-        if (p.length >= 4) {
-            try {
-                count = Integer.parseInt(p[3].trim());
-            } catch (NumberFormatException ex) {
-                return null;
-            }
-        }
-        if (count <= 0) return null;
-
-        Item item = GameRegistry.findItem(modid, name);
-        if (item == null) {
-            // try fallback: maybe name and mod are reversed? (rare)
-            // don't spam errors, just return null
-            return null;
-        }
-
-        return new ItemStack(item, count, meta);
-    }
-
-    /**
-     * Parse the CraftItem result format used in your example:
-     *   HandmadeGuns:AK47:0:1  -> modid:itemname:meta:count
-     */
-    private static ItemStack parseResultWeaponString(String s) {
-        if (s == null) return null;
-        s = s.trim();
-        if (s.isEmpty()) return null;
-
-        String[] p = s.split(":");
-        // allow either mod:item:meta:count or mod:item (defaults)
-        if (p.length < 2) return null;
-
-        String modid = p[0].trim();
-        String name = p[1].trim();
-        int meta = 0;
-        int count = 1;
-
-        if (p.length >= 3) {
-            try {
-                meta = Integer.parseInt(p[2].trim());
-            } catch (NumberFormatException ignored) {}
-        }
-        if (p.length >= 4) {
-            try {
-                count = Integer.parseInt(p[3].trim());
-            } catch (NumberFormatException ignored) {}
-        }
-
-        Item item = GameRegistry.findItem(modid, name);
-        if (item == null) {
-            return null;
-        }
-
-        return new ItemStack(item, Math.max(1, count), meta);
+    private static void reject(File file, int slot, String reason) {
+        HandmadeGunsCore.Debug("[GunSmith] Rejecting %s Slot%d: %s", file.getName(), slot + 1, reason);
     }
 }
