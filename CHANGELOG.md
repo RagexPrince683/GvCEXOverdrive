@@ -1,5 +1,17 @@
 # Changelog
 
+## Fix Gun Smithing Table NEI runtime-state lookup
+
+- Gun Smithing Table NEI output lookup no longer compares mutable gun runtime
+  NBT, so tooltip initialization, loaded magazines, fire modes, and attachments
+  do not hide a gun's base recipe.
+- Pressing `R` on guns and stateful ammunition now consistently resolves the
+  correct table recipe, while real metadata variants and recipe-defined output
+  NBT remain distinct and every matching recipe remains visible.
+- Isolate each NEI recipe and usage query to prevent an unsuccessful lookup from
+  retaining an unrelated prior result; registration continues to use the proven
+  MCHO `API.registerRecipeHandler` and `API.registerUsageHandler` pattern.
+
 ## Refactor HMG Ore Dictionary and NEI support
 
 - Follow MCHO's Forge 1.7.10 recipe approach by automatically normalizing ordinary
