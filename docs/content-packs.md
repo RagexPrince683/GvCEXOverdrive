@@ -97,6 +97,16 @@ The file is read per pack. The current source switch lacks `break` statements be
 - Ship client assets with the pack and test on a clean client.
 - Test `/reloadSettings` during development, but do full restarts before release validation.
 - Avoid relying on undocumented parser behavior; HMG definition parsers are legacy and forgiving in some places but not uniformly validated.
+
+## Gun Weight and Mouse Sensitivity
+
+Gun definitions may use the existing `Weight` key (a floating-point value). While the
+local player holds that unified gun on foot in normal gameplay, HMG applies
+`clamp(1 / (1 + 0.06 * max(0, Weight - 1)), 0.35, 1.0)` to mouse sensitivity. A
+weight of `1` therefore keeps normal Minecraft sensitivity, while progressively
+heavier rifles and machine guns turn more slowly. This multiplier combines with ADS
+zoom sensitivity; it does not affect menus, placed guns, or vehicle cameras.
+
 ## Data-driven gun skins
 
 Gun skins are normal pack items and may be declared in an `attachment/*.txt` file. The

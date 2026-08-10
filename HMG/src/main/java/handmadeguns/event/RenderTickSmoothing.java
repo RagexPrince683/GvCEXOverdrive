@@ -81,9 +81,11 @@ public class RenderTickSmoothing {
 				HMGRenderItemGun_U_NEW.smoothing = event.renderTickTime;
 				HMGEntityParticles.particaltick = event.renderTickTime;
 				HandmadeGunsCore.smooth = event.renderTickTime;
-				if(currentZoomLevel != 1) {
+				float weightSensitivityMultiplier = getHeldGunWeightSensitivityMultiplier();
+				if(currentZoomLevel != 1 || weightSensitivityMultiplier != 1.0F) {
 					backUppedMouseSensitivity = HMG_proxy.getMCInstance().gameSettings.mouseSensitivity;
-					HMG_proxy.getMCInstance().gameSettings.mouseSensitivity /= currentZoomLevel;
+					HMG_proxy.getMCInstance().gameSettings.mouseSensitivity =
+							backUppedMouseSensitivity / currentZoomLevel * weightSensitivityMultiplier;
 				}else {
 					backUppedMouseSensitivity = -1;
 				}
@@ -98,6 +100,15 @@ public class RenderTickSmoothing {
 				}
 				break;
 		}
+	}
+
+	private static float getHeldGunWeightSensitivityMultiplier()
+	{
+		if (HMG_proxy.getMCInstance().currentScreen != null || HMG_proxy.getMCInstance().thePlayer == null
+				|| HMG_proxy.getMCInstance().thePlayer.ridingEntity != null) return 1.0F;
+		ItemStack held = HMG_proxy.getMCInstance().thePlayer.getCurrentEquippedItem();
+		if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) return 1.0F;
+		return ((HMGItem_Unified_Guns) held.getItem()).gunInfo.getWeightSensitivityMultiplier();
 	}
 
 	//todo: figure out why some guns decide to continue to be in sprint state while firing
