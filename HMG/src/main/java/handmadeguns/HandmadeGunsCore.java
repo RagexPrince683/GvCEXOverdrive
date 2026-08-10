@@ -118,9 +118,6 @@ public class HandmadeGunsCore {
 	public static GunSmithTable blockGunTable;
 
 	public static boolean isDebugMessage = false;
-	public static boolean enableWeightSensitivityDiagnostics = false;
-	public static boolean showWeightSensitivityDiagnosticsOnScreen = false;
-	public static boolean forceWeightSensitivityDiagnostic = false;
 	public static boolean islmmloaded;
 	public static boolean isgvcloaded;
 
@@ -279,9 +276,6 @@ public class HandmadeGunsCore {
 		combativesAimRecoilMaxYaw = lconf.get("Compatibility", "combativesAimRecoilMaxYaw", 5.0D, "Client-side maximum controller-owned horizontal aim recoil, in degrees.", 0.25D, 30.0D).getDouble(5.0D);
 		enableCombativesRecoilDebug = lconf.get("Compatibility", "enableCombativesRecoilDebug", false, "Client-side only: verbose diagnostics for HMG-to-Combatives recoil impulse submission and fallback decisions. Leave disabled during normal gameplay.").getBoolean(false);
 		isDebugMessage = lconf.get("Logging", "enableDebugLogging", false, "Enables verbose HMG startup/content-pack diagnostics such as per-pack resource confirmations, registration timings, script confirmations, and recipe success messages. Errors and warnings still log when this is false.").getBoolean(false);
-		enableWeightSensitivityDiagnostics = lconf.get("Development", "enableWeightSensitivityDiagnostics", false, "Log the complete held-gun Weight data flow when the held item changes.").getBoolean(false);
-		showWeightSensitivityDiagnosticsOnScreen = lconf.get("Development", "showWeightSensitivityDiagnosticsOnScreen", false, "Show the held gun's Weight diagnostic in chat when the held item changes.").getBoolean(false);
-		forceWeightSensitivityDiagnostic = lconf.get("Development", "forceWeightSensitivityDiagnostic", false, "Development-only: force a 0.10 camera multiplier. This has no effect unless weight diagnostics are enabled.").getBoolean(false);
 
 		lconf.save();
 
@@ -835,8 +829,8 @@ public class HandmadeGunsCore {
 		MinecraftForge.EVENT_BUS.register(hmgLivingUpdateEvent);
 
 		RenderTickSmoothing renderTickSmoothing = new RenderTickSmoothing();
-		// RenderTickEvent is delivered by the FML game-event bus, not the Forge event bus.
 		FMLCommonHandler.instance().bus().register(renderTickSmoothing);
+		MinecraftForge.EVENT_BUS.register(renderTickSmoothing);
 
 		//I don't know if this is needed. I don't know how this fucking mod works. I don't know why this isn't working. OH MY GOD JUST FUCKING WORK
 		//NetworkRegistry.INSTANCE.registerGuiHandler(this, new HMGGuiHandler());

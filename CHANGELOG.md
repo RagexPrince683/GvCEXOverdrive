@@ -1,18 +1,5 @@
 # Changelog
 
-## PR: Fix gun Weight sensitivity and runClient diagnostics
-
-- Fixed the production path: tracked handheld guns did not declare `Weight`, so their
-  runtime `weightConfigured` flag correctly selected the exact `1.0` no-scaling path;
-  the Lynx GM6 and Barrett M82 now explicitly own heavy-end values.
-- Replaced the experimental compressed curve with a monotonic curve designed for the
-  tracked 31.4--610 range and converted camera gain through vanilla's nonlinear slider.
-- Added opt-in console and on-screen data-flow diagnostics, source-definition ownership,
-  single-bus render-tick registration, exact sensitivity restoration, and a development
-  warning for stale HandmadeGuns jars.
-- Reattached ForgeGradle's late-configured child stdout and stderr streams so Minecraft,
-  Forge/FML, HMG, `System.out`, `System.err`, and crash output reach the Gradle console.
-
 ## Fix Gun Smithing Table NEI runtime-state lookup
 
 - Gun Smithing Table NEI output lookup no longer compares mutable gun runtime

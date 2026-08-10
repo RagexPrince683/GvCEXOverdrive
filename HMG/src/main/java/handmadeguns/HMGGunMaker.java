@@ -57,7 +57,6 @@ public class HMGGunMaker {
 		int parsedLines = 0;
 		int modelRegistrations = 0;
 		GunInfo gunInfo = new GunInfo();
-		gunInfo.sourceGunDefinition = file1.getAbsolutePath();
 		String  GunName = null;
 		String  displayNamegun = null;
 		String  objtexture;

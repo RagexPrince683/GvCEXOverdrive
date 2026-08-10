@@ -121,16 +121,13 @@ The file is read per pack. The current source switch lacks `break` statements be
 
 ## Gun Weight and Mouse Sensitivity
 
-Gun definitions may use the existing `Weight` key (a floating-point value). Omitting
-`Weight` applies exactly `1.0` scaling, so legacy guns retain normal sensitivity.
-For configured values HMG applies `1 / sqrt(1 + max(0, Weight) / 80)` to vanilla
-camera gain. The tracked pack range is 31.4 through 610: those endpoints produce
-multipliers of approximately `0.847` and `0.340`, while the common value 80 produces
-`0.707`. Values remain monotonic and distinct throughout that range. HMG converts
-the desired camera-gain multiplier back through Minecraft 1.7.10's nonlinear
-sensitivity curve rather than directly multiplying the slider. This scaling composes
-with ADS zoom sensitivity and does not affect menus, non-HMG items, guns without a
-`Weight`, placed guns, or vehicle cameras.
+Gun definitions may use the existing `Weight` key (a floating-point value). While the
+local player holds that unified gun on foot in normal gameplay, HMG applies
+`clamp(1 / (1 + 0.075 * max(0, Weight)), 0.30, 1.0)` to mouse sensitivity. The
+default weight of `1` produces a subtle light-gun multiplier of about `0.93`, while
+progressively heavier rifles and machine guns turn more slowly. Invalid non-finite
+weights safely use the default. This multiplier combines with ADS
+zoom sensitivity; it does not affect menus, placed guns, or vehicle cameras.
 
 ## Data-driven gun skins
 
