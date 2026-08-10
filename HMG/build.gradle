@@ -75,10 +75,10 @@ validateVersionProperties(loadedVersionValues)
 
 ext.isProductionVersionTask = { String requestedTask ->
 	def taskName = requestedTask.tokenize(':').last()
-	def normalized = taskName.toLowerCase(Locale.ROOT)
+	def normalized = taskName.toLowerCase(java.util.Locale.ROOT)
 	def developmentTasks = [
 		'runclient', 'runserver', 'test', 'setupdecompworkspace', 'setupdevworkspace',
-		'setupciworkspace', 'eclipse', 'idea', 'genintellijruns', 'genEclipseRuns'.toLowerCase(Locale.ROOT)
+		'setupciworkspace', 'eclipse', 'idea', 'genintellijruns', 'genEclipseRuns'.toLowerCase(java.util.Locale.ROOT)
 	]
 	if (developmentTasks.contains(normalized) || normalized.startsWith('run')) {
 		return false
@@ -205,5 +205,30 @@ tasks.withType(JavaExec) {
 		jvmArgs "-Djinput.useDefaultPlugin=false"
 		jvmArgs "-Djinput.plugins=none"
 		jvmArgs "-Djinput.loglevel=OFF"
+	}
+}
+
+// ForgeGradle 1.2 installs its launch streams late. Reattach them after project
+// evaluation so IntelliJ's Gradle console receives Minecraft/FML stdout and stderr.
+afterEvaluate {
+	tasks.withType(JavaExec) { JavaExec task ->
+		if (task.name == "runClient") {
+			task.standardOutput = System.out
+			task.errorOutput = System.err
+			task.logging.captureStandardOutput org.gradle.api.logging.LogLevel.LIFECYCLE
+			task.logging.captureStandardError org.gradle.api.logging.LogLevel.ERROR
+			task.doFirst {
+				standardOutput = System.out
+				errorOutput = System.err
+				[file("eclipse/mods"), file("lib"), file("libs")].each { runtimeDir ->
+					if (runtimeDir.isDirectory()) {
+						def staleHmgJars = fileTree(runtimeDir) {
+							include "**/*.jar"
+						}.files.findAll { it.name.toLowerCase(java.util.Locale.ROOT).contains("handmadeguns") }
+						staleHmgJars.each { logger.warn("[HMG runClient] Possible duplicate source-project jar: ${it}") }
+					}
+				}
+			}
+		}
 	}
 }
