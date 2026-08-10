@@ -1,5 +1,16 @@
 # Changelog
 
+## Fix HMG transparent sight reticle rendering
+
+- Isolate the reticle and stencil-plate pass from gun-skin OpenGL state, explicitly
+  restoring normal alpha blending and `GL_LEQUAL` depth testing for both skinned and
+  unskinned guns.
+- Keep reticle-plate generation stencil-only by disabling depth writes, then render
+  the reticle against both that stencil and the existing opaque scene depth so gun
+  bodies and optic housings occlude it without making transparent lenses opaque.
+- Restore the renderer's incoming pass after rendering reticle children instead of
+  leaving the shared pass selector set to the transparent pass.
+
 ## Fix HMG sight housing gun skin rendering
 
 - Apply universal gun skins to gun-owned iron-sight, red-dot, and scope housing parts

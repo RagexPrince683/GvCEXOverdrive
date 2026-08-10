@@ -151,6 +151,11 @@ public abstract class PartsRender {
 				e.printStackTrace();
 			}
 			if (parts.reticleAndPlate && this.pass == 1) {
+				GL11.glPushAttrib(GL11.GL_ENABLE_BIT
+						| GL11.GL_COLOR_BUFFER_BIT
+						| GL11.GL_DEPTH_BUFFER_BIT
+						| GL11.GL_CURRENT_BIT
+						| GL11.GL_STENCIL_BUFFER_BIT);
 //				FBO.start();
 //				FBO.attachMotherDepth();
 //				GL11.glPushMatrix();
@@ -171,8 +176,11 @@ public abstract class PartsRender {
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 				GL11.glEnable(GL_BLEND);
 				GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				GL11.glDepthMask(false);
+				GL11.glEnable(GL_ALPHA_TEST);
 				GL11.glAlphaFunc(GL_GREATER, 0.0F);
+				GL11.glEnable(GL_DEPTH_TEST);
+				GL11.glDepthFunc(GL_LEQUAL);
+				GL11.glDepthMask(false);
 				if (stencilAvailable) {
 					GL11.glClear(GL_STENCIL_BUFFER_BIT);
 					GL11.glEnable(GL_STENCIL_TEST);
@@ -188,22 +196,20 @@ public abstract class PartsRender {
 					GL11.glStencilFunc(GL_EQUAL, 1, -1);
 					GL11.glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 				}
-				GL11.glAlphaFunc(GL_GREATER, 0.0F);
-				GL11.glDepthMask(false);
-				GL11.glDepthFunc(GL_ALWAYS);
 				GL11.glDisable(GL_LIGHTING);
-				GL11.glDisable(GL_DEPTH_TEST);
 				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 240.0F);
 				parts.currentGroup_reticle.render();
 				if (parts.reticleChild != null) {
-					pass = 0;
-					partSidentification(parts.reticleChild, state, flame, Integer.valueOf(remainbullets));
-					pass = 1;
-					partSidentification(parts.reticleChild, state, flame, Integer.valueOf(remainbullets));
+					int oldPass = pass;
+					try {
+						pass = 0;
+						partSidentification(parts.reticleChild, state, flame, Integer.valueOf(remainbullets));
+						pass = 1;
+						partSidentification(parts.reticleChild, state, flame, Integer.valueOf(remainbullets));
+					} finally {
+						pass = oldPass;
+					}
 				}
-				GL11.glAlphaFunc(GL_GREATER, 0.0F);
-
-				GL11.glDisable(GL_LIGHTING);
 				if (stencilAvailable) {
 					GL11.glDisable(GL_STENCIL_TEST);
 				}
@@ -243,12 +249,7 @@ public abstract class PartsRender {
 
 				FMLClientHandler.instance().getClient().getTextureManager().bindTexture(this.texture);
 				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
-
-				GL11.glEnable(GL_CULL_FACE);
-				GL11.glEnable(GL_LIGHTING);
-				GL11.glEnable(GL_DEPTH_TEST);
-				GL11.glDepthMask(true);
-				GL11.glDepthFunc(GL_LEQUAL);
+				GL11.glPopAttrib();
 			}
 		}
 		return skip;
