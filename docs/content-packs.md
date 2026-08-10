@@ -107,9 +107,10 @@ The file is read per pack. The current source switch lacks `break` statements be
 
 Gun definitions may use the existing `Weight` key (a floating-point value). While the
 local player holds that unified gun on foot in normal gameplay, HMG applies
-`clamp(1 / (1 + 0.06 * max(0, Weight - 1)), 0.35, 1.0)` to mouse sensitivity. A
-weight of `1` therefore keeps normal Minecraft sensitivity, while progressively
-heavier rifles and machine guns turn more slowly. This multiplier combines with ADS
+`clamp(1 / (1 + 0.075 * max(0, Weight)), 0.30, 1.0)` to mouse sensitivity. The
+default weight of `1` produces a subtle light-gun multiplier of about `0.93`, while
+progressively heavier rifles and machine guns turn more slowly. Invalid non-finite
+weights safely use the default. This multiplier combines with ADS
 zoom sensitivity; it does not affect menus, placed guns, or vehicle cameras.
 
 ## Data-driven gun skins

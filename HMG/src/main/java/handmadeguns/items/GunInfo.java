@@ -95,11 +95,12 @@ public class GunInfo {
 
 	public double motion = 1D;
 	public double weight = 1D;
+	public boolean weightConfigured = false;
 	public float getWeightSensitivityMultiplier() {
-		// Each unit above the light-gun baseline adds 6% resistance, then safety-clamp the result.
-		double effectiveWeight = Double.isNaN(weight) ? 1.0D : Math.max(1.0D, weight);
-		float multiplier = (float) (1.0D / (1.0D + 0.06D * (effectiveWeight - 1.0D)));
-		return Math.max(0.35F, Math.min(1.0F, multiplier));
+		// Pack weights are mass-like values. This curve remains useful from light firearms through heavy launchers.
+		double effectiveWeight = Double.isNaN(weight) || Double.isInfinite(weight) ? 1.0D : Math.max(0.0D, weight);
+		float multiplier = (float) (1.0D / (1.0D + 0.075D * effectiveWeight));
+		return Math.max(0.30F, Math.min(1.0F, multiplier));
 	}
 	public boolean muzzleflash = true;
 	public float soundrespeed = 1.0F;

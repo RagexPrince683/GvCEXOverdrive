@@ -1,5 +1,14 @@
 # Changelog
 
+## Tune gun weight mouse sensitivity diagnostics
+
+- Retuned gun-weight mouse sensitivity for mass-like content-pack values, including
+  a subtle effect for the default weight and a lower safety clamp for heavy weapons.
+- Added disabled-by-default, held-gun-change diagnostics and a separate debug-only
+  forced `0.10` multiplier for verifying the render-tick input hook without log spam.
+- Track whether a gun definition explicitly supplied `Weight` so diagnostics identify
+  guns silently using the parser default.
+
 ## Fix Gun Smithing Table NEI integration
 
 - Mirror both Gun Smithing Table pages in the custom NEI category: registered gun
