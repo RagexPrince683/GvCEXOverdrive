@@ -2,6 +2,8 @@ package handmadeguns.compat.nei;
 
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import handmadeguns.gunsmithing.GunSmithRecipe;
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunTableIngredient;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Client-only NEI view over the live canonical registry. */
+@SideOnly(Side.CLIENT)
 public class GunSmithingNEIHandler extends TemplateRecipeHandler {
     public static final String OVERLAY_ID = "handmadeguns.gunsmithing";
 

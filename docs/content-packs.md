@@ -64,7 +64,13 @@ handmadeguns_Packs/
 
 ## Pack Recipe Ore Dictionary Inputs
 
-Gun Smithing Table recipes loaded from `addpackrecipe/` support ore dictionary slot ingredients in addition to exact item IDs. Use an ore dictionary prefix in a `SlotN` line:
+Gun Smithing Table recipes loaded from `addpackrecipe/` automatically use Forge's
+Ore Dictionary when an ordinary referenced item is registered there. For example,
+`Slot1,HandmadeGuns:steel_ingot` accepts every `ingotSteel` alternative when that
+item is registered as `ingotSteel`; packs do not need to opt in with a prefix.
+
+An explicit Ore Dictionary key can still override automatic selection in a `SlotN`
+line:
 
 ```text
 AddRecipe
@@ -76,6 +82,12 @@ CraftItem,HandmadeGuns:ExampleGun:0:1
 ```
 
 Supported prefixes are `ore:`, `oredict:`, and `OreDictionary:`. Prefix matching is case-insensitive, and the ore dictionary key after the prefix is preserved. A final numeric suffix may be used for the required amount, as in `ore:ingotCopper:5`; otherwise the slot requires one matching item.
+
+If Forge registers an item under multiple keys, automatic conversion deterministically
+uses the first ID returned by Forge, matching MCHO behavior. To require the literal
+item instead, use `exact:modid:item[:metadata[:count]]`. Exact inputs retain metadata
+and NBT matching; metadata `32767` has Forge wildcard semantics. Tagged programmatic
+recipe inputs also stay exact so normalization cannot discard an NBT requirement.
 
 Ore dictionary requirements retain the ore key instead of resolving permanently to the first registered stack. The Gun Smithing Table resolves display stacks, availability checks, server validation, and consumption against the live ore dictionary so compatible items registered by other mods can satisfy recipes even when normal pre-init recipe registration cannot be represented as an ore recipe.
 
