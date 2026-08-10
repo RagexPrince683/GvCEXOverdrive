@@ -20,7 +20,10 @@ public class HMGItemGunSkin extends Item {
     public HMGItemGunSkin(String skinId, String texture, Collection<String> targets) {
         this.skinId = skinId;
         this.overlayTexture = HMGGunSkinRegistry.textureLocation(texture);
-        this.targets = new LinkedHashSet<String>(targets);
+        this.targets = new LinkedHashSet<String>();
+        if (targets != null) for (String target : targets) {
+            if (target != null && target.trim().length() > 0) this.targets.add(target.trim());
+        }
         setMaxStackSize(64);
     }
 

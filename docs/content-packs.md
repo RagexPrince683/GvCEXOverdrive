@@ -128,10 +128,11 @@ base gun unchanged. Craft one compatible gun with one skin item in any arrangeme
 copy the gun, preserve all of its NBT, and set or replace its selected skin. Missing,
 removed, and incompatible skin identifiers simply leave the base gun unskinned.
 
-Compatibility reads the actual gun item's Forge unique identifier and compares its
-name directly with each target. It does not perform a reverse item lookup. Damage,
-ammunition, attachments, custom names, and all other per-stack NBT therefore have no
-effect on whether the recipe matches.
+After all packs load, HMG resolves each target through its own `GunName` map and
+registers a separate recipe containing the exact gun and skin item objects. Crafting
+does not query Forge identifiers or perform registry lookups. Damage, ammunition,
+attachments, custom names, and all other per-stack NBT therefore have no effect on
+whether the recipe matches, and all existing gun NBT is retained in the output.
 
 Definitions load on both client and server because crafting needs their IDs and
 targets. Overlay existence is checked only by the client renderer and is not stored in
