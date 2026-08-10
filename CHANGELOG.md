@@ -1,5 +1,13 @@
 # Changelog
 
+## Gun weight mouse sensitivity
+
+- Reduce first-person mouse sensitivity while a unified HMG gun is held, using the
+  gun definition's existing `Weight` value and a clamped weight curve.
+- Combine gun-weight sensitivity with the existing ADS zoom adjustment for the same
+  render camera update, then restore the user's exact configured sensitivity.
+- Leave GUI input, unarmed/non-HMG input, placed guns, and vehicle cameras unchanged.
+
 ## Fix M16A4 skinned transparent reticle group selection
 
 - Associate the M16A4 red-dot reticle marker with its actual `mat4`,
