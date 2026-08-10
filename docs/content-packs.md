@@ -126,6 +126,10 @@ unified HMG gun with one skin item, in either order in a 2x2 or 3x3 grid, to cop
 gun, preserve all of its state, and set or replace its selected skin. Missing or
 removed skin identifiers simply leave the base gun unskinned.
 
+Skin items show this crafting instruction and their universal unified-gun
+compatibility in the inventory tooltip. Invalid skin definitions are reported in the
+tooltip instead of causing an error.
+
 HMG registers one dynamic recipe for the entire system. It identifies firearms by the
 shared `HMGItem_Unified_Guns` class, rather than item identity or stack state, and
 rejects extra ingredients. Damage, ammunition, attachments, custom names,

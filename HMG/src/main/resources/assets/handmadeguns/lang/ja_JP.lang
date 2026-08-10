@@ -190,3 +190,6 @@ hmg.guide.page.server_config.balance=For servers, tune recoil/handling in gun pa
 hmg.guide.page.server_config.crafting=Crafting balance is split between built-in HMG recipes and pack recipes. Receiver and assembly choices should communicate weapon role: stamped/blowback for simple guns, milled/rotating for rifles, heavy/belt-fed for LMGs, launcher parts for explosives.
 hmg.guide.page.troubleshooting.missing_manual=If this manual item is missing, Guide-API may not be installed, the HMG GuideBook config may be false, or registration failed. Use /hmgmanual and check the log for [HMG][GuideAPI] messages.
 hmg.guide.page.troubleshooting.common=Common fixes: verify ammo compatibility, reload/cock/fix the gun, stop sprinting before firing, confirm attachments are allowed by whitelist, check server configs match the client, and ensure gun-pack resources copied correctly.
+hmg.tooltip.gun_skin.apply=対応する銃とクラフトして適用します。
+hmg.tooltip.gun_skin.compatibility.universal=対応: すべてのHMG統合銃
+hmg.tooltip.gun_skin.invalid=対応: スキンデータが無効です

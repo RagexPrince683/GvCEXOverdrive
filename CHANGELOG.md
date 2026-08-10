@@ -168,3 +168,10 @@
 - Rendered universal gun-skin overlays during HMG's guaranteed opaque model pass so they appear once in first person, third person, dropped-item, and model-inventory rendering without relying on Forge to provide item render pass 1.
 - Preserved per-stack skin selection and the exclusions for attachment and bullet model parts; legacy scripted guns remain supported when their scripts use the renderer's `renderpartofmodel` helper.
 - Updated repository ignore rules so `HMG/eclipse/handmadeguns_Packs` content-pack sources are tracked while other HMG Eclipse runtime files remain ignored.
+
+## Add gun skin usage tooltips
+
+- Add a localized tooltip to every gun skin item explaining that skins are applied
+  by crafting them with a compatible gun.
+- Show universal unified-HMG-gun compatibility for valid skins and safely identify
+  invalid skin data.
