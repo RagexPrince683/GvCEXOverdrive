@@ -17,7 +17,8 @@ public final class ExactStackIngredient implements GunTableIngredient {
 
     public boolean matches(ItemStack candidate) {
         if (candidate == null || stack.getItem() == null) return false;
-        return OreDictionary.itemMatches(stack, candidate, false);
+        return OreDictionary.itemMatches(stack, candidate, false)
+                && ItemStack.areItemStackTagsEqual(stack, candidate);
     }
 
     public ItemStack getDisplayStack() {

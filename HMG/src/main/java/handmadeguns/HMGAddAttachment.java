@@ -727,25 +727,8 @@ public class HMGAddAttachment
 
 								int kazu1  = parseInt(type[3]);
 
-								GameRegistry.addRecipe(
-										new ItemStack(additem, kazu1),
-										re1,
-										re2,
-										re3,
-										'a', itema,
-										'b', itemb,
-										'c', itemc,
-										'd', itemd,
-										'e', iteme,
-										'f', itemf,
-										'g', itemg,
-										'h', itemh,
-										'i', itemi
-								);
-
-								HandmadeGunsCore.Debug("Loaded crafting recipe for: %s:%s x%s", type[1], type[2], kazu1);
-
-								// --- ALSO register with HMG's ammo registry for GUI (deterministic) ---
+								// Attachment-pack addNewRecipe entries populate the Ammo page of
+								// the Gun Smithing Table; NEI reads this same registration directly.
 								ItemStack output = new ItemStack(additem, kazu1);
 
 								// inputs are mapped a..i -> positions 0..8

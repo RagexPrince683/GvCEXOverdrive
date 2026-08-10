@@ -1,5 +1,16 @@
 # Changelog
 
+## Fix Gun Smithing Table recipe discovery in NEI
+
+- Replaced the previous Gun Smithing Table NEI entry point because its class name
+  did not satisfy NEI 1.7.10 plugin discovery and it therefore never registered
+  the recipe and usage handler.
+- Gun Smithing Table recipes now have direct, live NEI recipe and usage support,
+  including exact/NBT stacks, Ore Dictionary alternatives, stack amounts, and
+  every distinct gun and ammunition recipe.
+- Gun Smithing Table-only content-pack recipes no longer need or receive duplicate
+  vanilla crafting registrations merely to be visible in NEI.
+
 ## Gun Smithing Table recipe system refactor and NEI integration fix
 
 - Replace the split gun/ammunition lists and global crafting-recipe scan with one
