@@ -52,7 +52,7 @@ handmadeguns_Packs/
 | `magazines/` | Magazine definitions parsed by `HMGAddmagazine`. |
 | `bullets/` | Bullet/projectile definitions parsed by `HMGAddBullets`. |
 | `attachment/` | Attachment definitions parsed by `HMGAddAttachment`. |
-| `addpackrecipe/` | Recipe files loaded into both the original crafting system and the canonical Gun Smithing Table registry. |
+| `addpackrecipe/` | Recipes parsed directly into the canonical Gun Smithing Table registry (and exposed to NEI without a vanilla crafting copy). |
 | `addTab/` | Creative-tab definitions. |
 | `addmodel/` | Model resources copied to `textures/model`. |
 | `addtexture/` | Item texture resources copied to `textures/items`. |

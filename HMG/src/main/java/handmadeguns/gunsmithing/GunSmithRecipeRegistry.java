@@ -4,6 +4,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import handmadeguns.HandmadeGunsCore;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.block.Block;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.io.BufferedReader;
@@ -173,7 +174,13 @@ public final class GunSmithRecipeRegistry {
             if (parts.length > 2) meta = Integer.parseInt(parts[2].trim());
             if (parts.length > 3) count = Integer.parseInt(parts[3].trim());
         } catch (NumberFormatException e) { return null; }
-        Item item = GameRegistry.findItem(parts[0].trim(), parts[1].trim());
+        String modId = parts[0].trim();
+        String name = parts[1].trim();
+        Item item = GameRegistry.findItem(modId, name);
+        if (item == null) {
+            Block block = GameRegistry.findBlock(modId, name);
+            if (block != null) item = Item.getItemFromBlock(block);
+        }
         return item == null || count <= 0 ? null : new ItemStack(item, count, meta);
     }
 

@@ -7,7 +7,6 @@ import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunTableIngredient;
 import handmadeguns.gunsmithing.OreDictionaryIngredient;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
 import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.ArrayList;
@@ -17,8 +16,8 @@ import java.util.List;
 public class GunSmithingNEIHandler extends TemplateRecipeHandler {
     public static final String OVERLAY_ID = "handmadeguns.gunsmithing";
 
-    public String getRecipeName() { return StatCollector.translateToLocal("nei.handmadeguns.gunsmithing"); }
-    public String getGuiTexture() { return "textures/gui/container/crafting_table.png"; }
+    public String getRecipeName() { return "Gun Smithing Table"; }
+    public String getGuiTexture() { return "minecraft:textures/gui/container/crafting_table.png"; }
     public String getOverlayIdentifier() { return OVERLAY_ID; }
 
     public void loadCraftingRecipes(String outputId, Object... results) {
@@ -58,7 +57,9 @@ public class GunSmithingNEIHandler extends TemplateRecipeHandler {
                             alternatives.add(copy);
                         }
                     }
-                    if (!alternatives.isEmpty()) display = alternatives;
+                    if (!alternatives.isEmpty()) {
+                        display = alternatives.toArray(new ItemStack[alternatives.size()]);
+                    }
                 }
                 if (display != null) ingredients.add(new PositionedStack(display,
                         25 + (i % 3) * 18, 6 + (i / 3) * 18, true));
