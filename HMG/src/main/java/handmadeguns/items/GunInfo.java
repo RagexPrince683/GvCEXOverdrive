@@ -107,12 +107,12 @@ public class GunInfo {
 						? 1.0D
 						: Math.max(0.0D, weight);
 
-		double scaledWeight = Math.pow(effectiveWeight, 1.5D);
+		double scaledWeight = Math.pow(effectiveWeight, 0.1D);
 
 		float multiplier =
-				(float) (1.0D / (1.0D + 0.30D * scaledWeight));
+				(float) (1.0D / (1.0D + 0.1D * scaledWeight));
 
-		return Math.max(0.025F, Math.min(1.0F, multiplier));
+		return Math.max(0.015F, Math.min(1.0F, multiplier));
 	}
 	public boolean muzzleflash = true;
 	public float soundrespeed = 1.0F;
