@@ -74,6 +74,7 @@ public class HMGAddAttachment
 		boolean canobj = false;
 		String  objmodel = null;
 		String objtexture = "null";
+		String attach3dmodel = null;
 		Item itema = null;
 		Item itemb = null;
 		Item itemc = null;
@@ -153,6 +154,9 @@ public class HMGAddAttachment
 								break;
 							case "ObjTexture":
 								objtexture = type[1];
+								break;
+							case "attach3dmodel":
+								attach3dmodel = type.length > 1 ? type[1].trim() : null;
 								break;
 							case "ReduceRecoilLevel":
 								reduceRecoilLevel = Float.parseFloat(type[1]);
@@ -526,8 +530,17 @@ public class HMGAddAttachment
 						}
 
 						if (newitem != null) {
+							if (newitem instanceof HMGItemAttachmentBase) {
+								((HMGItemAttachmentBase) newitem).attach3dmodel = attach3dmodel;
+							}
 							try {
-								if (canobj && isClient) {
+								if (isClient && newitem instanceof HMGItemAttachmentBase
+										&& ((HMGItemAttachmentBase) newitem).has3dModel()) {
+									String modelName = ((HMGItemAttachmentBase) newitem).attach3dmodel;
+									IModelCustom attach = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + modelName);
+									ResourceLocation attachtexture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
+									MinecraftForgeClient.registerItemRenderer(newitem, new HMGRenderItemCustom(attach, attachtexture, true));
+								} else if (canobj && isClient) {
 //									System.out.println("" + objmodel);
 									IModelCustom attach = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + objmodel);
 									//todo gun skins here
@@ -535,8 +548,9 @@ public class HMGAddAttachment
 									ResourceLocation attachtexture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
 									MinecraftForgeClient.registerItemRenderer(newitem, new HMGRenderItemCustom(attach, attachtexture));
 								}
-							}catch (Exception e){
-								e.printStackTrace();
+							}catch (Throwable e){
+								System.err.println("[HMG] Unable to load attachment model for " + GunName + " ("
+										+ attach3dmodel + "): " + e.getMessage());
 							}
 							if(tabname == null) newitem.setCreativeTab(HandmadeGunsCore.tabhmg);
 							else if(tabshmg.containsKey(tabname)){

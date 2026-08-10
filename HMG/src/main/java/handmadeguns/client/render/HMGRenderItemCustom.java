@@ -26,12 +26,18 @@ import static org.lwjgl.opengl.GL11.*;
 public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 	private IModelCustom modeling;
 	private ResourceLocation texture;
+	private final boolean renderInventory;
 	public static float smoothing;
 	public NBTTagCompound nbt;
 
 	public HMGRenderItemCustom(IModelCustom modelgun, ResourceLocation texture) {
+		this(modelgun, texture, false);
+	}
+
+	public HMGRenderItemCustom(IModelCustom modelgun, ResourceLocation texture, boolean renderInventory) {
 		modeling = modelgun;
 		this.texture = texture;
+		this.renderInventory = renderInventory;
 	}
 
 	@Override
@@ -40,6 +46,7 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 		switch (type) {
 			// case 1: //entity third person
 			case INVENTORY:
+				return renderInventory;
 			case FIRST_PERSON_MAP:
 				return false;
 			case EQUIPPED_FIRST_PERSON:
@@ -55,6 +62,7 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 		switch (type) {
 			// case 1:
 			case INVENTORY:
+				return renderInventory;
 			case FIRST_PERSON_MAP:
 				return false;
 			case EQUIPPED_FIRST_PERSON:
@@ -72,6 +80,19 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 		nbt = item.getTagCompound();
 		switch (type) {
 			case INVENTORY:
+				GL11.glPushMatrix();
+				GL11.glRotatef(180F, 1, 0, 0);
+				Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+				modeling.renderAll();
+				GL11.glPopMatrix();
+				break;
+			case ENTITY:
+				if (!renderInventory) break;
+				GL11.glPushMatrix();
+				GL11.glRotatef(180F, 1, 0, 0);
+				Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+				modeling.renderAll();
+				GL11.glPopMatrix();
 				break;
 			case EQUIPPED_FIRST_PERSON:
 			{

@@ -1,5 +1,32 @@
 # Handmade Guns Overdrive Configuration Reference
 
+## Content-pack attachment models
+
+Attachment TXT files may opt into a real model item/rendered attachment with:
+
+```text
+attach3dmodel,my_attachment.obj
+ObjTexture,my_attachment.png
+```
+
+The key is lowercase and uses the parser's comma-separated syntax. The model and
+the existing optional `ObjTexture` are resolved below
+`handmadeguns:textures/model/`, just like other HMG pack models. Attachments
+without `attach3dmodel` retain their normal 2D icon and legacy rendering.
+
+A gun TXT file enables the corresponding shared, gun-local anchor with either:
+
+```text
+attachmentlocation,0.0,1.25,-0.5
+attachmentlocation,0.0,1.25,-0.5,90.0
+```
+
+Coordinates use the existing gun-parts coordinate system and scale. The optional
+rotation is in degrees around the attachment renderer's normal local Y axis. All
+model-based attachment items actually present in the gun's existing attachment
+slots render at this anchor. Omitting the key leaves gun rendering unchanged;
+malformed/non-finite values are logged and ignored.
+
 The active config file is generated from the `HandmadeGuns` mod id, usually as `config/HandmadeGuns.cfg`. Defaults below are read directly from `HMG/src/main/java/handmadeguns/HandmadeGunsCore.java`.
 
 ## `Gun`

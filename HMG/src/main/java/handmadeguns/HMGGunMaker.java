@@ -310,6 +310,9 @@ public class HMGGunMaker {
 					if (type.length != 0){// 1
 
 						switch (type[0]) {
+							case "attachmentlocation":
+								parseAttachmentLocation(gunInfo, type, file1);
+								break;
 							case "Name":
 								displayNamegun = type[1];
 								break;
@@ -1369,7 +1372,7 @@ public class HMGGunMaker {
 		return tokens.toArray(new String[tokens.size()]);
 	}
 
-	static ResourceLocation getCachedResourceLocation(String path) {
+	public static ResourceLocation getCachedResourceLocation(String path) {
 		ResourceLocation location = RESOURCE_LOCATION_CACHE.get(path);
 		if (location == null) {
 			location = new ResourceLocation(path);
@@ -1382,7 +1385,7 @@ public class HMGGunMaker {
 		MODEL_CACHE.clear();
 	}
 
-	static IModelCustom getCachedModel(String path) {
+	public static IModelCustom getCachedModel(String path) {
 		IModelCustom model = MODEL_CACHE.get(path);
 		if (model == null) {
 			// Gun pack resources are immutable after the pack scan/resource refresh
@@ -1391,6 +1394,37 @@ public class HMGGunMaker {
 			MODEL_CACHE.put(path, model);
 		}
 		return model;
+	}
+
+	private static void parseAttachmentLocation(GunInfo gunInfo, String[] values, File gunFile) {
+		try {
+			if (values.length != 4 && values.length != 5) throw new NumberFormatException("expected 3 or 4 values");
+			float x = Float.parseFloat(values[1]);
+			float y = Float.parseFloat(values[2]);
+			float z = Float.parseFloat(values[3]);
+			float rotation = values.length == 5 ? Float.parseFloat(values[4]) : 0;
+			if (Float.isNaN(x) || Float.isInfinite(x) || Float.isNaN(y) || Float.isInfinite(y)
+					|| Float.isNaN(z) || Float.isInfinite(z) || Float.isNaN(rotation) || Float.isInfinite(rotation)) {
+				throw new NumberFormatException("values must be finite");
+			}
+			gunInfo.attachmentLocationX = x;
+			gunInfo.attachmentLocationY = y;
+			gunInfo.attachmentLocationZ = z;
+			gunInfo.attachmentLocationRotation = rotation;
+			gunInfo.hasAttachmentLocation = true;
+		} catch (RuntimeException exception) {
+			System.err.println("[HMG] Invalid attachmentlocation in gun file " + gunFile.getPath()
+					+ ": " + joinConfigValues(values) + " (" + exception.getMessage() + ")");
+		}
+	}
+
+	private static String joinConfigValues(String[] values) {
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < values.length; i++) {
+			if (i > 0) result.append(',');
+			result.append(values[i]);
+		}
+		return result.toString();
 	}
 
 	private static void logLoadTiming(File file, int parsedLines, int modelRegistrations, long startNanos) {
