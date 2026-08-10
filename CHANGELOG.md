@@ -131,3 +131,9 @@
 - Added cached API-version and capability discovery with conservative degradation for missing or older optional camera surfaces.
 - Fixed exact-shot recoil ownership so an active Combatives installation can no longer erase legacy recoil queued after a rejected submission.
 - Added capability-gated yaw, roll, translation, and FOV construction plus burst cleanup on trigger release and reload, while retaining existing death, dimension, and weapon-switch cleanup.
+
+## Fix HMG skin rendering across item views
+
+- Rendered universal gun-skin overlays during HMG's guaranteed opaque model pass so they appear once in first person, third person, dropped-item, and model-inventory rendering without relying on Forge to provide item render pass 1.
+- Preserved per-stack skin selection and the exclusions for attachment and bullet model parts; legacy scripted guns remain supported when their scripts use the renderer's `renderpartofmodel` helper.
+- Updated repository ignore rules so `HMG/eclipse/handmadeguns_Packs` content-pack sources are tracked while other HMG Eclipse runtime files remain ignored.

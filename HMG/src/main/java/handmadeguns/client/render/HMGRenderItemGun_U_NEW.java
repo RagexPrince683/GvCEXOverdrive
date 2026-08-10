@@ -428,6 +428,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 		gunitem.checkTags(gunstack);
 		nbt = gunstack.getTagCompound();
 		partsRender_gun.gunSkinTexture = HMGGunSkinTextures.available(HMGGunSkinRegistry.appliedTexture(gunstack));
+		partsRender_gun.renderGunSkinOverlay = false;
 		items[0] = null;
 		items[1] = null;
 		items[2] = null;
@@ -459,6 +460,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				for (pass = 0; pass < 2; pass++)
 				{
 					partsRender_gun.pass = pass;
+					partsRender_gun.renderGunSkinOverlay = pass == 0;
 					isfirstperson = true;
 
 					EntityLivingBase entity = (EntityLivingBase) data[1];
@@ -673,6 +675,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			case EQUIPPED: {//third person
 				pass = MinecraftForgeClient.getRenderPass();
 				partsRender_gun.pass = pass;
+				partsRender_gun.renderGunSkinOverlay = true;
 				isfirstperson = false;
 				EntityLivingBase entity = (EntityLivingBase) data[1];
 				PartsRender_Gun.curretnEntity = entity;
@@ -698,6 +701,7 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			case ENTITY: {
 				pass = MinecraftForgeClient.getRenderPass();
 				partsRender_gun.pass = pass;
+				partsRender_gun.renderGunSkinOverlay = true;
 				isfirstperson = false;
 				Minecraft.getMinecraft().renderEngine.bindTexture(guntexture);
 				GL11.glPushMatrix();
