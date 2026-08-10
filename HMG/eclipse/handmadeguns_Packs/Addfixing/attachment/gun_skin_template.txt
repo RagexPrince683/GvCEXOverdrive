@@ -6,5 +6,5 @@ Stack,64
 Name,AR Sample Gun Skin
 GunSkin,true
 SkinTexture,ar.png
-SkinTarget,HandmadeGuns:AR_sample
+SkinTarget,AR_sample
 GunSkinItem,ar_sample_skin

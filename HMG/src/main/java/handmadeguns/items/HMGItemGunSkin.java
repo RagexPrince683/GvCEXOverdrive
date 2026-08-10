@@ -2,6 +2,8 @@ package handmadeguns.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import handmadeguns.HMGGunSkinRegistry;
+import handmadeguns.HandmadeGunsCore;
+import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
@@ -24,16 +26,29 @@ public class HMGItemGunSkin extends Item {
 
     public String getSkinId() { return skinId; }
     public ResourceLocation getOverlayTexture() { return overlayTexture; }
+    public Collection<String> getTargets() { return new LinkedHashSet<String>(targets); }
     public boolean isValid() { return skinId != null && skinId.length() > 0 && overlayTexture != null && !targets.isEmpty(); }
 
-    /** Resolve exact Forge registry names and compare the shared Item identity, never stack state. */
+    /** Compare the gun's registered identity directly, never mutable stack state. */
     public boolean supports(Item gunItem) {
-        if (gunItem == null) return false;
-        for (String target : targets) {
+        if (!(gunItem instanceof HMGItem_Unified_Guns)) return false;
+        GameRegistry.UniqueIdentifier actual = GameRegistry.findUniqueIdentifierFor(gunItem);
+        if (actual == null) return false;
+        for (String rawTarget : targets) {
+            if (rawTarget == null) continue;
+            String target = rawTarget.trim();
+            if (target.length() == 0) continue;
             int separator = target.indexOf(':');
-            if (separator <= 0 || separator == target.length() - 1) continue;
-            Item targetItem = GameRegistry.findItem(target.substring(0, separator), target.substring(separator + 1));
-            if (targetItem == gunItem) return true;
+            if (separator < 0) {
+                if (actual.name.equals(target)) return true;
+                continue;
+            }
+            String targetMod = target.substring(0, separator).trim();
+            String targetName = target.substring(separator + 1).trim();
+            if (!actual.name.equals(targetName)) continue;
+            if (actual.modId.equals(targetMod)) return true;
+            if (targetMod.equalsIgnoreCase(HandmadeGunsCore.MOD_ID)
+                    && actual.modId.equalsIgnoreCase(HandmadeGunsCore.MOD_ID)) return true;
         }
         return false;
     }

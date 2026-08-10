@@ -1,5 +1,14 @@
 # Changelog
 
+## Fix HMG gun skin crafting identity matching
+
+- Match skin targets against each gun item's actual Forge unique identifier instead
+  of reverse-looking-up the target, with bare HMG `GunName` targets preferred and
+  legacy fully-qualified targets retained.
+- Trim and reject empty target fields, validate skin targets once after pack loading,
+  and document the canonical content-pack identifier format.
+- Update the Addfixing sample to target `AR_sample` by its gun declaration identifier.
+
 ## Fix the HMG gun skin pipeline
 
 - Corrected the Addfixing sample so its inventory icon, exact `HandmadeGuns:AR_sample`
