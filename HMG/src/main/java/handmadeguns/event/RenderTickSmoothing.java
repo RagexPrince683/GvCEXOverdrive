@@ -3,6 +3,7 @@ package handmadeguns.event;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.FMLLog;
 import handmadeguns.HandmadeGunsCore;
 import handmadeguns.entity.HMGEntityParticles;
 import handmadeguns.client.render.HMGRenderItemGun_U;
@@ -12,6 +13,7 @@ import handmadeguns.compat.HMGRecoilBridge;
 import handmadeguns.compat.HMGAimRecoilController;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -32,6 +34,10 @@ public class RenderTickSmoothing {
 	//todo onRenderTickStartでマウス感度を下げ、onRenderTickEndで復帰させればズーム時の照準が楽になるだろう
 
 	public static float backUppedMouseSensitivity = -1;
+	// Development diagnostics. Never enable these in a release build.
+	private static final boolean DEBUG_WEIGHT_SENSITIVITY = false;
+	private static final boolean DEBUG_FORCE_WEIGHT_SENSITIVITY = false;
+	private static Item lastWeightDebugItem;
 
 
 
@@ -81,7 +87,8 @@ public class RenderTickSmoothing {
 				HMGRenderItemGun_U_NEW.smoothing = event.renderTickTime;
 				HMGEntityParticles.particaltick = event.renderTickTime;
 				HandmadeGunsCore.smooth = event.renderTickTime;
-				float weightSensitivityMultiplier = getHeldGunWeightSensitivityMultiplier();
+				ItemStack heldGun = getHeldUnifiedGun();
+				float weightSensitivityMultiplier = getHeldGunWeightSensitivityMultiplier(heldGun);
 				if(currentZoomLevel != 1 || weightSensitivityMultiplier != 1.0F) {
 					backUppedMouseSensitivity = HMG_proxy.getMCInstance().gameSettings.mouseSensitivity;
 					HMG_proxy.getMCInstance().gameSettings.mouseSensitivity =
@@ -89,6 +96,9 @@ public class RenderTickSmoothing {
 				}else {
 					backUppedMouseSensitivity = -1;
 				}
+				logWeightSensitivityOnHeldGunChange(heldGun, weightSensitivityMultiplier,
+						backUppedMouseSensitivity == -1 ? HMG_proxy.getMCInstance().gameSettings.mouseSensitivity : backUppedMouseSensitivity,
+						HMG_proxy.getMCInstance().gameSettings.mouseSensitivity);
 				currentZoomLevel = 1;
 
 				ensureStencilBufferAvailable();
@@ -102,13 +112,38 @@ public class RenderTickSmoothing {
 		}
 	}
 
-	private static float getHeldGunWeightSensitivityMultiplier()
+	private static ItemStack getHeldUnifiedGun()
 	{
 		if (HMG_proxy.getMCInstance().currentScreen != null || HMG_proxy.getMCInstance().thePlayer == null
-				|| HMG_proxy.getMCInstance().thePlayer.ridingEntity != null) return 1.0F;
+				|| HMG_proxy.getMCInstance().thePlayer.ridingEntity != null) return null;
 		ItemStack held = HMG_proxy.getMCInstance().thePlayer.getCurrentEquippedItem();
-		if (held == null || !(held.getItem() instanceof HMGItem_Unified_Guns)) return 1.0F;
+		return held != null && held.getItem() instanceof HMGItem_Unified_Guns ? held : null;
+	}
+
+	private static float getHeldGunWeightSensitivityMultiplier(ItemStack held)
+	{
+		if (held == null) return 1.0F;
+		if (DEBUG_WEIGHT_SENSITIVITY && DEBUG_FORCE_WEIGHT_SENSITIVITY) return 0.10F;
 		return ((HMGItem_Unified_Guns) held.getItem()).gunInfo.getWeightSensitivityMultiplier();
+	}
+
+	private static void logWeightSensitivityOnHeldGunChange(ItemStack held, float multiplier,
+			float originalSensitivity, float appliedSensitivity)
+	{
+		if (!DEBUG_WEIGHT_SENSITIVITY) return;
+		Item heldItem = held == null ? null : held.getItem();
+		if (heldItem == lastWeightDebugItem) return;
+		lastWeightDebugItem = heldItem;
+		if (!(heldItem instanceof HMGItem_Unified_Guns)) {
+			FMLLog.info("[HMG weight sensitivity] held gun: none");
+			return;
+		}
+		HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) heldItem;
+		Object registryName = Item.itemRegistry.getNameForObject(heldItem);
+		FMLLog.info("[HMG weight sensitivity] gun=%s, Weight=%s, multiplier=%.4f, original=%.4f, applied=%.4f%s",
+				registryName == null ? heldItem.getUnlocalizedName() : registryName.toString(),
+				Double.toString(gun.gunInfo.weight), multiplier, originalSensitivity, appliedSensitivity,
+				gun.gunInfo.weightConfigured ? "" : " (default Weight: no Weight key was configured)");
 	}
 
 	//todo: figure out why some guns decide to continue to be in sprint state while firing

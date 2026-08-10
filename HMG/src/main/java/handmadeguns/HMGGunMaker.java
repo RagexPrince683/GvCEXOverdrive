@@ -2146,6 +2146,7 @@ public class HMGGunMaker {
 				break;
 			case "Weight":
 				gunInfo.weight = parseDouble(type[1]);
+				gunInfo.weightConfigured = true;
 				break;
 			case "Zoom":
 				gunInfo.scopezoombase = parseFloat(type[1]);
