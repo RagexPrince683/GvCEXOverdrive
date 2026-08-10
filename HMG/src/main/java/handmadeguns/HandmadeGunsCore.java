@@ -1136,7 +1136,7 @@ public class HandmadeGunsCore {
 
 						try {
 							HMGGunMaker.addRecipe(recipeFile); // original crafting system
-							GunSmithRecipeRegistry.registerFromFile(recipeFile); // GUI system
+							GunSmithRecipeRegistry.registerFromFile(recipeFile); // canonical Gun Smithing Table system
 							recipeFiles++;
 							Debug("Loaded recipe: %s", recipeFile.getAbsolutePath());
 

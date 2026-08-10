@@ -191,3 +191,5 @@ hmg.guide.page.troubleshooting.common=Common fixes: verify ammo compatibility, r
 hmg.tooltip.gun_skin.apply=Craft with a compatible gun to apply.
 hmg.tooltip.gun_skin.compatibility.universal=Compatible: All unified HMG guns
 hmg.tooltip.gun_skin.invalid=Compatibility: Invalid skin data
+
+nei.handmadeguns.gunsmithing=Gun Smithing Table

@@ -1308,7 +1308,6 @@ public class HMGGunMaker {
 								 * 										itemi != null ? new ItemStack(itemi) : null
 								 *                                                                };
 								 *
-								 * 								GunSmithRecipeRegistry.registerAmmoRecipe(output, inputs);
 								 */
 
 								// Clear after successful register

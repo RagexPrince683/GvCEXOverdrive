@@ -11,10 +11,10 @@ public class GunSmithingCraftHandler {
     //gun craft handler
     public static void handleCraft(EntityPlayer player, int recipeIndex) {
         if (!canHandleRequest(player)) return;
-        List<GunSmithRecipeRegistry.GunRecipeEntry> list = GunSmithRecipeRegistry.getAll();
+        List<GunSmithRecipe> list = GunSmithRecipeRegistry.getGunRecipes();
         if (list == null || recipeIndex < 0 || recipeIndex >= list.size()) return;
-        GunSmithRecipeRegistry.GunRecipeEntry entry = list.get(recipeIndex);
-        if (entry == null || entry.result == null) return;
+        GunSmithRecipe entry = list.get(recipeIndex);
+        if (entry == null || entry.getOutput() == null) return;
 
         craftTransaction(player, entry);
     }
@@ -23,27 +23,18 @@ public class GunSmithingCraftHandler {
     public static void handleAmmoCraft(EntityPlayer player, int recipeIndex) {
         if (!canHandleRequest(player)) return;
 
-        // Build the SAME combined list as the GUI
-        List<GunSmithRecipeRegistry.GunRecipeEntry> ammoList =
-                GunSmithRecipeRegistry.getCombinedAmmoRecipes();
-
-        System.out.println("[GunSmith] handleAmmoCraft idx=" + recipeIndex +
-                " size=" + (ammoList == null ? 0 : ammoList.size()));
+        List<GunSmithRecipe> ammoList = GunSmithRecipeRegistry.getAmmoRecipes();
 
         if (ammoList == null || recipeIndex < 0 || recipeIndex >= ammoList.size()) {
-            System.out.println("[GunSmith] INVALID AMMO INDEX " + recipeIndex);
             return;
         }
 
-        GunSmithRecipeRegistry.GunRecipeEntry entry = ammoList.get(recipeIndex);
-        if (entry == null || entry.result == null) {
-            System.out.println("[GunSmith] NULL AMMO ENTRY AT INDEX " + recipeIndex);
+        GunSmithRecipe entry = ammoList.get(recipeIndex);
+        if (entry == null || entry.getOutput() == null) {
             return;
         }
 
-        if (craftTransaction(player, entry)) {
-            System.out.println("[GunSmith] CRAFTED: " + entry.result.getDisplayName());
-        }
+        craftTransaction(player, entry);
     }
 
     private static boolean canHandleRequest(EntityPlayer player) {
@@ -55,13 +46,13 @@ public class GunSmithingCraftHandler {
      * selects a server-owned recipe; no client-provided stack participates here.
      */
     private static boolean craftTransaction(EntityPlayer player,
-                                            GunSmithRecipeRegistry.GunRecipeEntry entry) {
+                                            GunSmithRecipe entry) {
         synchronized (player.inventory) {
             GunTableInventoryAllocator.AllocationResult allocation =
-                    GunTableInventoryAllocator.allocate(player, entry.ingredients);
+                    GunTableInventoryAllocator.allocate(player, entry.getIngredients());
             if (!allocation.success || !GunTableInventoryAllocator.consume(player, allocation)) return false;
 
-            ItemStack remainder = entry.result.copy();
+            ItemStack remainder = entry.getOutput();
             player.inventory.addItemStackToInventory(remainder);
             if (remainder.stackSize > 0) {
                 player.dropPlayerItemWithRandomChoice(remainder, false);

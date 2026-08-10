@@ -52,7 +52,7 @@ handmadeguns_Packs/
 | `magazines/` | Magazine definitions parsed by `HMGAddmagazine`. |
 | `bullets/` | Bullet/projectile definitions parsed by `HMGAddBullets`. |
 | `attachment/` | Attachment definitions parsed by `HMGAddAttachment`. |
-| `addpackrecipe/` | Recipe files loaded into both the original crafting system and Gun Smithing GUI registry. |
+| `addpackrecipe/` | Recipe files loaded into both the original crafting system and the canonical Gun Smithing Table registry. |
 | `addTab/` | Creative-tab definitions. |
 | `addmodel/` | Model resources copied to `textures/model`. |
 | `addtexture/` | Item texture resources copied to `textures/items`. |
@@ -80,9 +80,13 @@ Supported prefixes are `ore:`, `oredict:`, and `OreDictionary:`. Prefix matching
 Ore dictionary requirements retain the ore key instead of resolving permanently to the first registered stack. The Gun Smithing Table resolves display stacks, availability checks, server validation, and consumption against the live ore dictionary so compatible items registered by other mods can satisfy recipes even when normal pre-init recipe registration cannot be represented as an ore recipe.
 
 When NEI is installed, these recipes appear in a dedicated **Gun Smithing Table**
-category. The table block is the category catalyst, duplicate-output recipes remain
-separate, and ore dictionary inputs cycle through every currently registered
-alternative.
+category. Duplicate-output recipes remain separate, and ore dictionary inputs cycle
+through every currently registered alternative. The bundled NEI 1.0.5.120 API does
+not expose the later recipe-catalyst registration API.
+
+The table GUI, server-side crafting transaction, and NEI handler all query that same
+registry. Gun and ammunition recipes are categorized explicitly; the table does not
+discover ammunition by scanning or guessing entries in Minecraft's crafting list.
 
 ## `additionalSettings.txt`
 
