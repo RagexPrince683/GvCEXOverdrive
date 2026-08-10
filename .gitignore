@@ -52,4 +52,9 @@ HMG/eclipse/ops.json
 /HMG/eclipse/screenshots
 *.zip
 *.png~
-/HMG/eclipse
+
+# Ignore HMG's Eclipse runtime while keeping content-pack sources trackable.
+!/HMG/eclipse/
+/HMG/eclipse/*
+!/HMG/eclipse/handmadeguns_Packs/
+!/HMG/eclipse/handmadeguns_Packs/**
