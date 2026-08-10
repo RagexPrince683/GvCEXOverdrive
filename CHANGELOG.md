@@ -1,5 +1,12 @@
 # Changelog
 
+## Fix NEI 1.0.5.120 Gun Smithing compatibility
+
+- Register Gun Smithing recipe and usage handlers through NEI's supported API.
+- Register the Gun Smithing Table catalyst through NEI 1.0.5.120's
+  handler-based `RecipeCatalysts` API instead of the unavailable identifier-based
+  `API.addRecipeCatalyst` method.
+
 ## Add crafting-based gun skin removal
 
 - Add a dynamic shapeless recipe that removes an applied gun skin when its gun is

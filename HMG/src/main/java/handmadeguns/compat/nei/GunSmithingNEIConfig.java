@@ -2,8 +2,7 @@ package handmadeguns.compat.nei;
 
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
-import codechicken.nei.recipe.GuiCraftingRecipe;
-import codechicken.nei.recipe.GuiUsageRecipe;
+import codechicken.nei.recipe.RecipeCatalysts;
 import handmadeguns.HandmadeGunsCore;
 import net.minecraft.item.ItemStack;
 
@@ -12,9 +11,9 @@ public class GunSmithingNEIConfig implements IConfigureNEI {
     public void loadConfig() {
         GunSmithingNEIHandler crafting = new GunSmithingNEIHandler();
         GunSmithingNEIHandler usage = new GunSmithingNEIHandler();
-        GuiCraftingRecipe.craftinghandlers.add(crafting);
-        GuiUsageRecipe.usagehandlers.add(usage);
-        API.addRecipeCatalyst(new ItemStack(HandmadeGunsCore.blockGunTable), GunSmithingNEIHandler.OVERLAY_ID);
+        API.registerRecipeHandler(crafting);
+        API.registerUsageHandler(usage);
+        RecipeCatalysts.addRecipeCatalyst(new ItemStack(HandmadeGunsCore.blockGunTable), crafting);
     }
 
     public String getName() {
