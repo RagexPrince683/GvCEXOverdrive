@@ -127,6 +127,7 @@ AddParts,Base_Sys
 				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 				attachpart
 				dot
+				reticleAndPlate
     			BackParts
     			AddChildParts,mat41
 				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
@@ -137,7 +138,6 @@ AddParts,Base_Sys
 				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 				attachpart
 				dot
-				reticleAndPlate
     			BackParts
     			AddChildParts,mat5
 				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0

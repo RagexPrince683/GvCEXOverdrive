@@ -1,5 +1,15 @@
 # Changelog
 
+## Fix M16A4 skinned transparent reticle group selection
+
+- Associate the M16A4 red-dot reticle marker with its actual `mat4`,
+  `mat4reticle`, and `mat4reticlePlate` MQO object family instead of the
+  nonexistent `mat41` family.
+- Make model-group discovery color- and depth-write-free so initialization can
+  never turn a transparent reticle plate into an invisible depth occluder.
+- Preserve the existing isolated gun-skin housing overlay and depth-tested,
+  original-texture reticle pass.
+
 ## Fix HMG transparent sight reticle rendering
 
 - Isolate the reticle and stencil-plate pass from gun-skin OpenGL state, explicitly

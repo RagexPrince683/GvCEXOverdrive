@@ -44,20 +44,31 @@ public abstract class PartsRender {
 	public void part_Render(HMGGunParts parts, GunState state, float flame, int remainbullets, HMGGunParts_Motion_PosAndRotation OffsetAndRotation){
 		FMLClientHandler.instance().getWorldClient().theProfiler.startSection("partRender");
 		if(!parts.initialized){
-			GL11.glColorMask(false,false,false,false);
-			GL11.glDepthMask(true);
-			model.renderPart(parts.partsname);
-			parts.currentGroup_parts = ((IModelCustom_HMG)model).renderPart_getInstance();
+			/*
+			 * renderPart_getInstance() is only exposed through the model API after a
+			 * renderPart() call.  These calls are lookups, not an opaque render pass:
+			 * in particular, a reticle plate selected here must not seed scene depth
+			 * before its later stencil-only pass.
+			 */
+			GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+			try {
+				GL11.glColorMask(false, false, false, false);
+				GL11.glDepthMask(false);
 
-			model.renderPart(parts.partsname_reticlePlate);
-			parts.currentGroup_reticlePlate = ((IModelCustom_HMG)model).renderPart_getInstance();
+				model.renderPart(parts.partsname);
+				parts.currentGroup_parts = ((IModelCustom_HMG)model).renderPart_getInstance();
 
-			model.renderPart(parts.partsname_reticle);
-			parts.currentGroup_reticle = ((IModelCustom_HMG)model).renderPart_getInstance();
+				model.renderPart(parts.partsname_reticlePlate);
+				parts.currentGroup_reticlePlate = ((IModelCustom_HMG)model).renderPart_getInstance();
 
-			model.renderPart(parts.partsname_light);
-			parts.currentGroup_light = ((IModelCustom_HMG)model).renderPart_getInstance();
+				model.renderPart(parts.partsname_reticle);
+				parts.currentGroup_reticle = ((IModelCustom_HMG)model).renderPart_getInstance();
 
+				model.renderPart(parts.partsname_light);
+				parts.currentGroup_light = ((IModelCustom_HMG)model).renderPart_getInstance();
+			} finally {
+				GL11.glPopAttrib();
+			}
 
 			parts.initialized = true;
 		}
