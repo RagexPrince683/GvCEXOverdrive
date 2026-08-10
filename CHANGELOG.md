@@ -1,5 +1,16 @@
 # Changelog
 
+## Fix gun Motion mouse sensitivity scaling
+
+- Correct the previous sensitivity implementation, which incorrectly introduced a
+  second `Weight` system, by deriving held-gun sensitivity from the existing
+  `Motion` handling value instead.
+- Scale the bundled packs' small Motion differences with a monotonic, bounded curve
+  while preserving normal sensitivity at `Motion,1.0` and safe handling of invalid
+  values.
+- Keep existing gun definitions compatible without content-pack migration and avoid
+  registering the render-tick handler on both event buses.
+
 ## Fix Gun Smithing Table NEI runtime-state lookup
 
 - Gun Smithing Table NEI output lookup no longer compares mutable gun runtime

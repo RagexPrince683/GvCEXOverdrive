@@ -119,15 +119,21 @@ The file is read per pack. The current source switch lacks `break` statements be
 - Test `/reloadSettings` during development, but do full restarts before release validation.
 - Avoid relying on undocumented parser behavior; HMG definition parsers are legacy and forgiving in some places but not uniformly validated.
 
-## Gun Weight and Mouse Sensitivity
+## Gun Motion Handling and Mouse Sensitivity
 
-Gun definitions may use the existing `Weight` key (a floating-point value). While the
-local player holds that unified gun on foot in normal gameplay, HMG applies
-`clamp(1 / (1 + 0.075 * max(0, Weight)), 0.30, 1.0)` to mouse sensitivity. The
-default weight of `1` produces a subtle light-gun multiplier of about `0.93`, while
-progressively heavier rifles and machine guns turn more slowly. Invalid non-finite
-weights safely use the default. This multiplier combines with ADS
-zoom sensitivity; it does not affect menus, placed guns, or vehicle cameras.
+The existing `Motion,<number>` gun setting controls weapon handling. It already
+scales held-gun movement speed and jump behavior, and now also scales mouse
+sensitivity while the local player holds a unified gun on foot in normal gameplay.
+`Motion,1.0` means normal handling; lower values mean progressively heavier handling.
+No new setting or pack migration is required.
+
+For finite Motion values below 1.0, the handling multiplier is
+`max(0.25, 1 - 0.75 * (1 - Motion))`, after clamping Motion to at least zero.
+Motion values at or above 1.0, and invalid non-finite values, use exactly `1.0`.
+For examples from the bundled packs, ordinary `Motion,0.95` rifles use `0.9625`,
+the `Motion,0.48` Lynx uses `0.61`, and the `Motion,0.35` M82A3 Barrett uses
+`0.5125`. This multiplier composes once with ADS zoom sensitivity; it does not
+affect menus, placed guns, non-HMG items, or vehicle cameras.
 
 ## Data-driven gun skins
 

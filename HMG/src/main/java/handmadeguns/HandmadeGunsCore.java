@@ -830,7 +830,6 @@ public class HandmadeGunsCore {
 
 		RenderTickSmoothing renderTickSmoothing = new RenderTickSmoothing();
 		FMLCommonHandler.instance().bus().register(renderTickSmoothing);
-		MinecraftForge.EVENT_BUS.register(renderTickSmoothing);
 
 		//I don't know if this is needed. I don't know how this fucking mod works. I don't know why this isn't working. OH MY GOD JUST FUCKING WORK
 		//NetworkRegistry.INSTANCE.registerGuiHandler(this, new HMGGuiHandler());
