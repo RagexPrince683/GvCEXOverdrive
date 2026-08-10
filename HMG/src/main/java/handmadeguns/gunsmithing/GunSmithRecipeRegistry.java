@@ -32,7 +32,7 @@ public final class GunSmithRecipeRegistry {
     }
 
     public static void register(ItemStack output, GunSmithRecipeCategory category, ItemStack... inputs) {
-        register(output, exactIngredients(inputs), category);
+        register(output, normalizeIngredients(inputs), category);
     }
 
     /** Compatibility adapter for old pack-facing callers; gun is the historical default. */
@@ -56,9 +56,9 @@ public final class GunSmithRecipeRegistry {
             ItemStack input = inputs != null && i < inputs.length ? inputs[i] : null;
             String ore = oreInputs != null && i < oreInputs.length ? oreInputs[i] : null;
             if (ore != null && !ore.trim().isEmpty()) {
-                ingredients[i] = new OreDictionaryIngredient(ore.trim(), input == null ? 1 : Math.max(1, input.stackSize));
+                ingredients[i] = createExplicitOreIngredient(ore.trim(), input == null ? 1 : Math.max(1, input.stackSize));
             } else if (input != null) {
-                ingredients[i] = new ExactStackIngredient(input);
+                ingredients[i] = normalizeIngredient(input);
             }
         }
         register(output, ingredients, GunSmithRecipeCategory.GUNS);
@@ -105,12 +105,50 @@ public final class GunSmithRecipeRegistry {
         }
     }
 
-    private static GunTableIngredient[] exactIngredients(ItemStack[] inputs) {
+    private static GunTableIngredient[] normalizeIngredients(ItemStack[] inputs) {
         GunTableIngredient[] ingredients = new GunTableIngredient[GunSmithRecipe.SLOT_COUNT];
         if (inputs != null) for (int i = 0; i < Math.min(inputs.length, ingredients.length); i++) {
-            if (inputs[i] != null) ingredients[i] = new ExactStackIngredient(inputs[i]);
+            if (inputs[i] != null) ingredients[i] = normalizeIngredient(inputs[i]);
         }
         return ingredients;
+    }
+
+    /**
+     * MCHO-style normalization for every ordinary Gun Smithing Table stack input.
+     * The first Forge ore ID is authoritative, matching Forge's deterministic
+     * registration order. Tagged stacks remain exact so NBT requirements are not lost.
+     */
+    public static GunTableIngredient normalizeIngredient(ItemStack stack) {
+        if (stack == null) return null;
+        if (!stack.hasTagCompound()) {
+            int[] oreIds = OreDictionary.getOreIDs(stack);
+            if (oreIds != null) {
+                for (int i = 0; i < oreIds.length; i++) {
+                    String oreName = OreDictionary.getOreName(oreIds[i]);
+                    if (isValidOreName(oreName)) {
+                        if (oreIds.length > 1) {
+                            HandmadeGunsCore.Debug("[GunSmith] %s has %s Ore Dictionary IDs; selecting first valid entry %s",
+                                    stack, oreIds.length, oreName);
+                        }
+                        return new OreDictionaryIngredient(oreName, Math.max(1, stack.stackSize));
+                    }
+                }
+            }
+        }
+        return new ExactStackIngredient(stack);
+    }
+
+    private static GunTableIngredient createExplicitOreIngredient(String oreName, int amount) {
+        return isValidOreName(oreName) && amount > 0 ? new OreDictionaryIngredient(oreName, amount) : null;
+    }
+
+    private static boolean isValidOreName(String oreName) {
+        if (oreName == null || oreName.trim().isEmpty()) return false;
+        String expected = oreName.trim();
+        for (String registered : OreDictionary.getOreNames()) {
+            if (expected.equals(registered)) return true;
+        }
+        return false;
     }
 
     private static void parseAndRegisterAddRecipeFile(File file) throws IOException {
@@ -156,12 +194,15 @@ public final class GunSmithRecipeRegistry {
             } catch (NumberFormatException e) {
                 reject(file, slot, "invalid Ore Dictionary count"); return null;
             }
-            if (!spec.isEmpty() && amount > 0) return new OreDictionaryIngredient(spec, amount);
+            GunTableIngredient explicit = createExplicitOreIngredient(spec, amount);
+            if (explicit != null) return explicit;
             reject(file, slot, "invalid Ore Dictionary ingredient"); return null;
         }
+        boolean exact = lower.startsWith("exact:");
+        if (exact) text = text.substring(6).trim();
         ItemStack stack = parseStack(text);
         if (stack == null) reject(file, slot, "could not resolve " + text);
-        return stack == null ? null : new ExactStackIngredient(stack);
+        return stack == null ? null : exact ? new ExactStackIngredient(stack) : normalizeIngredient(stack);
     }
 
     private static ItemStack parseStack(String value) {

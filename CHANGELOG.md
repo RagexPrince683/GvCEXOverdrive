@@ -1,5 +1,18 @@
 # Changelog
 
+## Refactor HMG Ore Dictionary and NEI support
+
+- Follow MCHO's Forge 1.7.10 recipe approach by automatically normalizing ordinary
+  Gun Smithing Table item inputs to their first valid Ore Dictionary entry while
+  preserving counts, explicit `ore:` forms, wildcard metadata, and tagged stacks.
+- Add `exact:modid:item[:meta[:count]]` for packs that intentionally require a
+  specific registered item even when Forge associates it with an ore entry.
+- Register the client-only Gun Smithing Table recipe and usage handler through
+  NEI's supported `API` methods, with cycling ore alternatives sourced from the
+  same canonical table recipes used by GUI and server crafting.
+- Keep Gun Smithing Table-only recipes outside vanilla crafting; NEI visibility
+  reads directly from the table registry and requires no vanilla recipe copy.
+
 ## Fix Gun Smithing Table recipe discovery in NEI
 
 - Replaced the previous Gun Smithing Table NEI entry point because its class name
