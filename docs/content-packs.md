@@ -79,6 +79,11 @@ Supported prefixes are `ore:`, `oredict:`, and `OreDictionary:`. Prefix matching
 
 Ore dictionary requirements retain the ore key instead of resolving permanently to the first registered stack. The Gun Smithing Table resolves display stacks, availability checks, server validation, and consumption against the live ore dictionary so compatible items registered by other mods can satisfy recipes even when normal pre-init recipe registration cannot be represented as an ore recipe.
 
+When NEI is installed, these recipes appear in a dedicated **Gun Smithing Table**
+category. The table block is the category catalyst, duplicate-output recipes remain
+separate, and ore dictionary inputs cycle through every currently registered
+alternative.
+
 ## `additionalSettings.txt`
 
 Recognized keys found in source:
