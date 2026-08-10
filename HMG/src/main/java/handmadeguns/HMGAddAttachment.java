@@ -96,7 +96,6 @@ public class HMGAddAttachment
 		String tabname = null;
 		boolean gunSkin = false;
 		String skinTexture = null;
-		List<String> skinTargets = new ArrayList<String>();
 		try {
 			File file = file1;
 			//File file = new File(configfile,"hmg_handmadeguns.txt");
@@ -250,10 +249,7 @@ public class HMGAddAttachment
 								skinTexture = type[1];
 								break;
 							case "SkinTarget":
-								for (int target = 1; target < type.length; target++) {
-									String skinTarget = type[target].trim();
-									if (skinTarget.length() > 0) skinTargets.add(skinTarget);
-								}
+								// Deprecated compatibility key. Skins are universal, so targets are ignored.
 								break;
 							case "GunRotation":
 								for (int i = 0; i < 3; i++)
@@ -262,9 +258,9 @@ public class HMGAddAttachment
 								break;
 						}
 						Item newitem = null;
-						if(type[0].equals("GunSkinItem") && gunSkin && skinTexture != null && !skinTargets.isEmpty()){
+						if(type[0].equals("GunSkinItem") && gunSkin && skinTexture != null){
 							GunName = type[1];
-							newitem = new HMGItemGunSkin(GunName, skinTexture, skinTargets).setUnlocalizedName(GunName)
+							newitem = new HMGItemGunSkin(GunName, skinTexture).setUnlocalizedName(GunName)
 									.setTextureName("handmadeguns:" + texture);
 							if(Namegun != null) LanguageRegistry.instance().addNameForObject(newitem, "en_US", Namegun);
 							else LanguageRegistry.instance().addNameForObject(newitem, "en_US", GunName);

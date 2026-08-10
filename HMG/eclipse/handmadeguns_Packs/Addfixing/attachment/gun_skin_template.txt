@@ -1,10 +1,9 @@
-// Working sample for the Addfixing AR_sample gun.
+// Universal sample: this same item can be applied to every unified HMG gun.
 // Inventory icon: assets/handmadeguns/textures/items/AR_sample.png
 // The overlay is resolved from the same pack model-texture directory as ObjTexture.
 Texture,AR_sample
 Stack,64
 Name,AR Sample Gun Skin
 GunSkin,true
-SkinTexture,ar.png
-SkinTarget,AR_sample
+SkinTexture,skins/sample_red.png
 GunSkinItem,ar_sample_skin

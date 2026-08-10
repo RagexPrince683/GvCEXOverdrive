@@ -1,5 +1,17 @@
 # Changelog
 
+## Fix universal HMG gun skins
+
+- Replace target-pair recipe generation with one dynamic recipe accepting exactly one
+  `HMGItem_Unified_Guns` stack and one valid skin in either grid order.
+- Preserve the complete input gun stack while setting or replacing only its `GunSkin`
+  NBT value, allowing loaded, damaged, attached, named, and previously skinned guns.
+- Remove the gun-name map, target matching, target warnings, and gun-specific AK47 and
+  PKM development skins; legacy `SkinTarget` lines are parsed and deliberately ignored.
+- Resolve overlays solely from the skin ID on each rendered gun stack, keeping skins
+  instance-local and universal across gun models while excluding attachment parts.
+- Update the content-pack documentation and universal `ar_sample_skin` definition.
+
 ## Fix HMG gun skin crafting with concrete recipes
 
 - Track every final unified gun object by its pack-declared `GunName`, including

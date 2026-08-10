@@ -108,32 +108,30 @@ Texture,my_skin_item
 Name,My Gun Skin
 GunSkin,true
 SkinTexture,skins/my_gun_overlay.png
-SkinTarget,my_gun
 GunSkinItem,my_skin
 ```
 
 `GunSkinItem` is the stable registered item/skin identifier; it is also what is stored
-in the gun's `GunSkin` NBT value. `SkinTarget` accepts a comma-separated list of exact,
-case-sensitive HMG `GunName` values (the second field of a gun creation line such as
-`AR,my_gun`). The legacy full form, such as `HandmadeGuns:my_gun`, is also accepted;
-HMG's mod ID is compared case-insensitively to tolerate Forge normalization, while the
-gun name remains case-sensitive. Empty and whitespace-only targets are ignored. The
-overlay resolves through the pack resource domain. With the path above it must be at
+in the gun's `GunSkin` NBT value. Every skin is universal: `SkinTarget`, gun names,
+and Forge registry names are neither required nor consulted. The deprecated
+`SkinTarget` key is accepted only so older definitions continue loading, and its value
+is ignored. The overlay resolves through the pack resource domain. With the path above it must be at
 `assets/handmadeguns/textures/model/skins/my_gun_overlay.png`; an explicit resource
 such as `othermod:textures/model/skin.png` is also supported.
 
-The overlay is separate from the inventory icon and must have the same dimensions and
-UV layout as every target gun's base model texture. Fully transparent pixels leave the
-base gun unchanged. Craft one compatible gun with one skin item in any arrangement to
-copy the gun, preserve all of its NBT, and set or replace its selected skin. Missing,
-removed, and incompatible skin identifiers simply leave the base gun unskinned.
+The overlay is separate from the inventory icon. Its UV content is the pack author's
+responsibility; HMG does not reject overlays based on a gun's model, UV layout, or
+texture dimensions. Fully transparent pixels leave the base gun visible. Craft any
+unified HMG gun with one skin item, in either order in a 2x2 or 3x3 grid, to copy the
+gun, preserve all of its state, and set or replace its selected skin. Missing or
+removed skin identifiers simply leave the base gun unskinned.
 
-After all packs load, HMG resolves each target through its own `GunName` map and
-registers a separate recipe containing the exact gun and skin item objects. Crafting
-does not query Forge identifiers or perform registry lookups. Damage, ammunition,
-attachments, custom names, and all other per-stack NBT therefore have no effect on
-whether the recipe matches, and all existing gun NBT is retained in the output.
+HMG registers one dynamic recipe for the entire system. It identifies firearms by the
+shared `HMGItem_Unified_Guns` class, rather than item identity or stack state, and
+rejects extra ingredients. Damage, ammunition, attachments, custom names,
+enchantments, the previous skin, and all other per-stack NBT have no effect on whether
+the recipe matches; the copied output retains them and changes only `GunSkin`.
 
-Definitions load on both client and server because crafting needs their IDs and
-targets. Overlay existence is checked only by the client renderer and is not stored in
+Definitions load on both client and server because crafting needs their IDs. Overlay
+existence is checked only by the client renderer and is not stored in
 shared skin metadata; an unavailable resource safely leaves the base gun unskinned.

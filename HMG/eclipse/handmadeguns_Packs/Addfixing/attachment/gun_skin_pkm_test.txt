@@ -1,8 +1,0 @@
-// Development coverage for newerGVCPack/guns/PKM.txt: LMG,PKM.
-Texture,AR_sample
-Stack,64
-Name,PKM Test Gun Skin
-GunSkin,true
-SkinTexture,ar.png
-SkinTarget,PKM
-GunSkinItem,pkm_test_skin

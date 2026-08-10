@@ -702,7 +702,8 @@ public class HandmadeGunsCore {
 	public void init(FMLInitializationEvent pEvent) {
 
 		HGGunRecipes.init();
-		HMGGunSkinRegistry.registerCraftingRecipes();
+		GameRegistry.addRecipe(new handmadeguns.recipes.HMGRecipeApplyGunSkin());
+		FMLLog.info("[HMG] Loaded %d gun skins.", HMGGunSkinRegistry.size());
 		GameRegistry.registerWorldGenerator(new HGWorldGen(), 0);
 
 		int D = Short.MAX_VALUE;
