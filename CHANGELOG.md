@@ -1,11 +1,14 @@
 # Changelog
 
-## Fix NEI 1.0.5.120 Gun Smithing compatibility
+## Add model-based attachment rendering
 
-- Register Gun Smithing recipe and usage handlers through NEI 1.0.5.120's
-  `GuiCraftingRecipe.craftinghandlers` and `GuiUsageRecipe.usagehandlers` lists.
-- Remove recipe catalyst registration because NEI 1.0.5.120 does not provide the
-  newer catalyst APIs; recipe and ingredient lookup remain available through NEI.
+- Add the optional comma-based `attach3dmodel,{model}` attachment key while
+  retaining the legacy icon and embedded gun-part paths when it is absent.
+- Add `attachmentlocation,x,y,z[,rotation]` as a shared local gun-model anchor
+  for every installed model attachment, with safe per-file numeric diagnostics.
+- Reuse cached HMG pack models, existing model textures, item renderer plumbing,
+  and the gun's existing `Items` attachment NBT slots in inventory, first-person,
+  third-person, entity, and placed-gun rendering paths.
 
 ## Add crafting-based gun skin removal
 
