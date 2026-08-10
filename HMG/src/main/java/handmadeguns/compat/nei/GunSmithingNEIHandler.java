@@ -24,15 +24,21 @@ public class GunSmithingNEIHandler extends TemplateRecipeHandler {
     public String getOverlayIdentifier() { return OVERLAY_ID; }
 
     public void loadCraftingRecipes(String outputId, Object... results) {
-        if (OVERLAY_ID.equals(outputId)) addRecipes(GunSmithRecipeRegistry.getAll());
+        if (OVERLAY_ID.equals(outputId)) {
+            arecipes.clear();
+            addRecipes(GunSmithRecipeRegistry.getAll());
+        }
         else super.loadCraftingRecipes(outputId, results);
     }
 
     public void loadCraftingRecipes(ItemStack result) {
+        // Isolate every NEI R-key query so a failed lookup cannot expose an older result.
+        arecipes.clear();
         addRecipes(GunSmithRecipeRegistry.findByOutput(result));
     }
 
     public void loadUsageRecipes(ItemStack ingredient) {
+        arecipes.clear();
         addRecipes(GunSmithRecipeRegistry.findByIngredient(ingredient));
     }
 

@@ -2,6 +2,8 @@ package handmadeguns.gunsmithing;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import handmadeguns.HandmadeGunsCore;
+import handmadeguns.items.HMGItemCustomMagazine;
+import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.block.Block;
@@ -80,11 +82,33 @@ public final class GunSmithRecipeRegistry {
     public static synchronized List<GunSmithRecipe> findByOutput(ItemStack output) {
         List<GunSmithRecipe> found = new ArrayList<GunSmithRecipe>();
         if (output != null) for (GunSmithRecipe recipe : RECIPES) {
-            ItemStack candidate = recipe.getOutput();
-            if (OreDictionary.itemMatches(candidate, output, false)
-                    && ItemStack.areItemStackTagsEqual(candidate, output)) found.add(recipe);
+            if (matchesRecipeOutput(recipe.getOutput(), output)) found.add(recipe);
         }
         return Collections.unmodifiableList(found);
+    }
+
+    /**
+     * Compares the identity of an item produced by a table recipe, rather than the
+     * mutable state of the particular stack being inspected by NEI.
+     */
+    public static boolean matchesRecipeOutput(ItemStack recipeOutput, ItemStack queried) {
+        if (recipeOutput == null || queried == null || recipeOutput.getItem() != queried.getItem()) return false;
+
+        Item item = recipeOutput.getItem();
+        // Guns use both damage and NBT for live ammunition, firing, and attachment state.
+        if (item instanceof HMGItem_Unified_Guns) return true;
+        // Custom magazines use item damage as their remaining-round count.
+        if (item instanceof HMGItemCustomMagazine) return true;
+
+        int recipeMetadata = recipeOutput.getItemDamage();
+        int queriedMetadata = queried.getItemDamage();
+        if (recipeMetadata != OreDictionary.WILDCARD_VALUE
+                && queriedMetadata != OreDictionary.WILDCARD_VALUE
+                && recipeMetadata != queriedMetadata) return false;
+
+        // An output tag is recipe-defined data.  An untagged output, by contrast,
+        // must accept irrelevant runtime tags added to the queried stack.
+        return !recipeOutput.hasTagCompound() || ItemStack.areItemStackTagsEqual(recipeOutput, queried);
     }
 
     public static synchronized List<GunSmithRecipe> findByIngredient(ItemStack stack) {
