@@ -1,5 +1,15 @@
 # Changelog
 
+## Add model-based attachment rendering
+
+- Add the optional comma-based `attach3dmodel,{model}` attachment key while
+  retaining the legacy icon and embedded gun-part paths when it is absent.
+- Add `attachmentlocation,x,y,z[,rotation]` as a shared local gun-model anchor
+  for every installed model attachment, with safe per-file numeric diagnostics.
+- Reuse cached HMG pack models, existing model textures, item renderer plumbing,
+  and the gun's existing `Items` attachment NBT slots in inventory, first-person,
+  third-person, entity, and placed-gun rendering paths.
+
 ## Add crafting-based gun skin removal
 
 - Add a dynamic shapeless recipe that removes an applied gun skin when its gun is

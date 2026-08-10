@@ -150,6 +150,12 @@ public class GunInfo {
 	public float onunderrotationz;
 	public float modelscale = 1;
 	public float inworldScale = 1;
+	/** Shared local anchor for attachments using attach3dmodel. */
+	public boolean hasAttachmentLocation = false;
+	public float attachmentLocationX = 0;
+	public float attachmentLocationY = 0;
+	public float attachmentLocationZ = 0;
+	public float attachmentLocationRotation = 0;
 
 	public float inventoryscale = 1;
 	public boolean grenade = false;
