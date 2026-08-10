@@ -1,5 +1,15 @@
 # Changelog
 
+## Fix HMG sight housing gun skin rendering
+
+- Apply universal gun skins to gun-owned iron-sight, red-dot, and scope housing parts
+  even when their model definitions mark them as attachment parts, while continuing
+  to exclude unrelated attachments, bullets, lights, lasers, and reticle/plate parts.
+- Mask the overlay against the opaque base render with an exact depth comparison, so
+  transparent and semi-transparent lens pixels remain on their original render path.
+- Remove polygon offset from the overlay pass because the repeated geometry now uses
+  the opaque pass's matching depth without writing new depth.
+
 ## Fix universal HMG gun skins
 
 - Replace target-pair recipe generation with one dynamic recipe accepting exactly one
