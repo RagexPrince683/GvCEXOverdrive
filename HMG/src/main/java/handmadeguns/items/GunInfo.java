@@ -95,25 +95,6 @@ public class GunInfo {
 
 	public double motion = 1D;
 	public double weight = 1D;
-	public boolean weightConfigured = false;
-	public float getWeightSensitivityMultiplier() {
-
-		if (!weightConfigured) {
-			return 1.0F;
-		}
-
-		double effectiveWeight =
-				Double.isNaN(weight) || Double.isInfinite(weight)
-						? 1.0D
-						: Math.max(0.0D, weight);
-
-		double scaledWeight = Math.pow(effectiveWeight, 0.1D);
-
-		float multiplier =
-				(float) (1.0D / (1.0D + 0.1D * scaledWeight));
-
-		return Math.max(0.015F, Math.min(1.0F, multiplier));
-	}
 	public boolean muzzleflash = true;
 	public float soundrespeed = 1.0F;
 	public int cocktime = 20;

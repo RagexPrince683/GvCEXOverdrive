@@ -35,9 +35,9 @@ public class RenderTickSmoothing {
 
 	public static float backUppedMouseSensitivity = -1;
 	// Development diagnostics. Never enable these in a release build.
-	private static final boolean DEBUG_WEIGHT_SENSITIVITY = false;
-	private static final boolean DEBUG_FORCE_WEIGHT_SENSITIVITY = false;
-	private static Item lastWeightDebugItem;
+	private static final boolean DEBUG_MOTION_SENSITIVITY = false;
+	private static final boolean DEBUG_FORCE_MOTION_SENSITIVITY = false;
+	private static Item lastMotionDebugItem;
 
 
 
@@ -88,15 +88,16 @@ public class RenderTickSmoothing {
 				HMGEntityParticles.particaltick = event.renderTickTime;
 				HandmadeGunsCore.smooth = event.renderTickTime;
 				ItemStack heldGun = getHeldUnifiedGun();
-				float weightSensitivityMultiplier = getHeldGunWeightSensitivityMultiplier(heldGun);
-				if(currentZoomLevel != 1 || weightSensitivityMultiplier != 1.0F) {
+				float handlingSensitivityMultiplier = getHeldGunMotionSensitivityMultiplier(heldGun);
+				if(currentZoomLevel != 1 || handlingSensitivityMultiplier != 1.0F) {
 					backUppedMouseSensitivity = HMG_proxy.getMCInstance().gameSettings.mouseSensitivity;
 					HMG_proxy.getMCInstance().gameSettings.mouseSensitivity =
-							backUppedMouseSensitivity / currentZoomLevel * weightSensitivityMultiplier;
+							backUppedMouseSensitivity / currentZoomLevel * handlingSensitivityMultiplier;
 				}else {
 					backUppedMouseSensitivity = -1;
 				}
-				logWeightSensitivityOnHeldGunChange(heldGun, weightSensitivityMultiplier,
+				ItemStack equippedGun = getEquippedUnifiedGun();
+				logMotionSensitivityOnHeldGunChange(equippedGun, getHeldGunMotionSensitivityMultiplier(equippedGun),
 						backUppedMouseSensitivity == -1 ? HMG_proxy.getMCInstance().gameSettings.mouseSensitivity : backUppedMouseSensitivity,
 						HMG_proxy.getMCInstance().gameSettings.mouseSensitivity);
 				currentZoomLevel = 1;
@@ -120,30 +121,41 @@ public class RenderTickSmoothing {
 		return held != null && held.getItem() instanceof HMGItem_Unified_Guns ? held : null;
 	}
 
-	private static float getHeldGunWeightSensitivityMultiplier(ItemStack held)
+	private static ItemStack getEquippedUnifiedGun()
 	{
-		if (held == null) return 1.0F;
-		if (DEBUG_WEIGHT_SENSITIVITY && DEBUG_FORCE_WEIGHT_SENSITIVITY) return 0.10F;
-		return ((HMGItem_Unified_Guns) held.getItem()).gunInfo.getWeightSensitivityMultiplier();
+		if (HMG_proxy.getMCInstance().thePlayer == null) return null;
+		ItemStack held = HMG_proxy.getMCInstance().thePlayer.getCurrentEquippedItem();
+		return held != null && held.getItem() instanceof HMGItem_Unified_Guns ? held : null;
 	}
 
-	private static void logWeightSensitivityOnHeldGunChange(ItemStack held, float multiplier,
+	private static float getHeldGunMotionSensitivityMultiplier(ItemStack held)
+	{
+		if (held == null) return 1.0F;
+		if (DEBUG_MOTION_SENSITIVITY && DEBUG_FORCE_MOTION_SENSITIVITY) return 0.10F;
+		double motion = ((HMGItem_Unified_Guns) held.getItem()).gunInfo.motion;
+		if (Double.isNaN(motion) || Double.isInfinite(motion)) return 1.0F;
+		if (motion >= 1.0D) return 1.0F;
+		motion = Math.max(0.0D, motion);
+		return (float) Math.max(0.25D, 1.0D - 0.75D * (1.0D - motion));
+	}
+
+	private static void logMotionSensitivityOnHeldGunChange(ItemStack held, float multiplier,
 			float originalSensitivity, float appliedSensitivity)
 	{
-		if (!DEBUG_WEIGHT_SENSITIVITY) return;
+		if (!DEBUG_MOTION_SENSITIVITY) return;
 		Item heldItem = held == null ? null : held.getItem();
-		if (heldItem == lastWeightDebugItem) return;
-		lastWeightDebugItem = heldItem;
+		if (heldItem == lastMotionDebugItem) return;
+		lastMotionDebugItem = heldItem;
 		if (!(heldItem instanceof HMGItem_Unified_Guns)) {
-			FMLLog.info("[HMG weight sensitivity] held gun: none");
+			FMLLog.info("[HMG Motion sensitivity] held gun: none");
 			return;
 		}
 		HMGItem_Unified_Guns gun = (HMGItem_Unified_Guns) heldItem;
 		Object registryName = Item.itemRegistry.getNameForObject(heldItem);
-		FMLLog.info("[HMG weight sensitivity] gun=%s, Weight=%s, multiplier=%.4f, original=%.4f, applied=%.4f%s",
-				registryName == null ? heldItem.getUnlocalizedName() : registryName.toString(),
-				Double.toString(gun.gunInfo.weight), multiplier, originalSensitivity, appliedSensitivity,
-				gun.gunInfo.weightConfigured ? "" : " (default Weight: no Weight key was configured)");
+		FMLLog.info("[HMG Motion sensitivity] registry=%s, unlocalized=%s, Motion=%s, multiplier=%.4f, original=%.4f, applied=%.4f, zoom=%.4f, riding=%s",
+				registryName == null ? "unregistered" : registryName.toString(), heldItem.getUnlocalizedName(),
+				Double.toString(gun.gunInfo.motion), multiplier, originalSensitivity, appliedSensitivity,
+				currentZoomLevel, Boolean.toString(HMG_proxy.getMCInstance().thePlayer.ridingEntity != null));
 	}
 
 	//todo: figure out why some guns decide to continue to be in sprint state while firing
