@@ -10,6 +10,13 @@
   and the gun's existing `Items` attachment NBT slots in inventory, first-person,
   third-person, entity, and placed-gun rendering paths.
 
+## Fix NEI 1.0.5.120 Gun Smithing compatibility
+
+- Register Gun Smithing recipe and usage handlers through NEI 1.0.5.120's
+  `GuiCraftingRecipe.craftinghandlers` and `GuiUsageRecipe.usagehandlers` lists.
+- Remove recipe catalyst registration because NEI 1.0.5.120 does not provide the
+  newer catalyst APIs; recipe and ingredient lookup remain available through NEI.
+
 ## Add crafting-based gun skin removal
 
 - Add a dynamic shapeless recipe that removes an applied gun skin when its gun is
