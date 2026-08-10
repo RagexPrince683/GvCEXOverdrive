@@ -23,6 +23,7 @@ UnderBarrelWeapon,0
 Cycle,2
 
 Motion,0.35
+Weight,600
 
 Recoil,30
 Recoil_sneaking,7.5
