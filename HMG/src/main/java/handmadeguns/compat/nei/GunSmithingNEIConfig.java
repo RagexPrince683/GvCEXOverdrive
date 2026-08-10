@@ -1,19 +1,17 @@
 package handmadeguns.compat.nei;
 
-import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
-import codechicken.nei.recipe.RecipeCatalysts;
+import codechicken.nei.recipe.GuiCraftingRecipe;
+import codechicken.nei.recipe.GuiUsageRecipe;
 import handmadeguns.HandmadeGunsCore;
-import net.minecraft.item.ItemStack;
 
 /** Loaded by NEI's optional plugin discovery; it is never referenced by common HMG code. */
 public class GunSmithingNEIConfig implements IConfigureNEI {
     public void loadConfig() {
         GunSmithingNEIHandler crafting = new GunSmithingNEIHandler();
         GunSmithingNEIHandler usage = new GunSmithingNEIHandler();
-        API.registerRecipeHandler(crafting);
-        API.registerUsageHandler(usage);
-        RecipeCatalysts.addRecipeCatalyst(new ItemStack(HandmadeGunsCore.blockGunTable), crafting);
+        GuiCraftingRecipe.craftinghandlers.add(crafting);
+        GuiUsageRecipe.usagehandlers.add(usage);
     }
 
     public String getName() {
