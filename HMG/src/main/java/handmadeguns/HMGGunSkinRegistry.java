@@ -1,5 +1,6 @@
 package handmadeguns;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry;
 import handmadeguns.items.HMGItemGunSkin;
 import net.minecraft.item.Item;
@@ -18,6 +19,36 @@ public final class HMGGunSkinRegistry {
 
     public static void register(HMGItemGunSkin skin) { SKINS.put(skin.getSkinId(), skin); }
     public static HMGItemGunSkin get(String id) { return id == null ? null : SKINS.get(id); }
+
+    /** Run once after pack registration; malformed targets warn without disabling other skins. */
+    public static void validateTargets() {
+        for (HMGItemGunSkin skin : SKINS.values()) {
+            for (String target : skin.getTargets()) {
+                boolean matched = false;
+                for (Object candidate : HMGGunMaker.Guns) {
+                    if (candidate instanceof Item && targetMatches((Item)candidate, target)) {
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched) FMLLog.warning("[HMG] Gun skin '%s' has invalid SkinTarget '%s'; expected GunName or %s:GunName",
+                        skin.getSkinId(), target, HandmadeGunsCore.MOD_ID);
+            }
+        }
+    }
+
+    private static boolean targetMatches(Item gun, String rawTarget) {
+        GameRegistry.UniqueIdentifier actual = GameRegistry.findUniqueIdentifierFor(gun);
+        if (actual == null || rawTarget == null) return false;
+        String target = rawTarget.trim();
+        int separator = target.indexOf(':');
+        if (separator < 0) return actual.name.equals(target);
+        String targetMod = target.substring(0, separator).trim();
+        String targetName = target.substring(separator + 1).trim();
+        return actual.name.equals(targetName) && (actual.modId.equals(targetMod)
+                || (targetMod.equalsIgnoreCase(HandmadeGunsCore.MOD_ID)
+                && actual.modId.equalsIgnoreCase(HandmadeGunsCore.MOD_ID)));
+    }
 
     public static String gunId(ItemStack gun) {
         GameRegistry.UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(gun.getItem());

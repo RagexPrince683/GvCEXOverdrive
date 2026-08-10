@@ -250,7 +250,10 @@ public class HMGAddAttachment
 								skinTexture = type[1];
 								break;
 							case "SkinTarget":
-								for (int target = 1; target < type.length; target++) skinTargets.add(type[target]);
+								for (int target = 1; target < type.length; target++) {
+									String skinTarget = type[target].trim();
+									if (skinTarget.length() > 0) skinTargets.add(skinTarget);
+								}
 								break;
 							case "GunRotation":
 								for (int i = 0; i < 3; i++)

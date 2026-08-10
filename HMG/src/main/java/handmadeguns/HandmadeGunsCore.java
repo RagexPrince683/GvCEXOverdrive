@@ -330,6 +330,7 @@ public class HandmadeGunsCore {
 
 		readPack(packdir_normal,pEvent.getSide().isClient());
 		readPack(packdir_old,pEvent.getSide().isClient());
+		HMGGunSkinRegistry.validateTargets();
 
 		//TODO:INJECT_FUNCTION
 		File[] packlist = packdir_normal.listFiles();
@@ -1187,4 +1188,3 @@ public class HandmadeGunsCore {
 	//END
 
 }
-
