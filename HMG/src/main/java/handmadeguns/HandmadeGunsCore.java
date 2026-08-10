@@ -330,7 +330,6 @@ public class HandmadeGunsCore {
 
 		readPack(packdir_normal,pEvent.getSide().isClient());
 		readPack(packdir_old,pEvent.getSide().isClient());
-		HMGGunSkinRegistry.validateTargets();
 
 		//TODO:INJECT_FUNCTION
 		File[] packlist = packdir_normal.listFiles();
@@ -703,7 +702,7 @@ public class HandmadeGunsCore {
 	public void init(FMLInitializationEvent pEvent) {
 
 		HGGunRecipes.init();
-		GameRegistry.addRecipe(new handmadeguns.recipes.HMGRecipeApplyGunSkin());
+		HMGGunSkinRegistry.registerCraftingRecipes();
 		GameRegistry.registerWorldGenerator(new HGWorldGen(), 0);
 
 		int D = Short.MAX_VALUE;

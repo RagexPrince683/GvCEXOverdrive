@@ -1,0 +1,8 @@
+// Development coverage for a real GVCguns declaration: AR,AK47.
+Texture,AR_sample
+Stack,64
+Name,AK47 Test Gun Skin
+GunSkin,true
+SkinTexture,ar.png
+SkinTarget,AK47
+GunSkinItem,ak47_test_skin

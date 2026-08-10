@@ -970,10 +970,12 @@ public class HMGGunMaker {
 							if(newgun != null) {
 								try {
 									Item check = GameRegistry.findItem("HandmadeGuns",GunName);
-									if(check == null)
+									if(check == null) {
 										GameRegistry.registerItem(newgun, GunName);
-									else if(check instanceof HMGItem_Unified_Guns){
+										HMGGunSkinRegistry.registerGun(GunName, newgun);
+									} else if(check instanceof HMGItem_Unified_Guns){
 										newgun = (HMGItem_Unified_Guns) check;
+										HMGGunSkinRegistry.registerGun(GunName, newgun);
 									}
 //									System.out.println("debug loading " + newgun.getUnlocalizedName());
 								}catch (Exception e){

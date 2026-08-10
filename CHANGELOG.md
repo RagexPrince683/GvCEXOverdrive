@@ -1,5 +1,17 @@
 # Changelog
 
+## Fix HMG gun skin crafting with concrete recipes
+
+- Track every final unified gun object by its pack-declared `GunName`, including
+  reused registered guns, and generate one exact-object crafting recipe for each
+  valid gun/skin target pair during Forge initialization.
+- Preserve the input gun stack and all existing state while applying `GunSkin`, and
+  report recipe totals plus every unresolved target once during startup.
+- Document that skin crafting is resolved after pack loading without crafting-time
+  Forge registry identifier lookups.
+- Add development pack skin definitions for the real `AK47` and newer-pack `PKM`
+  declarations so concrete recipe registration can be exercised beyond `AR_sample`.
+
 ## Fix HMG gun skin crafting identity matching
 
 - Match skin targets against each gun item's actual Forge unique identifier instead
