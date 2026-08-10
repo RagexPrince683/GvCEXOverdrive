@@ -1,8 +1,8 @@
 package handmadeguns.gunsmithing;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 import java.util.List;
 
@@ -10,25 +10,18 @@ public class GunSmithingCraftHandler {
 
     //gun craft handler
     public static void handleCraft(EntityPlayer player, int recipeIndex) {
-        if (player == null) return;
+        if (!canHandleRequest(player)) return;
         List<GunSmithRecipeRegistry.GunRecipeEntry> list = GunSmithRecipeRegistry.getAll();
         if (list == null || recipeIndex < 0 || recipeIndex >= list.size()) return;
         GunSmithRecipeRegistry.GunRecipeEntry entry = list.get(recipeIndex);
         if (entry == null || entry.result == null) return;
 
-        GunTableInventoryAllocator.AllocationResult allocation =
-                GunTableInventoryAllocator.allocate(player, entry.ingredients);
-        if (!allocation.success) return;
-        if (!GunTableInventoryAllocator.consume(player, allocation)) return;
-
-        player.inventory.addItemStackToInventory(entry.result.copy());
-        player.inventory.markDirty();
-        if (player.inventoryContainer != null) player.inventoryContainer.detectAndSendChanges();
+        craftTransaction(player, entry);
     }
 
     // ---------------- SERVER-SIDE AMMO CRAFT ----------------
     public static void handleAmmoCraft(EntityPlayer player, int recipeIndex) {
-        if (player == null) return;
+        if (!canHandleRequest(player)) return;
 
         // Build the SAME combined list as the GUI
         List<GunSmithRecipeRegistry.GunRecipeEntry> ammoList =
@@ -48,29 +41,45 @@ public class GunSmithingCraftHandler {
             return;
         }
 
-        GunTableInventoryAllocator.AllocationResult allocation =
-                GunTableInventoryAllocator.allocate(player, entry.ingredients);
-        if (!allocation.success) {
-            if (allocation.failedIngredient != null) {
-                System.out.println("[GunSmith] NOT ENOUGH: " +
-                        allocation.failedIngredient.getDisplayName() + " missing " + allocation.missingAmount);
+        if (craftTransaction(player, entry)) {
+            System.out.println("[GunSmith] CRAFTED: " + entry.result.getDisplayName());
+        }
+    }
+
+    private static boolean canHandleRequest(EntityPlayer player) {
+        return player != null && !player.worldObj.isRemote && player.openContainer instanceof ContainerGunSmith;
+    }
+
+    /**
+     * Revalidates, consumes, and delivers under one inventory lock.  The packet only
+     * selects a server-owned recipe; no client-provided stack participates here.
+     */
+    private static boolean craftTransaction(EntityPlayer player,
+                                            GunSmithRecipeRegistry.GunRecipeEntry entry) {
+        synchronized (player.inventory) {
+            GunTableInventoryAllocator.AllocationResult allocation =
+                    GunTableInventoryAllocator.allocate(player, entry.ingredients);
+            if (!allocation.success || !GunTableInventoryAllocator.consume(player, allocation)) return false;
+
+            ItemStack remainder = entry.result.copy();
+            player.inventory.addItemStackToInventory(remainder);
+            if (remainder.stackSize > 0) {
+                player.dropPlayerItemWithRandomChoice(remainder, false);
             }
-            return;
+            synchronize(player);
+            return true;
         }
-        if (!GunTableInventoryAllocator.consume(player, allocation)) return;
+    }
 
-        // === GIVE RESULT ===
-        ItemStack resultCopy = entry.result.copy();
-        boolean added = player.inventory.addItemStackToInventory(resultCopy);
-
-        if (!added) {
-            // If inventory full, drop it in the world
-            player.dropPlayerItemWithRandomChoice(resultCopy, false);
-        }
-
+    private static void synchronize(EntityPlayer player) {
         player.inventory.markDirty();
         if (player.inventoryContainer != null) player.inventoryContainer.detectAndSendChanges();
-
-        System.out.println("[GunSmith] CRAFTED: " + entry.result.getDisplayName());
+        if (player.openContainer != null) player.openContainer.detectAndSendChanges();
+        if (player instanceof EntityPlayerMP) {
+            EntityPlayerMP serverPlayer = (EntityPlayerMP) player;
+            // ContainerGunSmith has no slots of its own, so explicitly send the
+            // player inventory container as well as detecting the open container.
+            serverPlayer.sendContainerToPlayer(serverPlayer.inventoryContainer);
+        }
     }
 }

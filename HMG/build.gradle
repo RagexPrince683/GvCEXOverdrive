@@ -139,17 +139,9 @@ repositories {
 // ===========================
 
 dependencies {
-	/*
-     * Do not hardwire old ChickenBones NEI/CCL here.
-     *
-     * For GTNH/Angelica runClient testing, put matching dev/deobf jars in:
-     *   eclipse/mods/
-     *
-     * Put compile-only API jars in:
-     *   libs/compileOnly/
-     */
-
 	compileOnly fileTree(dir: "libs/compileOnly", include: ["*.jar"])
+	// Compile the optional 1.7.10 NEI API without packaging NEI in the HMG jar.
+	compileOnly "codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev"
 
 	compileOnly "inventorytweaks:InventoryTweaks:1.59-dev:deobf"
 	implementation "li.cil.oc:OpenComputers:MC1.7.10-1.5.+:api"

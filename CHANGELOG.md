@@ -1,5 +1,16 @@
 # Changelog
 
+## Fix Gun Smithing Table crafting and add NEI recipe support
+
+- Deliver Gun Smithing Table outputs immediately from the server, drop only an
+  insertion remainder, and explicitly synchronize the player and open containers.
+- Serialize each inventory transaction so rapid requests cannot consume the same
+  ingredients twice, and reject requests unless the smithing container is open.
+- Add optional NEI integration with a dedicated Gun Smithing Table category,
+  table catalyst, distinct duplicate-output recipes, and cycling ore alternatives.
+- Compile against NEI's development API without packaging it as an HMG runtime
+  dependency, and document recipe discovery for content-pack authors.
+
 ## Gun weight mouse sensitivity
 
 - Reduce first-person mouse sensitivity while a unified HMG gun is held, using the
