@@ -151,6 +151,14 @@ rejects extra ingredients. Damage, ammunition, attachments, custom names,
 enchantments, the previous skin, and all other per-stack NBT have no effect on whether
 the recipe matches; the copied output retains them and changes only `GunSkin`.
 
+To remove an applied skin, craft the skinned gun with either the skin item whose stable
+`GunSkinItem` identifier is stored on the gun or one dye. Vanilla dye items and modded
+dyes registered under a Forge Ore Dictionary name beginning with `dye` are accepted.
+The removal recipe copies the gun and removes only its root `GunSkin` string, preserving
+ammunition, attachments, damage, custom names, fire mode, cocking state, and all other
+stack NBT. A different skin still follows the normal application recipe rather than
+removing the current skin.
+
 Definitions load on both client and server because crafting needs their IDs. Overlay
 existence is checked only by the client renderer and is not stored in
 shared skin metadata; an unavailable resource safely leaves the base gun unskinned.
