@@ -1,5 +1,14 @@
 # Changelog
 
+## Fix Gun Smithing Table NEI integration
+
+- Mirror both Gun Smithing Table pages in the custom NEI category: registered gun
+  recipes and the combined ammo recipes, including compatible recipes discovered
+  from Minecraft's `CraftingManager`.
+- Match crafting-result and ingredient-usage lookups against the complete table
+  recipe population while preserving Ore Dictionary alternative cycling.
+- Suppress only exact cross-list recipe duplicates, retaining distinct recipes
+  that happen to produce the same item.
 ## Add model-based attachment rendering
 
 - Add the optional comma-based `attach3dmodel,{model}` attachment key while

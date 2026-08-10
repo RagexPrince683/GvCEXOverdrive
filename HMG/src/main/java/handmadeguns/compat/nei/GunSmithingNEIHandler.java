@@ -26,7 +26,7 @@ public class GunSmithingNEIHandler extends TemplateRecipeHandler {
     }
 
     public void loadCraftingRecipes(ItemStack result) {
-        for (GunSmithRecipeRegistry.GunRecipeEntry recipe : GunSmithRecipeRegistry.getAll()) {
+        for (GunSmithRecipeRegistry.GunRecipeEntry recipe : getVisibleRecipes()) {
             if (recipe != null && recipe.result != null && stacksMatch(recipe.result, result)) {
                 arecipes.add(new CachedGunSmithRecipe(recipe));
             }
@@ -34,7 +34,7 @@ public class GunSmithingNEIHandler extends TemplateRecipeHandler {
     }
 
     public void loadUsageRecipes(ItemStack ingredient) {
-        for (GunSmithRecipeRegistry.GunRecipeEntry recipe : GunSmithRecipeRegistry.getAll()) {
+        for (GunSmithRecipeRegistry.GunRecipeEntry recipe : getVisibleRecipes()) {
             if (recipe == null || recipe.ingredients == null) continue;
             for (GunTableIngredient required : recipe.ingredients) {
                 if (required != null && required.matches(ingredient)) {
@@ -46,9 +46,72 @@ public class GunSmithingNEIHandler extends TemplateRecipeHandler {
     }
 
     private void addAllRecipes() {
-        for (GunSmithRecipeRegistry.GunRecipeEntry recipe : GunSmithRecipeRegistry.getAll()) {
+        for (GunSmithRecipeRegistry.GunRecipeEntry recipe : getVisibleRecipes()) {
             if (recipe != null && recipe.result != null) arecipes.add(new CachedGunSmithRecipe(recipe));
         }
+    }
+
+    /**
+     * Mirrors both recipe pages exposed by {@code GunSmithingTableGui}. Recipes
+     * discovered by the ammo registry from CraftingManager deliberately remain
+     * normal crafting recipes as well as appearing in this handler.
+     */
+    private static List<GunSmithRecipeRegistry.GunRecipeEntry> getVisibleRecipes() {
+        ArrayList<GunSmithRecipeRegistry.GunRecipeEntry> recipes =
+                new ArrayList<GunSmithRecipeRegistry.GunRecipeEntry>();
+        addUniqueRecipes(recipes, GunSmithRecipeRegistry.getAll());
+        addUniqueRecipes(recipes, GunSmithRecipeRegistry.getCombinedAmmoRecipes());
+        return recipes;
+    }
+
+    private static void addUniqueRecipes(List<GunSmithRecipeRegistry.GunRecipeEntry> recipes,
+                                         List<GunSmithRecipeRegistry.GunRecipeEntry> additions) {
+        if (additions == null) return;
+        for (GunSmithRecipeRegistry.GunRecipeEntry addition : additions) {
+            if (addition == null || addition.result == null) continue;
+            boolean duplicate = false;
+            for (GunSmithRecipeRegistry.GunRecipeEntry recipe : recipes) {
+                if (sameRecipe(recipe, addition)) {
+                    duplicate = true;
+                    break;
+                }
+            }
+            if (!duplicate) recipes.add(addition);
+        }
+    }
+
+    private static boolean sameRecipe(GunSmithRecipeRegistry.GunRecipeEntry first,
+                                      GunSmithRecipeRegistry.GunRecipeEntry second) {
+        if (!sameStack(first.result, second.result)) return false;
+        GunTableIngredient[] firstIngredients = first.ingredients;
+        GunTableIngredient[] secondIngredients = second.ingredients;
+        if (firstIngredients == null || secondIngredients == null) {
+            return firstIngredients == secondIngredients;
+        }
+        if (firstIngredients.length != secondIngredients.length) return false;
+        for (int i = 0; i < firstIngredients.length; i++) {
+            if (!sameIngredient(firstIngredients[i], secondIngredients[i])) return false;
+        }
+        return true;
+    }
+
+    private static boolean sameIngredient(GunTableIngredient first, GunTableIngredient second) {
+        if (first == null || second == null) return first == second;
+        if (first.getClass() != second.getClass()
+                || first.getRequiredAmount() != second.getRequiredAmount()) return false;
+        if (first instanceof OreDictionaryIngredient) {
+            return ((OreDictionaryIngredient) first).getOreName().equals(
+                    ((OreDictionaryIngredient) second).getOreName());
+        }
+        return sameStack(first.getDisplayStack(), second.getDisplayStack());
+    }
+
+    private static boolean sameStack(ItemStack first, ItemStack second) {
+        return first != null && second != null
+                && first.getItem() == second.getItem()
+                && first.getItemDamage() == second.getItemDamage()
+                && first.stackSize == second.stackSize
+                && ItemStack.areItemStackTagsEqual(first, second);
     }
 
     private static boolean stacksMatch(ItemStack expected, ItemStack candidate) {
