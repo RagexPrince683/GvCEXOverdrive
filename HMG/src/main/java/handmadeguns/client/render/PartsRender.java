@@ -23,6 +23,18 @@ public abstract class PartsRender {
 	public ResourceLocation gunSkinTexture;
 	/** Independent of Forge's item pass; true only for the model invocation that owns the skin overlay. */
 	public boolean renderGunSkinOverlay;
+
+	/**
+	 * Gun-owned opaque geometry is eligible for the universal skin overlay.  Attachment
+	 * markers normally identify separately styled equipment, except for the gun model's
+	 * selectable iron-sight, red-dot, and scope housings.
+	 */
+	private boolean shouldApplyGunSkin(HMGGunParts parts) {
+		if (parts == null || parts.isbullet || parts.reticleAndPlate || parts.islight || parts.islasersight) {
+			return false;
+		}
+		return !parts.isattachpart || parts.issight || parts.isdot || parts.isscope;
+	}
 	
 
 	public abstract void partSidentification(Object... data);
@@ -114,16 +126,16 @@ public abstract class PartsRender {
 			float lastBrightnessY = OpenGlHelper.lastBrightnessY;
 			if(!skip) {
 				parts.currentGroup_parts.render();
-				if (gunSkinTexture != null && renderGunSkinOverlay && !parts.isattachpart && !parts.isbullet) {
+				if (gunSkinTexture != null && renderGunSkinOverlay && shouldApplyGunSkin(parts)) {
 					GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT | GL11.GL_CURRENT_BIT | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_POLYGON_BIT);
 					FMLClientHandler.instance().getClient().getTextureManager().bindTexture(gunSkinTexture);
 					GL11.glEnable(GL11.GL_BLEND);
 					GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 					GL11.glEnable(GL11.GL_ALPHA_TEST);
 					GL11.glAlphaFunc(GL11.GL_GREATER, 0.0F);
+					GL11.glEnable(GL11.GL_DEPTH_TEST);
+					GL11.glDepthFunc(GL11.GL_EQUAL);
 					GL11.glDepthMask(false);
-					GL11.glEnable(GL11.GL_POLYGON_OFFSET_FILL);
-					GL11.glPolygonOffset(-1.0F, -1.0F);
 					GL11.glColor4f(1, 1, 1, 1);
 					parts.currentGroup_parts.render();
 					GL11.glPopAttrib();
