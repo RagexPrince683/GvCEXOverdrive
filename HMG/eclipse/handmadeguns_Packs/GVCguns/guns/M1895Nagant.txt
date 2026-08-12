@@ -81,7 +81,7 @@ MagazineGL,0,HandmadeGuns,bullet_rr_hmg
 
 MuzzleJump,-1
 
-ReloadTime,580
+ReloadTime,5
 
 AddParts,frame
 	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0

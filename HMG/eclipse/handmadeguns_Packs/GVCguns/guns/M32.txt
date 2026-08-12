@@ -7,7 +7,7 @@ BlletSpreadDiffusion,5,0,1.8,0.2,3,0.6
 Cycle,10
 Recoil,8
 Recoil_sneaking,4
-ReloadTime,120
+ReloadTime,12
 RemainingBullet,6
 Attacking,4.0f
 Zoom,1.1f,2.0f,4.0f
