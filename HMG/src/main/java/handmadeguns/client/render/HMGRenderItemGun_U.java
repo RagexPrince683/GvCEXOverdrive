@@ -431,9 +431,10 @@ public class HMGRenderItemGun_U implements IItemRenderer {
 			case INVENTORY:
 			case FIRST_PERSON_MAP:
 				return false;
+			case EQUIPPED:
+				return helper != ItemRendererHelper.BLOCK_3D;
 			case EQUIPPED_FIRST_PERSON:
 			case ENTITY:
-			case EQUIPPED:
 				return true;
 		}
 		return false;

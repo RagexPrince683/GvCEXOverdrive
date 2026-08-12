@@ -1,5 +1,18 @@
 # Changelog
 
+## Fix CustomNPC+ held HMG gun orientation
+
+- Correct the Forge render-helper contract in all three HMG gun renderers so an
+  equipped gun no longer advertises the generic `BLOCK_3D` helper while retaining
+  its custom `EQUIPPED` renderer and all other render-type support.
+- Prevent CustomNPC+ from applying its generic 3D-item transform before HMG's own
+  non-player gun transform, which previously combined two incompatible transform
+  systems and made aimed guns point sideways.
+- Preserve the established player, non-player, first-person, dropped-item,
+  inventory, attachment, skin, reload, animation, LittleMaid, and configured gun
+  transforms; the fix changes only helper selection in `HMGRenderItemGun_U`,
+  `HMGRenderItemGun_U_NEW`, and `HMGRenderItemGun_S`.
+
 ## Fix gun Motion mouse sensitivity scaling
 
 - Correct the previous sensitivity implementation, which incorrectly introduced a
