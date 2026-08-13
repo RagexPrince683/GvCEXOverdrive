@@ -1,6 +1,7 @@
 package handmadeguns.client.render;
 
 import handmadeguns.client.HMGDroppedGunRenderHelper;
+import handmadeguns.client.HMGCustomNpcRenderCompat;
 
 import handmadeguns.HandmadeGunsCore;
 import handmadeguns.HMGGunSkinRegistry;
@@ -304,7 +305,10 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 			case FIRST_PERSON_MAP:
 				return false;
 			case EQUIPPED:
-				return helper != ItemRendererHelper.BLOCK_3D;
+				if (helper == ItemRendererHelper.BLOCK_3D && HMGCustomNpcRenderCompat.isRenderingCustomNpc()) {
+					return false;
+				}
+				return true;
 			case EQUIPPED_FIRST_PERSON:
 			case ENTITY:
 				return true;

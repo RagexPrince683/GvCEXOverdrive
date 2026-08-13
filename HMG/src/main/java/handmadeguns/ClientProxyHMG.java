@@ -1,6 +1,7 @@
 package handmadeguns;
 
 import handmadeguns.client.HMGManualGunPickupClientHandler;
+import handmadeguns.client.HMGCustomNpcRenderCompat;
 
 
 import java.io.File;
@@ -212,6 +213,7 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		}
 		MinecraftForge.EVENT_BUS.register(new HMGParticles());
 		MinecraftForge.EVENT_BUS.register(new HMGFovHandler());
+		MinecraftForge.EVENT_BUS.register(new HMGCustomNpcRenderCompat());
 
 
 		try {
