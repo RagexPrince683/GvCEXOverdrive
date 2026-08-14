@@ -1,5 +1,46 @@
 # Changelog
 
+## Add per-shell CustomMagazine ballistic overrides
+
+- `CustomMagazine` ammunition may now override projectile power, speed, gravity,
+  spread, pellet count, type/model, explosion and block damage, stability, damage
+  range, knockback, bounce, resistance, acceleration, fuse, and water resistance.
+  Omitted keys continue to inherit the gun TXT value; existing `damagemodify` and
+  `speedmodify` multipliers are applied after absolute power/speed overrides.
+- Supported keys and aliases are `BulletPower`, `BulletSpeed`, `BulletGravity`,
+  `BulletSpread`/`BlletSpread`, `ShotGun_Pellet`/`PerFireRound`, `BulletType`,
+  `Explosion`/`Explosionlevel`, `BlockDestroy`/`Blockdestroy`, `BulletStability`,
+  `damageRange`, `KnockBack`/`knockback`, `KnockBackY`/`knockbackY`,
+  `CanBounce`, `BounceRate`/`bouncerate`, `BounceLimit`/`bouncelimit`,
+  `Resistance`/`resistance`, `Acceleration`/`acceleration`,
+  `AccelerationDelay`/`accelerationDelay`, `AccelerationFuse`/`accelerationFuse`,
+  `Bulletmodel`/`BulletModelName`, `ResistanceInWater`, and `fuse`/`bulletFuse`.
+- `MultiMagazine` guns with `PerShellReload,true` retain the actual shell stacks
+  in their tube as a FIFO queue. Selecting a new shell affects future loading,
+  not rounds already in the tube.
+
+Example buckshot ammunition:
+
+```text
+Name,12 gauge buckshot
+Stack,64
+BulletRound,1
+BulletPower,5
+BulletSpeed,4
+BlletSpread,0.12
+ShotGun_Pellet,9
+CustomMagazine,12g_buckshot
+```
+
+Example slug projectile count:
+
+```text
+Name,12 gauge slug
+BulletRound,1
+ShotGun_Pellet,1
+CustomMagazine,12g_slug
+```
+
 ## Add fast TXT-only gun settings reload command
 
 - `/reloadsettings` continues to reload gun TXT settings and invalidate/reload

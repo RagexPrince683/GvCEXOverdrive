@@ -37,6 +37,18 @@ public class HMGItemCustomMagazine extends HMGItemAttachmentBase {
     public float  resistance = Float.NaN;
     public float  acceleration = Float.NaN;
     public float  gra = Float.NaN;
+    // Absolute per-round overrides.  Null means "inherit the gun" (zero is valid).
+    public Integer powerOverride;
+    public Float speedOverride;
+    public Float spreadOverride;
+    public Integer pelletOverride;
+    public Float bulletStabilityOverride;
+    public Float damageRangeOverride;
+    public Float resistanceInWaterOverride;
+    public Boolean canBounceOverride;
+    public Boolean blockDestroyOverride;
+    public Integer accelerationDelayOverride;
+    public Integer accelerationFuseOverride;
     
     public String bulletItemName;
     public Item bulletItem;

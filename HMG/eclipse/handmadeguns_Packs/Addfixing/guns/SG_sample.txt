@@ -61,7 +61,7 @@ ScopeTexture,ironsight.png,reddot.png,scope.png
 RenderCross,false
 RightType,1
 Automatic,false
-Magazine,0,HandmadeGuns,bullet_shell_hmg
+MultiMagazine,HandmadeGuns:12g_birdshot,HandmadeGuns:12g_buckshot,HandmadeGuns:12g_slug
 
 Unified_guns,SG_sample
 

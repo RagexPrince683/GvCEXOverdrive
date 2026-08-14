@@ -1007,7 +1007,8 @@ public class HMGItem_Unified_Guns extends Item {
 //            world.playSoundEffect(entity.posX,entity.posY,entity.posZ, sound, soundlevel, soundspeed);
 
 
-				damageMagazine(itemstack, entity);
+				// Resolve before consumption: this exact stack supplies this shot's profile.
+				ItemStack ammunitionStack = resolveNextAmmunitionStack(itemstack);
 				HMGEntityBulletBase[] bullet = null;
 				//メソッド一個追加して、弾種類で分けながらfor回したほうが絶対効率良さそう<-んな訳あるか
 				int currentBulletType = gunInfo.guntype;
@@ -1043,8 +1044,14 @@ public class HMGItem_Unified_Guns extends Item {
 					}
 				}
 				firetemp = new FireTemp(gunInfo);
-				int magazineBulletOption = get_Type_Option_of_currentMagzine_and_apply_magazine_Option(itemstack);
-				if (magazineBulletOption != -1) currentBulletType = magazineBulletOption;
+				firetemp.applyMagOption(ammunitionStack);
+				if(firetemp.bulletType != -1) currentBulletType = firetemp.bulletType;
+				float shotSpreadBackup = guntemp.tempspread;
+				// GunTemp has already applied ADS, diffusion, movement and attachments; scale
+				// that finished value so ammunition replaces only its base component.
+				if (gunInfo.spread_setting != 0) guntemp.tempspread *= firetemp.spread / gunInfo.spread_setting;
+				else guntemp.tempspread = firetemp.spread;
+				damageMagazine(itemstack, entity);
 				float backUpRotationPitch = entity.rotationPitch;
 				float backUpRotationYaw = entity.rotationYaw;
 				if(!gunInfo.elevationOffsets.isEmpty() && !(entity instanceof PlacedGunEntity)){
@@ -1099,27 +1106,27 @@ public class HMGItem_Unified_Guns extends Item {
 						this.Flash(itemstack, world, entity, nbt);
 					}
 					for (HMGEntityBulletBase bulletBase : bullet) {
-						bulletBase.knockbackXZ = gunInfo.knockback;
-						bulletBase.knockbackY = gunInfo.knockbackY;
-						bulletBase.bulletStability = gunInfo.bulletStability;
-						bulletBase.gra = gunInfo.gravity;
-						bulletBase.bouncerate = gunInfo.bouncerate;
-						bulletBase.bouncelimit = gunInfo.bouncelimit;
+						bulletBase.knockbackXZ = firetemp.knockback;
+						bulletBase.knockbackY = firetemp.knockbackY;
+						bulletBase.bulletStability = firetemp.bulletStability;
+						bulletBase.gra = firetemp.gra;
+						bulletBase.bouncerate = firetemp.bouncerate;
+						bulletBase.bouncelimit = firetemp.bouncelimit;
 						bulletBase.fuse = firetemp.fuse;
-						bulletBase.canbounce = gunInfo.canbounce;
-						bulletBase.resistance = gunInfo.resistance;
-						bulletBase.acceleration = gunInfo.acceleration;
-						bulletBase.accelerationDelay = gunInfo.accelerationDelay;
-						bulletBase.accelerationFuse = gunInfo.accelerationFuse;
+						bulletBase.canbounce = firetemp.canbounce;
+						bulletBase.resistance = firetemp.resistance;
+						bulletBase.acceleration = firetemp.acceleration;
+						bulletBase.accelerationDelay = firetemp.accelerationDelay;
+						bulletBase.accelerationFuse = firetemp.accelerationFuse;
 						bulletBase.canex = firetemp.destroyBlock;
 						if(bulletBase instanceof HMGEntityBulletTorp)((HMGEntityBulletTorp) bulletBase).draft = gunInfo.torpdraft;
-						bulletBase.damageRange = gunInfo.damagerange;
+						bulletBase.damageRange = firetemp.damageRange;
 						bulletBase.hasVT   = gunInfo.hasVT  ;
 						bulletBase.forceVT   = gunInfo.forceVT  ;
 						bulletBase.VTRange = gunInfo.VTRange;
 						bulletBase.VTWidth = gunInfo.VTWidth;
 						bulletBase.seekerwidth = gunInfo.seekerSize_bullet;
-						bulletBase.resistanceinwater = gunInfo.resistanceinWater;
+						bulletBase.resistanceinwater = firetemp.resistanceInWater;
 						if (guntemp.currentConnectedTurret == null) {
 							bulletBase.prevRotationYaw = bulletBase.rotationYaw = wrapAngleTo180_float(entity.getRotationYawHead());
 							bulletBase.prevRotationPitch = bulletBase.rotationPitch = entity.rotationPitch;
@@ -1160,6 +1167,7 @@ public class HMGItem_Unified_Guns extends Item {
 				}
 				entity.rotationPitch = backUpRotationPitch;
 				entity.rotationYaw = backUpRotationYaw;
+				guntemp.tempspread = shotSpreadBackup;
 				HMGPacketHandler.INSTANCE.sendToAll(new PacketPlaysound(entity, guntemp.sound, gunInfo.soundspeed, guntemp.soundlevel,entity.posX,entity.posY,entity.posZ));
 			}
 
@@ -1236,16 +1244,16 @@ public class HMGItem_Unified_Guns extends Item {
 		}
 	}
 	public HMGEntityBulletBase[] getBullet(World par2World, Entity par3Entity){
-		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-		for(int i = 0; i < gunInfo.pellet; i++){
+		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet(par2World, par3Entity,
 					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelN);
 		}
 		return bulletinstances;
 	}
 	public HMGEntityBulletBase[] getBulletAP(World par2World, Entity par3Entity){
-		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-		for(int i = 0; i < gunInfo.pellet; i++){
+		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_AP(par2World, par3Entity,
 					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelAP);
 		}
@@ -1259,8 +1267,8 @@ public class HMGItem_Unified_Guns extends Item {
 
 			return bulletinstances;
 		}else {
-			HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-			for(int i = 0; i < gunInfo.pellet; i++){
+			HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+			for(int i = 0; i < firetemp.pellet; i++){
 				bulletinstances[i] = new HMGEntityBullet_Frag(par2World, par3Entity,
 						firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelFrag);
 			}
@@ -1268,8 +1276,8 @@ public class HMGItem_Unified_Guns extends Item {
 		}
 	}
 	public HMGEntityBulletBase[] FireBulletAT(World par2World, Entity par3Entity){
-		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-		for(int i = 0; i < gunInfo.pellet; i++){
+		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_AT(par2World, par3Entity,
 					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelAT);
 		}
@@ -1279,16 +1287,16 @@ public class HMGItem_Unified_Guns extends Item {
 
 
 	public HMGEntityBulletBase[] FireBulletGL(World par2World, Entity par3Entity){
-		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-		for(int i = 0; i < gunInfo.pellet; i++){
+		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBulletExprode(par2World, par3Entity,
 					firetemp.power, firetemp.speed, guntemp.tempspread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelGL);
 		}
 		return bulletinstances;
 	}
 	public HMGEntityBulletBase[] FireBulletTE(World par2World, Entity par3Entity){
-		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-		for(int i = 0; i < gunInfo.pellet; i++){
+		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_TE(par2World, par3Entity,
 					firetemp.power, firetemp.speed, guntemp.tempspread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelTE);
 		}
@@ -1296,32 +1304,32 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 	public HMGEntityBulletBase[] FireBulletRPG(World par2World, Entity par3Entity){
 		//dawhg I just want to fix the MCH BS
-		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-		for(int i = 0; i < gunInfo.pellet; i++){
+		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBulletRocket(par2World, par3Entity,
 					firetemp.power, firetemp.speed, guntemp.tempspread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelRPG);
 		}
 		return bulletinstances;
 	}
 	public HMGEntityBulletBase[] FireBulletHE(World par2World, Entity par3Entity){
-		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-		for(int i = 0; i < gunInfo.pellet; i++){
+		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_HE(par2World, par3Entity,
 					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model: gunInfo.bulletmodelHE);
 		}
 		return bulletinstances;
 	}
 	public HMGEntityBulletBase[] FireBulletFrame(World par2World, Entity par3Entity){
-		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-		for(int i = 0; i < gunInfo.pellet; i++){
+		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_Flame(par2World, par3Entity,
 					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model: gunInfo.bulletmodelN);
 		}
 		return bulletinstances;
 	}
 	public HMGEntityBulletBase[] FireBulletTorp(World par2World, Entity par3Entity){
-		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[gunInfo.pellet];
-		for(int i = 0; i < gunInfo.pellet; i++){
+		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
+		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBulletTorp(par2World, par3Entity,
 					firetemp.power, firetemp.speed, guntemp.tempspread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelRPG);
 		}
@@ -1954,6 +1962,13 @@ public class HMGItem_Unified_Guns extends Item {
 		int magazine_cnt = countLoadedMagazines(magazines);
 		int originalMagazineCount = magazine_cnt;
 		boolean perShellReload = isPerShellReload(gunStack);
+		if(perShellReload) {
+			ItemStack[] compacted = new ItemStack[magazines.length];
+			int next = 0;
+			for(ItemStack magazine : magazines) if(magazine != null) compacted[next++] = magazine;
+			magazines = compacted;
+			magazine_cnt = next;
+		}
 		int currentLoadedAmmo = remain_Bullet(gunStack);
 		int maxLoadedAmmo = max_Bullet(gunStack);
 		StackAndSlot prevStackAndSlot = null;
@@ -2374,6 +2389,20 @@ public class HMGItem_Unified_Guns extends Item {
 		}
 		return false;
 	}
+	/** Returns the physical round at the chamber end, not the currently selected reload type. */
+	public ItemStack resolveNextAmmunitionStack(ItemStack gunStack){
+		checkTags(gunStack);
+		if(isPerShellReload(gunStack)) {
+			for(int i = 0; i < gunInfo.magazineItemCount; i++) {
+				ItemStack stack = ItemStack.loadItemStackFromNBT(gunStack.getTagCompound().getCompoundTag("LoadedMagazine" + i));
+				if(stack != null) return stack;
+			}
+		}
+		ItemStack[] loaded = get_loadedMagazineStack(gunStack);
+		for(ItemStack stack : loaded) if(stack != null) return stack;
+		Item selected = getcurrentMagazine(gunStack);
+		return selected == null ? null : new ItemStack(selected, 1);
+	}
 	public int get_Type_Option_of_currentMagzine_and_apply_magazine_Option(ItemStack itemStack){
 		Item currentmagazine = getcurrentMagazine(itemStack);
 		if(currentmagazine instanceof HMGItemCustomMagazine){
@@ -2522,10 +2551,18 @@ public class HMGItem_Unified_Guns extends Item {
 		for(ItemStack a_itemStack: magazines){
 			if(a_itemStack != null && a_itemStack.getMaxDamage() > a_itemStack.getItemDamage()){
 				a_itemStack.setItemDamage(a_itemStack.getItemDamage() + 1);
-				if(a_itemStack.getMaxDamage() <= a_itemStack.getItemDamage() && currentMagazine_is_autoDestroy(itemStack))magazines[cnt] = null;
+				if(a_itemStack.getMaxDamage() <= a_itemStack.getItemDamage() &&
+						(!(a_itemStack.getItem() instanceof HMGItemCustomMagazine) || ((HMGItemCustomMagazine)a_itemStack.getItem()).autoDestroy)) magazines[cnt] = null;
 				break;
 			}
 			cnt ++ ;
+		}
+		if(isPerShellReload(itemStack)) {
+			// Compact only tube-fed ammunition: firing is FIFO and loading appends.
+			ItemStack[] compacted = new ItemStack[magazines.length];
+			int next = 0;
+			for(ItemStack magazine : magazines) if(magazine != null) compacted[next++] = magazine;
+			magazines = compacted;
 		}
 		set_loadedMagazineStack(itemStack,magazines);
 	}
