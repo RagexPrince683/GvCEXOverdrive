@@ -1046,6 +1046,14 @@ public class HMGItem_Unified_Guns extends Item {
 				firetemp = new FireTemp(gunInfo);
 				firetemp.applyMagOption(ammunitionStack);
 				if(firetemp.bulletType != -1) currentBulletType = firetemp.bulletType;
+				if(HandmadeGunsCore.isDebugMessage) {
+					ItemStack loadedFront = ItemStack.loadItemStackFromNBT(itemstack.getTagCompound().getCompoundTag("LoadedMagazine0"));
+					Item selected = getcurrentMagazine(itemstack);
+					HandmadeGunsCore.Debug("[AmmoDebug] SHOT gun=%s resolved=%s itemDamage=%s maxDamage=%s selected=%s loaded0=%s power=%s speed=%s spread=%s pellet=%s fuse=%s bulletType=%s gravity=%s resistance=%s stability=%s damageRange=%s",
+							getUnlocalizedName(), debugItem(ammunitionStack), ammunitionStack == null ? -1 : ammunitionStack.getItemDamage(), ammunitionStack == null ? -1 : ammunitionStack.getMaxDamage(),
+							selected == null ? "null" : selected.getUnlocalizedName(), debugItem(loadedFront), firetemp.power, firetemp.speed, firetemp.spread,
+							firetemp.pellet, firetemp.fuse, currentBulletType, firetemp.gra, firetemp.resistance, firetemp.bulletStability, firetemp.damageRange);
+				}
 				float shotSpreadBackup = guntemp.tempspread;
 				// GunTemp has already applied ADS, diffusion, movement and attachments; scale
 				// that finished value so ammunition replaces only its base component.
@@ -1105,6 +1113,7 @@ public class HMGItem_Unified_Guns extends Item {
 						}
 						this.Flash(itemstack, world, entity, nbt);
 					}
+					int pelletIndex = 0;
 					for (HMGEntityBulletBase bulletBase : bullet) {
 						bulletBase.knockbackXZ = firetemp.knockback;
 						bulletBase.knockbackY = firetemp.knockbackY;
@@ -1158,7 +1167,9 @@ public class HMGItem_Unified_Guns extends Item {
 								}
 							}
 						}
+						if(pelletIndex == 0) bulletBase.debugSpawn(pelletIndex);
 						world.spawnEntityInWorld(bulletBase);
+						pelletIndex++;
 					}
 				}else {
 					if (HandmadeGunsCore.cfg_canEjectCartridge && gunInfo.dropcart) {
@@ -2402,6 +2413,9 @@ public class HMGItem_Unified_Guns extends Item {
 		for(ItemStack stack : loaded) if(stack != null) return stack;
 		Item selected = getcurrentMagazine(gunStack);
 		return selected == null ? null : new ItemStack(selected, 1);
+	}
+	private String debugItem(ItemStack stack) {
+		return stack == null || stack.getItem() == null ? "null" : stack.getItem().getUnlocalizedName();
 	}
 	public int get_Type_Option_of_currentMagzine_and_apply_magazine_Option(ItemStack itemStack){
 		Item currentmagazine = getcurrentMagazine(itemStack);

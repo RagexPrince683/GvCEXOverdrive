@@ -46,8 +46,9 @@ public class HMGGunMaker {
 	private static final Map<String, ResourceLocation> RESOURCE_LOCATION_CACHE = new HashMap<String, ResourceLocation>();
 	private static final Map<String, IModelCustom> MODEL_CACHE = new HashMap<String, IModelCustom>();
 
-	public static float damageCof = 0;
-	public static float speedCof = 0;
+	// Safe defaults outside pack parsing; readPack still resets these for every pack.
+	public static float damageCof = 1;
+	public static float speedCof = 1;
 
 
 

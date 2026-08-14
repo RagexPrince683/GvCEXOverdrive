@@ -1,6 +1,7 @@
 package handmadeguns.command;
 
 import handmadeguns.HMGGunMaker;
+import handmadeguns.HandmadeGunsCore;
 import handmadeguns.HMGPacketHandler;
 import handmadeguns.network.PacketReloadparm;
 import net.minecraft.command.CommandBase;
@@ -98,6 +99,8 @@ public class HMG_CommandReloadparm extends CommandBase implements ICommand{
          */
 
         for (File apack : packlist) {
+            // Reloaded guns must see the same isolated per-pack coefficient context as startup.
+            HandmadeGunsCore.configurePackCoefficients(apack);
             File gunDir = new File(apack, "guns");
             File[] gunFiles = gunDir.listFiles(File::isFile);
             if (gunFiles == null) continue;
