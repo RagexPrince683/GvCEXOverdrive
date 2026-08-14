@@ -1,11 +1,11 @@
 guerrila_cant_use_this
 Dont_Be_Inside_Root_Chest
 BulletPower,4
-BulletSpeed,3.0f
-BlletSpread,40.0f
+BulletSpeed,1.0f
+BlletSpread,1.0f
 guntype,1
 Recoil,2.0d
-ReloadTime,50
+ReloadTime,5
 RemainingBullet,8
 Attacking,2.0f
 Zoom,1.0f,2.0f,4.0f
