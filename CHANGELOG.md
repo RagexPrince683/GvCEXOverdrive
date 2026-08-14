@@ -1,5 +1,12 @@
 # Changelog
 
+## Add fast TXT-only gun settings reload command
+
+- `/reloadsettings` continues to reload gun TXT settings and invalidate/reload
+  changed 3D models for live model development.
+- Add `/reloadsettingsnomodel` to reload gun TXT settings while retaining the
+  currently loaded 3D models and their OBJ/MQO and GPU-resource caches.
+
 ## Fix startup models while preserving live `/reloadsettings` refreshes
 
 - Keep Forge's immediate resource-listener registration callback from releasing

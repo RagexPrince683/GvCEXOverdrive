@@ -36,6 +36,14 @@ public class HMG_CommandReloadparm extends CommandBase implements ICommand{
 		// Invalidate before parsing settings: existing item renderers are then
 		// updated by HMGGunMaker with models read from the current pack files.
 		HMG_proxy.invalidateReloadableModels();
+		reloadGunSettings();
+    }
+
+	/**
+	 * Re-read the registered guns' pack settings and replace their render settings.
+	 * Model cache lifetime is deliberately controlled by the calling command.
+	 */
+	protected static void reloadGunSettings() {
 //        EntityPlayer entityPlayer = getPlayer(var1,var2[0]);
 //        if(entityPlayer.getHeldItem().getItem() instanceof HMGItemGunBase){
 //            String str = var2[1];
