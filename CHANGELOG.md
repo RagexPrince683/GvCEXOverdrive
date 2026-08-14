@@ -1,5 +1,14 @@
 # Changelog
 
+## Fix startup models while preserving live `/reloadsettings` refreshes
+
+- Keep Forge's immediate resource-listener registration callback from releasing
+  gun and vehicle models that were loaded and assigned during pre-initialization.
+- Reserve destructive OBJ/MQO cache and GPU-resource invalidation for the explicit
+  HMG and HMV settings reload paths, which immediately reparse packs and replace
+  renderer model references.
+- Preserve VBO and legacy display-list cleanup for repeated live model refreshes.
+
 ## Restore live model reloads through `/reloadsettings`
 
 - Invalidate the gun-maker, OBJ, and MQO model caches before re-reading pack
