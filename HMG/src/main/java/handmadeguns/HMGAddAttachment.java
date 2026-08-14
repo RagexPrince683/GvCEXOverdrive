@@ -67,6 +67,7 @@ public class HMGAddAttachment
 		Double bulletStabilityOverride = null;
 		Boolean canBounceOverride = null;
 		Boolean blockDestroyOverride = null;
+		String rawPowerOverride = null, rawSpeedOverride = null;
 		
 		
 		String bulletItemName = null;
@@ -203,9 +204,11 @@ public class HMGAddAttachment
 								bullettype = Integer.parseInt(type[1]);
 								break;
 							case "BulletPower":
+								rawPowerOverride = type[1];
 								powerOverride = (int)(Integer.parseInt(type[1]) * HMGGunMaker.damageCof);
 								break;
 							case "BulletSpeed":
+								rawSpeedOverride = type[1];
 								speedOverride = Float.parseFloat(type[1]) * HMGGunMaker.speedCof * 2;
 								break;
 							case "BulletGravity":
@@ -635,6 +638,11 @@ public class HMGAddAttachment
 								((HMGItemCustomMagazine)newitem).blockDestroyOverride = blockDestroyOverride;
 								((HMGItemCustomMagazine)newitem).accelerationDelayOverride = accelerationDelayOverride;
 								((HMGItemCustomMagazine)newitem).accelerationFuseOverride = accelerationFuseOverride;
+								if(powerOverride != null || speedOverride != null || spreadOverride != null || pelletOverride != null) {
+									HandmadeGunsCore.Debug("[AmmoDebug] ammo=%s source=%s rawPower=%s effectivePower=%s rawSpeed=%s effectiveSpeed=%s damageCof=%s speedCof=%s spread=%s pellet=%s fuse=%s bulletType=%s",
+											GunName, file1.getPath(), rawPowerOverride, powerOverride, rawSpeedOverride, speedOverride,
+											HMGGunMaker.damageCof, HMGGunMaker.speedCof, spreadOverride, pelletOverride, fuse, bullettype);
+								}
 							}
 							GameRegistry.registerItem(newitem, GunName);
 							if (newitem instanceof HMGItemGunSkin)

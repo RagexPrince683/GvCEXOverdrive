@@ -356,15 +356,17 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	public void onUpdate() {
 		super.onUpdate();
 		this.worldObj.theProfiler.startSection("HMG_Bullet");
+		if(!worldObj.isRemote && ticksExisted == 1) debugLifecycle("FIRST_TICK");
 //		if(!worldObj.isRemote)System.out.println("Y " + (this.posY - firstY) + "\t\tDist " + sqrt(pow(this.posX - firstX,2) + pow(this.posZ - firstZ,2)));
 		if(Double.isNaN( this.motionX ) || Double.isNaN( this.motionY ) || Double.isNaN( this.motionZ )){//エラー対応
 			this.motionX =this.motionY =this.motionZ =0;
 			this.posX = this.posY = this.posZ = 0;
-			System.out.println("debug");
+			debugBulletDeath("NaN motion");
 			this.setDead();
 			return;
 		}
 		if(!this.worldObj.isRemote && this.thrower  == null){//主の居ない弾は削除
+			debugBulletDeath("null thrower on server");
 			setDead();
 		}
 		if(!worldObj.isRemote && !this.inGround && worldObj.blockExists(this.xTile, this.yTile, this.zTile)) {
@@ -386,6 +388,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 			this.posY += this.motionY;
 			this.posZ += this.motionZ;
 			onImpact(new MovingObjectPosition((int)posX,(int)posY,(int)posZ,-1,Vec3.createVectorHelper(this.posX,this.posY,this.posZ),true));
+			debugBulletDeath("fuse reached zero");
 			setDead();
 			return;
 		}
@@ -403,6 +406,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 					this.posZ = lockedpos.zCoord;
 				}
 				if(fuse<0){
+					debugBulletDeath("in-ground death");
 					setDead();
 				}
 			}
@@ -444,6 +448,25 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	
 	public Entity getThrower() {
 		return this.thrower;
+	}
+
+	public void debugSpawn(int pelletIndex) {
+		if(worldObj == null || worldObj.isRemote || !HandmadeGunsCore.isDebugMessage) return;
+		double speed = sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ);
+		HandmadeGunsCore.Debug("[AmmoDebug] SPAWN class=%s id=%s thrower=%s pos=(%s,%s,%s) motion=(%s,%s,%s) magnitude=%s fuse=%s power=%s pelletIndex=%s canbounce=%s inGround=%s",
+				getClass().getName(), getEntityId(), thrower, posX, posY, posZ, motionX, motionY, motionZ, speed, fuse, Bdamege, pelletIndex, canbounce, inGround);
+	}
+
+	private void debugLifecycle(String stage) {
+		if(worldObj == null || worldObj.isRemote || !HandmadeGunsCore.isDebugMessage) return;
+		HandmadeGunsCore.Debug("[AmmoDebug] PROJECTILE_%s class=%s id=%s ticksExisted=%s ticksInAir=%s fuse=%s pos=(%s,%s,%s) motion=(%s,%s,%s) thrower=%s inGround=%s",
+				stage, getClass().getName(), getEntityId(), ticksExisted, ticksInAir, fuse, posX, posY, posZ, motionX, motionY, motionZ, thrower, inGround);
+	}
+
+	private void debugBulletDeath(String reason) {
+		if(worldObj == null || worldObj.isRemote || !HandmadeGunsCore.isDebugMessage) return;
+		HandmadeGunsCore.Debug("[AmmoDebug] PROJECTILE_DEATH reason=%s class=%s id=%s ticksExisted=%s ticksInAir=%s fuse=%s pos=(%s,%s,%s) motion=(%s,%s,%s) thrower=%s inGround=%s",
+				reason, getClass().getName(), getEntityId(), ticksExisted, ticksInAir, fuse, posX, posY, posZ, motionX, motionY, motionZ, thrower, inGround);
 	}
 	
 	
@@ -547,6 +570,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 					}
 				}
 
+				debugBulletDeath("entity impact");
 				this.setDead();
 			}
 			if(var1.entityHit instanceof EntityLiving)for (int i = 0; i < 4; ++i) {
@@ -569,7 +593,10 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 
 			if (!this.worldObj.isRemote)
 			{
-				if(!this.canbounce) this.setDead();
+				if(!this.canbounce) {
+					debugBulletDeath("block impact");
+					this.setDead();
+				}
 			}
 		}
 	}
@@ -1209,7 +1236,10 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				}
 			}
 		}
-		if(killCNT>0 && fuse < 0)this.setDead();
+		if(killCNT>0 && fuse < 0){
+			debugBulletDeath("penetration limit");
+			this.setDead();
+		}
 		int hitside = -1;
 		if (movingobjectposition != null) {
 			hitedpos = movingobjectposition.hitVec;

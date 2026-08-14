@@ -535,6 +535,7 @@ public class HandmadeGunsCore {
 			Arrays.sort(packlist);
 			for (File apack : packlist) {
 				if (apack.isDirectory()) {
+					configurePackCoefficients(apack);
 					File direTab = new File(apack, "addTab");
 					File[] filetab = direTab.listFiles();
 					if (filetab != null) {
@@ -550,6 +551,7 @@ public class HandmadeGunsCore {
 						}
 					}
 					File direattach = new File(apack, "attachment");
+					Debug("[AmmoDebug] Pack=%s damageCof=%s speedCof=%s before attachment load", apack.getName(), HMGGunMaker.damageCof, HMGGunMaker.speedCof);
 					File[] fileattach = direattach.listFiles();
 					if (fileattach != null) {
 						Arrays.sort(fileattach, new Comparator<File>() {
@@ -624,33 +626,7 @@ public class HandmadeGunsCore {
 							}
 						}
 					}
-					File packAdditionalSettings = new File(apack, "additionalSettings.txt");
-					HMGGunMaker.damageCof = 1;
-					HMGGunMaker.speedCof = 1;
-					if (packAdditionalSettings.isFile() && checkBeforeReadfile(packAdditionalSettings)) {
-						try {
-							BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(packAdditionalSettings), "Shift-JIS"));
-
-							String str;
-							while ((str = br.readLine()) != null) { // 1行ずつ読み込む
-								String[] key = HMGGunMaker.splitComma(str);
-								switch (key[0]) {
-									case "damageCof":
-										HMGGunMaker.damageCof = Float.parseFloat(key[1]);
-									case "speedCof":
-										HMGGunMaker.speedCof = Float.parseFloat(key[1]);
-
-								}
-							}
-							br.close(); // ファイルを閉じる
-						} catch (UnsupportedEncodingException e) {
-							e.printStackTrace();
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
+					// Coefficients were resolved before attachments; guns use that same pack context.
 					File diregun = new File(apack, "guns");
 					File[] filegun = diregun.listFiles();
 					if (filegun == null) {
@@ -673,12 +649,35 @@ public class HandmadeGunsCore {
 
 			}
 		}
+
 		System.out.println("[HMG] Content pack registration complete for " + packdir.getPath() + ": attachments=" + attachmentFiles + ", magazines=" + magazineFiles + ", bullets=" + bulletFiles + ", guns=" + gunFiles);
 		Debug("[Timing] attachment registration files=%s took %s ms", attachmentFiles, (attachmentNanos / 1000000L));
 		Debug("[Timing] magazine registration files=%s took %s ms", magazineFiles, (magazineNanos / 1000000L));
 		Debug("[Timing] bullet registration files=%s took %s ms", bulletFiles, (bulletNanos / 1000000L));
 		Debug("[Timing] gun TXT parse/item registration files=%s took %s ms", gunFiles, (gunNanos / 1000000L));
 		Debug("[Timing] pack load %s packs=%s took %s ms", packdir.getPath(), packlist.length, ((System.nanoTime() - startNanos) / 1000000L));
+	}
+
+	public static void configurePackCoefficients(File pack) {
+		HMGGunMaker.damageCof = 1;
+		HMGGunMaker.speedCof = 1;
+		File settings = new File(pack, "additionalSettings.txt");
+		if (!settings.isFile() || !checkBeforeReadfile(settings)) return;
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(settings), "Shift-JIS"));
+			String str;
+			while ((str = br.readLine()) != null) {
+				String[] key = HMGGunMaker.splitComma(str);
+				if (key.length < 2) continue;
+				switch (key[0]) {
+					case "damageCof": HMGGunMaker.damageCof = Float.parseFloat(key[1]); break;
+					case "speedCof": HMGGunMaker.speedCof = Float.parseFloat(key[1]); break;
+				}
+			}
+			br.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void copyFile(File in, File out) throws IOException {

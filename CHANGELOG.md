@@ -1,5 +1,14 @@
 # Changelog
 
+## Fix per-shell ballistic coefficient initialization regression
+
+- Resolve and reset each content pack's `damageCof` and `speedCof` before
+  attachment parsing, so per-shell ammunition overrides and guns use the same
+  owning-pack scale without leaking values between packs.
+- Parse `damageCof` and `speedCof` independently, preventing damage settings
+  from falling through into speed settings, and restore the same pack context
+  when live gun settings are reloaded.
+
 ## Fix per-shell bullet stability precision
 
 - Keep ammunition-defined bullet stability values as doubles from TXT parsing
