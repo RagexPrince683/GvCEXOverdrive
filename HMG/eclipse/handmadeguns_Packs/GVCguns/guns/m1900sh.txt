@@ -6,7 +6,7 @@ BulletGravity,0.485
 Class,1
 Recoil,20
 Recoil_sneaking,12
-ReloadTime,80
+ReloadTime,40
 RemainingBullet,2
 Attacking,6.0f
 Zoom,1.0f,2.0f,4.0f

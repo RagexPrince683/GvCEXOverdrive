@@ -2,7 +2,7 @@ BulletPower,6
 BulletSpeed,3.6f
 BlletSpread,1.0f
 Recoil,2.0d
-ReloadTime,220
+ReloadTime,15
 RemainingBullet,6
 Attacking,2.0f
 Zoom,1.0f,2.0f,4.0f
@@ -13,7 +13,7 @@ Texture,enfieldrev
 GunSound,handmadeguns.enfield,handmadeguns.supu
 GunSoundReload,handmadeguns.reload
 CanObj,true
-ObjModel,enfieldrev.obj
+ObjModel,enfieldrevunfuck.mqo
 ObjTexture,a_pallete1.png
 ModelScala,0.5f
 InworldScale,1.8f

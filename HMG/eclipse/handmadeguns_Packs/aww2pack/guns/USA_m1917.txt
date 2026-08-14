@@ -4,7 +4,7 @@ BulletSpread,1.0f
 Recoil,2.5d
 //todo 5rnd stripper clip ver
 //ReloadTime,50
-ReloadTime,90
+ReloadTime,9
 RemainingBullet,6
 Attacking,4.0f
 Zoom,2.0f,2.0f,4.0f
