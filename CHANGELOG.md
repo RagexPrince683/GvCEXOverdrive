@@ -1,5 +1,11 @@
 # Changelog
 
+## Fix per-shell bullet stability precision
+
+- Keep ammunition-defined bullet stability values as doubles from TXT parsing
+  through the effective per-shot profile and spawned projectile, avoiding a
+  lossy conversion from the native HMG ballistic type.
+
 ## Add per-shell CustomMagazine ballistic overrides
 
 - `CustomMagazine` ammunition may now override projectile power, speed, gravity,

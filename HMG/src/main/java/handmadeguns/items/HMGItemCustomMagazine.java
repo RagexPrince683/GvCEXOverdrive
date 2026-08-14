@@ -42,7 +42,7 @@ public class HMGItemCustomMagazine extends HMGItemAttachmentBase {
     public Float speedOverride;
     public Float spreadOverride;
     public Integer pelletOverride;
-    public Float bulletStabilityOverride;
+    public Double bulletStabilityOverride;
     public Float damageRangeOverride;
     public Float resistanceInWaterOverride;
     public Boolean canBounceOverride;
