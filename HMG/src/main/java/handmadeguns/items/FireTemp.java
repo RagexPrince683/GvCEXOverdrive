@@ -20,7 +20,7 @@ public class FireTemp {
 	public float  gra;
 	public float spread;
 	public int pellet;
-	public float bulletStability;
+	public double bulletStability;
 	public float damageRange;
 	public float resistanceInWater;
 	public boolean canbounce;
@@ -82,7 +82,7 @@ public class FireTemp {
 		if(Float.isFinite(magazine.gra))this.gra = magazine.gra;
 		if(magazine.spreadOverride != null && Float.isFinite(magazine.spreadOverride))this.spread = magazine.spreadOverride;
 		if(magazine.pelletOverride != null)this.pellet = Math.max(1, magazine.pelletOverride);
-		if(magazine.bulletStabilityOverride != null && Float.isFinite(magazine.bulletStabilityOverride))this.bulletStability = magazine.bulletStabilityOverride;
+		if(magazine.bulletStabilityOverride != null && Double.isFinite(magazine.bulletStabilityOverride))this.bulletStability = magazine.bulletStabilityOverride;
 		if(magazine.damageRangeOverride != null && Float.isFinite(magazine.damageRangeOverride))this.damageRange = magazine.damageRangeOverride;
 		if(magazine.resistanceInWaterOverride != null && Float.isFinite(magazine.resistanceInWaterOverride))this.resistanceInWater = magazine.resistanceInWaterOverride;
 		if(magazine.canBounceOverride != null)this.canbounce = magazine.canBounceOverride;

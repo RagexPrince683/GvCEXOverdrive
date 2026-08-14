@@ -63,7 +63,8 @@ public class HMGAddAttachment
 		float  acceleration = Float.NaN;
 		float  gra = Float.NaN;
 		Integer powerOverride = null, pelletOverride = null, accelerationDelayOverride = null, accelerationFuseOverride = null;
-		Float speedOverride = null, spreadOverride = null, bulletStabilityOverride = null, damageRangeOverride = null, resistanceInWaterOverride = null;
+		Float speedOverride = null, spreadOverride = null, damageRangeOverride = null, resistanceInWaterOverride = null;
+		Double bulletStabilityOverride = null;
 		Boolean canBounceOverride = null;
 		Boolean blockDestroyOverride = null;
 		
@@ -219,7 +220,7 @@ public class HMGAddAttachment
 							case "PerFireRound":
 								pelletOverride = Math.max(1, Integer.parseInt(type[1]));
 								break;
-							case "BulletStability": bulletStabilityOverride = Float.parseFloat(type[1]); break;
+							case "BulletStability": bulletStabilityOverride = Double.parseDouble(type[1]); break;
 							case "damageRange": damageRangeOverride = Float.parseFloat(type[1]); break;
 							case "ResistanceInWater": resistanceInWaterOverride = Float.parseFloat(type[1]); break;
 							case "CanBounce": case "canBounce": canBounceOverride = Boolean.parseBoolean(type[1]); break;
