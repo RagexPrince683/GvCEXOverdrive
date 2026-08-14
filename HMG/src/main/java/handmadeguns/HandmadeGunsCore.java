@@ -22,6 +22,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import handmadeguns.blocks.HMGBlockMounter;
 import handmadeguns.command.HMG_CommandReloadparm;
+import handmadeguns.command.HMG_CommandReloadparmNoModel;
 import handmadeguns.command.HMG_CommandManual;
 import handmadeguns.guide.HMGGuideIntegration;
 import handmadeguns.entity.*;
@@ -1155,9 +1156,12 @@ public class HandmadeGunsCore {
 	@EventHandler
 	public void serverStarting(FMLServerStartingEvent event){
 		HMG_CommandReloadparm hmg_commandReloadparm = new HMG_CommandReloadparm();
+		HMG_CommandReloadparmNoModel hmgCommandReloadparmNoModel = new HMG_CommandReloadparmNoModel();
 		event.registerServerCommand(hmg_commandReloadparm);
+		event.registerServerCommand(hmgCommandReloadparmNoModel);
 		event.registerServerCommand(new HMG_CommandManual());
 		net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(hmg_commandReloadparm);
+		net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(hmgCommandReloadparmNoModel);
 	}
 
 	//TODO:INJ
