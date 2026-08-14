@@ -62,6 +62,10 @@ public class HMGAddAttachment
 		float  resistance = Float.NaN;
 		float  acceleration = Float.NaN;
 		float  gra = Float.NaN;
+		Integer powerOverride = null, pelletOverride = null, accelerationDelayOverride = null, accelerationFuseOverride = null;
+		Float speedOverride = null, spreadOverride = null, bulletStabilityOverride = null, damageRangeOverride = null, resistanceInWaterOverride = null;
+		Boolean canBounceOverride = null;
+		Boolean blockDestroyOverride = null;
 		
 		
 		String bulletItemName = null;
@@ -197,32 +201,63 @@ public class HMGAddAttachment
 							case "BulletType":
 								bullettype = Integer.parseInt(type[1]);
 								break;
+							case "BulletPower":
+								powerOverride = (int)(Integer.parseInt(type[1]) * HMGGunMaker.damageCof);
+								break;
+							case "BulletSpeed":
+								speedOverride = Float.parseFloat(type[1]) * HMGGunMaker.speedCof * 2;
+								break;
+							case "BulletGravity":
+							case "gravity":
+								gra = Float.parseFloat(type[1]);
+								break;
+							case "BulletSpread":
+							case "BlletSpread":
+								spreadOverride = Float.parseFloat(type[1]);
+								break;
+							case "ShotGun_Pellet":
+							case "PerFireRound":
+								pelletOverride = Math.max(1, Integer.parseInt(type[1]));
+								break;
+							case "BulletStability": bulletStabilityOverride = Float.parseFloat(type[1]); break;
+							case "damageRange": damageRangeOverride = Float.parseFloat(type[1]); break;
+							case "ResistanceInWater": resistanceInWaterOverride = Float.parseFloat(type[1]); break;
+							case "CanBounce": case "canBounce": canBounceOverride = Boolean.parseBoolean(type[1]); break;
+							case "AccelerationDelay": case "accelerationDelay": accelerationDelayOverride = Integer.parseInt(type[1]); break;
+							case "AccelerationFuse": case "accelerationFuse": accelerationFuseOverride = Integer.parseInt(type[1]); break;
+							case "fuse": case "bulletFuse": fuse = Integer.parseInt(type[1]); break;
+							case "Explosion": case "ExplosionRadius": explosionlevel = Float.parseFloat(type[1]); break;
 							case "Explosionlevel":
 								explosionlevel = Float.parseFloat(type[1]);
 								break;
 								
+							case "KnockBack":
 							case "knockback":
 								knockback = Double.parseDouble(type[1]);
-								knockbackY = Double.parseDouble(type[2]);
+								if(type.length > 2) knockbackY = Double.parseDouble(type[2]);
 								break;
+							case "KnockBackY": case "knockbackY": knockbackY = Double.parseDouble(type[1]); break;
+							case "BounceRate":
 							case "bouncerate":
 								bouncerate = Float.parseFloat(type[1]);
 								break;
+							case "BounceLimit":
 							case "bouncelimit":
 								bouncelimit = Float.parseFloat(type[1]);
 								break;
+							case "Resistance":
 							case "resistance":
 								resistance = Float.parseFloat(type[1]);
 								break;
+							case "Acceleration":
 							case "acceleration":
 								acceleration = Float.parseFloat(type[1]);
 								break;
-							case "gravity":
-								gra = Float.parseFloat(type[1]);
-								break;
-								
+
+							case "BlockDestroy":
 							case "Blockdestroy":
 								blockdestroyex = Boolean.parseBoolean(type[1]);
+								blockDestroyOverride = blockdestroyex;
 								break;
 							case "AutoDestroy":
 								autoDestroy = Boolean.parseBoolean(type[1]);
@@ -234,6 +269,7 @@ public class HMGAddAttachment
 								cartItemName = (type[1]);
 								break;
 							case "BulletModelName":
+							case "Bulletmodel":
 								bulletModelName = (type[1]);
 								break;
 							case "CartModelName":
@@ -587,6 +623,17 @@ public class HMGAddAttachment
 								((HMGItemCustomMagazine)newitem).resistance = resistance;
 								((HMGItemCustomMagazine)newitem).acceleration = acceleration;
 								((HMGItemCustomMagazine)newitem).gra = gra;
+								((HMGItemCustomMagazine)newitem).powerOverride = powerOverride;
+								((HMGItemCustomMagazine)newitem).speedOverride = speedOverride;
+								((HMGItemCustomMagazine)newitem).spreadOverride = spreadOverride;
+								((HMGItemCustomMagazine)newitem).pelletOverride = pelletOverride;
+								((HMGItemCustomMagazine)newitem).bulletStabilityOverride = bulletStabilityOverride;
+								((HMGItemCustomMagazine)newitem).damageRangeOverride = damageRangeOverride;
+								((HMGItemCustomMagazine)newitem).resistanceInWaterOverride = resistanceInWaterOverride;
+								((HMGItemCustomMagazine)newitem).canBounceOverride = canBounceOverride;
+								((HMGItemCustomMagazine)newitem).blockDestroyOverride = blockDestroyOverride;
+								((HMGItemCustomMagazine)newitem).accelerationDelayOverride = accelerationDelayOverride;
+								((HMGItemCustomMagazine)newitem).accelerationFuseOverride = accelerationFuseOverride;
 							}
 							GameRegistry.registerItem(newitem, GunName);
 							if (newitem instanceof HMGItemGunSkin)

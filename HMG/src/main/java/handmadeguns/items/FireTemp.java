@@ -1,5 +1,8 @@
 package handmadeguns.items;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
 public class FireTemp {
 	public int power;
 	public int fuse;
@@ -15,6 +18,15 @@ public class FireTemp {
 	public float  resistance;
 	public float  acceleration;
 	public float  gra;
+	public float spread;
+	public int pellet;
+	public float bulletStability;
+	public float damageRange;
+	public float resistanceInWater;
+	public boolean canbounce;
+	public int accelerationDelay;
+	public int accelerationFuse;
+	public int bulletType;
 	public FireTemp(){}
 	public FireTemp(GunInfo gunInfo){
 		this.power = gunInfo.power;
@@ -30,8 +42,26 @@ public class FireTemp {
 		this.resistance = gunInfo.resistance;
 		this.acceleration = gunInfo.acceleration;
 		this.gra = gunInfo.gravity;
+		this.spread = gunInfo.spread_setting;
+		this.pellet = Math.max(1, gunInfo.pellet);
+		this.bulletStability = gunInfo.bulletStability;
+		this.damageRange = gunInfo.damagerange;
+		this.resistanceInWater = gunInfo.resistanceinWater;
+		this.canbounce = gunInfo.canbounce;
+		this.accelerationDelay = gunInfo.accelerationDelay;
+		this.accelerationFuse = gunInfo.accelerationFuse;
+		this.bulletType = -1;
+	}
+	public void applyMagOption(ItemStack ammunitionStack){
+		if(ammunitionStack != null) applyMagOption(ammunitionStack.getItem());
+	}
+	public void applyMagOption(Item item){
+		if(item instanceof HMGItemCustomMagazine) applyMagOption((HMGItemCustomMagazine)item);
 	}
 	public void applyMagOption(HMGItemCustomMagazine magazine){
+		// Absolute values use gun-TXT units; legacy multipliers intentionally run second.
+		if(magazine.powerOverride != null)this.power = magazine.powerOverride;
+		if(magazine.speedOverride != null && Float.isFinite(magazine.speedOverride))this.speed = magazine.speedOverride;
 		this.power *= magazine.damagemodify;
 		this.speed *= magazine.speedmodify;
 		if(magazine.fuse != -1)this.fuse = magazine.fuse;
@@ -39,15 +69,25 @@ public class FireTemp {
 		//todo this is causing mch vehicles to take way less damage than they should from anti tank weaponry
 		// specifically explosive weaponry because the math for MCH is wrong for explosion calcs but also the logic for this is weak
 		//
-		this.destroyBlock &= magazine.blockdestroyex;
+		if(magazine.blockDestroyOverride != null)this.destroyBlock = magazine.blockDestroyOverride;
+		else this.destroyBlock &= magazine.blockdestroyex;
 		if(magazine.bulletmodel != null)this.model = magazine.bulletmodel;
 		
-		if(!Double.isNaN(magazine.knockback))this.knockback = magazine.knockback;
-		if(!Double.isNaN(magazine.knockbackY))this.knockbackY = magazine.knockbackY;
-		if(!Float.isNaN(magazine.bouncerate))this.bouncerate = magazine.bouncerate;
-		if(!Float.isNaN(magazine.bouncelimit))this.bouncelimit = magazine.bouncelimit;
-		if(!Float.isNaN(magazine.resistance))this.resistance = magazine.resistance;
-		if(!Float.isNaN(magazine.acceleration))this.acceleration = magazine.acceleration;
-		if(!Float.isNaN(magazine.gra))this.gra = magazine.gra;
+		if(Double.isFinite(magazine.knockback))this.knockback = magazine.knockback;
+		if(Double.isFinite(magazine.knockbackY))this.knockbackY = magazine.knockbackY;
+		if(Float.isFinite(magazine.bouncerate))this.bouncerate = magazine.bouncerate;
+		if(Float.isFinite(magazine.bouncelimit))this.bouncelimit = magazine.bouncelimit;
+		if(Float.isFinite(magazine.resistance))this.resistance = magazine.resistance;
+		if(Float.isFinite(magazine.acceleration))this.acceleration = magazine.acceleration;
+		if(Float.isFinite(magazine.gra))this.gra = magazine.gra;
+		if(magazine.spreadOverride != null && Float.isFinite(magazine.spreadOverride))this.spread = magazine.spreadOverride;
+		if(magazine.pelletOverride != null)this.pellet = Math.max(1, magazine.pelletOverride);
+		if(magazine.bulletStabilityOverride != null && Float.isFinite(magazine.bulletStabilityOverride))this.bulletStability = magazine.bulletStabilityOverride;
+		if(magazine.damageRangeOverride != null && Float.isFinite(magazine.damageRangeOverride))this.damageRange = magazine.damageRangeOverride;
+		if(magazine.resistanceInWaterOverride != null && Float.isFinite(magazine.resistanceInWaterOverride))this.resistanceInWater = magazine.resistanceInWaterOverride;
+		if(magazine.canBounceOverride != null)this.canbounce = magazine.canBounceOverride;
+		if(magazine.accelerationDelayOverride != null)this.accelerationDelay = magazine.accelerationDelayOverride;
+		if(magazine.accelerationFuseOverride != null)this.accelerationFuse = magazine.accelerationFuseOverride;
+		if(magazine.bullettype != -1)this.bulletType = magazine.bullettype;
 	}
 }
