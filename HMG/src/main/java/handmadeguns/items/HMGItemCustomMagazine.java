@@ -18,6 +18,9 @@ public class HMGItemCustomMagazine extends HMGItemAttachmentBase {
     public float damagemodify = 1;//古いものを活かすために倍率方式を取らざるを得ない
     public float speedmodify = 1;
     public int fuse = -1;
+    // Null inherits the gun; unlike the legacy -1 sentinel this preserves every
+    // explicitly configured value, including zero (and legacy negative fuses).
+    public Integer fuseOverride;
     public boolean autoDestroy = true;
     public int bullettype = -1;//-1でデフォルト
     public boolean hasRoundOption = false;

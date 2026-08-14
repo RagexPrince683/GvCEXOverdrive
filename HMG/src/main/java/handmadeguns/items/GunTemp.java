@@ -12,6 +12,8 @@ import javax.script.Invocable;
 public class GunTemp {
 	//情報一時保存用
 	public float tempspread;
+	/** Multipliers/additions expressed as a factor of the per-shot base spread. */
+	public float spreadMultiplier = 1;
 	public float tempspreadDiffusion;
 	public String sound= "none";
 	
@@ -42,8 +44,10 @@ public class GunTemp {
 		if (this.connectedTurret = nbt.getBoolean("IsTurretStack") && this.currentConnectedTurret == null) {
 			return;
 		}
+		this.spreadMultiplier = 1;
 		this.tempspread = gunInfo.spread_setting;
 		if (isADS) {
+			this.spreadMultiplier *= gunInfo.ads_spread_cof;
 			this.tempspread = this.tempspread * gunInfo.ads_spread_cof;
 		}
 		this.tempspreadDiffusion = nbt.getFloat("Diffusion");
@@ -53,6 +57,7 @@ public class GunTemp {
 		if (this.tempspreadDiffusion < gunInfo.spreadDiffusionmin)
 			this.tempspreadDiffusion = gunInfo.spreadDiffusionmin;
 		this.tempspread += gunInfo.spread_setting * this.tempspreadDiffusion;
+		this.spreadMultiplier += this.tempspreadDiffusion;
 
 
 		this.sound = gunInfo.soundbase;

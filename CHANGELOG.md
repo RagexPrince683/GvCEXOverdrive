@@ -1,5 +1,13 @@
 # Changelog
 
+## Correct ammunition ballistic override propagation
+
+- Correct `CustomMagazine` `BlletSpread`/`BulletSpread` and `bulletFuse`
+  overrides so the exact loaded round supplies the projectile's base spread and
+  fuse before it is consumed, including FIFO per-shell `MultiMagazine` guns.
+- Preserve normal ADS, diffusion, movement, and attachment spread modifiers
+  without ratio or division behavior, and preserve explicit zero overrides.
+
 ## Fix per-shell ballistic coefficient initialization regression
 
 - Resolve and reset each content pack's `damageCof` and `speedCof` before
