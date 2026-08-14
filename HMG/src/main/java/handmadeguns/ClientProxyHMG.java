@@ -14,6 +14,7 @@ import handmadeguns.client.audio.GunSoundHMG;
 import handmadeguns.client.audio.MovingSoundHMG;
 import handmadeguns.client.audio.ReloadSoundHMG;
 import handmadeguns.client.modelLoader.emb_modelloader.MQO_ModelLoader;
+import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjResourceReloadListener;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
@@ -652,6 +653,14 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 			modelCustom_hmg.renderAll();
 		}
 		modelList.clear();
+	}
+	@Override
+	public void invalidateReloadableModels(){
+		// Commands execute on the client thread, so GPU objects cannot still be in
+		// use by an in-progress render when they are released here.
+		HMGGunMaker.clearCachedModels();
+		HMGObjModelLoader.clearModelCache();
+		MQO_ModelLoader.clearModelCache();
 	}
 	public void AddModel(Object o){
 		modelList.add((IModelCustom_HMG) o);

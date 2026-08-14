@@ -172,6 +172,9 @@ public class CommonSideProxyHMG {
 	public void setUpModels(){
 
 	}
+	public void invalidateReloadableModels(){
+
+	}
 	public void AddModel(Object o){
 	}
 

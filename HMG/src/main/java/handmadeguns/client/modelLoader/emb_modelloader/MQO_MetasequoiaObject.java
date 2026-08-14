@@ -88,6 +88,12 @@ public class MQO_MetasequoiaObject implements IModelCustom_HMG
 	public boolean isReady() {
 		return endLoad;
 	}
+
+	public void releaseDisplayLists() {
+		for (MQO_GroupObject groupObject : groupObjects) {
+			groupObject.releaseDisplayList();
+		}
+	}
 	@Override
 	public String getType()
 	{

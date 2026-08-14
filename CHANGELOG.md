@@ -1,5 +1,15 @@
 # Changelog
 
+## Restore live model reloads through `/reloadsettings`
+
+- Invalidate the gun-maker, OBJ, and MQO model caches before re-reading pack
+  settings so existing gun and vehicle render registrations receive freshly
+  parsed model instances.
+- Release obsolete OBJ VBOs and legacy OBJ/MQO OpenGL display lists on the client
+  thread, keeping repeated developer reloads from leaking GPU resources.
+- Reuse the existing settings reload and renderer replacement paths without
+  recreating registered items or entities.
+
 ## Fix CustomNPC+ held HMG gun orientation
 
 - Scope the Forge render-helper workaround in all three HMG gun renderers so an

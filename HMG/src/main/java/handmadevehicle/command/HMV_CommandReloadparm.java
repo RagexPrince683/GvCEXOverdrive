@@ -34,6 +34,7 @@ public class HMV_CommandReloadparm extends CommandBase implements ICommand{
     public void processCommand(ICommandSender var1, String[] var2) {
         System.out.println(""+var1);
         System.out.println(""+var2);
+		HMG_proxy.invalidateReloadableModels();
 
         File packdir = new File(HMV_Proxy.ProxyFile(), "handmadeVehicles_Packs");
         packdir.mkdirs();

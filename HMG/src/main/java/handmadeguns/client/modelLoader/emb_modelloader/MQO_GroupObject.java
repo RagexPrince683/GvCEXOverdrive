@@ -74,6 +74,15 @@ public class MQO_GroupObject extends HMGGroupObject
 		else initDisplay();
 	}
 
+	public void releaseDisplayList()
+	{
+		if (displayList > 0)
+		{
+			GLAllocation.deleteDisplayLists(displayList);
+			displayList = -1;
+		}
+	}
+
 	public void render_init()
 	{
 		if (faces_PerMat == null) return;

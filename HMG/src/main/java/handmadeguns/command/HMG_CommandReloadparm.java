@@ -33,6 +33,9 @@ public class HMG_CommandReloadparm extends CommandBase implements ICommand{
     @Override
     public void processCommand(ICommandSender var1, String[] var2) {
         System.out.println(""+var1);
+		// Invalidate before parsing settings: existing item renderers are then
+		// updated by HMGGunMaker with models read from the current pack files.
+		HMG_proxy.invalidateReloadableModels();
 //        EntityPlayer entityPlayer = getPlayer(var1,var2[0]);
 //        if(entityPlayer.getHeldItem().getItem() instanceof HMGItemGunBase){
 //            String str = var2[1];

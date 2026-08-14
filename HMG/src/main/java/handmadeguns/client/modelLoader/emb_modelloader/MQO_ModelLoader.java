@@ -26,6 +26,18 @@ public class MQO_ModelLoader implements IModelCustomLoader
         return types;
     }
 
+	public static void clearModelCache()
+	{
+		for (IModelCustom model : MODEL_CACHE.values())
+		{
+			if (model instanceof MQO_MetasequoiaObject)
+			{
+				((MQO_MetasequoiaObject) model).releaseDisplayLists();
+			}
+		}
+		MODEL_CACHE.clear();
+	}
+
     public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
     {
         String key = resource.toString();

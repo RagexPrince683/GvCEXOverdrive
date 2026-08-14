@@ -49,6 +49,11 @@ public class HMGGroupObject
 		{
 			vboMesh.release();
 		}
+		if (displayList > 0)
+		{
+			net.minecraft.client.renderer.GLAllocation.deleteDisplayLists(displayList);
+			displayList = -1;
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
