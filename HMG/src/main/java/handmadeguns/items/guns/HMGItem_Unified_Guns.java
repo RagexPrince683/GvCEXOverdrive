@@ -1046,19 +1046,27 @@ public class HMGItem_Unified_Guns extends Item {
 				firetemp = new FireTemp(gunInfo);
 				firetemp.applyMagOption(ammunitionStack);
 				if(firetemp.bulletType != -1) currentBulletType = firetemp.bulletType;
+				float gunBaseSpread = gunInfo.spread_setting;
+				int gunBaseFuse = gunInfo.fuse;
+				Float ammoSpread = null;
+				Integer ammoFuse = null;
+				if(ammunitionStack != null && ammunitionStack.getItem() instanceof HMGItemCustomMagazine) {
+					HMGItemCustomMagazine ammunition = (HMGItemCustomMagazine) ammunitionStack.getItem();
+					ammoSpread = ammunition.spreadOverride;
+					ammoFuse = ammunition.fuseOverride;
+				}
+				// GunTemp records the normal ADS, diffusion and attachment factor. Apply
+				// it to this round's base directly, without dividing by the gun base.
+				firetemp.spread *= guntemp.spreadMultiplier;
 				if(HandmadeGunsCore.isDebugMessage) {
 					ItemStack loadedFront = ItemStack.loadItemStackFromNBT(itemstack.getTagCompound().getCompoundTag("LoadedMagazine0"));
 					Item selected = getcurrentMagazine(itemstack);
-					HandmadeGunsCore.Debug("[AmmoDebug] SHOT gun=%s resolved=%s itemDamage=%s maxDamage=%s selected=%s loaded0=%s power=%s speed=%s spread=%s pellet=%s fuse=%s bulletType=%s gravity=%s resistance=%s stability=%s damageRange=%s",
+					HandmadeGunsCore.Debug("[AmmoDebug] SHOT gun=%s resolved=%s itemDamage=%s maxDamage=%s selected=%s loaded0=%s power=%s speed=%s gunBaseSpread=%s ammoSpread=%s finalSpread=%s pellet=%s gunBaseFuse=%s ammoFuse=%s finalFuse=%s bulletType=%s gravity=%s resistance=%s stability=%s damageRange=%s",
 							getUnlocalizedName(), debugItem(ammunitionStack), ammunitionStack == null ? -1 : ammunitionStack.getItemDamage(), ammunitionStack == null ? -1 : ammunitionStack.getMaxDamage(),
-							selected == null ? "null" : selected.getUnlocalizedName(), debugItem(loadedFront), firetemp.power, firetemp.speed, firetemp.spread,
-							firetemp.pellet, firetemp.fuse, currentBulletType, firetemp.gra, firetemp.resistance, firetemp.bulletStability, firetemp.damageRange);
+							selected == null ? "null" : selected.getUnlocalizedName(), debugItem(loadedFront), firetemp.power, firetemp.speed,
+							gunBaseSpread, ammoSpread, firetemp.spread, firetemp.pellet, gunBaseFuse, ammoFuse, firetemp.fuse,
+							currentBulletType, firetemp.gra, firetemp.resistance, firetemp.bulletStability, firetemp.damageRange);
 				}
-				float shotSpreadBackup = guntemp.tempspread;
-				// GunTemp has already applied ADS, diffusion, movement and attachments; scale
-				// that finished value so ammunition replaces only its base component.
-				if (gunInfo.spread_setting != 0) guntemp.tempspread *= firetemp.spread / gunInfo.spread_setting;
-				else guntemp.tempspread = firetemp.spread;
 				damageMagazine(itemstack, entity);
 				float backUpRotationPitch = entity.rotationPitch;
 				float backUpRotationYaw = entity.rotationYaw;
@@ -1122,6 +1130,8 @@ public class HMGItem_Unified_Guns extends Item {
 						bulletBase.bouncerate = firetemp.bouncerate;
 						bulletBase.bouncelimit = firetemp.bouncelimit;
 						bulletBase.fuse = firetemp.fuse;
+						if(HandmadeGunsCore.isDebugMessage && pelletIndex == 0)
+							HandmadeGunsCore.Debug("[AmmoDebug] PROJECTILE_CONFIG class=%s finalSpread=%s spawnedFuse=%s", bulletBase.getClass().getName(), firetemp.spread, bulletBase.fuse);
 						bulletBase.canbounce = firetemp.canbounce;
 						bulletBase.resistance = firetemp.resistance;
 						bulletBase.acceleration = firetemp.acceleration;
@@ -1178,7 +1188,6 @@ public class HMGItem_Unified_Guns extends Item {
 				}
 				entity.rotationPitch = backUpRotationPitch;
 				entity.rotationYaw = backUpRotationYaw;
-				guntemp.tempspread = shotSpreadBackup;
 				HMGPacketHandler.INSTANCE.sendToAll(new PacketPlaysound(entity, guntemp.sound, gunInfo.soundspeed, guntemp.soundlevel,entity.posX,entity.posY,entity.posZ));
 			}
 
@@ -1258,7 +1267,7 @@ public class HMGItem_Unified_Guns extends Item {
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelN);
+					firetemp.power, firetemp.speed, firetemp.spread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelN);
 		}
 		return bulletinstances;
 	}
@@ -1266,7 +1275,7 @@ public class HMGItem_Unified_Guns extends Item {
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_AP(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelAP);
+					firetemp.power, firetemp.speed, firetemp.spread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelAP);
 		}
 		return bulletinstances;
 	}
@@ -1274,14 +1283,14 @@ public class HMGItem_Unified_Guns extends Item {
 		if(gunInfo.guntype == 1) {
 			HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[1];
 			bulletinstances[0] = new HMGEntityBullet_Frag(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelFrag);
+					firetemp.power, firetemp.speed, firetemp.spread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelFrag);
 
 			return bulletinstances;
 		}else {
 			HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 			for(int i = 0; i < firetemp.pellet; i++){
 				bulletinstances[i] = new HMGEntityBullet_Frag(par2World, par3Entity,
-						firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelFrag);
+						firetemp.power, firetemp.speed, firetemp.spread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelFrag);
 			}
 			return bulletinstances;
 		}
@@ -1290,7 +1299,7 @@ public class HMGItem_Unified_Guns extends Item {
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_AT(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelAT);
+					firetemp.power, firetemp.speed, firetemp.spread, firetemp.model != null?firetemp.model:gunInfo.bulletmodelAT);
 		}
 		return bulletinstances;
 	}
@@ -1301,7 +1310,7 @@ public class HMGItem_Unified_Guns extends Item {
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBulletExprode(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelGL);
+					firetemp.power, firetemp.speed, firetemp.spread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelGL);
 		}
 		return bulletinstances;
 	}
@@ -1309,7 +1318,7 @@ public class HMGItem_Unified_Guns extends Item {
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_TE(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelTE);
+					firetemp.power, firetemp.speed, firetemp.spread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelTE);
 		}
 		return bulletinstances;
 	}
@@ -1318,7 +1327,7 @@ public class HMGItem_Unified_Guns extends Item {
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBulletRocket(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelRPG);
+					firetemp.power, firetemp.speed, firetemp.spread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelRPG);
 		}
 		return bulletinstances;
 	}
@@ -1326,7 +1335,7 @@ public class HMGItem_Unified_Guns extends Item {
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_HE(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model: gunInfo.bulletmodelHE);
+					firetemp.power, firetemp.speed, firetemp.spread, firetemp.model != null?firetemp.model: gunInfo.bulletmodelHE);
 		}
 		return bulletinstances;
 	}
@@ -1334,7 +1343,7 @@ public class HMGItem_Unified_Guns extends Item {
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBullet_Flame(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread, firetemp.model != null?firetemp.model: gunInfo.bulletmodelN);
+					firetemp.power, firetemp.speed, firetemp.spread, firetemp.model != null?firetemp.model: gunInfo.bulletmodelN);
 		}
 		return bulletinstances;
 	}
@@ -1342,7 +1351,7 @@ public class HMGItem_Unified_Guns extends Item {
 		HMGEntityBulletBase[] bulletinstances = new HMGEntityBulletBase[firetemp.pellet];
 		for(int i = 0; i < firetemp.pellet; i++){
 			bulletinstances[i] = new HMGEntityBulletTorp(par2World, par3Entity,
-					firetemp.power, firetemp.speed, guntemp.tempspread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelRPG);
+					firetemp.power, firetemp.speed, firetemp.spread,firetemp.exlevel,firetemp.destroyBlock, firetemp.model != null?firetemp.model:gunInfo.bulletmodelRPG);
 		}
 		return bulletinstances;
 	}
@@ -2194,9 +2203,13 @@ public class HMGItem_Unified_Guns extends Item {
 				}
 				if (guntemp.items[4] != null && guntemp.items[4].getItem() instanceof HMGItemAttachment_grip) {
 					if(HandmadeGunsCore.Key_ADS(entity) || (entity instanceof EntityPlayer && entity.boundingBox.maxY - entity.boundingBox.minY < 1.5)){
-						guntemp.tempspread *= ((HMGItemAttachment_grip) guntemp.items[4].getItem()).reduceSpreadLevel_ADS;
+						float gripSpread = ((HMGItemAttachment_grip) guntemp.items[4].getItem()).reduceSpreadLevel_ADS;
+						guntemp.tempspread *= gripSpread;
+						guntemp.spreadMultiplier *= gripSpread;
 					}else {
-						guntemp.tempspread *= ((HMGItemAttachment_grip) guntemp.items[4].getItem()).reduceSpreadLevel;
+						float gripSpread = ((HMGItemAttachment_grip) guntemp.items[4].getItem()).reduceSpreadLevel;
+						guntemp.tempspread *= gripSpread;
+						guntemp.spreadMultiplier *= gripSpread;
 					}
 				} else if(guntemp.items[4] != null && guntemp.items[4].getItem() instanceof HMGItem_Unified_Guns) {
 					double ix = 0;
@@ -2293,7 +2306,16 @@ public class HMGItem_Unified_Guns extends Item {
 	}
 
 	public void damageMagazine(ItemStack par1ItemStack , Entity par3Entity){
-		if(!currentMagzine_has_roundOption(par1ItemStack)){
+		boolean hasPhysicalRound = false;
+		for(int i = 0; i < gunInfo.magazineItemCount; i++) {
+			ItemStack loaded = ItemStack.loadItemStackFromNBT(par1ItemStack.getTagCompound().getCompoundTag("LoadedMagazine" + i));
+			if(loaded != null && loaded.getItemDamage() < loaded.getMaxDamage()) {
+				hasPhysicalRound = true;
+				break;
+			}
+		}
+		if(hasPhysicalRound) damage_LoadedMagazine(par1ItemStack);
+		else if(!currentMagzine_has_roundOption(par1ItemStack)){
 			par1ItemStack.setItemDamage(par1ItemStack.getItemDamage() + 1);
 			if(gunInfo.magazineItemCount > 1)destroy_LoadedMagazine(par1ItemStack);
 			if(par1ItemStack.getItemDamage() == par1ItemStack.getMaxDamage())destroy_LoadedMagazine(par1ItemStack);
@@ -2403,14 +2425,10 @@ public class HMGItem_Unified_Guns extends Item {
 	/** Returns the physical round at the chamber end, not the currently selected reload type. */
 	public ItemStack resolveNextAmmunitionStack(ItemStack gunStack){
 		checkTags(gunStack);
-		if(isPerShellReload(gunStack)) {
-			for(int i = 0; i < gunInfo.magazineItemCount; i++) {
-				ItemStack stack = ItemStack.loadItemStackFromNBT(gunStack.getTagCompound().getCompoundTag("LoadedMagazine" + i));
-				if(stack != null) return stack;
-			}
+		for(int i = 0; i < gunInfo.magazineItemCount; i++) {
+			ItemStack stack = ItemStack.loadItemStackFromNBT(gunStack.getTagCompound().getCompoundTag("LoadedMagazine" + i));
+			if(stack != null && stack.getItemDamage() < stack.getMaxDamage()) return stack;
 		}
-		ItemStack[] loaded = get_loadedMagazineStack(gunStack);
-		for(ItemStack stack : loaded) if(stack != null) return stack;
 		Item selected = getcurrentMagazine(gunStack);
 		return selected == null ? null : new ItemStack(selected, 1);
 	}
@@ -2560,7 +2578,9 @@ public class HMGItem_Unified_Guns extends Item {
 		set_loadedMagazineStack(itemStack,magazines);
 	}
 	public void damage_LoadedMagazine(ItemStack itemStack){
-		ItemStack[] magazines = get_loadedMagazineStack(itemStack);
+		ItemStack[] magazines = new ItemStack[gunInfo.magazineItemCount];
+		for(int i = 0; i < magazines.length; i++)
+			magazines[i] = ItemStack.loadItemStackFromNBT(itemStack.getTagCompound().getCompoundTag("LoadedMagazine" + i));
 		int cnt = 0;
 		for(ItemStack a_itemStack: magazines){
 			if(a_itemStack != null && a_itemStack.getMaxDamage() > a_itemStack.getItemDamage()){

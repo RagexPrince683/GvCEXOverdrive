@@ -64,7 +64,8 @@ public class FireTemp {
 		if(magazine.speedOverride != null && Float.isFinite(magazine.speedOverride))this.speed = magazine.speedOverride;
 		this.power *= magazine.damagemodify;
 		this.speed *= magazine.speedmodify;
-		if(magazine.fuse != -1)this.fuse = magazine.fuse;
+		if(magazine.fuseOverride != null)this.fuse = magazine.fuseOverride;
+		else if(magazine.fuse != -1)this.fuse = magazine.fuse;
 		if(magazine.explosionlevel != -1)this.exlevel = magazine.explosionlevel;
 		//todo this is causing mch vehicles to take way less damage than they should from anti tank weaponry
 		// specifically explosive weaponry because the math for MCH is wrong for explosion calcs but also the logic for this is weak

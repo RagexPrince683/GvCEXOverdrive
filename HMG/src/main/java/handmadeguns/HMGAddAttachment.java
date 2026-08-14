@@ -46,6 +46,7 @@ public class HMGAddAttachment
 
 
 		int fuse = -1;
+		Integer fuseOverride = null;
 		boolean blockdestroyex = true;
 		boolean autoDestroy = true;
 		boolean hasRoundOption = false;
@@ -125,6 +126,13 @@ public class HMGAddAttachment
 
 					if (type.length != 0)
 					{//1
+						// Match gun-TXT whitespace handling for ballistic overrides only;
+						// attachment/recipe tokens retain their legacy untrimmed semantics.
+						String trimmedKey = type[0].trim();
+						if ("BulletSpread".equals(trimmedKey) || "BlletSpread".equals(trimmedKey)
+								|| "bulletFuse".equals(trimmedKey) || "fuse".equals(trimmedKey)) {
+							type[0] = trimmedKey;
+						}
 						switch (type[0]) {
 							case "Texture":
 								texture = type[1];
@@ -217,7 +225,7 @@ public class HMGAddAttachment
 								break;
 							case "BulletSpread":
 							case "BlletSpread":
-								spreadOverride = Float.parseFloat(type[1]);
+								spreadOverride = Float.parseFloat(type[1].trim());
 								break;
 							case "ShotGun_Pellet":
 							case "PerFireRound":
@@ -229,7 +237,10 @@ public class HMGAddAttachment
 							case "CanBounce": case "canBounce": canBounceOverride = Boolean.parseBoolean(type[1]); break;
 							case "AccelerationDelay": case "accelerationDelay": accelerationDelayOverride = Integer.parseInt(type[1]); break;
 							case "AccelerationFuse": case "accelerationFuse": accelerationFuseOverride = Integer.parseInt(type[1]); break;
-							case "fuse": case "bulletFuse": fuse = Integer.parseInt(type[1]); break;
+							case "fuse": case "bulletFuse":
+								fuseOverride = Integer.valueOf(type[1].trim());
+								fuse = fuseOverride;
+								break;
 							case "Explosion": case "ExplosionRadius": explosionlevel = Float.parseFloat(type[1]); break;
 							case "Explosionlevel":
 								explosionlevel = Float.parseFloat(type[1]);
@@ -610,6 +621,7 @@ public class HMGAddAttachment
 									((HMGItemCustomMagazine)newitem).setMaxDamage(round);
 								}
 								((HMGItemCustomMagazine)newitem).fuse = fuse;
+								((HMGItemCustomMagazine)newitem).fuseOverride = fuseOverride;
 								((HMGItemCustomMagazine)newitem).blockdestroyex = blockdestroyex;
 								((HMGItemCustomMagazine)newitem).autoDestroy = autoDestroy;
 								((HMGItemCustomMagazine)newitem).explosionlevel = explosionlevel;
@@ -638,10 +650,10 @@ public class HMGAddAttachment
 								((HMGItemCustomMagazine)newitem).blockDestroyOverride = blockDestroyOverride;
 								((HMGItemCustomMagazine)newitem).accelerationDelayOverride = accelerationDelayOverride;
 								((HMGItemCustomMagazine)newitem).accelerationFuseOverride = accelerationFuseOverride;
-								if(powerOverride != null || speedOverride != null || spreadOverride != null || pelletOverride != null) {
+								if(powerOverride != null || speedOverride != null || spreadOverride != null || pelletOverride != null || fuseOverride != null) {
 									HandmadeGunsCore.Debug("[AmmoDebug] ammo=%s source=%s rawPower=%s effectivePower=%s rawSpeed=%s effectiveSpeed=%s damageCof=%s speedCof=%s spread=%s pellet=%s fuse=%s bulletType=%s",
 											GunName, file1.getPath(), rawPowerOverride, powerOverride, rawSpeedOverride, speedOverride,
-											HMGGunMaker.damageCof, HMGGunMaker.speedCof, spreadOverride, pelletOverride, fuse, bullettype);
+											HMGGunMaker.damageCof, HMGGunMaker.speedCof, spreadOverride, pelletOverride, fuseOverride, bullettype);
 								}
 							}
 							GameRegistry.registerItem(newitem, GunName);
