@@ -916,8 +916,12 @@ public class HMGAddAttachment
 		}
 	}
 
-	/** Re-reads only mutable inventory transforms and never performs registration side effects. */
+	/** Re-reads model/render settings for registered items without item or recipe registration. */
 	public static void reloadAttachmentSettings(File file) {
+		String attach3dmodel = null;
+		String model3dTexture = null;
+		String[] attach3dmodels = new String[6];
+		String[] model3dTextures = new String[6];
 		float inventoryScale = 1.0F;
 		float[] inventoryOffset = new float[] {0.0F, 0.0F, 0.0F};
 		List<HMGItemAttachmentBase> registeredAttachments = new ArrayList<HMGItemAttachmentBase>();
@@ -929,7 +933,15 @@ public class HMGAddAttachment
 					String[] values = HMGConfigLineParser.parseAttachmentExtensionLine(line);
 					if (values.length == 0) continue;
 					String key = values[0].trim();
-					if ("InventoryScale".equals(key)) inventoryScale = parseInventoryScale(values, file);
+					if ("attach3dmodel".equals(key))
+						attach3dmodel = values.length > 1 ? values[1].trim() : null;
+					else if ("3dmodeltex".equals(key))
+						model3dTexture = values.length > 1 ? values[1].trim() : null;
+					else if (key.matches("attach3dmodel[1-5]"))
+						attach3dmodels[key.charAt(key.length() - 1) - '0'] = values.length > 1 ? values[1].trim() : null;
+					else if (key.matches("3dmodeltex[1-5]"))
+						model3dTextures[key.charAt(key.length() - 1) - '0'] = values.length > 1 ? values[1].trim() : null;
+					else if ("InventoryScale".equals(key)) inventoryScale = parseInventoryScale(values, file);
 					else if ("InventoryOffset".equals(key)) inventoryOffset = parseInventoryOffset(values, file);
 					else if (isAttachmentDeclaration(key) && values.length > 1) {
 						Item registered = GameRegistry.findItem("HandmadeGuns", values[1].trim());
@@ -943,10 +955,16 @@ public class HMGAddAttachment
 				reader.close();
 			}
 			for (HMGItemAttachmentBase attachment : registeredAttachments) {
+				attachment.attach3dmodel = attach3dmodel;
+				attachment.model3dTexture = model3dTexture;
+				System.arraycopy(attach3dmodels, 0, attachment.attach3dmodels, 0, attach3dmodels.length);
+				System.arraycopy(model3dTextures, 0, attachment.model3dTextures, 0, model3dTextures.length);
 				attachment.inventoryScale = inventoryScale;
 				attachment.inventoryOffsetX = inventoryOffset[0];
 				attachment.inventoryOffsetY = inventoryOffset[1];
 				attachment.inventoryOffsetZ = inventoryOffset[2];
+				if (attachment.getStandalone3dModelSlot() >= 0)
+					registerModelAttachment(attachment, attachment.getUnlocalizedName());
 			}
 		} catch (IOException error) {
 			System.err.println("[HMG] Unable to reload attachment settings from " + file.getPath()
