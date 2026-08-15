@@ -33,9 +33,9 @@ BulletNameALL,M26grenade
 
 grenade,true
 
-InventoryScale,20
+InventoryScale,30
 
-InventoryOffset,-1.2,-1.1,0
+InventoryOffset,30,0,-10
 
 Cartridge,false
 DropMagazine,false
