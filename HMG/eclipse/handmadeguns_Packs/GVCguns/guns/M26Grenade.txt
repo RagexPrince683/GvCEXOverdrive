@@ -35,6 +35,8 @@ grenade,true
 
 InventoryScale,20
 
+InventoryOffset,-1.2,-1.1,0
+
 Cartridge,false
 DropMagazine,false
 
