@@ -42,6 +42,7 @@ public class HMGGunMaker {
 	public static ScriptEngine currentScript;
 	public static FileReader currentScriptFile;
 	private HMGGunParts attachmentAnchor;
+	private final HMGGunParts[] attachmentAnchors = new HMGGunParts[6];
 	private File currentGunConfig;
 
 	private static final ScriptEngineManager SCRIPT_ENGINE_MANAGER = new ScriptEngineManager(null);
@@ -57,6 +58,7 @@ public class HMGGunMaker {
 
 	public void load( boolean isClient, File file1) {
 		attachmentAnchor = null;
+		for (int slot = 1; slot <= 5; slot++) attachmentAnchors[slot] = null;
 		currentGunConfig = file1;
 		currentParts = null;
 		long loadStartNanos = System.nanoTime();
@@ -316,7 +318,11 @@ public class HMGGunMaker {
 
 						switch (type[0]) {
 							case "attachmentlocation":
-								parseAttachmentLocation(gunInfo, type, file1);
+								parseAttachmentLocation(gunInfo, type, file1, 0);
+								break;
+							case "attachmentlocation1": case "attachmentlocation2": case "attachmentlocation3":
+							case "attachmentlocation4": case "attachmentlocation5":
+								parseAttachmentLocation(gunInfo, type, file1, type[0].charAt(type[0].length() - 1) - '0');
 								break;
 							case "Name":
 								displayNamegun = type[1];
@@ -1018,6 +1024,7 @@ public class HMGGunMaker {
 											
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.partslist = partslist;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.hasAttachmentAnchor = attachmentAnchor != null;
+										for (int attachmentSlot = 1; attachmentSlot <= 5; attachmentSlot++) ((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.hasNumberedAttachmentAnchor[attachmentSlot] = attachmentAnchors[attachmentSlot] != null;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.gunPartsScale = gunPartsScale;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.useLegacyInventoryScale = useLegacyInventoryScale;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.muzzleattachoffset = barrelattachoffset;
@@ -1049,6 +1056,7 @@ public class HMGGunMaker {
 											
 											renderItemGun_u_new.partsRender_gun.partslist = partslist;
 											renderItemGun_u_new.partsRender_gun.hasAttachmentAnchor = attachmentAnchor != null;
+										for (int attachmentSlot = 1; attachmentSlot <= 5; attachmentSlot++) renderItemGun_u_new.partsRender_gun.hasNumberedAttachmentAnchor[attachmentSlot] = attachmentAnchors[attachmentSlot] != null;
 											renderItemGun_u_new.partsRender_gun.gunPartsScale = gunPartsScale;
 											renderItemGun_u_new.partsRender_gun.useLegacyInventoryScale = useLegacyInventoryScale;
 											renderItemGun_u_new.partsRender_gun.muzzleattachoffset = barrelattachoffset;
@@ -1436,7 +1444,7 @@ public class HMGGunMaker {
 		}
 	}
 
-	private static void parseAttachmentLocation(GunInfo gunInfo, String[] values, File gunFile) {
+	private static void parseAttachmentLocation(GunInfo gunInfo, String[] values, File gunFile, int slot) {
 		try {
 			if (values.length != 4 && values.length != 5) throw new NumberFormatException("expected 3 or 4 values");
 			float x = Float.parseFloat(values[1]);
@@ -1447,11 +1455,15 @@ public class HMGGunMaker {
 					|| Float.isNaN(z) || Float.isInfinite(z) || Float.isNaN(rotation) || Float.isInfinite(rotation)) {
 				throw new NumberFormatException("values must be finite");
 			}
-			gunInfo.attachmentLocationX = x;
-			gunInfo.attachmentLocationY = y;
-			gunInfo.attachmentLocationZ = z;
-			gunInfo.attachmentLocationRotation = rotation;
-			gunInfo.hasAttachmentLocation = true;
+			if (slot == 0) {
+				gunInfo.attachmentLocationX = x; gunInfo.attachmentLocationY = y;
+				gunInfo.attachmentLocationZ = z; gunInfo.attachmentLocationRotation = rotation;
+				gunInfo.hasAttachmentLocation = true;
+			} else {
+				gunInfo.attachmentLocationXs[slot] = x; gunInfo.attachmentLocationYs[slot] = y;
+				gunInfo.attachmentLocationZs[slot] = z; gunInfo.attachmentLocationRotations[slot] = rotation;
+				gunInfo.hasAttachmentLocations[slot] = true;
+			}
 		} catch (RuntimeException exception) {
 			System.err.println("[HMG] Invalid attachmentlocation in gun file " + gunFile.getPath()
 					+ ": " + joinConfigValues(values) + " (" + exception.getMessage() + ")");
@@ -1721,6 +1733,20 @@ public class HMGGunMaker {
 					System.err.println("[HMG] Duplicate SetAttachmentAttach in gun configuration "
 							+ sourceName(currentGunConfig) + " for part " + currentParts.partsname
 							+ "; keeping first anchor " + attachmentAnchor.partsname);
+				}
+				break;
+			case "SetAttachmentAttach1": case "SetAttachmentAttach2": case "SetAttachmentAttach3":
+			case "SetAttachmentAttach4": case "SetAttachmentAttach5":
+				int attachmentSlot = type[0].charAt(type[0].length() - 1) - '0';
+				if (currentParts == null) {
+					System.err.println("[HMG] Ignoring " + type[0] + " without an AddParts or AddChildParts in gun configuration " + sourceName(currentGunConfig));
+				} else if (attachmentAnchors[attachmentSlot] == null) {
+					currentParts.attachmentAttachSlots[attachmentSlot] = true;
+					attachmentAnchors[attachmentSlot] = currentParts;
+				} else {
+					System.err.println("[HMG] Duplicate attachment anchor in gun configuration " + sourceName(currentGunConfig)
+							+ " for slot " + attachmentSlot + " on part " + currentParts.partsname
+							+ "; keeping first anchor " + attachmentAnchors[attachmentSlot].partsname);
 				}
 				break;
 			case "AddPartsRotationCenterAndRotationAmount":

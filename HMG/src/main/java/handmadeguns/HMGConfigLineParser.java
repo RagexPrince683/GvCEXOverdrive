@@ -23,7 +23,13 @@ public final class HMGConfigLineParser {
     private static boolean isExtensionKey(String key) {
         return "attach3dmodel".equals(key) || "3dmodeltex".equals(key)
                 || "attachmentlocation".equals(key) || "InventoryScale".equals(key)
-                || "InventoryOffset".equals(key);
+                || "InventoryOffset".equals(key) || numberedKey(key, "attach3dmodel")
+                || numberedKey(key, "3dmodeltex") || numberedKey(key, "attachmentlocation");
+    }
+
+    private static boolean numberedKey(String key, String prefix) {
+        return key.length() == prefix.length() + 1 && key.startsWith(prefix)
+                && key.charAt(prefix.length()) >= '1' && key.charAt(prefix.length()) <= '5';
     }
 
     private static String[] trim(String[] values) {

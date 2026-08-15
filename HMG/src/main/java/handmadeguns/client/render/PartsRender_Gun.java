@@ -37,7 +37,8 @@ public class PartsRender_Gun extends PartsRender {
 	public boolean useLegacyInventoryScale = false;
 	/** Set by the gun-part parser when this model has a SetAttachmentAttach anchor. */
 	public boolean hasAttachmentAnchor = false;
-	private boolean attachmentRendered;
+	public final boolean[] hasNumberedAttachmentAnchor = new boolean[6];
+	private final boolean[] attachmentRendered = new boolean[6];
 	
 	public void partSidentification(Object... data){
 		guntemp.readPropertyFromNBT(gunitem.gunInfo,nbt, HandmadeGunsCore.Key_ADS(curretnEntity),HMG_proxy.getCilentWorld());
@@ -46,7 +47,7 @@ public class PartsRender_Gun extends PartsRender {
 		int remainbullets;
 		ArrayList<HMGGunParts> partslist_temp = partslist;
 		boolean rootRender = data.length <= 3;
-		if (rootRender) attachmentRendered = false;
+		if (rootRender) for (int slot = 1; slot <= 5; slot++) attachmentRendered[slot] = false;
 		if(data.length >3){
 			partslist_temp = (ArrayList<HMGGunParts>) data[0];
 			if(data[1] instanceof GunState[])states = (GunState[]) data[1];
@@ -64,19 +65,23 @@ public class PartsRender_Gun extends PartsRender {
 				if(checkState2(state,parts,flame,remainbullets))break;
 			}
 		}
-		if (rootRender && !hasAttachmentAnchor && !attachmentRendered) {
-			attachmentRendered = true;
-			HMGAttachmentModelRenderer.renderInstalled(gunitem, items, pass, gunPartsScale, texture);
-		}
+		if (rootRender) for (int slot = 1; slot <= 5; slot++)
+			if (!attachmentRendered[slot] && !hasNumberedAttachmentAnchor[slot] && !hasAttachmentAnchor)
+				renderAttachmentSlot(slot);
 	}
 
 	@Override
 	protected void renderPartHook(HMGGunParts parts, GunState state, float flame, int remainbullets,
 	                              HMGGunParts_Motion_PosAndRotation offsetAndRotation) {
-		if (parts.attachmentAttach && !attachmentRendered) {
-			attachmentRendered = true;
-			HMGAttachmentModelRenderer.renderInstalled(gunitem, items, pass, gunPartsScale, texture);
-		}
+		for (int slot = 1; slot <= 5; slot++) if (parts.attachmentAttachSlots[slot]) renderAttachmentSlot(slot);
+		if (parts.attachmentAttach) for (int slot = 1; slot <= 5; slot++)
+			if (!hasNumberedAttachmentAnchor[slot]) renderAttachmentSlot(slot);
+	}
+
+	private void renderAttachmentSlot(int slot) {
+		if (attachmentRendered[slot]) return;
+		attachmentRendered[slot] = true;
+		HMGAttachmentModelRenderer.renderInstalledSlot(gunitem, items, pass, gunPartsScale, texture, slot);
 	}
 	private boolean checkState2(GunState state,HMGGunParts parts,float flame,int remainbullets){
 		switch (state) {
@@ -166,7 +171,7 @@ public class PartsRender_Gun extends PartsRender {
 					if (parts.issightbase && items[1].getItem() instanceof HMGItemSightBase) {
 						IItemRenderer attachrender = MinecraftForgeClient.getItemRenderer(items[1], IItemRenderer.ItemRenderType.EQUIPPED);
 						if (attachrender instanceof HMGRenderItemCustom
-								&& !((HMGItemAttachmentBase) items[1].getItem()).has3dModel()) {
+								&& !((HMGItemAttachmentBase) items[1].getItem()).has3dModel(1)) {
 							GunPart_Render_attach(parts, state, flame, remainbullets, OffsetAndRotation, sightattachoffset, sightattachrotation, ((HMGRenderItemCustom) attachrender));
 							return;
 						}
@@ -191,7 +196,7 @@ public class PartsRender_Gun extends PartsRender {
 					} else if (parts.isoverbarrelbase && items[2].getItem() instanceof HMGItemAttachmentBase) {
 						IItemRenderer attachrender = MinecraftForgeClient.getItemRenderer(items[2], IItemRenderer.ItemRenderType.EQUIPPED);
 						if (attachrender instanceof HMGRenderItemCustom
-								&& !((HMGItemAttachmentBase) items[2].getItem()).has3dModel()) {
+								&& !((HMGItemAttachmentBase) items[2].getItem()).has3dModel(2)) {
 							GunPart_Render_attach(parts, state, flame, remainbullets, OffsetAndRotation, overbarrelattachoffset, overbarrelattachrotation, ((HMGRenderItemCustom) attachrender));
 							return;
 						}
@@ -204,7 +209,7 @@ public class PartsRender_Gun extends PartsRender {
 					} else if (parts.ismuzzulebase && items[3].getItem() instanceof HMGItemAttachmentBase) {
 						IItemRenderer attachrender = MinecraftForgeClient.getItemRenderer(items[3], IItemRenderer.ItemRenderType.EQUIPPED);
 						if (attachrender instanceof HMGRenderItemCustom
-								&& !((HMGItemAttachmentBase) items[3].getItem()).has3dModel()) {
+								&& !((HMGItemAttachmentBase) items[3].getItem()).has3dModel(3)) {
 							GunPart_Render_attach(parts, state, flame, remainbullets, OffsetAndRotation, muzzleattachoffset, muzzleattachrotation, ((HMGRenderItemCustom) attachrender));
 							return;
 						}
@@ -231,7 +236,7 @@ public class PartsRender_Gun extends PartsRender {
 					if (parts.isgripBase && items[4].getItem() instanceof HMGItemAttachmentBase) {
 						IItemRenderer attachrender = MinecraftForgeClient.getItemRenderer(items[4], IItemRenderer.ItemRenderType.EQUIPPED);
 						if (attachrender instanceof HMGRenderItemCustom
-								&& !((HMGItemAttachmentBase) items[4].getItem()).has3dModel()) {
+								&& !((HMGItemAttachmentBase) items[4].getItem()).has3dModel(4)) {
 							GunPart_Render_attach(parts, state, flame, remainbullets, OffsetAndRotation, gripattachoffset, gripattachrotation, ((HMGRenderItemCustom) attachrender));
 						}
 					} else if (parts.isgrip && items[4].getItem() instanceof HMGItemAttachment_grip) {

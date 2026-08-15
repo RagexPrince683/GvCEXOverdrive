@@ -65,6 +65,8 @@ public class HMGGunParts {
     public boolean isattachpart;
     /** True only for the first gun-model part marked by SetAttachmentAttach. */
     public boolean attachmentAttach;
+    /** Numbered attachment anchors. Index zero is intentionally unused. */
+    public final boolean[] attachmentAttachSlots = new boolean[6];
     public boolean isscope;
     public boolean isdot;
     public boolean issight;

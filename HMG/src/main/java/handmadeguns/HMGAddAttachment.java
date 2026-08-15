@@ -84,6 +84,8 @@ public class HMGAddAttachment
 		String objtexture = "null";
 		String attach3dmodel = null;
 		String model3dTexture = null;
+		String[] attach3dmodels = new String[6];
+		String[] model3dTextures = new String[6];
 		float inventoryScale = 1.0F;
 		float inventoryOffsetX = 0.0F;
 		float inventoryOffsetY = 0.0F;
@@ -181,6 +183,14 @@ public class HMGAddAttachment
 								break;
 							case "3dmodeltex":
 								model3dTexture = type.length > 1 ? type[1].trim() : null;
+								break;
+							case "attach3dmodel1": case "attach3dmodel2": case "attach3dmodel3":
+							case "attach3dmodel4": case "attach3dmodel5":
+								attach3dmodels[type[0].charAt(type[0].length() - 1) - '0'] = type.length > 1 ? type[1].trim() : null;
+								break;
+							case "3dmodeltex1": case "3dmodeltex2": case "3dmodeltex3":
+							case "3dmodeltex4": case "3dmodeltex5":
+								model3dTextures[type[0].charAt(type[0].length() - 1) - '0'] = type.length > 1 ? type[1].trim() : null;
 								break;
 							case "InventoryScale":
 								inventoryScale = parseInventoryScale(type, file1);
@@ -852,11 +862,13 @@ public class HMGAddAttachment
 				for (HMGItemAttachmentBase attachment : pendingAttachments) {
 					attachment.attach3dmodel = attach3dmodel;
 					attachment.model3dTexture = model3dTexture;
+					System.arraycopy(attach3dmodels, 0, attachment.attach3dmodels, 0, attach3dmodels.length);
+					System.arraycopy(model3dTextures, 0, attachment.model3dTextures, 0, model3dTextures.length);
 					attachment.inventoryScale = inventoryScale;
 					attachment.inventoryOffsetX = inventoryOffsetX;
 					attachment.inventoryOffsetY = inventoryOffsetY;
 					attachment.inventoryOffsetZ = inventoryOffsetZ;
-					if (isClient && attachment.has3dModel()) registerModelAttachment(attachment, attachment.getUnlocalizedName());
+					if (isClient && attachment.getStandalone3dModelSlot() >= 0) registerModelAttachment(attachment, attachment.getUnlocalizedName());
 					else if (isClient && canobj) {
 						IModelCustom model = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + objmodel);
 						ResourceLocation tex = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
@@ -878,13 +890,26 @@ public class HMGAddAttachment
 
 	private static void registerModelAttachment(HMGItemAttachmentBase attachment, String registryName) {
 		try {
-			String modelName = HMGGunMaker.resolveAttachmentModel(attachment.attach3dmodel);
-			String textureName = HMGGunMaker.resolveAttachmentTexture(attachment.model3dTexture, modelName, registryName);
-			attachment.attach3dmodel = modelName;
-			attachment.model3dTexture = textureName;
-			IModelCustom model = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + modelName);
-			ResourceLocation texture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + textureName);
-			MinecraftForgeClient.registerItemRenderer(attachment, HMGRenderItemCustom.forAttachment(model, texture));
+			IModelCustom[] models = new IModelCustom[6];
+			ResourceLocation[] textures = new ResourceLocation[6];
+			for (int slot = 0; slot <= 5; slot++) {
+				String configuredModel = slot == 0 ? attachment.attach3dmodel : attachment.get3dModel(slot);
+				if (configuredModel == null || configuredModel.length() == 0) continue;
+				String configuredTexture = slot == 0 ? attachment.model3dTexture : attachment.get3dModelTexture(slot);
+				String modelName = HMGGunMaker.resolveAttachmentModel(configuredModel);
+				String textureName = HMGGunMaker.resolveAttachmentTexture(configuredTexture, modelName, registryName);
+				if (slot == 0) { attachment.attach3dmodel = modelName; attachment.model3dTexture = textureName; }
+				else {
+					if (attachment.attach3dmodels[slot] != null && attachment.attach3dmodels[slot].length() > 0)
+						attachment.attach3dmodels[slot] = modelName;
+					if (attachment.model3dTextures[slot] != null && attachment.model3dTextures[slot].length() > 0)
+						attachment.model3dTextures[slot] = textureName;
+				}
+				models[slot] = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + modelName);
+				textures[slot] = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + textureName);
+			}
+			MinecraftForgeClient.registerItemRenderer(attachment, HMGRenderItemCustom.forAttachment(models, textures,
+					attachment.getStandalone3dModelSlot()));
 		} catch (Throwable error) {
 			System.err.println("[HMG] Unable to load attachment model for " + registryName + " ("
 					+ attachment.attach3dmodel + "): " + error.getMessage());
