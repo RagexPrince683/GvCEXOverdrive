@@ -3,7 +3,7 @@ Name,Attachment Test
 
 Tabname,HMG_Attachments
 
-attach3dmodel = am_dotsight
+attach3dmodel1 = am_dotsight
 3dmodeltex = am_dotsight
 InventoryScale,0.4
 InventoryOffset,-1.2,-1.1,0
