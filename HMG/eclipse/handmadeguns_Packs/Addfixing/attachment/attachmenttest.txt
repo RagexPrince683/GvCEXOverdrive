@@ -5,8 +5,8 @@ Tabname,HMG_Attachments
 
 attach3dmodel = am_dotsight
 3dmodeltex = am_dotsight
-InventoryScale,1.0
-InventoryOffset,0,0,0
+InventoryScale,0.1
+InventoryOffset,-1,-1,0
 
 RedDot,attachmenttest
 //addRecipe,reddot,1,a00,de0,000,331,0,0,265,265,0,0,0,0
