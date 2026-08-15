@@ -1,5 +1,14 @@
 # Changelog
 
+## Fix HMG attachment GUI slot validation (PR pending)
+
+- Require every attachment to match the established slot type: sight, support,
+  muzzle, under-barrel, or special ammunition.
+- Apply gun attachment whitelists as an additional compatibility restriction
+  instead of allowing a whitelisted item to bypass its slot type.
+- Restrict shift-click attachment destinations to the five exposed GUI slots
+  while preserving the existing 54-entry NBT-backed inventory and slot numbers.
+
 ## Add slot-aware ADS and gun-part attachment offsets (PR pending)
 
 - Add `opticshift1` through `opticshift5` gun directives that combine live occupied-slot offsets with first-person ADS alignment and its transition without changing zeroing or elevation.

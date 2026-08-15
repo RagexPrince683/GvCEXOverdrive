@@ -11,12 +11,16 @@ import net.minecraft.item.ItemStack;
 public class HMGSlotInventoryItem extends Slot
 {
     public ItemStack gun = null;
+    private final int attachmentSlot;
+
     public HMGSlotInventoryItem(IInventory p_i1824_1_, int p_i1824_2_, int p_i1824_3_, int p_i1824_4_) {
         super(p_i1824_1_, p_i1824_2_, p_i1824_3_, p_i1824_4_);
+        this.attachmentSlot = -1;
     }
     public HMGSlotInventoryItem(IInventory p_i1824_1_, int p_i1824_2_, int p_i1824_3_, int p_i1824_4_,ItemStack gun) {
         super(p_i1824_1_, p_i1824_2_, p_i1824_3_, p_i1824_4_);
         this.gun = gun;
+        this.attachmentSlot = p_i1824_2_;
     }
  
     /*
@@ -38,26 +42,37 @@ public class HMGSlotInventoryItem extends Slot
     }
     @Override
     public boolean isItemValid(ItemStack itemStack){
-//        System.out.println("" + slotNumber + itemStack.getItem().getUnlocalizedName());
-        if(gun != null && itemStack != null){
-            if(gun.getItem() instanceof HMGItem_Unified_Guns && ((HMGItem_Unified_Guns) gun.getItem()).gunInfo.hasAttachRestriction) {
-                for(String aa: ((HMGItem_Unified_Guns) gun.getItem()).gunInfo.attachwhitelist) {
-                    if("item.".concat(aa).equals(itemStack.getItem().getUnlocalizedName())){
+        if (itemStack == null || itemStack.getItem() == null) {
+            return false;
+        }
+
+        // Player-inventory slots use this class too, but are not attachment destinations.
+        if (attachmentSlot < 1 || attachmentSlot > 5) {
+            return super.isItemValid(itemStack);
+        }
+
+        if (!canvalidthisItemtoSlot(itemStack, attachmentSlot)) {
+            return false;
+        }
+
+        if (gun != null && gun.getItem() instanceof HMGItem_Unified_Guns) {
+            HMGItem_Unified_Guns gunItem = (HMGItem_Unified_Guns) gun.getItem();
+            if (gunItem.gunInfo.hasAttachRestriction) {
+                for (String allowedAttachment : gunItem.gunInfo.attachwhitelist) {
+                    if ("item.".concat(allowedAttachment).equals(itemStack.getItem().getUnlocalizedName())) {
                         return true;
                     }
                 }
                 return false;
-            }else {
-//                System.out.println("debug");
-                return true;
             }
-        }else if(slotNumber == 4 && itemStack != null){
-    
-            return true;
         }
+
         return true;
     }
     boolean canvalidthisItemtoSlot(ItemStack itemStack,int slot){
+        if (itemStack == null || itemStack.getItem() == null) {
+            return false;
+        }
         switch (slot){
             case 0:
                 return false;
@@ -66,11 +81,15 @@ public class HMGSlotInventoryItem extends Slot
             case 2:
                 return itemStack.getItem() instanceof HMGItemAttachment_laser || itemStack.getItem() instanceof HMGItemAttachment_light;
             case 3:
-                return itemStack.getItem() instanceof HMGItemAttachment_Suppressor;
+                return itemStack.getItem() instanceof HMGItemAttachment_Suppressor
+                        || itemStack.getItem() instanceof HMGItemAttachment_Muzzle;
             case 4:
                 return itemStack.getItem() instanceof HMGItemAttachment_grip || itemStack.getItem() instanceof HMGItem_Unified_Guns || itemStack.getItem() instanceof HMGXItemGun_Sword;
             case 5:
-                return itemStack.getItem() instanceof HMGItemSightBase;
+                return itemStack.getItem() instanceof HMGItemBullet_AP
+                        || itemStack.getItem() instanceof HMGItemBullet_AT
+                        || itemStack.getItem() instanceof HMGItemBullet_Frag
+                        || itemStack.getItem() instanceof HMGItemBullet_TE;
         }
         return false;
     }
