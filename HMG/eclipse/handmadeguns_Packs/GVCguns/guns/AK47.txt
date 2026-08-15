@@ -9,6 +9,8 @@ Cycle,2
 ElevationOffsets,     0,-0.4,-0.8,-1.4,-2 ,-2.7,-3.5
 elevationOffsets_info,0,20m ,40m ,60m ,80m,100m,120m
 
+attachmentlocation = 0, 1.6, 2
+
 Motion,0.95
 
 Recoil,3
@@ -40,6 +42,7 @@ Rates,2,2,2
 
 attachRestriction,true
 //allowattach,byfrou01_Bayonet
+allowattach,attachmenttest
 
 ModelEquipped,-0.7f,0.2f,-0.5f
 ModelHigh,0.9601,0.9601,0.9601
