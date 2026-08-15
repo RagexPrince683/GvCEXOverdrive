@@ -24,7 +24,11 @@ import static java.lang.Math.abs;
 import static org.lwjgl.opengl.GL11.*;
 
 public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
+	private static final float ATTACHMENT_INVENTORY_CENTER_X = 8.0F;
+	private static final float ATTACHMENT_INVENTORY_CENTER_Y = 8.0F;
+	private static final float ATTACHMENT_INVENTORY_CENTER_Z = 0.0F;
 	private static final float ATTACHMENT_INVENTORY_BASE_SCALE = 6.0F;
+	private static final float ATTACHMENT_INVENTORY_BASE_OFFSET_Y = -0.25F;
 	private IModelCustom modeling;
 	private ResourceLocation texture;
 	private final boolean renderInventory;
@@ -106,21 +110,32 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 		switch (type) {
 			case INVENTORY:
 				GL11.glPushMatrix();
-				if (attachmentMode) {
-					GL11.glTranslatef(8F, 8F, 0F);
-					// Convert model units to Forge inventory pixels before applying the author offset.
-					GL11.glScalef(ATTACHMENT_INVENTORY_BASE_SCALE, ATTACHMENT_INVENTORY_BASE_SCALE,
-							ATTACHMENT_INVENTORY_BASE_SCALE);
-					// This precedes the configurable scale so changing size does not move the chosen center.
-					GL11.glTranslatef(attachmentInventoryOffsetX, attachmentInventoryOffsetY,
-							attachmentInventoryOffsetZ);
-					GL11.glScalef(attachmentInventoryScale, attachmentInventoryScale, attachmentInventoryScale);
-					GL11.glRotatef(25F, 1, 0, 0);
-					GL11.glRotatef(135F, 0, 1, 0);
-				} else GL11.glRotatef(180F, 1, 0, 0);
-				Minecraft.getMinecraft().renderEngine.bindTexture(texture);
-				modeling.renderAll();
-				GL11.glPopMatrix();
+				try {
+					if (attachmentMode) {
+						GL11.glTranslatef(ATTACHMENT_INVENTORY_CENTER_X, ATTACHMENT_INVENTORY_CENTER_Y,
+								ATTACHMENT_INVENTORY_CENTER_Z);
+						// Forge supplies inventory rendering in 16x16 GUI coordinates. Convert model units
+						// to that space independently of the pack-authored scale multiplier.
+						GL11.glScalef(ATTACHMENT_INVENTORY_BASE_SCALE, ATTACHMENT_INVENTORY_BASE_SCALE,
+								ATTACHMENT_INVENTORY_BASE_SCALE);
+						// Preserve the original attachment model centering. A zero author offset means
+						// no extra displacement; it does not opt out of this renderer correction.
+						GL11.glTranslatef(0.0F, ATTACHMENT_INVENTORY_BASE_OFFSET_Y, 0.0F);
+						// Author offsets are model-space values converted by the fixed base scale, but
+						// deliberately are not multiplied by InventoryScale.
+						GL11.glTranslatef(attachmentInventoryOffsetX, attachmentInventoryOffsetY,
+								attachmentInventoryOffsetZ);
+						GL11.glScalef(attachmentInventoryScale, attachmentInventoryScale,
+								attachmentInventoryScale);
+						GL11.glRotatef(25F, 1, 0, 0);
+						GL11.glRotatef(135F, 0, 1, 0);
+					} else GL11.glRotatef(180F, 1, 0, 0);
+					Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+					GL11.glColor4f(1F, 1F, 1F, 1F);
+					modeling.renderAll();
+				} finally {
+					GL11.glPopMatrix();
+				}
 				break;
 			case ENTITY:
 				if (!renderInventory) break;
