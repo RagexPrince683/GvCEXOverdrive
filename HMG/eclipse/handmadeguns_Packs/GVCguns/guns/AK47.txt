@@ -9,7 +9,7 @@ Cycle,2
 ElevationOffsets,     0,-0.4,-0.8,-1.4,-2 ,-2.7,-3.5
 elevationOffsets_info,0,20m ,40m ,60m ,80m,100m,120m
 
-attachmentlocation = 0, 1.35, 1.65
+
 
 Motion,0.95
 
@@ -43,6 +43,9 @@ Rates,2,2,2
 attachRestriction,true
 //allowattach,byfrou01_Bayonet
 allowattach,attachmenttest
+attachmentlocation = 0, 1.4, 1.65
+
+opticshift1,0,-0.025,0
 
 ModelEquipped,-0.7f,0.2f,-0.5f
 ModelHigh,0.9601,0.9601,0.9601
@@ -100,6 +103,7 @@ AddParts,Sys_Zero_in
 			SetAsNormalParts
 			AddPartsRotationCenterAndRotationAmount,0,1.6347,2.597,0,0,0
 			//removeifattachpresent1
+			//moveifattachpresent1,0,-0.1,0
 			AddSomeMotion,0,0,0,0     ,0        ,0,0,      0,0,0,0     ,0        ,0,0,   0
 			AddSomeMotion,0,0,0,0     ,3        ,0,0,      1,0,0,0     ,3        ,0,0,   0
 			AddSomeMotion,1,0,0,0     ,6        ,0,0,      2,0,0,0     ,6        ,0,0,   0
@@ -111,6 +115,7 @@ AddParts,Sys_Zero_in
 			AddChildParts,sight_tab
 				SetAsNormalParts
 				//removeifattachpresent1
+				//moveifattachpresent1,0,-0.1,0
 				AddSomeMotion,0,0,0,0     ,0,0,0,      0,0,0,0     ,0,0,0,      0
 				AddSomeMotion,0,0,0,0.04  ,0,0,0,   1,0,0,0.04  ,0,0,0,   0
 				AddSomeMotion,1,0,0,0.08  ,0,0,0,   2,0,0,0.08  ,0,0,0,   0
