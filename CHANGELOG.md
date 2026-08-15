@@ -1,5 +1,14 @@
 # Changelog
 
+## Configurable 3D attachment inventory transforms
+
+- Add per-attachment `InventoryScale` and three-axis `InventoryOffset` TXT
+  controls for model-based inventory items, including finite-value validation
+  and backwards-compatible defaults.
+- Keep installed attachment placement, dropped-item rendering, legacy models,
+  and gun rendering independent from these inventory-only settings.
+- Document both comma and assignment syntax and configure the sample attachment.
+
 ## Fix one-use weapon consumption
 
 - Fixed `isOneuse,true` weapons remaining as empty items after use.

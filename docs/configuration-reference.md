@@ -7,15 +7,32 @@ Attachment TXT files may opt into a real model item/rendered attachment with:
 ```text
 attach3dmodel = my_attachment
 3dmodeltex = my_attachment
+InventoryScale,0.75
+InventoryOffset,-0.4,0.15,0
 ```
 
-These three extension keys accept either comma syntax or `key = value` syntax,
+These attachment extension keys accept either comma syntax or `key = value` syntax,
 with surrounding whitespace ignored. Models and textures are resolved below
 `handmadeguns:textures/model/`, just like other HMG pack models. Explicit `.mqo`
 and `.obj` model extensions are supported; an extensionless name probes `.mqo`
 first and then `.obj`. `3dmodeltex` defaults to `.png`, and when omitted falls
 back to a PNG with the resolved model's base name. Attachments
 without `attach3dmodel` retain their normal 2D icon and legacy rendering.
+
+`InventoryScale,<number>` controls only the 3D attachment model rendered as an
+inventory item. `1.0` is the default model scale multiplier, preserving the
+renderer base scale for existing packs. The value must be finite and greater
+than zero. `InventoryOffset,<x>,<y>,<z>` moves only that inventory-rendered 3D
+model in local model coordinates and defaults to `0,0,0`. Neither key affects
+the attachment when installed on a gun. `attachmentlocation` remains the
+installed-gun placement control.
+
+Assignment syntax is also accepted for these values:
+
+```text
+InventoryScale = 0.75
+InventoryOffset = -0.4, 0.15, 0
+```
 
 A gun TXT file enables the corresponding shared, gun-local anchor with either:
 
