@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 
 public class HMGContainerInventoryItem extends Container
 {
+    private static final int ATTACHMENT_SLOT_COUNT = 5;
     public HMGInventoryItem inventory;
 
     public HMGContainerInventoryItem(InventoryPlayer inventoryPlayer, ItemStack itemstack)
@@ -79,9 +80,9 @@ public class HMGContainerInventoryItem extends Container
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
 
-            if (p_82846_2_ < this.inventory.getSizeInventory())
+            if (p_82846_2_ < ATTACHMENT_SLOT_COUNT)
             {
-                if (!this.mergeItemStack(itemstack1, this.inventory.getSizeInventory(), this.inventorySlots.size(), true))
+                if (!this.mergeItemStack(itemstack1, ATTACHMENT_SLOT_COUNT, this.inventorySlots.size(), true))
                 {
                     return null;
                 }
@@ -91,7 +92,7 @@ public class HMGContainerInventoryItem extends Container
             {
                 return null;
             }
-            else if (!this.mergeItemStack(itemstack1, 0, this.inventory.getSizeInventory(), false))
+            else if (!this.mergeItemStack(itemstack1, 0, ATTACHMENT_SLOT_COUNT, false))
             {
                 return null;
             }
