@@ -41,6 +41,12 @@ multiplied by `InventoryScale`, so changing model size does not move the chosen
 center. Neither key affects the attachment when installed on a gun.
 `attachmentlocation` remains the installed-gun placement control.
 
+`/reloadSettings` destructively refreshes the OBJ/MQO model caches, rereads all
+singular and numbered attachment model and texture keys, and replaces the item
+renderer on each affected already registered attachment. Model, texture, and
+path changes therefore take effect without registering another item or recipe;
+the newly loaded models are finalized together with the reloaded gun models.
+
 Gun TXT files use the same inventory-only controls:
 
 ```text

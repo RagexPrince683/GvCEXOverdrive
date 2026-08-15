@@ -1,5 +1,10 @@
 # Changelog
 
+## Fix external 3D attachment reload and render passes (PR pending)
+
+- Rebuild existing external attachment item renderers, including numbered model and texture variants, after destructive model-cache invalidation during `/reloadSettings`.
+- Match installed attachments to gun opaque/transparent alpha and depth pass semantics, isolate all changed GL state, and consistently use the selected numbered model and texture.
+
 ## Hide gun parts when attachment slots are occupied (PR pending)
 
 - Add `removeifattachpresent1` through `removeifattachpresent5` gun-part directives, mapped directly to the existing attachment GUI/NBT slots.

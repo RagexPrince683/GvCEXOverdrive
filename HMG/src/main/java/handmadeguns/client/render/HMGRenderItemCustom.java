@@ -222,15 +222,17 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 			selectedTexture = attachmentTextures[selectedSlot];
 		}
 		if (selectedModel == null || selectedTexture == null) return;
-		glEnable(GL_BLEND);
+		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_DEPTH_TEST);
 		if(pass == 1) {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			GL11.glDepthMask(false);
-			glAlphaFunc(GL_LEQUAL, 1);
+			glAlphaFunc(GL_LESS, 1.0F);
 		}else {
+			glDisable(GL_BLEND);
 			GL11.glDepthMask(true);
-			glAlphaFunc(GL_EQUAL, 1);
+			glAlphaFunc(GL_EQUAL, 1.0F);
 		}
 		GL11.glColor4f(1, 1, 1, 1F);
 		Minecraft.getMinecraft().renderEngine.bindTexture(selectedTexture);
@@ -238,13 +240,15 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 		selectedModel.renderAllExcept("light");
 
 
+		boolean lightingEnabled = GL11.glIsEnabled(GL11.GL_LIGHTING);
 		RenderHelper.disableStandardItemLighting();
 		float lastBrightnessX = OpenGlHelper.lastBrightnessX;
 		float lastBrightnessY = OpenGlHelper.lastBrightnessY;
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
 		selectedModel.renderPart("light");
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)lastBrightnessX, (float)lastBrightnessY);
-		RenderHelper.enableStandardItemLighting();
+		if (lightingEnabled) RenderHelper.enableStandardItemLighting();
+		else GL11.glDisable(GL11.GL_LIGHTING);
 
 
 		if(cfgRender_useStencil && pass==1){
@@ -253,7 +257,7 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 			//       : �e�̃e�N�X�`������bind
 //			FBO.start();
 //			GL11.glPushMatrix();
-			FMLClientHandler.instance().getClient().getTextureManager().bindTexture(this.texture);
+			FMLClientHandler.instance().getClient().getTextureManager().bindTexture(selectedTexture);
 			glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			//INSERT-END
 
@@ -282,7 +286,7 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 			GL11.glDepthMask(false);
 			glAlphaFunc(GL_GREATER, 0);
 
-			modeling.renderPart("plate");
+			selectedModel.renderPart("plate");
 
 			GL11.glDepthMask(true);
 			glAlphaFunc(GL_EQUAL, 1);
@@ -307,9 +311,9 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 			GL11.glDepthFunc(GL11.GL_ALWAYS);//�����`��
 			GL11.glDisable(GL11.GL_LIGHTING);
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
-			modeling.renderPart("reticle_light");
+			selectedModel.renderPart("reticle_light");
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
-			modeling.renderPart("reticle");
+			selectedModel.renderPart("reticle");
 			GL11.glDepthFunc(GL11.GL_LEQUAL);
 			GL11.glDepthMask(true);
 			glDisable(GL_STENCIL_TEST);
@@ -358,27 +362,30 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 //			glLoadMatrix(modelViewMatrix);
 //			glPopMatrix();
 //			//INSERT-END
-			FMLClientHandler.instance().getClient().getTextureManager().bindTexture(this.texture);
+			FMLClientHandler.instance().getClient().getTextureManager().bindTexture(selectedTexture);
 			GL11.glDepthFunc(GL11.GL_LEQUAL);
 			glEnable(GL_DEPTH_TEST);
 			if(pass == 1) {
 				glEnable(GL_BLEND);
 				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				GL11.glDepthMask(false);
-				glAlphaFunc(GL_LEQUAL, 1);
+				glAlphaFunc(GL_LESS, 1.0F);
 			}else {
+				glDisable(GL_BLEND);
 				GL11.glDepthMask(true);
 				glAlphaFunc(GL_EQUAL, 1);
 			}
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)lastBrightnessX, (float)lastBrightnessY);
-			GL11.glEnable(GL11.GL_LIGHTING);
+			if (lightingEnabled) GL11.glEnable(GL11.GL_LIGHTING);
+			else GL11.glDisable(GL11.GL_LIGHTING);
 		}
 		if(pass == 1) {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			GL11.glDepthMask(false);
-			glAlphaFunc(GL_LEQUAL, 1);
+			glAlphaFunc(GL_LESS, 1.0F);
 		}else {
+			glDisable(GL_BLEND);
 			GL11.glDepthMask(true);
 			glAlphaFunc(GL_EQUAL, 1);
 		}
