@@ -102,6 +102,28 @@ applied as a local translation and optional Y rotation. Use only one
 warning, uses the first valid part in file order, and ignores the later markers.
 Numbered anchors `SetAttachmentAttach1` through `SetAttachmentAttach5` mark independent animated anchors for inventory slots `1` through `5`. The numbered anchor is preferred for its slot; singular `SetAttachmentAttach` remains the fallback for slots without a numbered anchor. Each slot keeps the first valid marker in file order and logs later duplicates with the gun, slot, and ignored part. An attachment is rendered while its selected part's complete live matrix is active, and is omitted when that part's `renderOnOff` state disables it. Legacy gun parts and attachment items do not use these directives.
 
+Gun parts and child parts can hide replaceable gun geometry while any kind of
+attachment is installed in a matching slot:
+
+```text
+removeifattachpresent1
+removeifattachpresent2
+removeifattachpresent3
+removeifattachpresent4
+removeifattachpresent5
+```
+
+The suffix maps directly to attachment GUI/NBT inventory slot `1` through `5`.
+Place a directive after its `AddParts` or `AddChildParts`; no argument is
+required. The marked part and its child subtree are hidden while the matching
+slot is occupied and reappear as soon as it is empty. Multiple directives on
+one part use OR behavior, so any matching occupied slot hides the part. This
+tests attachment presence rather than attachment type or 3D-model support, and
+therefore works for both legacy and external 3D attachments. If a hidden part
+also contains `SetAttachmentAttach` or its matching numbered anchor, its live
+transform and attachment hook still run, allowing the installed external model
+to replace the hidden geometry at that same animated anchor.
+
 The active config file is generated from the `HandmadeGuns` mod id, usually as `config/HandmadeGuns.cfg`. Defaults below are read directly from `HMG/src/main/java/handmadeguns/HandmadeGunsCore.java`.
 
 ## `Gun`

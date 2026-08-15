@@ -83,6 +83,20 @@ public class PartsRender_Gun extends PartsRender {
 		attachmentRendered[slot] = true;
 		HMGAttachmentModelRenderer.renderInstalledSlot(gunitem, items, pass, gunPartsScale, texture, slot);
 	}
+
+	/** Returns the live installed-item state for the existing attachment GUI/NBT slot. */
+	protected boolean isAttachmentSlotOccupied(int slot) {
+		return items != null && slot >= 1 && slot <= 5 && slot < items.length && items[slot] != null;
+	}
+
+	@Override
+	protected boolean shouldRenderPartGeometry(HMGGunParts parts) {
+		for (int slot = 1; slot <= 5; slot++) {
+			if (parts.removeIfAttachPresent[slot] && isAttachmentSlotOccupied(slot)) return false;
+		}
+		return true;
+	}
+
 	private boolean checkState2(GunState state,HMGGunParts parts,float flame,int remainbullets){
 		switch (state) {
 			case ADS:
@@ -324,9 +338,9 @@ public class PartsRender_Gun extends PartsRender {
 	}
 	public boolean partModel_render(HMGGunParts parts, GunState state, float flame, int remainbullets, HMGGunParts_Motion_PosAndRotation OffsetAndRotation){
 		HMGGunParts_Motion_PosAndRotation rotationCenterAndRotation = parts.getRenderinfCenter();
-		if(parts.isLarm){
+		if(shouldRenderPartGeometry(parts) && parts.isLarm){
 			renderarmL();
-		}else if(parts.isRarm){
+		}else if(shouldRenderPartGeometry(parts) && parts.isRarm){
 			renderarmR();
 		}
 		HMGGunParts_Motion_PosAndRotation elevationInfo = parts.getSomethingPositions(guntemp.currentElevation,0);

@@ -81,15 +81,21 @@ public abstract class PartsRender {
 
 
 		FMLClientHandler.instance().getWorldClient().theProfiler.startSection("renderPart");
+		boolean renderPartGeometry = shouldRenderPartGeometry(parts);
 		if(!partModel_render(parts, state, flame, remainbullets, OffsetAndRotation)) {
 			renderPartHook(parts, state, flame, remainbullets, OffsetAndRotation);
-			partSidentification(parts.childs,state,flame,remainbullets);
+			if (renderPartGeometry) partSidentification(parts.childs,state,flame,remainbullets);
 		}
 		FMLClientHandler.instance().getWorldClient().theProfiler.endSection();
 
 		GL11.glPopMatrix();
 		FMLClientHandler.instance().getWorldClient().theProfiler.endSection();
 
+	}
+
+	/** Gun renderers may suppress geometry without bypassing the active transform or render hook. */
+	protected boolean shouldRenderPartGeometry(HMGGunParts parts) {
+		return true;
 	}
 
 	/** Called with the complete, visible part transform active and before its matrix is popped. */
@@ -117,6 +123,7 @@ public abstract class PartsRender {
 	}
 
 	public boolean partModel_render(HMGGunParts parts, GunState state, float flame, int remainbullets, HMGGunParts_Motion_PosAndRotation OffsetAndRotation){
+		if (!shouldRenderPartGeometry(parts)) return false;
 		HMGGunParts_Motion_PosAndRotation rotationCenterAndRotation = parts.getRenderinfCenter();
 		boolean skip = false;
 		if (parts.isbullet) {

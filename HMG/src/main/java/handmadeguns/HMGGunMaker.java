@@ -1749,6 +1749,17 @@ public class HMGGunMaker {
 							+ "; keeping first anchor " + attachmentAnchors[attachmentSlot].partsname);
 				}
 				break;
+			case "removeifattachpresent1": case "removeifattachpresent2": case "removeifattachpresent3":
+			case "removeifattachpresent4": case "removeifattachpresent5":
+				int removalSlot = type[0].charAt(type[0].length() - 1) - '0';
+				if (currentParts == null) {
+					System.err.println("[HMG] Ignoring " + type[0]
+							+ " without an AddParts or AddChildParts in gun configuration "
+							+ sourceName(currentGunConfig));
+				} else {
+					currentParts.removeIfAttachPresent[removalSlot] = true;
+				}
+				break;
 			case "AddPartsRotationCenterAndRotationAmount":
 				currentParts.AddRenderinfDef(parseFloat(type[1]), parseFloat(type[2]), parseFloat(type[3]), parseFloat(type[4]), parseFloat(type[5]), parseFloat(type[6]));
 				break;
