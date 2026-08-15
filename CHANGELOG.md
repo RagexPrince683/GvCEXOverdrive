@@ -1,5 +1,11 @@
 # Changelog
 
+## Hide gun parts when attachment slots are occupied (PR pending)
+
+- Add `removeifattachpresent1` through `removeifattachpresent5` gun-part directives, mapped directly to the existing attachment GUI/NBT slots.
+- Hide marked part geometry and its child subtree from live installed-item state while preserving animated external 3D attachment anchors on the same part.
+- Document reversible, OR-based visibility behavior for legacy and external 3D attachments.
+
 ## Support five independent external 3D attachment slots (PR pending)
 
 - Add numbered model, texture, and gun-location keys for existing attachment inventory slots 1 through 5, retaining singular fallbacks and deterministic standalone rendering.

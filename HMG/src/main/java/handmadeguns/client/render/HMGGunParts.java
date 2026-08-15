@@ -67,6 +67,8 @@ public class HMGGunParts {
     public boolean attachmentAttach;
     /** Numbered attachment anchors. Index zero is intentionally unused. */
     public final boolean[] attachmentAttachSlots = new boolean[6];
+    /** Hide this part while an attachment occupies a marked slot. Index zero is unused. */
+    public final boolean[] removeIfAttachPresent = new boolean[6];
     public boolean isscope;
     public boolean isdot;
     public boolean issight;
