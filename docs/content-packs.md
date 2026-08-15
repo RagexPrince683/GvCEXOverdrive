@@ -119,6 +119,16 @@ The file is read per pack. The current source switch lacks `break` statements be
 - Test `/reloadSettings` during development, but do full restarts before release validation.
 - Avoid relying on undocumented parser behavior; HMG definition parsers are legacy and forgiving in some places but not uniformly validated.
 
+### Attachment whitelist names
+
+Use an attachment's stable registered identifier in a gun's `allowattach` directive,
+not its player-facing name. For example, an attachment declared with
+`Name,Attachment Test` and `RedDot,attachmenttest` is allowed with
+`allowattach,attachmenttest`. Gun tooltips resolve that identifier to the attachment's
+localized display name, so players see **Attachment Test** under **Valid attachments**.
+If an identifier cannot be resolved, the tooltip retains the configured value to make
+an invalid or missing pack dependency visible.
+
 ## Gun Motion Handling and Mouse Sensitivity
 
 The existing `Motion,<number>` gun setting controls weapon handling. It already
