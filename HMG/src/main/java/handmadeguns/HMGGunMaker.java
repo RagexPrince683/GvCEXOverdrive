@@ -298,7 +298,7 @@ public class HMGGunMaker {
 				while ((str = br.readLine()) != null) { // 1行ずつ読み込む
 					parsedLines++;
 					// System.out.println(str);
-					String[] type = splitComma(str);
+					String[] type = HMGConfigLineParser.parseAttachmentExtensionLine(str);
 					if(!type[0].equals("Recipe1")&& !type[0].equals("Recipe2") && !type[0].equals("Recipe3") && !type[0].equals("addRecipe") && !type[0].equals("addNewRecipe") && !type[0].equals("Magazine")){
 						for(int i=0;i<type.length;i++){
 							type[i] = type[i].trim();
@@ -1393,6 +1393,40 @@ public class HMGGunMaker {
 			MODEL_CACHE.put(path, model);
 		}
 		return model;
+	}
+
+	public static String resolveAttachmentModel(String configuredName) {
+		String name = configuredName == null ? "" : configuredName.trim();
+		if (name.length() == 0) throw new IllegalArgumentException("empty attach3dmodel");
+		if (name.lastIndexOf('.') > name.lastIndexOf('/')) return name;
+		// MQO is preferred deterministically because it is HMG's established pack format.
+		if (resourceExists("handmadeguns:textures/model/" + name + ".mqo")) return name + ".mqo";
+		if (resourceExists("handmadeguns:textures/model/" + name + ".obj")) return name + ".obj";
+		throw new IllegalArgumentException("no .mqo or .obj resource found for " + name);
+	}
+
+	public static String resolveAttachmentTexture(String configuredName, String resolvedModel, String attachmentName) {
+		String name = configuredName == null ? "" : configuredName.trim();
+		if (name.length() == 0) {
+			int dot = resolvedModel.lastIndexOf('.');
+			name = (dot < 0 ? resolvedModel : resolvedModel.substring(0, dot)) + ".png";
+		} else if (name.lastIndexOf('.') <= name.lastIndexOf('/')) {
+			name += ".png";
+		}
+		if (!resourceExists("handmadeguns:textures/model/" + name)) {
+			System.err.println("[HMG] Missing 3dmodeltex for attachment " + attachmentName
+					+ ": handmadeguns:textures/model/" + name);
+		}
+		return name;
+	}
+
+	private static boolean resourceExists(String path) {
+		try {
+			Minecraft.getMinecraft().getResourceManager().getResource(getCachedResourceLocation(path));
+			return true;
+		} catch (IOException missing) {
+			return false;
+		}
 	}
 
 	private static void parseAttachmentLocation(GunInfo gunInfo, String[] values, File gunFile) {

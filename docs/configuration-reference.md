@@ -5,13 +5,16 @@
 Attachment TXT files may opt into a real model item/rendered attachment with:
 
 ```text
-attach3dmodel,my_attachment.obj
-ObjTexture,my_attachment.png
+attach3dmodel = my_attachment
+3dmodeltex = my_attachment
 ```
 
-The key is lowercase and uses the parser's comma-separated syntax. The model and
-the existing optional `ObjTexture` are resolved below
-`handmadeguns:textures/model/`, just like other HMG pack models. Attachments
+These three extension keys accept either comma syntax or `key = value` syntax,
+with surrounding whitespace ignored. Models and textures are resolved below
+`handmadeguns:textures/model/`, just like other HMG pack models. Explicit `.mqo`
+and `.obj` model extensions are supported; an extensionless name probes `.mqo`
+first and then `.obj`. `3dmodeltex` defaults to `.png`, and when omitted falls
+back to a PNG with the resolved model's base name. Attachments
 without `attach3dmodel` retain their normal 2D icon and legacy rendering.
 
 A gun TXT file enables the corresponding shared, gun-local anchor with either:
@@ -19,6 +22,7 @@ A gun TXT file enables the corresponding shared, gun-local anchor with either:
 ```text
 attachmentlocation,0.0,1.25,-0.5
 attachmentlocation,0.0,1.25,-0.5,90.0
+attachmentlocation = 0.0, 1.25, -0.5, 90.0
 ```
 
 Coordinates use the existing gun-parts coordinate system and scale. The optional

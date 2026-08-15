@@ -405,3 +405,12 @@ CustomMagazine,12g_slug
   by crafting them with a compatible gun.
 - Show universal unified-HMG-gun compatibility for valid skins and safely identify
   invalid skin data.
+
+## Fix model-based attachment rendering (PR pending)
+
+- Fixed comma and assignment parsing for `attach3dmodel`, `3dmodeltex`, and
+  `attachmentlocation` without changing legacy key parsing.
+- Added cached extension resolution, dedicated model textures, order-independent
+  attachment renderer finalization, and isolated installed/inventory GL state.
+- Centered and scaled model attachment inventory icons and added dropped-item
+  model rendering while retaining legacy attachment visuals and behavior.
