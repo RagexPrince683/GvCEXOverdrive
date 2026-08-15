@@ -423,3 +423,13 @@ CustomMagazine,12g_slug
   attachment renderer finalization, and isolated installed/inventory GL state.
 - Centered and scaled model attachment inventory icons and added dropped-item
   model rendering while retaining legacy attachment visuals and behavior.
+
+## Fix 3D attachment inventory icon regression (PR pending)
+
+- Restored the fixed attachment inventory centering correction removed by the
+  configurable-transform change while keeping pack-authored offsets independent
+  of the configurable scale multiplier.
+- Corrected the `Attachment Test` fixture to use the visible `InventoryScale,1.0`
+  baseline and documented multiplier and offset semantics.
+- Guaranteed balanced inventory matrix state and reset the render color to
+  opaque white while the attachment texture remains bound.

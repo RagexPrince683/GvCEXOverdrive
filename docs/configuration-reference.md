@@ -7,7 +7,7 @@ Attachment TXT files may opt into a real model item/rendered attachment with:
 ```text
 attach3dmodel = my_attachment
 3dmodeltex = my_attachment
-InventoryScale,0.75
+InventoryScale,1.0
 InventoryOffset,-0.4,0.15,0
 ```
 
@@ -21,11 +21,14 @@ without `attach3dmodel` retain their normal 2D icon and legacy rendering.
 
 `InventoryScale,<number>` controls only the 3D attachment model rendered as an
 inventory item. `1.0` is the default model scale multiplier, preserving the
-renderer base scale for existing packs. The value must be finite and greater
+renderer's original visible `6.0` base scale for existing packs; `0.5` is half
+that size and `2.0` is twice that size. The value must be finite and greater
 than zero. `InventoryOffset,<x>,<y>,<z>` moves only that inventory-rendered 3D
-model in local model coordinates and defaults to `0,0,0`. Neither key affects
-the attachment when installed on a gun. `attachmentlocation` remains the
-installed-gun placement control.
+model along the inventory X, Y, and depth axes and defaults to `0,0,0`. Offset
+values use model units converted by the renderer's fixed base scale, but are not
+multiplied by `InventoryScale`, so changing model size does not move the chosen
+center. Neither key affects the attachment when installed on a gun.
+`attachmentlocation` remains the installed-gun placement control.
 
 Assignment syntax is also accepted for these values:
 
