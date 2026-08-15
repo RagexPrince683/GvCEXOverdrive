@@ -1,6 +1,7 @@
 package handmadeguns.command;
 
 import handmadeguns.HMGGunMaker;
+import handmadeguns.HMGAddAttachment;
 import handmadeguns.HandmadeGunsCore;
 import handmadeguns.HMGPacketHandler;
 import handmadeguns.network.PacketReloadparm;
@@ -37,14 +38,14 @@ public class HMG_CommandReloadparm extends CommandBase implements ICommand{
 		// Invalidate before parsing settings: existing item renderers are then
 		// updated by HMGGunMaker with models read from the current pack files.
 		HMG_proxy.invalidateReloadableModels();
-		reloadGunSettings();
+		reloadPackSettings();
     }
 
 	/**
 	 * Re-read the registered guns' pack settings and replace their render settings.
 	 * Model cache lifetime is deliberately controlled by the calling command.
 	 */
-	protected static void reloadGunSettings() {
+	protected static void reloadPackSettings() {
 //        EntityPlayer entityPlayer = getPlayer(var1,var2[0]);
 //        if(entityPlayer.getHeldItem().getItem() instanceof HMGItemGunBase){
 //            String str = var2[1];
@@ -102,18 +103,24 @@ public class HMG_CommandReloadparm extends CommandBase implements ICommand{
             // Reloaded guns must see the same isolated per-pack coefficient context as startup.
             HandmadeGunsCore.configurePackCoefficients(apack);
             File gunDir = new File(apack, "guns");
-            File[] gunFiles = gunDir.listFiles(File::isFile);
-            if (gunFiles == null) continue;
-
-            Arrays.sort(gunFiles, Comparator.comparing(File::getName)); // optional
-
-            for (File gunFile : gunFiles) {
-                try {
-                    gunMaker.load(true, gunFile);
-                } catch (ModelFormatException e) {
-                    e.printStackTrace();
-                }
-            }
+			File[] gunFiles = gunDir.listFiles(File::isFile);
+			if (gunFiles != null) {
+				Arrays.sort(gunFiles, Comparator.comparing(File::getName));
+				for (File gunFile : gunFiles) {
+					try {
+						gunMaker.load(true, gunFile);
+					} catch (ModelFormatException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			File[] attachmentFiles = new File(apack, "attachment").listFiles(File::isFile);
+			if (attachmentFiles != null) {
+				Arrays.sort(attachmentFiles, Comparator.comparing(File::getName));
+				for (File attachmentFile : attachmentFiles) {
+					HMGAddAttachment.reloadAttachmentSettings(attachmentFile);
+				}
+			}
         }
 
         HMG_proxy.setUpModels();

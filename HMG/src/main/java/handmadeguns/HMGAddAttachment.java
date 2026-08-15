@@ -884,13 +884,57 @@ public class HMGAddAttachment
 			attachment.model3dTexture = textureName;
 			IModelCustom model = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + modelName);
 			ResourceLocation texture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + textureName);
-			MinecraftForgeClient.registerItemRenderer(attachment, HMGRenderItemCustom.forAttachment(model, texture,
-					attachment.inventoryScale, attachment.inventoryOffsetX, attachment.inventoryOffsetY,
-					attachment.inventoryOffsetZ));
+			MinecraftForgeClient.registerItemRenderer(attachment, HMGRenderItemCustom.forAttachment(model, texture));
 		} catch (Throwable error) {
 			System.err.println("[HMG] Unable to load attachment model for " + registryName + " ("
 					+ attachment.attach3dmodel + "): " + error.getMessage());
 		}
+	}
+
+	/** Re-reads only mutable inventory transforms and never performs registration side effects. */
+	public static void reloadAttachmentSettings(File file) {
+		float inventoryScale = 1.0F;
+		float[] inventoryOffset = new float[] {0.0F, 0.0F, 0.0F};
+		List<HMGItemAttachmentBase> registeredAttachments = new ArrayList<HMGItemAttachmentBase>();
+		try {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "Shift-JIS"));
+			try {
+				String line;
+				while ((line = reader.readLine()) != null) {
+					String[] values = HMGConfigLineParser.parseAttachmentExtensionLine(line);
+					if (values.length == 0) continue;
+					String key = values[0].trim();
+					if ("InventoryScale".equals(key)) inventoryScale = parseInventoryScale(values, file);
+					else if ("InventoryOffset".equals(key)) inventoryOffset = parseInventoryOffset(values, file);
+					else if (isAttachmentDeclaration(key) && values.length > 1) {
+						Item registered = GameRegistry.findItem("HandmadeGuns", values[1].trim());
+						if (registered instanceof HMGItemAttachmentBase
+								&& !registeredAttachments.contains(registered)) {
+							registeredAttachments.add((HMGItemAttachmentBase)registered);
+						}
+					}
+				}
+			} finally {
+				reader.close();
+			}
+			for (HMGItemAttachmentBase attachment : registeredAttachments) {
+				attachment.inventoryScale = inventoryScale;
+				attachment.inventoryOffsetX = inventoryOffset[0];
+				attachment.inventoryOffsetY = inventoryOffset[1];
+				attachment.inventoryOffsetZ = inventoryOffset[2];
+			}
+		} catch (IOException error) {
+			System.err.println("[HMG] Unable to reload attachment settings from " + file.getPath()
+					+ ": " + error.getMessage());
+		}
+	}
+
+	private static boolean isAttachmentDeclaration(String key) {
+		return "Grip".equals(key) || "Laser".equals(key) || "Light".equals(key)
+				|| "Model_Grip".equals(key) || "Model_Laser".equals(key)
+				|| "Model_Light".equals(key) || "Model_Sight".equals(key)
+				|| "RedDot".equals(key) || "Right".equals(key) || "SCOPE".equals(key)
+				|| "Suppressor".equals(key);
 	}
 
 	private static float parseInventoryScale(String[] values, File file) {

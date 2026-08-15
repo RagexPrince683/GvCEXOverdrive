@@ -433,3 +433,11 @@ CustomMagazine,12g_slug
   baseline and documented multiplier and offset semantics.
 - Guaranteed balanced inventory matrix state and reset the render color to
   opaque white while the attachment texture remains bound.
+## Hot-reload HMG inventory model transforms (PR pending)
+
+- Made 3D attachment inventory renderers read scale and offset from the live
+  registered item instead of retaining startup snapshots.
+- Extended settings-only reloads to update existing attachment items without
+  re-registering items, recipes, models, or renderers.
+- Added gun `InventoryOffset,x,y,z` parsing and inventory-only rendering with
+  scale-independent displacement, including the M26 grenade pack setting.

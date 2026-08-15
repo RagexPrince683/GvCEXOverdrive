@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
+import handmadeguns.items.HMGItemAttachmentBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
@@ -33,10 +34,6 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 	private ResourceLocation texture;
 	private final boolean renderInventory;
 	private final boolean attachmentMode;
-	private final float attachmentInventoryScale;
-	private final float attachmentInventoryOffsetX;
-	private final float attachmentInventoryOffsetY;
-	private final float attachmentInventoryOffsetZ;
 	public static float smoothing;
 	public NBTTagCompound nbt;
 
@@ -45,26 +42,19 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 	}
 
 	public HMGRenderItemCustom(IModelCustom modelgun, ResourceLocation texture, boolean renderInventory) {
-		this(modelgun, texture, renderInventory, false, 1.0F, 0.0F, 0.0F, 0.0F);
+		this(modelgun, texture, renderInventory, false);
 	}
 
 	private HMGRenderItemCustom(IModelCustom modelgun, ResourceLocation texture, boolean renderInventory,
-			boolean attachmentMode, float inventoryScale, float inventoryOffsetX, float inventoryOffsetY,
-			float inventoryOffsetZ) {
+			boolean attachmentMode) {
 		modeling = modelgun;
 		this.texture = texture;
 		this.renderInventory = renderInventory;
 		this.attachmentMode = attachmentMode;
-		this.attachmentInventoryScale = inventoryScale;
-		this.attachmentInventoryOffsetX = inventoryOffsetX;
-		this.attachmentInventoryOffsetY = inventoryOffsetY;
-		this.attachmentInventoryOffsetZ = inventoryOffsetZ;
 	}
 
-	public static HMGRenderItemCustom forAttachment(IModelCustom model, ResourceLocation texture,
-			float inventoryScale, float inventoryOffsetX, float inventoryOffsetY, float inventoryOffsetZ) {
-		return new HMGRenderItemCustom(model, texture, true, true, inventoryScale,
-				inventoryOffsetX, inventoryOffsetY, inventoryOffsetZ);
+	public static HMGRenderItemCustom forAttachment(IModelCustom model, ResourceLocation texture) {
+		return new HMGRenderItemCustom(model, texture, true, true);
 	}
 
 	@Override
@@ -112,6 +102,13 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 				GL11.glPushMatrix();
 				try {
 					if (attachmentMode) {
+						HMGItemAttachmentBase attachment = item != null
+								&& item.getItem() instanceof HMGItemAttachmentBase
+								? (HMGItemAttachmentBase)item.getItem() : null;
+						float inventoryScale = attachment != null ? attachment.inventoryScale : 1.0F;
+						float inventoryOffsetX = attachment != null ? attachment.inventoryOffsetX : 0.0F;
+						float inventoryOffsetY = attachment != null ? attachment.inventoryOffsetY : 0.0F;
+						float inventoryOffsetZ = attachment != null ? attachment.inventoryOffsetZ : 0.0F;
 						GL11.glTranslatef(ATTACHMENT_INVENTORY_CENTER_X, ATTACHMENT_INVENTORY_CENTER_Y,
 								ATTACHMENT_INVENTORY_CENTER_Z);
 						// Forge supplies inventory rendering in 16x16 GUI coordinates. Convert model units
@@ -123,10 +120,8 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 						GL11.glTranslatef(0.0F, ATTACHMENT_INVENTORY_BASE_OFFSET_Y, 0.0F);
 						// Author offsets are model-space values converted by the fixed base scale, but
 						// deliberately are not multiplied by InventoryScale.
-						GL11.glTranslatef(attachmentInventoryOffsetX, attachmentInventoryOffsetY,
-								attachmentInventoryOffsetZ);
-						GL11.glScalef(attachmentInventoryScale, attachmentInventoryScale,
-								attachmentInventoryScale);
+						GL11.glTranslatef(inventoryOffsetX, inventoryOffsetY, inventoryOffsetZ);
+						GL11.glScalef(inventoryScale, inventoryScale, inventoryScale);
 						GL11.glRotatef(25F, 1, 0, 0);
 						GL11.glRotatef(135F, 0, 1, 0);
 					} else GL11.glRotatef(180F, 1, 0, 0);
