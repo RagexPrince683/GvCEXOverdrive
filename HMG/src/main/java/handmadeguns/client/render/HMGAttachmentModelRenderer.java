@@ -24,9 +24,12 @@ public final class HMGAttachmentModelRenderer {
             IItemRenderer renderer = MinecraftForgeClient.getItemRenderer(stack, IItemRenderer.ItemRenderType.EQUIPPED);
             if (!(renderer instanceof HMGRenderItemCustom)) continue;
 
-            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+            GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT
+                    | GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT
+                    | GL11.GL_STENCIL_BUFFER_BIT);
             GL11.glPushMatrix();
             try {
+                // PartsRender expresses every gun-local position in scaled model units.
                 GL11.glTranslatef(gun.gunInfo.attachmentLocationX * gunPartsScale,
                         gun.gunInfo.attachmentLocationY * gunPartsScale,
                         gun.gunInfo.attachmentLocationZ * gunPartsScale);
@@ -36,8 +39,9 @@ public final class HMGAttachmentModelRenderer {
             } finally {
                 GL11.glPopMatrix();
                 GL11.glPopAttrib();
+                // Texture attributes are restored above; bind explicitly for subsequent gun parts.
+                Minecraft.getMinecraft().renderEngine.bindTexture(gunTexture);
             }
-            Minecraft.getMinecraft().renderEngine.bindTexture(gunTexture);
         }
     }
 }

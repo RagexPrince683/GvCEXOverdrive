@@ -27,6 +27,7 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 	private IModelCustom modeling;
 	private ResourceLocation texture;
 	private final boolean renderInventory;
+	private final boolean attachmentMode;
 	public static float smoothing;
 	public NBTTagCompound nbt;
 
@@ -35,9 +36,18 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 	}
 
 	public HMGRenderItemCustom(IModelCustom modelgun, ResourceLocation texture, boolean renderInventory) {
+		this(modelgun, texture, renderInventory, false);
+	}
+
+	private HMGRenderItemCustom(IModelCustom modelgun, ResourceLocation texture, boolean renderInventory, boolean attachmentMode) {
 		modeling = modelgun;
 		this.texture = texture;
 		this.renderInventory = renderInventory;
+		this.attachmentMode = attachmentMode;
+	}
+
+	public static HMGRenderItemCustom forAttachment(IModelCustom model, ResourceLocation texture) {
+		return new HMGRenderItemCustom(model, texture, true, true);
 	}
 
 	@Override
@@ -74,6 +84,8 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 	}
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+		if (attachmentMode) GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_COLOR_BUFFER_BIT
+				| GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_LIGHTING_BIT | GL11.GL_TEXTURE_BIT);
 		GL11.glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glColor4f(1, 1, 1, 1F);
@@ -81,7 +93,13 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 		switch (type) {
 			case INVENTORY:
 				GL11.glPushMatrix();
-				GL11.glRotatef(180F, 1, 0, 0);
+				if (attachmentMode) {
+					GL11.glTranslatef(8F, 8F, 0F);
+					GL11.glScalef(6F, 6F, 6F);
+					GL11.glTranslatef(0F, -0.25F, 0F);
+					GL11.glRotatef(25F, 1, 0, 0);
+					GL11.glRotatef(135F, 0, 1, 0);
+				} else GL11.glRotatef(180F, 1, 0, 0);
 				Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 				modeling.renderAll();
 				GL11.glPopMatrix();
@@ -89,7 +107,10 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 			case ENTITY:
 				if (!renderInventory) break;
 				GL11.glPushMatrix();
-				GL11.glRotatef(180F, 1, 0, 0);
+				if (attachmentMode) {
+					GL11.glScalef(0.35F, 0.35F, 0.35F);
+					GL11.glRotatef(180F, 1, 0, 0);
+				} else GL11.glRotatef(180F, 1, 0, 0);
 				Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 				modeling.renderAll();
 				GL11.glPopMatrix();
@@ -138,6 +159,7 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 
 		GL11.glDepthMask(true);
 		GL11.glDisable(GL_BLEND);
+		if (attachmentMode) GL11.glPopAttrib();
 	}
 
 	public void renderaspart() {

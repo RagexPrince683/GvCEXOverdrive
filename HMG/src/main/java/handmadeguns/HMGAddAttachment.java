@@ -83,6 +83,8 @@ public class HMGAddAttachment
 		String  objmodel = null;
 		String objtexture = "null";
 		String attach3dmodel = null;
+		String model3dTexture = null;
+		List<HMGItemAttachmentBase> pendingAttachments = new ArrayList<HMGItemAttachmentBase>();
 		Item itema = null;
 		Item itemb = null;
 		Item itemc = null;
@@ -115,7 +117,7 @@ public class HMGAddAttachment
 				String str;
 				while((str = br.readLine()) != null){  // 1行ずつ読み込む
 					//System.out.println(str);
-					String[] type = HMGGunMaker.splitComma(str);
+					String[] type = HMGConfigLineParser.parseAttachmentExtensionLine(str);
 
 					int guntype = 0;
 
@@ -172,6 +174,9 @@ public class HMGAddAttachment
 								break;
 							case "attach3dmodel":
 								attach3dmodel = type.length > 1 ? type[1].trim() : null;
+								break;
+							case "3dmodeltex":
+								model3dTexture = type.length > 1 ? type[1].trim() : null;
 								break;
 							case "ReduceRecoilLevel":
 								reduceRecoilLevel = Float.parseFloat(type[1]);
@@ -582,17 +587,9 @@ public class HMGAddAttachment
 						}
 
 						if (newitem != null) {
-							if (newitem instanceof HMGItemAttachmentBase) {
-								((HMGItemAttachmentBase) newitem).attach3dmodel = attach3dmodel;
-							}
+							if (newitem instanceof HMGItemAttachmentBase) pendingAttachments.add((HMGItemAttachmentBase)newitem);
 							try {
-								if (isClient && newitem instanceof HMGItemAttachmentBase
-										&& ((HMGItemAttachmentBase) newitem).has3dModel()) {
-									String modelName = ((HMGItemAttachmentBase) newitem).attach3dmodel;
-									IModelCustom attach = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + modelName);
-									ResourceLocation attachtexture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
-									MinecraftForgeClient.registerItemRenderer(newitem, new HMGRenderItemCustom(attach, attachtexture, true));
-								} else if (canobj && isClient) {
+								if (canobj && isClient && !(newitem instanceof HMGItemAttachmentBase)) {
 //									System.out.println("" + objmodel);
 									IModelCustom attach = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + objmodel);
 									//todo gun skins here
@@ -839,6 +836,16 @@ public class HMGAddAttachment
 
 
 				}
+				for (HMGItemAttachmentBase attachment : pendingAttachments) {
+					attachment.attach3dmodel = attach3dmodel;
+					attachment.model3dTexture = model3dTexture;
+					if (isClient && attachment.has3dModel()) registerModelAttachment(attachment, attachment.getUnlocalizedName());
+					else if (isClient && canobj) {
+						IModelCustom model = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + objmodel);
+						ResourceLocation tex = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
+						MinecraftForgeClient.registerItemRenderer(attachment, new HMGRenderItemCustom(model, tex));
+					}
+				}
 				br.close();  // ファイルを閉じる
 			}
 			else
@@ -849,6 +856,21 @@ public class HMGAddAttachment
 			ex.printStackTrace();
 		} catch (IOException ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	private static void registerModelAttachment(HMGItemAttachmentBase attachment, String registryName) {
+		try {
+			String modelName = HMGGunMaker.resolveAttachmentModel(attachment.attach3dmodel);
+			String textureName = HMGGunMaker.resolveAttachmentTexture(attachment.model3dTexture, modelName, registryName);
+			attachment.attach3dmodel = modelName;
+			attachment.model3dTexture = textureName;
+			IModelCustom model = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + modelName);
+			ResourceLocation texture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + textureName);
+			MinecraftForgeClient.registerItemRenderer(attachment, HMGRenderItemCustom.forAttachment(model, texture));
+		} catch (Throwable error) {
+			System.err.println("[HMG] Unable to load attachment model for " + registryName + " ("
+					+ attachment.attach3dmodel + "): " + error.getMessage());
 		}
 	}
 
