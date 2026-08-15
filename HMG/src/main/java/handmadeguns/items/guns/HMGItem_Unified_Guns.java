@@ -646,7 +646,7 @@ public class HMGItem_Unified_Guns extends Item {
 										nbt.setBoolean("TriggerBacked", true);
 									}
 									if (!gunInfo.chargeType && !nbt.getBoolean("Bursting") && is_Bolt_shooting_position && isbulletremaining) {
-										fireProcess(itemstack, world, entity, nbt);
+										fireProcess(itemstack, world, entity, nbt, i);
 										resetBolt(itemstack);
 										nbt.setBoolean("Cocking", false);
 									}
@@ -668,7 +668,7 @@ public class HMGItem_Unified_Guns extends Item {
 							nbt.setBoolean("Bursting", false);
 							nbt.setBoolean("Cocking", false);
 						} else {
-							fireProcess(itemstack, world, entity, nbt);
+							fireProcess(itemstack, world, entity, nbt, i);
 							resetBolt(itemstack);
 						}
 					}
@@ -986,8 +986,10 @@ public class HMGItem_Unified_Guns extends Item {
 	public double getEntitySpeedSQ(Entity entity){
 		return entity.motionX * entity.motionX + entity.motionY * entity.motionY + entity.motionZ * entity.motionZ;
 	}
-	public void fireProcess(ItemStack itemstack, World world, Entity entity, NBTTagCompound nbt){
+	public void fireProcess(ItemStack itemstack, World world, Entity entity, NBTTagCompound nbt, int inventorySlot){
 		int fireLoop = 1;
+		boolean shotCommitted = false;
+		ItemStack oneUseState = gunInfo.isOneuse && !world.isRemote ? itemstack.copy() : null;
 		if(guntemp.currentConnectedTurret != null){
 			fireLoop = guntemp.currentConnectedTurret.getSyncroFireNum();
 		}
@@ -1068,6 +1070,7 @@ public class HMGItem_Unified_Guns extends Item {
 							currentBulletType, firetemp.gra, firetemp.resistance, firetemp.bulletStability, firetemp.damageRange);
 				}
 				damageMagazine(itemstack, entity);
+				shotCommitted = true;
 				float backUpRotationPitch = entity.rotationPitch;
 				float backUpRotationYaw = entity.rotationYaw;
 				if(!gunInfo.elevationOffsets.isEmpty() && !(entity instanceof PlacedGunEntity)){
@@ -1202,6 +1205,9 @@ public class HMGItem_Unified_Guns extends Item {
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 			}
+		}
+		if (shotCommitted && gunInfo.isOneuse) {
+			consumeOneUseWeapon(itemstack, oneUseState, entity, inventorySlot);
 		}
 	}
 	public void setBulletPos_PlacedGun(Entity entity,HMGEntityBulletBase bulletBase,NBTTagCompound nbt){
@@ -1777,19 +1783,7 @@ public class HMGItem_Unified_Guns extends Item {
 
 	public void resetReload(ItemStack par1ItemStack, World par2World, Entity entity, int i) {
 		if(guntemp != null)guntemp.items[5] = null;//撃ち終わりに特殊弾を消去
-		if(gunInfo.isOneuse) {
-			boolean flag = false;
-			if(getInventory_VehicleCheck(entity) != null){
-				flag = consumeInventoryItem(this, getInventory_VehicleCheck(entity), i);
-			}
-			if (!flag && getInventory_fromEntity(entity) != null) {
-				consumeInventoryItem(this, getInventory_fromEntity(entity), i);
-			}
-		}
 		if(par1ItemStack.stackSize > 0){
-			if(gunInfo.isOneuse && getInventory_fromEntity(entity) == null){
-				par1ItemStack.getTagCompound().setByte("Bolt", (byte)100);
-			}
 			reloadBullets(par1ItemStack, par2World, entity);
 		}
 //        int l;
@@ -1812,6 +1806,68 @@ public class HMGItem_Unified_Guns extends Item {
 //        }
 
 	}
+
+	private void consumeOneUseWeapon(ItemStack firedStack, ItemStack stateBeforeUse, Entity entity, int inventorySlot) {
+		IInventory vehicleInventory = getInventory_VehicleCheck(entity);
+		if (consumeExactStack(firedStack, stateBeforeUse, vehicleInventory, inventorySlot)) {
+			return;
+		}
+
+		IInventory owningInventory = getInventory_fromEntity(entity);
+		if (owningInventory != vehicleInventory && consumeExactStack(firedStack, stateBeforeUse, owningInventory, inventorySlot)) {
+			return;
+		}
+
+		// Placed guns and inventory-less mounts own the stack directly rather than
+		// exposing it through IInventory.
+		decrementOneUseStack(firedStack, stateBeforeUse);
+		if (entity instanceof PlacedGunEntity && firedStack.stackSize <= 0) {
+			((PlacedGunEntity) entity).gunStack = null;
+			((PlacedGunEntity) entity).gunItem = null;
+		}
+	}
+
+	private boolean consumeExactStack(ItemStack firedStack, ItemStack stateBeforeUse, IInventory inventory, int preferredSlot) {
+		if (inventory == null) {
+			return false;
+		}
+		if (preferredSlot >= 0 && preferredSlot < inventory.getSizeInventory()
+				&& inventory.getStackInSlot(preferredSlot) == firedStack) {
+			decrementOneUseStackInInventory(firedStack, stateBeforeUse, inventory, preferredSlot);
+			return true;
+		}
+		for (int slot = 0; slot < inventory.getSizeInventory(); slot++) {
+			if (inventory.getStackInSlot(slot) == firedStack) {
+				decrementOneUseStackInInventory(firedStack, stateBeforeUse, inventory, slot);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void decrementOneUseStackInInventory(ItemStack firedStack, ItemStack stateBeforeUse, IInventory inventory, int slot) {
+		decrementOneUseStack(firedStack, stateBeforeUse);
+		inventory.setInventorySlotContents(slot, firedStack.stackSize > 0 ? firedStack : null);
+		inventory.markDirty();
+	}
+
+	private void decrementOneUseStack(ItemStack firedStack, ItemStack stateBeforeUse) {
+		firedStack.stackSize--;
+		if (firedStack.stackSize > 0 && stateBeforeUse != null) {
+			// ItemStack damage and loaded-magazine NBT belong to the whole stack. Put
+			// the unthrown disposable items back into their pre-shot ammunition state.
+			firedStack.setItemDamage(stateBeforeUse.getItemDamage());
+			for (int magazineSlot = 0; magazineSlot < gunInfo.magazineItemCount; magazineSlot++) {
+				String tagName = "LoadedMagazine" + magazineSlot;
+				if (stateBeforeUse.getTagCompound().hasKey(tagName)) {
+					firedStack.getTagCompound().setTag(tagName, stateBeforeUse.getTagCompound().getTag(tagName).copy());
+				} else {
+					firedStack.getTagCompound().removeTag(tagName);
+				}
+			}
+		}
+	}
+
 	public double getTerminalspeed(){
 		if(gunInfo.acceleration > 0){
 			//A*0.9 + 0.1 = A
