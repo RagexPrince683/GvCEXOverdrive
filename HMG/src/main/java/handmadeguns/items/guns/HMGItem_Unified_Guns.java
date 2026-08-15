@@ -1141,6 +1141,7 @@ public class HMGItem_Unified_Guns extends Item {
 						bulletBase.accelerationDelay = firetemp.accelerationDelay;
 						bulletBase.accelerationFuse = firetemp.accelerationFuse;
 						bulletBase.canex = firetemp.destroyBlock;
+						bulletBase.canDoorBreach = firetemp.canDoorBreach;
 						if(bulletBase instanceof HMGEntityBulletTorp)((HMGEntityBulletTorp) bulletBase).draft = gunInfo.torpdraft;
 						bulletBase.damageRange = firetemp.damageRange;
 						bulletBase.hasVT   = gunInfo.hasVT  ;

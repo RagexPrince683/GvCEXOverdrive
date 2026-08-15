@@ -50,6 +50,8 @@ public class HMGItemCustomMagazine extends HMGItemAttachmentBase {
     public Float resistanceInWaterOverride;
     public Boolean canBounceOverride;
     public Boolean blockDestroyOverride;
+    // candoorbreach lets close-range projectiles such as shotgun slugs open non-iron doors.
+    public Boolean canDoorBreachOverride;
     public Integer accelerationDelayOverride;
     public Integer accelerationFuseOverride;
     

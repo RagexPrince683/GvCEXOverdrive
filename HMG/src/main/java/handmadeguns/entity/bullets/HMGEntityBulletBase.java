@@ -114,6 +114,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	protected int Bdamege;
 	public float ex;
 	public boolean canex = cfg_blockdestroy;
+	public boolean canDoorBreach = false;
 	public boolean canbounce = false;
 	public float bouncerate = 0.2f;
 	public float bouncelimit = 45;
@@ -582,6 +583,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 		}else{
 			Block lblock = worldObj.getBlock(var1.blockX, var1.blockY, var1.blockZ);
 			int lmeta = worldObj.getBlockMetadata(var1.blockX, var1.blockY, var1.blockZ);
+			openBreachedDoor(var1, lblock, lmeta);
 			if (checkDestroyBlock(var1, var1.blockX, var1.blockY, var1.blockZ, lblock, lmeta)) {
 				if (!this.worldObj.isRemote)
 				{
@@ -598,6 +600,26 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 					this.setDead();
 				}
 			}
+		}
+	}
+
+	private void openBreachedDoor(MovingObjectPosition hit, Block block, int metadata) {
+		if (worldObj.isRemote || !canDoorBreach || hit == null || hit.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK
+				|| !(block instanceof BlockDoor) || block == Blocks.iron_door || block.getMaterial() == Material.iron) {
+			return;
+		}
+
+		double impactX = hit.hitVec != null ? hit.hitVec.xCoord : hit.blockX + 0.5D;
+		double impactY = hit.hitVec != null ? hit.hitVec.yCoord : hit.blockY + 0.5D;
+		double impactZ = hit.hitVec != null ? hit.hitVec.zCoord : hit.blockZ + 0.5D;
+		double deltaX = impactX - firstX;
+		double deltaY = impactY - firstY;
+		double deltaZ = impactZ - firstZ;
+		if (deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ > 9.0D) return;
+
+		int doorY = (metadata & 8) != 0 ? hit.blockY - 1 : hit.blockY;
+		if ((worldObj.getBlockMetadata(hit.blockX, doorY, hit.blockZ) & 4) == 0) {
+			((BlockDoor)block).func_150014_a(worldObj, hit.blockX, doorY, hit.blockZ, true);
 		}
 	}
 	
