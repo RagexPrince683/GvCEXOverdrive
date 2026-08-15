@@ -1,5 +1,11 @@
 # Changelog
 
+## Fix one-use weapon consumption
+
+- Fixed `isOneuse,true` weapons remaining as empty items after use.
+- Restored immediate one-use weapon consumption.
+- Preserved manual reload behavior for normal player guns.
+
 ## Correct ammunition ballistic override propagation
 
 - Correct `CustomMagazine` `BlletSpread`/`BulletSpread` and `bulletFuse`
