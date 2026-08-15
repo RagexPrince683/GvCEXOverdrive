@@ -304,7 +304,7 @@ public class HMGGunMaker {
 							type[i] = type[i].trim();
 						}
 					}
-					readFireInfo(gunInfo,type);
+					readFireInfo(gunInfo,type,file1);
 
 
 					if (type.length != 0){// 1
@@ -1877,7 +1877,15 @@ public class HMGGunMaker {
 		}
 	}
 	
-	public static void readFireInfo(GunInfo gunInfo,String[] type){
+	private static String sourceName(File sourceFile) {
+		return sourceFile != null ? sourceFile.getPath() : "<unknown>";
+	}
+
+	public static void readFireInfo(GunInfo gunInfo, String[] type) {
+		readFireInfo(gunInfo, type, null);
+	}
+
+	public static void readFireInfo(GunInfo gunInfo,String[] type, File sourceFile){
 		switch (type[0]){
 			case "BulletPower":
 				gunInfo.power = (int) (parseInt(type[1]) * damageCof);
@@ -2114,6 +2122,26 @@ public class HMGGunMaker {
 				break;
 			case "InventoryScale":
 				gunInfo.inventoryscale = parseFloat(type[1]);
+				break;
+			case "InventoryOffset":
+				if (type.length != 4) {
+					System.err.println("[HMG] Invalid InventoryOffset in gun file " + sourceName(sourceFile)
+							+ ": expected three numeric values; using 0,0,0");
+					break;
+				}
+				try {
+					float x = parseFloat(type[1].trim());
+					float y = parseFloat(type[2].trim());
+					float z = parseFloat(type[3].trim());
+					if (Float.isNaN(x) || Float.isInfinite(x) || Float.isNaN(y) || Float.isInfinite(y)
+							|| Float.isNaN(z) || Float.isInfinite(z)) throw new NumberFormatException();
+					gunInfo.inventoryOffsetX = x;
+					gunInfo.inventoryOffsetY = y;
+					gunInfo.inventoryOffsetZ = z;
+				} catch (NumberFormatException error) {
+					System.err.println("[HMG] Invalid InventoryOffset in gun file " + sourceName(sourceFile)
+							+ ": " + type[1] + "," + type[2] + "," + type[3] + "; using 0,0,0");
+				}
 				break;
 
 			case "CockingTime":

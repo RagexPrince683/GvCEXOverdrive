@@ -30,6 +30,21 @@ multiplied by `InventoryScale`, so changing model size does not move the chosen
 center. Neither key affects the attachment when installed on a gun.
 `attachmentlocation` remains the installed-gun placement control.
 
+Gun TXT files use the same inventory-only controls:
+
+```text
+InventoryScale,0.75
+InventoryOffset,-1.2,-1.1,0
+```
+
+For guns, the offset is an additional displacement on top of HMG's legacy
+inventory centering and orientation. It is applied independently of
+`InventoryScale` and does not affect equipped, dropped, placed, or attachment
+mounting transforms. Both gun and attachment values are read again by
+`/reloadsettingsnomodel`; the already-registered item and renderer are retained,
+and no OBJ cache invalidation is required. Removing either attachment setting
+restores its default (`1.0` scale and `0,0,0` offset) on the next reload.
+
 Assignment syntax is also accepted for these values:
 
 ```text

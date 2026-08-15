@@ -13,6 +13,6 @@ public class HMG_CommandReloadparmNoModel extends HMG_CommandReloadparm {
     @Override
     public void processCommand(ICommandSender sender, String[] arguments) {
         System.out.println("" + sender);
-        reloadGunSettings();
+		reloadPackSettings();
     }
 }

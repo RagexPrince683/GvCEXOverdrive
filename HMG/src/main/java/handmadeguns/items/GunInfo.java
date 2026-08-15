@@ -152,6 +152,9 @@ public class GunInfo {
 	public float attachmentLocationRotation = 0;
 
 	public float inventoryscale = 1;
+	public float inventoryOffsetX = 0.0F;
+	public float inventoryOffsetY = 0.0F;
+	public float inventoryOffsetZ = 0.0F;
 	public boolean grenade = false;
 	public boolean hascustombulletmodel = false;
 	public boolean hascustomcartridgemodel = false;

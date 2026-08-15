@@ -398,6 +398,9 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 				// Inventory orientation
 				GL11.glRotatef(-90.0F, 1.0F, 0.0F, 0.0F);
 				GL11.glTranslatef(9.5F, 0.5F, 5.5F);
+				// Apply author displacement before scaling so InventoryScale cannot magnify it.
+				GL11.glTranslatef(gunitem.gunInfo.inventoryOffsetX, gunitem.gunInfo.inventoryOffsetY,
+						gunitem.gunInfo.inventoryOffsetZ);
 
 				float inventoryScaleMultiplier = partsRender_gun.useLegacyInventoryScale ? 2.5F : 8.0F;
 				float iconScale = (gunitem.gunInfo.inventoryscale * inventoryScaleMultiplier * modelscala) * gunitem.gunInfo.inworldScale;
@@ -458,6 +461,9 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 //		GL11.glColor4f(1, 1, 1, 1);
 		switch (type) {
 			case INVENTORY:
+				// This legacy inventory pass also consumes the live author adjustment.
+				GL11.glTranslatef(gunitem.gunInfo.inventoryOffsetX, gunitem.gunInfo.inventoryOffsetY,
+						gunitem.gunInfo.inventoryOffsetZ);
 				glMatrixForRenderInInventory();
 				break;
 			case EQUIPPED_FIRST_PERSON: // first
