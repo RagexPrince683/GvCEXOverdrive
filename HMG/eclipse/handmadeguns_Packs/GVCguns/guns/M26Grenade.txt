@@ -33,7 +33,7 @@ BulletNameALL,M26grenade
 
 grenade,true
 
-InventoryScale,6
+InventoryScale,20
 
 Cartridge,false
 DropMagazine,false
