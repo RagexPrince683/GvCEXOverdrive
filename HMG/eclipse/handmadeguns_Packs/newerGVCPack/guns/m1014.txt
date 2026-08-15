@@ -6,7 +6,7 @@ BulletGravity,0.485
 Class,1
 Recoil,12
 Recoil_sneaking,8
-ReloadTime,50
+ReloadTime,25
 RemainingBullet,8
 Attacking,6.0f
 Zoom,1.0f,2.0f,4.0f
@@ -73,9 +73,10 @@ ScopeTexture,ironsight.png,reddot.png,scope.png
 RenderCross,false
 RightType,1
 Automatic,false
-Magazine,0,HandmadeGuns,bullet_shell_hmg
+//Magazine,0,HandmadeGuns,bullet_shell_hmg
 
-//MultiMagazine,HandmadeGuns:bullet_shell_hmg,HandmadeGuns:bullet_shell_slug
+MultiMagazine,HandmadeGuns:bullet_shell_hmg,HandmadeGuns:bullet_shell_slug,HandmadeGuns:bullet_shell_bird,HandmadeGuns:bullet_shell_bird6
+
 
 Tabname,HMG_GVCGuns
 guntype,1

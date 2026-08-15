@@ -3,8 +3,10 @@ Stack,16
 BulletRound,1
 Tabname,HMG_Ammo
 BulletPower,6
-BlletSpread,0.2f
+BlletSpread,20.2f
+BulletSpeed,7.3f
 ShotGun_Pellet,40
+bulletFuse,8
 Name,12 Gauge BirdShot 4
 Magazine,bullet_shell_bird
 Recipe1,aaa

@@ -601,35 +601,6 @@ Slot6,HandmadeGuns:machinedParts
 CraftItem,HandmadeGuns:Remington Model 870:0:1
 
 AddRecipe
-Slot1,HandmadeGuns:milledReceiver
-Slot2,HandmadeGuns:pumpLeverActionModule
-Slot3,HandmadeGuns:heavyBarrelKit
-Slot4,HandmadeGuns:stockMount
-Slot5,HandmadeGuns:woodGunFurniture
-Slot6,HandmadeGuns:machinedParts
-CraftItem,HandmadeGuns:Remington Model 870 (BirdShot 4):0:1
-
-AddRecipe
-Slot1,HandmadeGuns:milledReceiver
-Slot2,HandmadeGuns:pumpLeverActionModule
-Slot3,HandmadeGuns:heavyBarrelKit
-Slot4,HandmadeGuns:stockMount
-Slot5,HandmadeGuns:woodGunFurniture
-Slot6,HandmadeGuns:machinedParts
-CraftItem,HandmadeGuns:Remington Model 870 (BirdShot 6):0:1
-
-AddRecipe
-Slot1,HandmadeGuns:milledReceiver
-Slot2,HandmadeGuns:pumpLeverActionModule
-Slot3,HandmadeGuns:heavyBarrelKit
-Slot4,HandmadeGuns:stockMount
-Slot5,HandmadeGuns:woodGunFurniture
-Slot6,HandmadeGuns:machinedParts
-CraftItem,HandmadeGuns:Remington Model 870 (Slug):0:1
-
-//end of same shit
-
-AddRecipe
 Slot1,HandmadeGuns:stampedReceiver
 Slot2,HandmadeGuns:pumpLeverActionModule
 Slot3,HandmadeGuns:heavyBarrelKit

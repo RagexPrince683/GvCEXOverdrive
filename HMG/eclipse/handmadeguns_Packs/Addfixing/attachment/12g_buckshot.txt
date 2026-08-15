@@ -4,6 +4,6 @@ Name,12 gauge buckshot
 BulletRound,1
 BulletPower,5
 BulletSpeed,4
-BlletSpread,0.12
+BlletSpread,0.8
 ShotGun_Pellet,9
 CustomMagazine,12g_buckshot
