@@ -19,6 +19,17 @@ first and then `.obj`. `3dmodeltex` defaults to `.png`, and when omitted falls
 back to a PNG with the resolved model's base name. Attachments
 without `attach3dmodel` retain their normal 2D icon and legacy rendering.
 
+Numbered variants select a model and texture for the matching existing gun attachment inventory slot directly:
+
+```text
+attach3dmodel1,optic_top
+3dmodeltex1,optic_top
+attach3dmodel5 = optic_offset
+3dmodeltex5 = optic_offset
+```
+
+Only suffixes `1` through `5` are valid. Installed rendering prefers the matching numbered model and texture, then the singular legacy values. Standalone inventory and dropped-item rendering prefers the singular model, or otherwise the lowest numbered model, with its matching texture. One renderer caches all variants; the suffix is a GUI/NBT inventory slot, never a model-part index.
+
 `InventoryScale,<number>` controls only the 3D attachment model rendered as an
 inventory item. `1.0` is the default model scale multiplier, preserving the
 renderer's original visible `6.0` base scale for existing packs; `0.5` is half
@@ -60,11 +71,17 @@ attachmentlocation,0.0,1.25,-0.5,90.0
 attachmentlocation = 0.0, 1.25, -0.5, 90.0
 ```
 
-Coordinates use the existing gun-parts coordinate system and scale. The optional
-rotation is in degrees around the attachment renderer's normal local Y axis. All
-model-based attachment items actually present in the gun's existing attachment
-slots render at this anchor. Omitting the key leaves gun rendering unchanged;
-malformed/non-finite values are logged and ignored.
+Numbered locations are also supported with comma or assignment syntax:
+
+```text
+attachmentlocation1,0,0.20,0
+attachmentlocation2 = 0.35, 0.05, 0, 90
+attachmentlocation3,0,0,-1.75
+attachmentlocation4,0,-0.45,0.30
+attachmentlocation5,-0.30,0.15,0
+```
+
+Coordinates use the existing gun-parts coordinate system and scale. The optional rotation is in degrees around the attachment renderer's normal local Y axis. Each suffix maps directly to attachment inventory slot `1` through `5`; a numbered location affects only its matching slot. Rendering prefers that location, then singular `attachmentlocation`, and otherwise adds no location transform. Malformed/non-finite values are logged and ignored.
 
 By default, `attachmentlocation` is relative to the gun model's root. A gun may
 instead make it local to an animated model part by placing `SetAttachmentAttach`
@@ -83,7 +100,7 @@ including all parent-part and motion transforms, before `attachmentlocation` is
 applied as a local translation and optional Y rotation. Use only one
 `SetAttachmentAttach` per gun. If a pack specifies more than one, HMG logs a
 warning, uses the first valid part in file order, and ignores the later markers.
-Legacy gun parts and attachment items do not use this directive.
+Numbered anchors `SetAttachmentAttach1` through `SetAttachmentAttach5` mark independent animated anchors for inventory slots `1` through `5`. The numbered anchor is preferred for its slot; singular `SetAttachmentAttach` remains the fallback for slots without a numbered anchor. Each slot keeps the first valid marker in file order and logs later duplicates with the gun, slot, and ignored part. An attachment is rendered while its selected part's complete live matrix is active, and is omitted when that part's `renderOnOff` state disables it. Legacy gun parts and attachment items do not use these directives.
 
 The active config file is generated from the `HandmadeGuns` mod id, usually as `config/HandmadeGuns.cfg`. Defaults below are read directly from `HMG/src/main/java/handmadeguns/HandmadeGunsCore.java`.
 

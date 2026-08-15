@@ -34,6 +34,9 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 	private ResourceLocation texture;
 	private final boolean renderInventory;
 	private final boolean attachmentMode;
+	private final IModelCustom[] attachmentModels;
+	private final ResourceLocation[] attachmentTextures;
+	private final int standaloneAttachmentSlot;
 	public static float smoothing;
 	public NBTTagCompound nbt;
 
@@ -51,10 +54,23 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 		this.texture = texture;
 		this.renderInventory = renderInventory;
 		this.attachmentMode = attachmentMode;
+		this.attachmentModels = null;
+		this.attachmentTextures = null;
+		this.standaloneAttachmentSlot = -1;
 	}
 
 	public static HMGRenderItemCustom forAttachment(IModelCustom model, ResourceLocation texture) {
 		return new HMGRenderItemCustom(model, texture, true, true);
+	}
+
+	private HMGRenderItemCustom(IModelCustom[] models, ResourceLocation[] textures, int standaloneSlot) {
+		modeling = models[standaloneSlot]; texture = textures[standaloneSlot];
+		renderInventory = true; attachmentMode = true;
+		attachmentModels = models; attachmentTextures = textures; standaloneAttachmentSlot = standaloneSlot;
+	}
+
+	public static HMGRenderItemCustom forAttachment(IModelCustom[] models, ResourceLocation[] textures, int standaloneSlot) {
+		return new HMGRenderItemCustom(models, textures, standaloneSlot);
 	}
 
 	@Override
@@ -195,6 +211,17 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 		renderaspart(1);
 	}
 	public void renderaspart(int pass) {
+		renderaspart(pass, 0);
+	}
+	public void renderaspart(int pass, int attachmentSlot) {
+		IModelCustom selectedModel = modeling;
+		ResourceLocation selectedTexture = texture;
+		if (attachmentModels != null && attachmentSlot >= 1 && attachmentSlot <= 5) {
+			int selectedSlot = attachmentModels[attachmentSlot] != null ? attachmentSlot : 0;
+			selectedModel = attachmentModels[selectedSlot];
+			selectedTexture = attachmentTextures[selectedSlot];
+		}
+		if (selectedModel == null || selectedTexture == null) return;
 		glEnable(GL_BLEND);
 		if(pass == 1) {
 			glEnable(GL_BLEND);
@@ -206,16 +233,16 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 			glAlphaFunc(GL_EQUAL, 1);
 		}
 		GL11.glColor4f(1, 1, 1, 1F);
-		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+		Minecraft.getMinecraft().renderEngine.bindTexture(selectedTexture);
 		GL11.glScalef(1, 1, 1);
-		modeling.renderAllExcept("light");
+		selectedModel.renderAllExcept("light");
 
 
 		RenderHelper.disableStandardItemLighting();
 		float lastBrightnessX = OpenGlHelper.lastBrightnessX;
 		float lastBrightnessY = OpenGlHelper.lastBrightnessY;
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
-		modeling.renderPart("light");
+		selectedModel.renderPart("light");
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)lastBrightnessX, (float)lastBrightnessY);
 		RenderHelper.enableStandardItemLighting();
 

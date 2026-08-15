@@ -150,6 +150,12 @@ public class GunInfo {
 	public float attachmentLocationY = 0;
 	public float attachmentLocationZ = 0;
 	public float attachmentLocationRotation = 0;
+	/** Slot-specific attachment locations. Index zero is intentionally unused. */
+	public final boolean[] hasAttachmentLocations = new boolean[6];
+	public final float[] attachmentLocationXs = new float[6];
+	public final float[] attachmentLocationYs = new float[6];
+	public final float[] attachmentLocationZs = new float[6];
+	public final float[] attachmentLocationRotations = new float[6];
 
 	public float inventoryscale = 1;
 	public float inventoryOffsetX = 0.0F;

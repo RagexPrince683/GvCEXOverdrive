@@ -1,5 +1,11 @@
 # Changelog
 
+## Support five independent external 3D attachment slots (PR pending)
+
+- Add numbered model, texture, and gun-location keys for existing attachment inventory slots 1 through 5, retaining singular fallbacks and deterministic standalone rendering.
+- Add independent `SetAttachmentAttach1` through `SetAttachmentAttach5` animated part anchors with first-anchor duplicate handling per slot.
+- Keep one cached item renderer per attachment while selecting the installed model, texture, location, and animated anchor from the actual NBT/GUI slot number.
+
 ## Add animated gun-part anchors for 3D attachments
 
 - Add the gun model-part directive `SetAttachmentAttach` for both `AddParts` and
