@@ -1,5 +1,11 @@
 # Changelog
 
+## Add slot-aware ADS and gun-part attachment offsets (PR pending)
+
+- Add `opticshift1` through `opticshift5` gun directives that combine live occupied-slot offsets with first-person ADS alignment and its transition without changing zeroing or elevation.
+- Add `moveifattachpresent1` through `moveifattachpresent5` part directives that compose local movement with existing animation matrices, child hierarchies, and external attachment anchors.
+- Validate both directive families as three finite values and document their direct mapping to the existing attachment GUI/NBT slots.
+
 ## Add close-range slug door breaching (PR pending)
 
 - Add the per-ammunition `candoorbreach` option, disabled when omitted, and enable it for the bundled slug rounds.

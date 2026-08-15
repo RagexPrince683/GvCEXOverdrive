@@ -762,6 +762,19 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 	}
 
 	//ADS
+	private float[] getEffectiveOpticShift() {
+		float[] shift = new float[3];
+		if (gunitem == null || items == null) return shift;
+		for (int slot = 1; slot <= 5; slot++) {
+			if (slot < items.length && items[slot] != null && gunitem.gunInfo.hasOpticShift[slot]) {
+				shift[0] += gunitem.gunInfo.opticShiftX[slot];
+				shift[1] += gunitem.gunInfo.opticShiftY[slot];
+				shift[2] += gunitem.gunInfo.opticShiftZ[slot];
+			}
+		}
+		return shift;
+	}
+
 	public void setUpGunPos_ADS(float reco) {
 		GL11.glRotatef(180f, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(180f, 0.0F, 0.0F, 1.0F);
@@ -772,9 +785,10 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					(float) sightOffset_zeroIn.y / modelscala,
 					(float) sightOffset_zeroIn.z / modelscala);// 0.694,1.03,-1.0//-1.4F
 		}
-		GL11.glTranslatef(onads_modelPosX,
-				onads_modelPosY,
-				onads_modelPosZ);
+		float[] opticShift = getEffectiveOpticShift();
+		GL11.glTranslatef(onads_modelPosX + opticShift[0],
+				onads_modelPosY + opticShift[1],
+				onads_modelPosZ + opticShift[2]);
 		GL11.glRotatef(onads_modelRotationY, 0.0F, 1.0F, 0.0F);
 		GL11.glRotatef(onads_modelRotationX, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(onads_modelRotationZ, 0.0F, 0.0F, 1.0F);
@@ -807,9 +821,10 @@ public class HMGRenderItemGun_U_NEW implements IItemRenderer {
 					(float) sightOffset_zeroIn.y / modelscala * interPole,
 					(float) sightOffset_zeroIn.z / modelscala * interPole);// 0.694,1.03,-1.0//-1.4F
 		}
-		GL11.glTranslatef(onads_modelPosX * interPole,
-				onads_modelPosY * interPole,
-				onads_modelPosZ * interPole);// 0.694,1.03,-1.0//-1.4F
+		float[] opticShift = getEffectiveOpticShift();
+		GL11.glTranslatef((onads_modelPosX + opticShift[0]) * interPole,
+				(onads_modelPosY + opticShift[1]) * interPole,
+				(onads_modelPosZ + opticShift[2]) * interPole);// 0.694,1.03,-1.0//-1.4F
 		GL11.glRotatef(onads_modelRotationY * interPole, 0.0F, 1.0F, 0.0F);
 		GL11.glRotatef(onads_modelRotationX * interPole, 1.0F, 0.0F, 0.0F);
 		GL11.glRotatef(onads_modelRotationZ * interPole, 0.0F, 0.0F, 1.0F);

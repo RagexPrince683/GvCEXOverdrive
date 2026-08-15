@@ -247,6 +247,11 @@ public class GunInfo {
 	public double[] sightPosR = new double[3];
 	public double[] sightPosS = new double[3];
 	public Vector3d[] sightOffset_zeroIn = new Vector3d[]{new Vector3d()};
+	/** Per-attachment-slot first-person ADS offsets. Index zero is intentionally unused. */
+	public final boolean[] hasOpticShift = new boolean[6];
+	public final float[] opticShiftX = new float[6];
+	public final float[] opticShiftY = new float[6];
+	public final float[] opticShiftZ = new float[6];
 	public boolean canceler;
 	public boolean chargeType;
 	public boolean[] hasNightVision = new boolean[]{false,false,false};

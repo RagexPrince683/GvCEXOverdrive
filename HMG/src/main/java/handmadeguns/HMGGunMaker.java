@@ -1760,6 +1760,31 @@ public class HMGGunMaker {
 					currentParts.removeIfAttachPresent[removalSlot] = true;
 				}
 				break;
+			case "moveifattachpresent1": case "moveifattachpresent2": case "moveifattachpresent3":
+			case "moveifattachpresent4": case "moveifattachpresent5":
+				int movementSlot = type[0].charAt(type[0].length() - 1) - '0';
+				if (currentParts == null) {
+					System.err.println("[HMG] Ignoring " + type[0]
+							+ " without an AddParts or AddChildParts in gun configuration "
+							+ sourceName(currentGunConfig));
+				} else if (type.length != 4) {
+					System.err.println("[HMG] Invalid " + type[0] + " in gun configuration "
+							+ sourceName(currentGunConfig) + ": expected three numeric values");
+				} else {
+					try {
+						float x = parseFiniteFloat(type[1]);
+						float y = parseFiniteFloat(type[2]);
+						float z = parseFiniteFloat(type[3]);
+						currentParts.moveIfAttachPresent[movementSlot] = true;
+						currentParts.moveIfAttachPresentX[movementSlot] = x;
+						currentParts.moveIfAttachPresentY[movementSlot] = y;
+						currentParts.moveIfAttachPresentZ[movementSlot] = z;
+					} catch (NumberFormatException error) {
+						System.err.println("[HMG] Invalid " + type[0] + " in gun configuration "
+								+ sourceName(currentGunConfig) + ": values must be finite numbers");
+					}
+				}
+				break;
 			case "AddPartsRotationCenterAndRotationAmount":
 				currentParts.AddRenderinfDef(parseFloat(type[1]), parseFloat(type[2]), parseFloat(type[3]), parseFloat(type[4]), parseFloat(type[5]), parseFloat(type[6]));
 				break;
@@ -1938,12 +1963,39 @@ public class HMGGunMaker {
 		return sourceFile != null ? sourceFile.getPath() : "<unknown>";
 	}
 
+	private static float parseFiniteFloat(String value) {
+		float parsed = parseFloat(value.trim());
+		if (Float.isNaN(parsed) || Float.isInfinite(parsed)) throw new NumberFormatException("non-finite value");
+		return parsed;
+	}
+
 	public static void readFireInfo(GunInfo gunInfo, String[] type) {
 		readFireInfo(gunInfo, type, null);
 	}
 
 	public static void readFireInfo(GunInfo gunInfo,String[] type, File sourceFile){
 		switch (type[0]){
+			case "opticshift1": case "opticshift2": case "opticshift3":
+			case "opticshift4": case "opticshift5":
+				int opticSlot = type[0].charAt(type[0].length() - 1) - '0';
+				if (type.length != 4) {
+					System.err.println("[HMG] Invalid " + type[0] + " in gun file " + sourceName(sourceFile)
+							+ ": expected three numeric values");
+					break;
+				}
+				try {
+					float x = parseFiniteFloat(type[1]);
+					float y = parseFiniteFloat(type[2]);
+					float z = parseFiniteFloat(type[3]);
+					gunInfo.hasOpticShift[opticSlot] = true;
+					gunInfo.opticShiftX[opticSlot] = x;
+					gunInfo.opticShiftY[opticSlot] = y;
+					gunInfo.opticShiftZ[opticSlot] = z;
+				} catch (NumberFormatException error) {
+					System.err.println("[HMG] Invalid " + type[0] + " in gun file " + sourceName(sourceFile)
+							+ ": values must be finite numbers");
+				}
+				break;
 			case "BulletPower":
 				gunInfo.power = (int) (parseInt(type[1]) * damageCof);
 				break;
