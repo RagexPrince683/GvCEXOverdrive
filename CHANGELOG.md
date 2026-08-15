@@ -1,5 +1,13 @@
 # Changelog
 
+## Display attachment names in firearm tooltips (PR pending)
+
+- Resolve firearm attachment-whitelist identifiers to their localized, player-facing
+  item names in the `Valid attachments` tooltip, with the configured identifier as a
+  fallback when an attachment is unavailable.
+- Document the distinction between stable `allowattach` identifiers and attachment
+  display names for content-pack authors.
+
 ## Fix HMG attachment GUI slot validation (PR pending)
 
 - Require every attachment to match the established slot type: sight, support,

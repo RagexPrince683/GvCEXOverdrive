@@ -1,6 +1,7 @@
 package handmadeguns.items.guns;
 
 import com.google.common.collect.Multimap;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import handmadeguns.HMGPacketHandler;
 import handmadeguns.HandmadeGunsCore;
@@ -146,10 +147,17 @@ public class HMGItem_Unified_Guns extends Item {
 			if(!gunInfo.attachwhitelist.isEmpty()){
 				par3List.add(EnumChatFormatting.YELLOW + "Valid attachments:");
 				for (String attachment : gunInfo.attachwhitelist)
-					par3List.add(EnumChatFormatting.WHITE + attachment);
+					par3List.add(EnumChatFormatting.WHITE + getAttachmentDisplayName(attachment));
 
 			}
 		}
+	}
+	private String getAttachmentDisplayName(String attachmentName) {
+		Item attachment = GameRegistry.findItem("HandmadeGuns", attachmentName);
+		if (attachment != null) {
+			return attachment.getItemStackDisplayName(new ItemStack(attachment));
+		}
+		return attachmentName;
 	}
 	public void onUpdate_fromTurret(ItemStack itemstack, World world, Entity entity, int i, boolean flag, TurretObj turretObj){
 		synchronized (this) {
