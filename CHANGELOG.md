@@ -1,5 +1,10 @@
 # Changelog
 
+## Add close-range slug door breaching (PR pending)
+
+- Add the per-ammunition `candoorbreach` option, disabled when omitted, and enable it for the bundled slug rounds.
+- Allow explicitly configured projectiles fired within three blocks to open directly impacted wooden doors while preserving iron doors and normal bullet collision behavior.
+
 ## Fix external 3D attachment reload and render passes (PR pending)
 
 - Rebuild existing external attachment item renderers, including numbered model and texture variants, after destructive model-cache invalidation during `/reloadSettings`.

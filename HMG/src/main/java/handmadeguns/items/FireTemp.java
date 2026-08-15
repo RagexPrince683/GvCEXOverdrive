@@ -10,6 +10,7 @@ public class FireTemp {
 	public String model = null;
 	public float exlevel;
 	public boolean destroyBlock;
+	public boolean canDoorBreach;
 	
 	public double knockback;
 	public double knockbackY;
@@ -72,6 +73,7 @@ public class FireTemp {
 		//
 		if(magazine.blockDestroyOverride != null)this.destroyBlock = magazine.blockDestroyOverride;
 		else this.destroyBlock &= magazine.blockdestroyex;
+		if(magazine.canDoorBreachOverride != null)this.canDoorBreach = magazine.canDoorBreachOverride;
 		if(magazine.bulletmodel != null)this.model = magazine.bulletmodel;
 		
 		if(Double.isFinite(magazine.knockback))this.knockback = magazine.knockback;

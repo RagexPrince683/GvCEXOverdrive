@@ -1,5 +1,15 @@
 # Handmade Guns Overdrive Configuration Reference
 
+## Per-ammunition door breaching
+
+`CustomMagazine` ammunition can opt a projectile into close-range wooden-door breaching:
+
+```text
+candoorbreach,true
+```
+
+The lowercase key defaults to `false` when omitted. An enabled projectile opens a wooden door only when it directly impacts the door no more than three blocks from its firing origin. Iron and other metal doors are never opened. Because the value belongs to the ammunition item, a gun can alternate between ordinary buckshot and door-breaching slugs without changing its gun configuration.
+
 ## Content-pack attachment models
 
 Attachment TXT files may opt into a real model item/rendered attachment with:

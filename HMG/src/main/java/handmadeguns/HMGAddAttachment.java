@@ -68,6 +68,7 @@ public class HMGAddAttachment
 		Double bulletStabilityOverride = null;
 		Boolean canBounceOverride = null;
 		Boolean blockDestroyOverride = null;
+		Boolean canDoorBreachOverride = null;
 		String rawPowerOverride = null, rawSpeedOverride = null;
 		
 		
@@ -304,6 +305,9 @@ public class HMGAddAttachment
 								break;
 							case "AutoDestroy":
 								autoDestroy = Boolean.parseBoolean(type[1]);
+								break;
+							case "candoorbreach":
+								canDoorBreachOverride = Boolean.parseBoolean(type[1]);
 								break;
 							case "BulletItemName":
 								bulletItemName = (type[1]);
@@ -668,6 +672,7 @@ public class HMGAddAttachment
 								((HMGItemCustomMagazine)newitem).resistanceInWaterOverride = resistanceInWaterOverride;
 								((HMGItemCustomMagazine)newitem).canBounceOverride = canBounceOverride;
 								((HMGItemCustomMagazine)newitem).blockDestroyOverride = blockDestroyOverride;
+								((HMGItemCustomMagazine)newitem).canDoorBreachOverride = canDoorBreachOverride;
 								((HMGItemCustomMagazine)newitem).accelerationDelayOverride = accelerationDelayOverride;
 								((HMGItemCustomMagazine)newitem).accelerationFuseOverride = accelerationFuseOverride;
 								if(powerOverride != null || speedOverride != null || spreadOverride != null || pelletOverride != null || fuseOverride != null) {

@@ -6,4 +6,5 @@ BulletPower,14
 BulletSpeed,5
 BulletSpread,0.015
 ShotGun_Pellet,1
+candoorbreach,true
 CustomMagazine,12g_slug
