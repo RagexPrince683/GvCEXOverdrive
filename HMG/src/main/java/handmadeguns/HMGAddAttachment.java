@@ -84,6 +84,10 @@ public class HMGAddAttachment
 		String objtexture = "null";
 		String attach3dmodel = null;
 		String model3dTexture = null;
+		float inventoryScale = 1.0F;
+		float inventoryOffsetX = 0.0F;
+		float inventoryOffsetY = 0.0F;
+		float inventoryOffsetZ = 0.0F;
 		List<HMGItemAttachmentBase> pendingAttachments = new ArrayList<HMGItemAttachmentBase>();
 		Item itema = null;
 		Item itemb = null;
@@ -177,6 +181,15 @@ public class HMGAddAttachment
 								break;
 							case "3dmodeltex":
 								model3dTexture = type.length > 1 ? type[1].trim() : null;
+								break;
+							case "InventoryScale":
+								inventoryScale = parseInventoryScale(type, file1);
+								break;
+							case "InventoryOffset":
+								float[] inventoryOffset = parseInventoryOffset(type, file1);
+								inventoryOffsetX = inventoryOffset[0];
+								inventoryOffsetY = inventoryOffset[1];
+								inventoryOffsetZ = inventoryOffset[2];
 								break;
 							case "ReduceRecoilLevel":
 								reduceRecoilLevel = Float.parseFloat(type[1]);
@@ -839,6 +852,10 @@ public class HMGAddAttachment
 				for (HMGItemAttachmentBase attachment : pendingAttachments) {
 					attachment.attach3dmodel = attach3dmodel;
 					attachment.model3dTexture = model3dTexture;
+					attachment.inventoryScale = inventoryScale;
+					attachment.inventoryOffsetX = inventoryOffsetX;
+					attachment.inventoryOffsetY = inventoryOffsetY;
+					attachment.inventoryOffsetZ = inventoryOffsetZ;
 					if (isClient && attachment.has3dModel()) registerModelAttachment(attachment, attachment.getUnlocalizedName());
 					else if (isClient && canobj) {
 						IModelCustom model = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + objmodel);
@@ -867,11 +884,51 @@ public class HMGAddAttachment
 			attachment.model3dTexture = textureName;
 			IModelCustom model = HMGGunMaker.getCachedModel("handmadeguns:textures/model/" + modelName);
 			ResourceLocation texture = HMGGunMaker.getCachedResourceLocation("handmadeguns:textures/model/" + textureName);
-			MinecraftForgeClient.registerItemRenderer(attachment, HMGRenderItemCustom.forAttachment(model, texture));
+			MinecraftForgeClient.registerItemRenderer(attachment, HMGRenderItemCustom.forAttachment(model, texture,
+					attachment.inventoryScale, attachment.inventoryOffsetX, attachment.inventoryOffsetY,
+					attachment.inventoryOffsetZ));
 		} catch (Throwable error) {
 			System.err.println("[HMG] Unable to load attachment model for " + registryName + " ("
 					+ attachment.attach3dmodel + "): " + error.getMessage());
 		}
+	}
+
+	private static float parseInventoryScale(String[] values, File file) {
+		String invalidValue = values.length > 1 ? values[1] : "<missing>";
+		try {
+			float value = Float.parseFloat(invalidValue);
+			if (!Float.isNaN(value) && !Float.isInfinite(value) && value > 0.0F) return value;
+		} catch (NumberFormatException ignored) {
+		}
+		System.err.println("[HMG] Invalid InventoryScale in attachment file " + file.getPath()
+				+ ": " + invalidValue + "; using 1.0");
+		return 1.0F;
+	}
+
+	private static float[] parseInventoryOffset(String[] values, File file) {
+		String invalidValue = values.length > 1 ? joinValues(values, 1) : "<missing>";
+		try {
+			if (values.length != 4) throw new NumberFormatException("expected three values");
+			float x = Float.parseFloat(values[1]);
+			float y = Float.parseFloat(values[2]);
+			float z = Float.parseFloat(values[3]);
+			if (Float.isNaN(x) || Float.isInfinite(x) || Float.isNaN(y) || Float.isInfinite(y)
+					|| Float.isNaN(z) || Float.isInfinite(z)) throw new NumberFormatException("non-finite value");
+			return new float[] {x, y, z};
+		} catch (NumberFormatException ignored) {
+			System.err.println("[HMG] Invalid InventoryOffset in attachment file " + file.getPath()
+					+ ": " + invalidValue + "; using 0,0,0");
+			return new float[] {0.0F, 0.0F, 0.0F};
+		}
+	}
+
+	private static String joinValues(String[] values, int start) {
+		StringBuilder result = new StringBuilder();
+		for (int i = start; i < values.length; i++) {
+			if (i > start) result.append(',');
+			result.append(values[i]);
+		}
+		return result.toString();
 	}
 
 	private static boolean checkBeforeReadfile(File file){

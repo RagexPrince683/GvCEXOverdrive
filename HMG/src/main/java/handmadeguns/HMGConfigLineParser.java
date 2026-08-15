@@ -1,6 +1,6 @@
 package handmadeguns;
 
-/** Parsing compatibility for the three post-legacy attachment keys only. */
+/** Parsing compatibility for post-legacy attachment keys only. */
 public final class HMGConfigLineParser {
     private HMGConfigLineParser() {}
 
@@ -22,7 +22,8 @@ public final class HMGConfigLineParser {
 
     private static boolean isExtensionKey(String key) {
         return "attach3dmodel".equals(key) || "3dmodeltex".equals(key)
-                || "attachmentlocation".equals(key);
+                || "attachmentlocation".equals(key) || "InventoryScale".equals(key)
+                || "InventoryOffset".equals(key);
     }
 
     private static String[] trim(String[] values) {

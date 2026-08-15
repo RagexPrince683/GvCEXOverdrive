@@ -24,10 +24,15 @@ import static java.lang.Math.abs;
 import static org.lwjgl.opengl.GL11.*;
 
 public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
+	private static final float ATTACHMENT_INVENTORY_BASE_SCALE = 6.0F;
 	private IModelCustom modeling;
 	private ResourceLocation texture;
 	private final boolean renderInventory;
 	private final boolean attachmentMode;
+	private final float attachmentInventoryScale;
+	private final float attachmentInventoryOffsetX;
+	private final float attachmentInventoryOffsetY;
+	private final float attachmentInventoryOffsetZ;
 	public static float smoothing;
 	public NBTTagCompound nbt;
 
@@ -36,18 +41,26 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 	}
 
 	public HMGRenderItemCustom(IModelCustom modelgun, ResourceLocation texture, boolean renderInventory) {
-		this(modelgun, texture, renderInventory, false);
+		this(modelgun, texture, renderInventory, false, 1.0F, 0.0F, 0.0F, 0.0F);
 	}
 
-	private HMGRenderItemCustom(IModelCustom modelgun, ResourceLocation texture, boolean renderInventory, boolean attachmentMode) {
+	private HMGRenderItemCustom(IModelCustom modelgun, ResourceLocation texture, boolean renderInventory,
+			boolean attachmentMode, float inventoryScale, float inventoryOffsetX, float inventoryOffsetY,
+			float inventoryOffsetZ) {
 		modeling = modelgun;
 		this.texture = texture;
 		this.renderInventory = renderInventory;
 		this.attachmentMode = attachmentMode;
+		this.attachmentInventoryScale = inventoryScale;
+		this.attachmentInventoryOffsetX = inventoryOffsetX;
+		this.attachmentInventoryOffsetY = inventoryOffsetY;
+		this.attachmentInventoryOffsetZ = inventoryOffsetZ;
 	}
 
-	public static HMGRenderItemCustom forAttachment(IModelCustom model, ResourceLocation texture) {
-		return new HMGRenderItemCustom(model, texture, true, true);
+	public static HMGRenderItemCustom forAttachment(IModelCustom model, ResourceLocation texture,
+			float inventoryScale, float inventoryOffsetX, float inventoryOffsetY, float inventoryOffsetZ) {
+		return new HMGRenderItemCustom(model, texture, true, true, inventoryScale,
+				inventoryOffsetX, inventoryOffsetY, inventoryOffsetZ);
 	}
 
 	@Override
@@ -95,8 +108,13 @@ public class HMGRenderItemCustom extends RenderItem implements IItemRenderer {
 				GL11.glPushMatrix();
 				if (attachmentMode) {
 					GL11.glTranslatef(8F, 8F, 0F);
-					GL11.glScalef(6F, 6F, 6F);
-					GL11.glTranslatef(0F, -0.25F, 0F);
+					// Convert model units to Forge inventory pixels before applying the author offset.
+					GL11.glScalef(ATTACHMENT_INVENTORY_BASE_SCALE, ATTACHMENT_INVENTORY_BASE_SCALE,
+							ATTACHMENT_INVENTORY_BASE_SCALE);
+					// This precedes the configurable scale so changing size does not move the chosen center.
+					GL11.glTranslatef(attachmentInventoryOffsetX, attachmentInventoryOffsetY,
+							attachmentInventoryOffsetZ);
+					GL11.glScalef(attachmentInventoryScale, attachmentInventoryScale, attachmentInventoryScale);
 					GL11.glRotatef(25F, 1, 0, 0);
 					GL11.glRotatef(135F, 0, 1, 0);
 				} else GL11.glRotatef(180F, 1, 0, 0);
