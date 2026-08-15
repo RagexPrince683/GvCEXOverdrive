@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -22,7 +23,25 @@ import static net.minecraft.util.MathHelper.wrapAngleTo180_float;
 
 public class HMGGuiInventoryItem extends GuiContainer
 {
-    static int test;
+    private static final float DEFAULT_PREVIEW_SCALE = 60.0F;
+    private static final float HORIZONTAL_DRAG_SENSITIVITY = 0.6F;
+    private static final float VERTICAL_DRAG_SENSITIVITY = 0.6F;
+    private static final float MIN_PREVIEW_PITCH = -80.0F;
+    private static final float MAX_PREVIEW_PITCH = 80.0F;
+    private static final float ZOOM_STEP = 0.1F;
+    private static final float MIN_PREVIEW_ZOOM = 0.5F;
+    private static final float MAX_PREVIEW_ZOOM = 2.0F;
+    private static final int PREVIEW_LEFT = 8;
+    private static final int PREVIEW_TOP = 55;
+    private static final int PREVIEW_RIGHT = 168;
+    private static final int PREVIEW_BOTTOM = 132;
+
+    private float previewYaw;
+    private float previewPitch;
+    private float previewZoom = 1.0F;
+    private boolean rotatingPreview;
+    private int previousMouseX;
+    private int previousMouseY;
     //private static final ResourceLocation texture = new ResourceLocation("textures/gui/container/generic_54.png");
     private static final ResourceLocation texture = new ResourceLocation("handmadeguns:textures/gui/AR.png");
  
@@ -52,81 +71,143 @@ public class HMGGuiInventoryItem extends GuiContainer
         float posX = (float)screenCenterX - (float)this.guiLeft;
         float posY = (float)screenCenterY - (float)this.guiTop;
 
-        float scale = 60.0F;
+        float scale = DEFAULT_PREVIEW_SCALE * previewZoom;
 
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         GL11.glEnable(GL11.GL_COLOR_MATERIAL);
         GL11.glPushMatrix();
-
-        // translate to the GUI-local position that matches screen center, then scale/rotate
-        GL11.glTranslatef(posX, posY, 120.0F);
-        GL11.glScalef(-scale, scale, scale);
-
-        // KEEP YOUR ROTATIONS (unchanged)
-        GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
-
-        RenderHelper.enableStandardItemLighting();
-        GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
-
-        // stabilize view and save/restore
         float prevViewY = RenderManager.instance.playerViewY;
-        RenderManager.instance.playerViewY = 180.0F;
+        try {
+            // Viewer rotations precede the legacy model transform, keeping the model origin at the existing pivot.
+            GL11.glTranslatef(posX, posY, 120.0F);
+            GL11.glRotatef(previewPitch, 1.0F, 0.0F, 0.0F);
+            GL11.glRotatef(previewYaw, 0.0F, 1.0F, 0.0F);
+            GL11.glScalef(-scale, scale, scale);
+            GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+            GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef(135.0F, 0.0F, 1.0F, 0.0F);
 
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthFunc(GL11.GL_LEQUAL);
-        GL11.glDepthMask(true);
-        GL11.glEnable(GL11.GL_CULL_FACE);
+            RenderHelper.enableStandardItemLighting();
+            GL11.glRotatef(-135.0F, 0.0F, 1.0F, 0.0F);
+            RenderManager.instance.playerViewY = 180.0F;
 
-        ItemStack currentItem = ((HMGContainerInventoryItem)inventorySlots).inventory.currentItem;
-        if (currentItem != null)
-        {
-            // ensure tag compound exists so we don't NPE
-            if (currentItem.getTagCompound() == null)
-                currentItem.setTagCompound(new NBTTagCompound());
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthFunc(GL11.GL_LEQUAL);
+            GL11.glDepthMask(true);
+            GL11.glEnable(GL11.GL_CULL_FACE);
 
-            // rebuild attachment NBT
-            NBTTagList tagList = new NBTTagList();
-            for (int i = 0; i < ((HMGContainerInventoryItem)inventorySlots).inventory.items.length; i++)
+            ItemStack currentItem = ((HMGContainerInventoryItem)inventorySlots).inventory.currentItem;
+            if (currentItem != null)
             {
-                ItemStack stack = ((HMGContainerInventoryItem)inventorySlots).inventory.items[i];
-                if (stack != null)
+                // The renderer needs live attachment NBT, but the preview must never modify the held firearm.
+                ItemStack previewItem = currentItem.copy();
+                if (previewItem.getTagCompound() == null)
+                    previewItem.setTagCompound(new NBTTagCompound());
+
+                NBTTagList tagList = new NBTTagList();
+                for (int i = 0; i < ((HMGContainerInventoryItem)inventorySlots).inventory.items.length; i++)
                 {
-                    NBTTagCompound compound = new NBTTagCompound();
-                    compound.setByte("Slot", (byte)i);
-                    stack.writeToNBT(compound);
-                    tagList.appendTag(compound);
+                    ItemStack stack = ((HMGContainerInventoryItem)inventorySlots).inventory.items[i];
+                    if (stack != null)
+                    {
+                        NBTTagCompound compound = new NBTTagCompound();
+                        compound.setByte("Slot", (byte)i);
+                        stack.writeToNBT(compound);
+                        tagList.appendTag(compound);
+                    }
                 }
+                previewItem.getTagCompound().setTag("Items", tagList);
+
+                GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+
+                IItemRenderer gunrender = MinecraftForgeClient.getItemRenderer(
+                        previewItem, IItemRenderer.ItemRenderType.EQUIPPED);
+
+                if (gunrender instanceof HMGRenderItemGun_U_NEW ||
+                        gunrender instanceof HMGRenderItemGun_U)
+                {
+                    gunrender.renderItem(IItemRenderer.ItemRenderType.ENTITY, previewItem);
+                }
+
+                GL11.glDisable(GL12.GL_RESCALE_NORMAL);
             }
-            currentItem.getTagCompound().setTag("Items", tagList);
-
-            GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-
-            IItemRenderer gunrender = MinecraftForgeClient.getItemRenderer(
-                    currentItem, IItemRenderer.ItemRenderType.EQUIPPED);
-
-            if (gunrender instanceof HMGRenderItemGun_U_NEW ||
-                    gunrender instanceof HMGRenderItemGun_U)
-            {
-                // render at origin (we already translated/scaled to where we want)
-                gunrender.renderItem(IItemRenderer.ItemRenderType.ENTITY, currentItem);
-            }
-
-            GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        } finally {
+            RenderManager.instance.playerViewY = prevViewY;
+            RenderHelper.disableStandardItemLighting();
+            OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+            GL11.glPopMatrix();
+            GL11.glPopAttrib();
+            OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
         }
+    }
 
-        // restore
-        RenderManager.instance.playerViewY = prevViewY;
-        GL11.glDepthMask(false);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
+    private boolean isInsidePreview(int mouseX, int mouseY)
+    {
+        int localX = mouseX - this.guiLeft;
+        int localY = mouseY - this.guiTop;
+        return localX >= PREVIEW_LEFT && localX < PREVIEW_RIGHT
+                && localY >= PREVIEW_TOP && localY < PREVIEW_BOTTOM;
+    }
 
-        GL11.glPopMatrix();
-        RenderHelper.disableStandardItemLighting();
-        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton)
+    {
+        if (mouseButton == 0 && isInsidePreview(mouseX, mouseY))
+        {
+            rotatingPreview = true;
+            previousMouseX = mouseX;
+            previousMouseY = mouseY;
+            // Do not pass a preview press to GuiContainer, where it could begin an item drag.
+            return;
+        }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+    }
 
-        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick)
+    {
+        if (rotatingPreview && mouseButton == 0)
+        {
+            int deltaX = mouseX - previousMouseX;
+            int deltaY = mouseY - previousMouseY;
+            previewYaw = wrapAngleTo180_float(previewYaw + deltaX * HORIZONTAL_DRAG_SENSITIVITY);
+            previewPitch = Math.max(MIN_PREVIEW_PITCH, Math.min(MAX_PREVIEW_PITCH,
+                    previewPitch + deltaY * VERTICAL_DRAG_SENSITIVITY));
+            previousMouseX = mouseX;
+            previousMouseY = mouseY;
+            return;
+        }
+        super.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
+    }
+
+    @Override
+    protected void mouseMovedOrUp(int mouseX, int mouseY, int mouseButton)
+    {
+        if (mouseButton == 0 && rotatingPreview)
+        {
+            rotatingPreview = false;
+            return;
+        }
+        super.mouseMovedOrUp(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    public void handleMouseInput()
+    {
+        super.handleMouseInput();
+        int wheel = Mouse.getEventDWheel();
+        if (wheel == 0)
+            return;
+
+        // LWJGL reports display pixels; convert them to the same scaled coordinates as GuiContainer.
+        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+        if (isInsidePreview(mouseX, mouseY))
+        {
+            float zoomDelta = wheel > 0 ? ZOOM_STEP : -ZOOM_STEP;
+            previewZoom = Math.max(MIN_PREVIEW_ZOOM, Math.min(MAX_PREVIEW_ZOOM,
+                    previewZoom + zoomDelta));
+        }
     }
 
 
