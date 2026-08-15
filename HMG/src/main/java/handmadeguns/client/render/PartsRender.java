@@ -81,13 +81,20 @@ public abstract class PartsRender {
 
 
 		FMLClientHandler.instance().getWorldClient().theProfiler.startSection("renderPart");
-		if(!partModel_render(parts, state, flame, remainbullets, OffsetAndRotation))
+		if(!partModel_render(parts, state, flame, remainbullets, OffsetAndRotation)) {
+			renderPartHook(parts, state, flame, remainbullets, OffsetAndRotation);
 			partSidentification(parts.childs,state,flame,remainbullets);
+		}
 		FMLClientHandler.instance().getWorldClient().theProfiler.endSection();
 
 		GL11.glPopMatrix();
 		FMLClientHandler.instance().getWorldClient().theProfiler.endSection();
 
+	}
+
+	/** Called with the complete, visible part transform active and before its matrix is popped. */
+	protected void renderPartHook(HMGGunParts parts, GunState state, float flame, int remainbullets,
+	                              HMGGunParts_Motion_PosAndRotation offsetAndRotation) {
 	}
 
 	public void transformParts(HMGGunParts_Motion_PosAndRotation rotationCenterAndRotation,

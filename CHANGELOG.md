@@ -1,5 +1,16 @@
 # Changelog
 
+## Add animated gun-part anchors for 3D attachments
+
+- Add the gun model-part directive `SetAttachmentAttach` for both `AddParts` and
+  `AddChildParts`, making `attachmentlocation` local to the selected part's live
+  animation matrix.
+- Render model-based installed attachments once from the selected part, or once
+  from gun-local space for packs without an anchor, rather than once per recursive
+  child-part traversal.
+- Keep the first configured anchor and warn about later duplicates without
+  breaking affected content packs.
+
 ## Configurable 3D attachment inventory transforms
 
 - Add per-attachment `InventoryScale` and three-axis `InventoryOffset` TXT

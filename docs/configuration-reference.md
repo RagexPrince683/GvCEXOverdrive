@@ -66,6 +66,25 @@ model-based attachment items actually present in the gun's existing attachment
 slots render at this anchor. Omitting the key leaves gun rendering unchanged;
 malformed/non-finite values are logged and ignored.
 
+By default, `attachmentlocation` is relative to the gun model's root. A gun may
+instead make it local to an animated model part by placing `SetAttachmentAttach`
+on the current `AddParts` or `AddChildParts` entry:
+
+```text
+AddParts,Sys_Zero_in
+    SetAsNormalParts
+    SetAttachmentAttach
+    AddPartsRotationCenterAndRotationAmount,0,1.6798,5.8886,0,0,0
+    AddSomeMotion,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+```
+
+The installed 3D attachment then inherits that part's complete active transform,
+including all parent-part and motion transforms, before `attachmentlocation` is
+applied as a local translation and optional Y rotation. Use only one
+`SetAttachmentAttach` per gun. If a pack specifies more than one, HMG logs a
+warning, uses the first valid part in file order, and ignores the later markers.
+Legacy gun parts and attachment items do not use this directive.
+
 The active config file is generated from the `HandmadeGuns` mod id, usually as `config/HandmadeGuns.cfg`. Defaults below are read directly from `HMG/src/main/java/handmadeguns/HandmadeGunsCore.java`.
 
 ## `Gun`

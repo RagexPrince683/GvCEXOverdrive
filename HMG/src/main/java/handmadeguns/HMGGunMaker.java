@@ -41,6 +41,8 @@ public class HMGGunMaker {
 	public static HMGGunParts currentParts = null;
 	public static ScriptEngine currentScript;
 	public static FileReader currentScriptFile;
+	private HMGGunParts attachmentAnchor;
+	private File currentGunConfig;
 
 	private static final ScriptEngineManager SCRIPT_ENGINE_MANAGER = new ScriptEngineManager(null);
 	private static final Map<String, ResourceLocation> RESOURCE_LOCATION_CACHE = new HashMap<String, ResourceLocation>();
@@ -54,6 +56,9 @@ public class HMGGunMaker {
 
 
 	public void load( boolean isClient, File file1) {
+		attachmentAnchor = null;
+		currentGunConfig = file1;
+		currentParts = null;
 		long loadStartNanos = System.nanoTime();
 		int parsedLines = 0;
 		int modelRegistrations = 0;
@@ -1012,6 +1017,7 @@ public class HMGGunMaker {
 											((HMGRenderItemGun_U_NEW)gunrender).setSprintOffsetAndRotation(spposx, spposy, spposz, sprotex, sprotey, sprotez);
 											
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.partslist = partslist;
+											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.hasAttachmentAnchor = attachmentAnchor != null;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.gunPartsScale = gunPartsScale;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.useLegacyInventoryScale = useLegacyInventoryScale;
 											((HMGRenderItemGun_U_NEW)gunrender).partsRender_gun.muzzleattachoffset = barrelattachoffset;
@@ -1042,6 +1048,7 @@ public class HMGGunMaker {
 											renderItemGun_u_new.setSprintOffsetAndRotation(spposx, spposy, spposz, sprotex, sprotey, sprotez);
 											
 											renderItemGun_u_new.partsRender_gun.partslist = partslist;
+											renderItemGun_u_new.partsRender_gun.hasAttachmentAnchor = attachmentAnchor != null;
 											renderItemGun_u_new.partsRender_gun.gunPartsScale = gunPartsScale;
 											renderItemGun_u_new.partsRender_gun.useLegacyInventoryScale = useLegacyInventoryScale;
 											renderItemGun_u_new.partsRender_gun.muzzleattachoffset = barrelattachoffset;
@@ -1702,6 +1709,19 @@ public class HMGGunMaker {
 				currentParts.AddRenderinfReload(0, 0, 0, 0, 0, 0);
 				
 				
+				break;
+			case "SetAttachmentAttach":
+				if (currentParts == null) {
+					System.err.println("[HMG] Ignoring SetAttachmentAttach without an AddParts or AddChildParts in gun configuration "
+							+ sourceName(currentGunConfig));
+				} else if (attachmentAnchor == null) {
+					currentParts.attachmentAttach = true;
+					attachmentAnchor = currentParts;
+				} else {
+					System.err.println("[HMG] Duplicate SetAttachmentAttach in gun configuration "
+							+ sourceName(currentGunConfig) + " for part " + currentParts.partsname
+							+ "; keeping first anchor " + attachmentAnchor.partsname);
+				}
 				break;
 			case "AddPartsRotationCenterAndRotationAmount":
 				currentParts.AddRenderinfDef(parseFloat(type[1]), parseFloat(type[2]), parseFloat(type[3]), parseFloat(type[4]), parseFloat(type[5]), parseFloat(type[6]));

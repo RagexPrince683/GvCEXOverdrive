@@ -63,6 +63,8 @@ public class HMGGunParts {
     public boolean isbullet;
 
     public boolean isattachpart;
+    /** True only for the first gun-model part marked by SetAttachmentAttach. */
+    public boolean attachmentAttach;
     public boolean isscope;
     public boolean isdot;
     public boolean issight;

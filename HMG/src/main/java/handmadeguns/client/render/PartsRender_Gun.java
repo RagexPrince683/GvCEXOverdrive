@@ -35,6 +35,9 @@ public class PartsRender_Gun extends PartsRender {
 	public float overbarrelattachoffset[] = new float[3];
 	public float overbarrelattachrotation[] = new float[3];
 	public boolean useLegacyInventoryScale = false;
+	/** Set by the gun-part parser when this model has a SetAttachmentAttach anchor. */
+	public boolean hasAttachmentAnchor = false;
+	private boolean attachmentRendered;
 	
 	public void partSidentification(Object... data){
 		guntemp.readPropertyFromNBT(gunitem.gunInfo,nbt, HandmadeGunsCore.Key_ADS(curretnEntity),HMG_proxy.getCilentWorld());
@@ -42,6 +45,8 @@ public class PartsRender_Gun extends PartsRender {
 		float flame;
 		int remainbullets;
 		ArrayList<HMGGunParts> partslist_temp = partslist;
+		boolean rootRender = data.length <= 3;
+		if (rootRender) attachmentRendered = false;
 		if(data.length >3){
 			partslist_temp = (ArrayList<HMGGunParts>) data[0];
 			if(data[1] instanceof GunState[])states = (GunState[]) data[1];
@@ -59,7 +64,19 @@ public class PartsRender_Gun extends PartsRender {
 				if(checkState2(state,parts,flame,remainbullets))break;
 			}
 		}
-		HMGAttachmentModelRenderer.renderInstalled(gunitem, items, pass, gunPartsScale, texture);
+		if (rootRender && !hasAttachmentAnchor && !attachmentRendered) {
+			attachmentRendered = true;
+			HMGAttachmentModelRenderer.renderInstalled(gunitem, items, pass, gunPartsScale, texture);
+		}
+	}
+
+	@Override
+	protected void renderPartHook(HMGGunParts parts, GunState state, float flame, int remainbullets,
+	                              HMGGunParts_Motion_PosAndRotation offsetAndRotation) {
+		if (parts.attachmentAttach && !attachmentRendered) {
+			attachmentRendered = true;
+			HMGAttachmentModelRenderer.renderInstalled(gunitem, items, pass, gunPartsScale, texture);
+		}
 	}
 	private boolean checkState2(GunState state,HMGGunParts parts,float flame,int remainbullets){
 		switch (state) {
