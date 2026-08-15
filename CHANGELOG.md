@@ -1,5 +1,14 @@
 # Changelog
 
+## Add interactive attachment GUI firearm preview controls (PR pending)
+
+- Rotate the attachment GUI firearm preview with a left-button drag that begins in
+  the preview area, without interfering with attachment or player inventory slots.
+- Zoom the firearm and its installed attachments with the mouse wheel while the
+  pointer is over the preview, with safe per-GUI zoom and pitch limits.
+- Render the live attachment preview from a copied stack so viewing the model does
+  not modify the held firearm or its NBT.
+
 ## Display attachment names in firearm tooltips (PR pending)
 
 - Resolve firearm attachment-whitelist identifiers to their localized, player-facing
