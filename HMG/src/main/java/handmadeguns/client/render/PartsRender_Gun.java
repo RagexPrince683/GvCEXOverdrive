@@ -90,6 +90,23 @@ public class PartsRender_Gun extends PartsRender {
 	}
 
 	@Override
+	protected void applyPartExtraTransform(HMGGunParts parts) {
+		float moveX = 0;
+		float moveY = 0;
+		float moveZ = 0;
+		for (int slot = 1; slot <= 5; slot++) {
+			if (parts.moveIfAttachPresent[slot] && isAttachmentSlotOccupied(slot)) {
+				moveX += parts.moveIfAttachPresentX[slot];
+				moveY += parts.moveIfAttachPresentY[slot];
+				moveZ += parts.moveIfAttachPresentZ[slot];
+			}
+		}
+		if (moveX != 0 || moveY != 0 || moveZ != 0) {
+			GL11.glTranslatef(moveX * gunPartsScale, moveY * gunPartsScale, moveZ * gunPartsScale);
+		}
+	}
+
+	@Override
 	protected boolean shouldRenderPartGeometry(HMGGunParts parts) {
 		for (int slot = 1; slot <= 5; slot++) {
 			if (parts.removeIfAttachPresent[slot] && isAttachmentSlotOccupied(slot)) return false;

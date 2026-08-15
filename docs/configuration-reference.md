@@ -140,6 +140,43 @@ also contains `SetAttachmentAttach` or its matching numbered anchor, its live
 transform and attachment hook still run, allowing the installed external model
 to replace the hidden geometry at that same animated anchor.
 
+Gun TXT files can add a slot-aware first-person ADS alignment offset:
+
+```text
+opticshift1,x,y,z
+opticshift2,x,y,z
+opticshift3,x,y,z
+opticshift4,x,y,z
+opticshift5,x,y,z
+```
+
+Each suffix maps directly to attachment GUI/NBT inventory slot `1` through `5`.
+While the matching slot is occupied, its values are added to the gun's existing
+first-person ADS target position in the same coordinate space as the gun's
+`onads_modelPosX`, `onads_modelPosY`, and `onads_modelPosZ` settings. Multiple
+occupied configured slots add together. The offset follows the normal ADS blend,
+does not move the HUD crosshair or bullet trajectory, and disappears immediately
+when the item is removed. Values must be exactly three finite numbers.
+
+A gun part can also move locally based on those same live attachment slots:
+
+```text
+moveifattachpresent1,x,y,z
+moveifattachpresent2,x,y,z
+moveifattachpresent3,x,y,z
+moveifattachpresent4,x,y,z
+moveifattachpresent5,x,y,z
+```
+
+Place these directives after the applicable `AddParts` or `AddChildParts` entry.
+When a matching slot is occupied, the marked gun model part moves by the supplied
+X, Y, and Z values in local model coordinates. Multiple matching movements add
+together. The translation composes after the part's normal and animated
+transforms, so its children and any `SetAttachmentAttach` or numbered attachment
+anchor on that part inherit the movement. `removeifattachpresent` continues to
+control geometry visibility independently and takes precedence when its matching
+slot is occupied. Values must be exactly three finite numbers.
+
 The active config file is generated from the `HandmadeGuns` mod id, usually as `config/HandmadeGuns.cfg`. Defaults below are read directly from `HMG/src/main/java/handmadeguns/HandmadeGunsCore.java`.
 
 ## `Gun`

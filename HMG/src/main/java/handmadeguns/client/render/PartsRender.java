@@ -78,6 +78,7 @@ public abstract class PartsRender {
 		GL11.glPushMatrix();
 		transformParts(rotationCenterAndRotation,parts.getRenderinfDefault_offset(),parts);
 		if(OffsetAndRotation != null)transformParts(rotationCenterAndRotation,OffsetAndRotation,parts);
+		applyPartExtraTransform(parts);
 
 
 		FMLClientHandler.instance().getWorldClient().theProfiler.startSection("renderPart");
@@ -96,6 +97,10 @@ public abstract class PartsRender {
 	/** Gun renderers may suppress geometry without bypassing the active transform or render hook. */
 	protected boolean shouldRenderPartGeometry(HMGGunParts parts) {
 		return true;
+	}
+
+	/** Renderer-specific transform composed after the part's normal and animated transforms. */
+	protected void applyPartExtraTransform(HMGGunParts parts) {
 	}
 
 	/** Called with the complete, visible part transform active and before its matrix is popped. */

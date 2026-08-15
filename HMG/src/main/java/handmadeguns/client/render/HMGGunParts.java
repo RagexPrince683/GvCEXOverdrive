@@ -69,6 +69,11 @@ public class HMGGunParts {
     public final boolean[] attachmentAttachSlots = new boolean[6];
     /** Hide this part while an attachment occupies a marked slot. Index zero is unused. */
     public final boolean[] removeIfAttachPresent = new boolean[6];
+    /** Local movement applied while an attachment occupies a marked slot. Index zero is unused. */
+    public final boolean[] moveIfAttachPresent = new boolean[6];
+    public final float[] moveIfAttachPresentX = new float[6];
+    public final float[] moveIfAttachPresentY = new float[6];
+    public final float[] moveIfAttachPresentZ = new float[6];
     public boolean isscope;
     public boolean isdot;
     public boolean issight;
