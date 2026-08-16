@@ -1,5 +1,15 @@
 # Changelog
 
+## HMGO Armor-Piercing Bullet Penetration (PR pending)
+
+- Allow armor-piercing projectiles to pass through intact collidable blocks whose
+  Forge blast resistance is no greater than vanilla stone, while bounded repeated
+  tracing still stops at stronger blocks and detects entities behind penetrations.
+- Apply 90% direct-hit damage until the projectile penetrates its first qualifying
+  block, then use normal configured damage for the rest of that projectile's life.
+- Apply 90% of configured gravity to armor-piercing projectiles without changing
+  shared gun or magazine configuration.
+
 ## Add interactive attachment GUI firearm preview controls (PR pending)
 
 - Rotate the attachment GUI firearm preview with a left-button drag that begins in

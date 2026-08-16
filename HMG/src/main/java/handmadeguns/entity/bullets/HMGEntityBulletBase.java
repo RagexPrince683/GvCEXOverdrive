@@ -486,7 +486,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 
 		if (var1.entityHit != null && noex)
 		{
-			int var2 = this.Bdamege;
+			float var2 = getImpactDamage();
 //			System.out.println("debug" + this.thrower +"  "+ var1.entityHit);
 			if(islmmloaded && HandmadeGunsCore.cfg_FriendFireLMM){
 				if((this.thrower instanceof LMM_EntityLittleMaid || this.thrower instanceof LMM_EntityLittleMaidAvatar || this.thrower instanceof LMM_EntityLittleMaidAvatarMP))
@@ -602,6 +602,25 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 				}
 			}
 		}
+	}
+
+	/** Returns the damage used for a direct entity impact. */
+	protected float getImpactDamage() {
+		return this.Bdamege;
+	}
+
+	/** Allows a projectile subtype to ignore a block hit without changing normal bullets. */
+	protected boolean canPenetrateBlock(MovingObjectPosition hit, Block block, int metadata) {
+		return false;
+	}
+
+	/** Called after a qualifying block collision has been removed from this tick's trace. */
+	protected void onBlockPenetrated(MovingObjectPosition hit, Block block, int metadata) {
+	}
+
+	/** Returns the configured gravity applied to this projectile. */
+	protected float getBulletGravity() {
+		return this.gra;
 	}
 
 	private void openBreachedDoor(MovingObjectPosition hit, Block block, int metadata) {
@@ -1084,6 +1103,21 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 		Vec3 vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
 		Vec3 vec31 = Vec3.createVectorHelper(this.posX + motionVec.xCoord, this.posY + motionVec.yCoord, this.posZ + motionVec.zCoord);
 		MovingObjectPosition movingobjectposition = GunsUtils.getmovingobjectPosition_forBlock(worldObj,vec3, vec31,3,null,new Material[]{Material.leaves});//衝突するブロックを調べる 葉は貫通
+		final int maxBlockPenetrationTraces = 64;
+		for (int penetrationTrace = 0; movingobjectposition != null && penetrationTrace < maxBlockPenetrationTraces; ++penetrationTrace) {
+			Block hitBlock = worldObj.getBlock(movingobjectposition.blockX, movingobjectposition.blockY, movingobjectposition.blockZ);
+			int hitMetadata = worldObj.getBlockMetadata(movingobjectposition.blockX, movingobjectposition.blockY, movingobjectposition.blockZ);
+			if (!canPenetrateBlock(movingobjectposition, hitBlock, hitMetadata)) break;
+
+			onBlockPenetrated(movingobjectposition, hitBlock, hitMetadata);
+			// Start beyond this block's voxel so its exit face cannot trap the trace.
+			Vec3 nextTraceStart = getTraceStartBeyondBlock(movingobjectposition, motionVec, vec31);
+			if (nextTraceStart == null) {
+				movingobjectposition = null;
+				break;
+			}
+			movingobjectposition = GunsUtils.getmovingobjectPosition_forBlock(worldObj, nextTraceStart, vec31, 3, null, new Material[]{Material.leaves});
+		}
 		//これをやるときに除外判定があればここまでやる必要はなかったのだ、故に作った。
 //			while (movingobjectposition != null) {
 //				hitblock = this.worldObj.getBlock(movingobjectposition.blockX, movingobjectposition.blockY, movingobjectposition.blockZ);
@@ -1397,6 +1431,32 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 		if(changemotionflag && !this.worldObj.isRemote) HMGPacketHandler.INSTANCE.sendToAll(new PacketFixClientbullet(this.getEntityId(), this));
 	}
 
+	private Vec3 getTraceStartBeyondBlock(MovingObjectPosition hit, Vec3 movement, Vec3 traceEnd) {
+		double length = movement.lengthVector();
+		if (hit.hitVec == null || length < 1.0E-7D) return null;
+
+		double directionX = movement.xCoord / length;
+		double directionY = movement.yCoord / length;
+		double directionZ = movement.zCoord / length;
+		double exitDistance = Double.POSITIVE_INFINITY;
+		if (directionX > 0.0D) exitDistance = Math.min(exitDistance, (hit.blockX + 1.0D - hit.hitVec.xCoord) / directionX);
+		else if (directionX < 0.0D) exitDistance = Math.min(exitDistance, (hit.blockX - hit.hitVec.xCoord) / directionX);
+		if (directionY > 0.0D) exitDistance = Math.min(exitDistance, (hit.blockY + 1.0D - hit.hitVec.yCoord) / directionY);
+		else if (directionY < 0.0D) exitDistance = Math.min(exitDistance, (hit.blockY - hit.hitVec.yCoord) / directionY);
+		if (directionZ > 0.0D) exitDistance = Math.min(exitDistance, (hit.blockZ + 1.0D - hit.hitVec.zCoord) / directionZ);
+		else if (directionZ < 0.0D) exitDistance = Math.min(exitDistance, (hit.blockZ - hit.hitVec.zCoord) / directionZ);
+
+		if (Double.isInfinite(exitDistance) || exitDistance < 0.0D) return null;
+		double advance = exitDistance + 1.0E-5D;
+		Vec3 next = Vec3.createVectorHelper(hit.hitVec.xCoord + directionX * advance,
+				hit.hitVec.yCoord + directionY * advance, hit.hitVec.zCoord + directionZ * advance);
+		double remainingX = traceEnd.xCoord - next.xCoord;
+		double remainingY = traceEnd.yCoord - next.yCoord;
+		double remainingZ = traceEnd.zCoord - next.zCoord;
+		if (remainingX * movement.xCoord + remainingY * movement.yCoord + remainingZ * movement.zCoord <= 0.0D) return null;
+		return next;
+	}
+
 	boolean awayFlag = false;
 	public boolean forceVT = false;
 	public boolean changeVector(){
@@ -1499,7 +1559,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 			ismotionupdate = true;
 		}
 		ismotionupdate |= applyacceleration();
-		this.motionY -= (double) gra * cfg_defgravitycof;
+		this.motionY -= (double) getBulletGravity() * cfg_defgravitycof;
 		if(onGround && this.motionY < 0)this.motionY = 0;
 		if(this.onGround){
 			this.motionX *= 0.8;
@@ -1516,7 +1576,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 
 		double[] targetPitch = Utils.CalculateGunElevationAngle(this.posX,this.posY,this.posZ,
 				targetX,targetY,targetZ,
-				gra * cfg_defgravitycof,
+				getBulletGravity() * cfg_defgravitycof,
 				this.getTerminalspeed());
 
 		// normalize desired course direction
