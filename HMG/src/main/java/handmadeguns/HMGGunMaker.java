@@ -11,12 +11,15 @@ import java.util.Map;
 
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
+import handmadeguns.gunsmithing.GunSmithRecipe;
+import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.client.render.*;
 import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import handmadevehicle.render.HMVVehicleParts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -159,18 +162,10 @@ public class HMGGunMaker {
 		Item    itemh = null;
 		Item    itemi = null;
 
-		ItemStack    itemblocka = null;
-		ItemStack    itemblockb = null;
-		ItemStack    itemblockc = null;
-		ItemStack    itemblockd = null;
-		ItemStack    itemblocke = null;
-		ItemStack    itemblockf = null;
-		ItemStack    itemblockg = null;
-		ItemStack    itemblockh = null;
-		ItemStack    itemblocki = null;
-		String  re1 = "abc";
-		String  re2 = "def";
-		String  re3 = "ghi";
+		ItemStack[] legacyRecipeIngredients = new ItemStack[GunSmithRecipe.SLOT_COUNT];
+		String  re1 = "   ";
+		String  re2 = "   ";
+		String  re3 = "   ";
 		boolean remat31;
 		boolean remat3 = true;
 		boolean reloadanim = true;
@@ -1220,59 +1215,11 @@ public class HMGGunMaker {
 						if(type[0].equals("Recipe3")){
 							re3 = type[1];
 						}
-						if(type[0].equals("ItemA") && !type[1].equals("null")){
-							itema = GameRegistry.findItem(type[1], type[2]);
-							if(itema == null){
-								itemblocka = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
-							}
-						}
-						if(type[0].equals("ItemB") && !type[1].equals("null")){
-							itemb = GameRegistry.findItem(type[1], type[2]);
-							if(itemb == null){
-								itemblockb = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
-							}
-						}
-						if(type[0].equals("ItemC") && !type[1].equals("null")){
-							itemc = GameRegistry.findItem(type[1], type[2]);
-							if(itemc == null){
-								itemblockc = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
-							}
-						}
-						if(type[0].equals("ItemD") && !type[1].equals("null")){
-							itemd = GameRegistry.findItem(type[1], type[2]);
-							if(itemd == null){
-								itemblockd = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
-							}
-						}
-						if(type[0].equals("ItemE") && !type[1].equals("null")){
-							iteme = GameRegistry.findItem(type[1], type[2]);
-							if(iteme == null){
-								itemblocke = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
-							}
-						}
-						if(type[0].equals("ItemF") && !type[1].equals("null")){
-							itemf = GameRegistry.findItem(type[1], type[2]);
-							if(itemf == null){
-								itemblockf = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
-							}
-						}
-						if(type[0].equals("ItemG") && !type[1].equals("null")){
-							itemg = GameRegistry.findItem(type[1], type[2]);
-							if(itemg == null){
-								itemblockg = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
-							}
-						}
-						if(type[0].equals("ItemH") && !type[1].equals("null")){
-							itemh = GameRegistry.findItem(type[1], type[2]);
-							if(itemh == null){
-								itemblockh = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
-							}
-						}
-						if(type[0].equals("ItemI") && !type[1].equals("null")){
-							itemi = GameRegistry.findItem(type[1], type[2]);
-							if(itemi == null){
-								itemblocki = new ItemStack(GameRegistry.findBlock(type[1], type[2]));
-							}
+						if (type[0].length() == 5 && type[0].startsWith("Item")
+								&& type[0].charAt(4) >= 'A' && type[0].charAt(4) <= 'I') {
+							int ingredientIndex = type[0].charAt(4) - 'A';
+							legacyRecipeIngredients[ingredientIndex] = type.length > 1 && !type[1].equals("null")
+									? resolveLegacyRecipeIngredient(type, file1) : null;
 						}
 						//Generic Recipe Add thing
 						if (type[0].equals("addNewRecipe")) {
@@ -1283,50 +1230,20 @@ public class HMGGunMaker {
 								if (additem == null) {
 									System.out.println("[HMG] ERROR: Item not found for recipe output -> Mod: "
 											+ type[1] + " Item: " + type[2]);
-									return;
+									throw new IllegalArgumentException("recipe output was not found");
 								}
 
 								int num = parseInt(type[3]);
 
-								GameRegistry.addRecipe(
-										new ItemStack(additem, num),
-										re1,
-										re2,
-										re3,
-										'a', itema,
-										'b', itemb,
-										'c', itemc,
-										'd', itemd,
-										'e', iteme,
-										'f', itemf,
-										'g', itemg,
-										'h', itemh,
-										'i', itemi
-								);
-
-								HandmadeGunsCore.Debug("Loaded crafting recipe for: %s:%s x%s", type[1], type[2], num);
-
-								/**
-								 * // --- ALSO register with HMG's ammo registry for GUI (deterministic) ---
-								 * 								ItemStack output = new ItemStack(additem, num);
-								 *
-								 * 								// inputs are mapped a..i -> positions 0..8
-								 * 								ItemStack[] inputs = new ItemStack[] {
-								 * 										itema != null ? new ItemStack(itema) : null,
-								 * 										itemb != null ? new ItemStack(itemb) : null,
-								 * 										itemc != null ? new ItemStack(itemc) : null,
-								 * 										itemd != null ? new ItemStack(itemd) : null,
-								 * 										iteme != null ? new ItemStack(iteme) : null,
-								 * 										itemf != null ? new ItemStack(itemf) : null,
-								 * 										itemg != null ? new ItemStack(itemg) : null,
-								 * 										itemh != null ? new ItemStack(itemh) : null,
-								 * 										itemi != null ? new ItemStack(itemi) : null
-								 *                                                                };
-								 *
-								 */
-
-								// Clear after successful register
-								itema = itemb = itemc = itemd = iteme = itemf = itemg = itemh = itemi = null;
+								ItemStack output = new ItemStack(additem, num);
+								GunSmithRecipe gunSmithRecipe = GunSmithRecipeRegistry.createLegacyShapedRecipe(
+										output, new String[] { re1, re2, re3 }, legacyRecipeIngredients, file1);
+								if (gunSmithRecipe != null) {
+									GameRegistry.addRecipe(output,
+											createLegacyVanillaRecipeArguments(re1, re2, re3, legacyRecipeIngredients));
+									GunSmithRecipeRegistry.register(gunSmithRecipe);
+									HandmadeGunsCore.Debug("Loaded crafting recipe for: %s:%s x%s", type[1], type[2], num);
+								}
 
 							} catch (Exception e) {
 								System.out.println("[HMG] ERROR: Failed to register crafting recipe for -> "
@@ -1334,7 +1251,7 @@ public class HMGGunMaker {
 								e.printStackTrace();
 							}
 
-							// Always reset shape
+							legacyRecipeIngredients = new ItemStack[GunSmithRecipe.SLOT_COUNT];
 							re1 = "   ";
 							re2 = "   ";
 							re3 = "   ";
@@ -1361,6 +1278,36 @@ public class HMGGunMaker {
 
 	static String[] splitComma(String value) {
 		return splitPreserveStringSplitSemantics(value, ',');
+	}
+
+	private static ItemStack resolveLegacyRecipeIngredient(String[] type, File sourceFile) {
+		if (type.length < 3) {
+			HandmadeGunsCore.Debug("[HMG] ERROR: Invalid %s ingredient in %s", type[0], sourceFile.getPath());
+			return null;
+		}
+		Item item = GameRegistry.findItem(type[1], type[2]);
+		if (item == null) {
+			Block block = GameRegistry.findBlock(type[1], type[2]);
+			if (block != null) item = Item.getItemFromBlock(block);
+		}
+		if (item == null) HandmadeGunsCore.Debug("[HMG] ERROR: Could not resolve legacy ingredient %s:%s (%s) in %s",
+				type[1], type[2], type[0], sourceFile.getPath());
+		return item == null ? null : new ItemStack(item);
+	}
+
+	private static Object[] createLegacyVanillaRecipeArguments(String re1, String re2, String re3,
+	                                                            ItemStack[] ingredients) {
+		ArrayList<Object> recipe = new ArrayList<Object>();
+		recipe.add(re1);
+		recipe.add(re2);
+		recipe.add(re3);
+		for (int i = 0; i < ingredients.length; i++) {
+			if (ingredients[i] != null) {
+				recipe.add(Character.valueOf((char) ('a' + i)));
+				recipe.add(ingredients[i]);
+			}
+		}
+		return recipe.toArray(new Object[recipe.size()]);
 	}
 
 	static String[] splitColon(String value) {
