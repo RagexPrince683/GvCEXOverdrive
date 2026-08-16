@@ -1240,7 +1240,8 @@ public class HMGGunMaker {
 										output, new String[] { re1, re2, re3 }, legacyRecipeIngredients, file1);
 								if (gunSmithRecipe != null) {
 									GameRegistry.addRecipe(output,
-											createLegacyVanillaRecipeArguments(re1, re2, re3, legacyRecipeIngredients));
+											GunSmithRecipeRegistry.createLegacyVanillaRecipeArguments(
+													new String[] { re1, re2, re3 }, legacyRecipeIngredients));
 									GunSmithRecipeRegistry.register(gunSmithRecipe);
 									HandmadeGunsCore.Debug("Loaded crafting recipe for: %s:%s x%s", type[1], type[2], num);
 								}
@@ -1293,21 +1294,6 @@ public class HMGGunMaker {
 		if (item == null) HandmadeGunsCore.Debug("[HMG] ERROR: Could not resolve legacy ingredient %s:%s (%s) in %s",
 				type[1], type[2], type[0], sourceFile.getPath());
 		return item == null ? null : new ItemStack(item);
-	}
-
-	private static Object[] createLegacyVanillaRecipeArguments(String re1, String re2, String re3,
-	                                                            ItemStack[] ingredients) {
-		ArrayList<Object> recipe = new ArrayList<Object>();
-		recipe.add(re1);
-		recipe.add(re2);
-		recipe.add(re3);
-		for (int i = 0; i < ingredients.length; i++) {
-			if (ingredients[i] != null) {
-				recipe.add(Character.valueOf((char) ('a' + i)));
-				recipe.add(ingredients[i]);
-			}
-		}
-		return recipe.toArray(new Object[recipe.size()]);
 	}
 
 	static String[] splitColon(String value) {
