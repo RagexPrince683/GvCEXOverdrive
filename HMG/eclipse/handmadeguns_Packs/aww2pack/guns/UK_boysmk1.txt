@@ -1,4 +1,6 @@
 attachRestriction,true
+allowattach,Bullet_AP
+
 BulletPower,25
 //max 25 for mk2 but 18mm isnt enough to murder someone
 BulletSpeed,15.0f

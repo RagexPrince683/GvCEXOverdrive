@@ -1,4 +1,8 @@
 attachRestriction,true
+//allowattach,Bullet_AP
+//not frequent enough used to add
+//allowattach,Bullet_AT
+//feeding issues
 BulletPower,7
 BulletSpeed,12.1f
 BulletSpread,0.5f

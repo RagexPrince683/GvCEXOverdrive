@@ -1,4 +1,7 @@
 attachRestriction,true
+allowattach,Bullet_AP
+//allowattach,Bullet_AT
+//laws of war + feeding reliability
 BulletPower,15
 BulletSpeed,14.8f
 BulletSpread,5.0f

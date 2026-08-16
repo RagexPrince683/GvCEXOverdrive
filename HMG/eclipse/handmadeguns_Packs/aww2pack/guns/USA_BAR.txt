@@ -36,6 +36,8 @@ ModelArmOffsetR,0.3f,0.5f,0.5f
 ModelArmRotationL,-0.0f,-2.0f,2.0f
 ModelArmOffsetL,0.3f,0.6f,0.1f
 attachRestriction,true
+allowattach,Bullet_AP
+//allowattach,Bullet_AT
 
 
 ScopeTexture,ironsight.png,reddot.png,scope.png

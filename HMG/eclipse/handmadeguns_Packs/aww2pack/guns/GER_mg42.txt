@@ -1,4 +1,6 @@
 attachRestriction,true
+allowattach,Bullet_AP
+
 BulletPower,15
 BulletSpeed,14.8f
 BulletSpread,0.3f

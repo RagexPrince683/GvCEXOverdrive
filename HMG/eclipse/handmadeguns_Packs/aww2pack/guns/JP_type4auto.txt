@@ -1,4 +1,7 @@
 attachRestriction,true
+allowattach,Bullet_AP
+//allowattach,Bullet_AT
+//rare so fuck you
 BulletPower,15
 BulletSpeed,16.8f
 BulletSpread,1.2f

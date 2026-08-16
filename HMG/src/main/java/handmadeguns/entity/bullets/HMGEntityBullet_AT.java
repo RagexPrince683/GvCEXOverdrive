@@ -51,8 +51,9 @@ public class HMGEntityBullet_AT extends HMGEntityBulletBase implements IEntityAd
 		{
 			if(var1.entityHit instanceof EntityLivingBase){
 				EntityLivingBase lebl = (EntityLivingBase)var1.entityHit;
-				lebl.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id,60 * 10, 10));
-				lebl.addPotionEffect(new PotionEffect(Potion.blindness.id,60 * 10, 10));
+				//hollow point rounds
+				lebl.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id,60 * 10, 3));
+				lebl.addPotionEffect(new PotionEffect(Potion.weakness.id,60 * 10, 3));
 			}
 		}
 	}
