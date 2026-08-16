@@ -26,6 +26,7 @@ ObjModel,panzerfaust.mqo
 ObjTexture,panzerfaust.png
 ModelScala,0.5f
 InworldScale,1.8f
+attachRestriction,true
 
 InventoryScale,3
 

@@ -31,6 +31,7 @@ ObjModel,type_91_manpads.mqo
 ObjTexture,type_91_manpads.png
 ModelScala,0.5f
 InworldScale,1.5f
+attachRestriction,true
 
 bulletFuse,78
 //3800 meters for base stinger (effective range, engagement)

@@ -43,6 +43,8 @@ attachRestriction,true
 //allowattach,scope
 //todo acog
 
+allowattach,Bullet_AP
+
 Canfix,true
 FixAsEntity,true
 OnEntity_PlayerPosOffset,0,0,3

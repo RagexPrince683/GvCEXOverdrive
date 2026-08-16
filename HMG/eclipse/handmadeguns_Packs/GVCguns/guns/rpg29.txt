@@ -17,6 +17,7 @@ ZoomRenderType,true,true,false
 ZoomRenderTypeTxture,false,true,true
 ReloadMat3,false
 //???
+attachRestriction,true
 
 InventoryScale,3
 

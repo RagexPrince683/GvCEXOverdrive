@@ -27,6 +27,7 @@ ObjModel,sraw.mqo
 ObjTexture,smaw.png
 ModelScala,0.5f
 InworldScale,1.8f
+attachRestriction,true
 
 InventoryScale,3
 

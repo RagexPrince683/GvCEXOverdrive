@@ -38,6 +38,9 @@ ElevationOffsets,	 0,-0.3,-0.6,-0.9,-1.35,-1.7,-2.2
 elevationOffsets_info,0,20m ,40m ,60m ,80m ,100m , 120m
 
 attachRestriction,true
+allowattach,Bullet_AP
+//allowattach,Bullet_AT
+//subsonic = no fuck you
 //allowattach,reddot
 //allowattach,scope
 //allowattach,byfrou01_Bayonet

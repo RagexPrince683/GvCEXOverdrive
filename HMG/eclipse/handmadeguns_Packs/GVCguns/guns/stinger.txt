@@ -31,6 +31,7 @@ ObjModel,fim92.mqo
 ObjTexture,fim92.png
 ModelScala,0.5f
 InworldScale,1.5f
+attachRestriction,true
 
 Cartridge,false
 DropMagazine,false

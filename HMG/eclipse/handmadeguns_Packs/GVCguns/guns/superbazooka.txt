@@ -9,6 +9,7 @@ Zoom,4.0f,4.0f,4.0f
 ZoomRender,true
 ZoomRenderType,false,false,false
 ZoomRenderTypeTxture,true,true,true
+InventoryScale,4
 
 ScopeTexture,scope_smaw.png,scope_smaw.png,scope_smaw.png
 RenderCross,false
@@ -28,6 +29,7 @@ Motion,0.5d
 
 Cartridge,false
 DropMagazine,false
+attachRestriction,true
 
 ModelEquipped,-0.5f,0.5f,-0.2f
 ModelHigh,1.10f,0.85f,0.85f

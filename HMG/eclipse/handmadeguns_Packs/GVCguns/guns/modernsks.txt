@@ -37,6 +37,11 @@ ModelArmOffsetR,0.2f,0.5f,0.5f
 ModelArmRotationL,-0.0f,-2.4f,2.0f
 ModelArmOffsetL,0.1f,0.6f,-0.3f
 
+
+attachRestriction,true
+allowattach,Bullet_AP
+//allowattach,Bullet_AT
+
 //ModelArmOffsetL,0.13f,0.31f,-0.3f
 //Magazine,0,HandmadeGuns,7.62mm Stripper
 

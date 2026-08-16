@@ -36,6 +36,7 @@ CustomFlash,arrow,1
 Bursts,1,-1,0
 Rates,1.6,1.6,1.6
 attachRestriction,true
+allowattach,Bullet_AP
 allowattach,Bullet_AT
 
 ModelEquipped,-0.7f,0.5077f,-0.7f

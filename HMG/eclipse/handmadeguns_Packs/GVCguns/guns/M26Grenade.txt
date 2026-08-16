@@ -30,6 +30,7 @@ isOneuse,true
 MaxstackSize,1
 MuzzleFlash,false
 BulletNameALL,M26grenade
+attachRestriction,true
 
 grenade,true
 

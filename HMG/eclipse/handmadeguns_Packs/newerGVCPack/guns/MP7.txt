@@ -36,6 +36,8 @@ Rates,1.263,1.263
 Cycle,1
 
 attachRestriction,true
+allowattach,Bullet_AP
+allowattach,Bullet_AT
 allowattach,Suppressor
 allowattach,grip
 

@@ -32,6 +32,8 @@ ObjTexture,9k38.png
 ModelScala,0.5f
 InworldScale,1.5f
 
+attachRestriction,true
+
 Cartridge,false
 DropMagazine,false
 

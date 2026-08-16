@@ -20,6 +20,7 @@ ZoomRenderType,false,false,false
 ZoomRenderTypeTxture,true,true,true
 ReloadMat3,false
 //???
+attachRestriction,true
 
 InventoryScale,3
 

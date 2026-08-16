@@ -36,6 +36,10 @@ Rates,4,4
 Motion,0.95
 
 attachRestriction,true
+allowattach,Bullet_AP
+//it can exist TM Pheonix Rising*
+//allowattach,Bullet_AT
+//eventually I will fix the mags/ammo to differentiate
 
 //ModelEquipped,-0.7f,0.7f,0.0f
 ModelEquipped,-0.7f,0.2f,-0.5f

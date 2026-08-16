@@ -4,7 +4,7 @@ BulletGravity,0.485
 
 BlletSpread,3.0f
 ADS_Spread_coefficient,0.0
-BlletSpreadDiffusion,16,0,4,1,6,0.8
+BlletSpreadDiffusion,12,0,6,4,6,0.2
 Motion,0.1
 
 Recoil,30
@@ -33,7 +33,7 @@ CustomFlash,CannonMuzzleFlash,4,3
 Bursts,1
 //Rates,1
 attachRestriction,true
-allowattach,Bullet_Frag
+//allowattach,Bullet_Frag
 allowattach,Bullet_AP
 allowattach,scope
 

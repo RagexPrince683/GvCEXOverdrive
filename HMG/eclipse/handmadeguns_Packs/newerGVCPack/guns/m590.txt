@@ -33,6 +33,9 @@ attachRestriction,true
 //allowattach,Bullet_Dart
 //allowattach,Bullet_Frag
 
+//allowattach,Bullet_AP
+//allowattach,Bullet_AT
+
 ModelEquipped,-0.5f,-0.45f,-1f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.8,0.8,0.8

@@ -66,6 +66,9 @@ SprintingPoint,0.4f,-0.3f,0.8f
 SprintingRotation,20f,60f,0f
 
 attachRestriction,true
+//allowattach,Bullet_AP
+//allowattach,Bullet_AT
+//no either bad feed or blowing up emoji
 //allowattach,byfrou01_Bayonet
 
 SoundSpeed,1f

@@ -35,6 +35,8 @@ Bursts,1
 //Rates,1
 
 attachRestriction,true
+allowattach,Bullet_AP
+allowattach,Bullet_AT
 allowattach,Suppressor
 
 ModelEquipped,-0.7f,0.7f,0.0f

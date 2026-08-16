@@ -10,6 +10,10 @@ Cycle,1
 
 Motion,0.15d
 
+attachRestriction,true
+allowattach,Bullet_AP
+//allowattach,Bullet_AT
+
 Recoil,12
 Recoil_sneaking,8
 

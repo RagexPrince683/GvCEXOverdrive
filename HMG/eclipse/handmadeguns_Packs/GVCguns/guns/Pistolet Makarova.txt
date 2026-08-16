@@ -40,6 +40,7 @@ allowattach,Suppressor
 //allowattach,reddot
 //allowattach,right
 //allowattach,Bullet_AT
+allowattach,Bullet_AP
 
 //ModelEquipped,-0.4f,0.7f,-0.3f
 

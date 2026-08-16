@@ -25,6 +25,10 @@ InworldScale,1.5f
 ThirdModelEquipped,0,0.2,-0.4
 Tabname,HMG_GVCGuns
 
+attachRestriction,true
+allowattach,Bullet_AP
+
+
 Canfix,true
 NeedFix,false
 FixAsEntity,true

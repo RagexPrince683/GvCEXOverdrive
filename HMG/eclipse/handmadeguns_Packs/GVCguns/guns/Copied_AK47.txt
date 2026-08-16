@@ -64,6 +64,8 @@ SprintingRotation,20f,60f,0f
 
 attachRestriction,true
 //todo
+allowattach,Bullet_AP
+allowattach,Bullet_AT
 allowattach,byfrou01_Bayonet
 
 SoundSpeed,1f

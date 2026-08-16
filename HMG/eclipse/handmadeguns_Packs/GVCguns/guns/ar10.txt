@@ -41,6 +41,8 @@ Rates,1.712,1.712,1.712,1.712
 attachRestriction,true
 allowattach,reddot
 allowattach,scope
+allowattach,Bullet_AP
+allowattach,Bullet_AT
 
 ModelEquipped,-0.7f,0.2f,-0.5f
 SimpleADSOffsetY,0.9295,0.950,0.950

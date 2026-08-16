@@ -35,6 +35,7 @@ CustomFlash,arrow,1
 Bursts,1
 //Rates,1
 attachRestriction,true
+allowattach,Bullet_AP
 allowattach,Bullet_AT
 Motion,0.95
 
