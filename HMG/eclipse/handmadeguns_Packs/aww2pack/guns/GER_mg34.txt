@@ -1,3 +1,4 @@
+attachRestriction,true
 BulletPower,15
 BulletSpeed,15.4f
 BulletSpread,0.3f

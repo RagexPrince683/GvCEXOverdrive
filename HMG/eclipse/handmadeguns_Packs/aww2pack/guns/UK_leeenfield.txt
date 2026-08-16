@@ -1,3 +1,4 @@
+attachRestriction,true
 BulletPower,15
 BulletSpeed,14.8f
 BulletSpread,1.0f
@@ -146,17 +147,17 @@ AddParts,mat1
         AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 
-        //ƒRƒbƒLƒ“ƒOƒ‚[ƒVƒ‡ƒ“
+        //ã‚³ãƒƒã‚­ãƒ³ã‚°ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³
         AddCockMotionKey,0,0,0,0,0,0,0,          1,0,0,0,0,0,0
-        //ƒ{ƒ‹ƒg‚ğ¶‚É‰ñ‚µ‚Ä
+        //ãƒœãƒ«ãƒˆã‚’å·¦ã«å›ã—ã¦
         AddCockMotionKey,1,0,0,0,0,0,0,          2,0,0,0,0,0,-90
-        //ˆø‚¢‚Ä
+        //å¼•ã„ã¦
         AddCockMotionKey,2,0,0,0,0,0,-90,        4,0,0,-0.4,0,0,-90
-        //”rä°‚µ‚Ä
+        //æ’è¢ã—ã¦
         AddCockMotionKey,4,0,0,-0.4,0,0,-90,     5,0,0,-0.4,0,0,-90
-        //–ß‚µ‚Ä
+        //æˆ»ã—ã¦
         AddCockMotionKey,5,0,0,-0.4,0,0,-90,     7,0,0,0,0,0,-90
-        //–ß‚·
+        //æˆ»ã™
         AddCockMotionKey,7,0,0,0,0,0,-90,       8,0,0,0,0,0,0
 
         AddCockMotionKey,8,0,0,0,0,0,0,         10,0,0,0,0,0,0

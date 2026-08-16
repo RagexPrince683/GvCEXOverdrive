@@ -1,3 +1,4 @@
+attachRestriction,true
 Texture,jpgacha
 BPItemStack,6
 BPItems,Type38,Type4Auto,Type14,Type99LMG,ROTA_Cannon,Type100MP

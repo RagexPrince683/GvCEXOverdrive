@@ -1,6 +1,7 @@
+attachRestriction,true
 Texture,ussrgacha
 BPItemStack,6
-BPItems,Mosin,ppsh41,DP28�y�@�֏e,PTRS1941,TT-33,SVT-40
+BPItems,Mosin,ppsh41,DP28Œy‹@ŠÖe,PTRS1941,TT-33,SVT-40
 
 Name,USSR Kit
 BP,USSR_Gatcha
