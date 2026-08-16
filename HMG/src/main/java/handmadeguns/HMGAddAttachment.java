@@ -9,10 +9,12 @@ import java.util.List;
 
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunSmithRecipeCategory;
+import handmadeguns.gunsmithing.GunSmithRecipe;
 import handmadeguns.items.*;
 import handmadeguns.client.render.HMGRenderItemCustom;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.block.Block;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.IModelCustom;
@@ -101,9 +103,10 @@ public class HMGAddAttachment
 		Item itemg = null;
 		Item itemh = null;
 		Item itemi = null;
-		String re1 = "abc";
-		String re2 = "def";
-		String re3 = "ghi";
+		ItemStack[] legacyRecipeIngredients = new ItemStack[GunSmithRecipe.SLOT_COUNT];
+		String re1 = "   ";
+		String re2 = "   ";
+		String re3 = "   ";
 
 
 		float reduceRecoilLevel = 1f;
@@ -779,32 +782,11 @@ public class HMGAddAttachment
 						if(type[0].equals("Recipe3")){
 							re3 = type[1];
 						}
-						if(type[0].equals("ItemA") && !type[1].equals("null")){
-							itema = GameRegistry.findItem(type[1], type[2]);
-						}
-						if(type[0].equals("ItemB") && !type[1].equals("null")){
-							itemb = GameRegistry.findItem(type[1], type[2]);
-						}
-						if(type[0].equals("ItemC") && !type[1].equals("null")){
-							itemc = GameRegistry.findItem(type[1], type[2]);
-						}
-						if(type[0].equals("ItemD") && !type[1].equals("null")){
-							itemd = GameRegistry.findItem(type[1], type[2]);
-						}
-						if(type[0].equals("ItemE") && !type[1].equals("null")){
-							iteme = GameRegistry.findItem(type[1], type[2]);
-						}
-						if(type[0].equals("ItemF") && !type[1].equals("null")){
-							itemf = GameRegistry.findItem(type[1], type[2]);
-						}
-						if(type[0].equals("ItemG") && !type[1].equals("null")){
-							itemg = GameRegistry.findItem(type[1], type[2]);
-						}
-						if(type[0].equals("ItemH") && !type[1].equals("null")){
-							itemh = GameRegistry.findItem(type[1], type[2]);
-						}
-						if(type[0].equals("ItemI") && !type[1].equals("null")){
-							itemi = GameRegistry.findItem(type[1], type[2]);
+						if (type[0].length() == 5 && type[0].startsWith("Item")
+								&& type[0].charAt(4) >= 'A' && type[0].charAt(4) <= 'I') {
+							int ingredientIndex = type[0].charAt(4) - 'A';
+							legacyRecipeIngredients[ingredientIndex] = type.length > 1 && !type[1].equals("null")
+									? resolveLegacyRecipeIngredient(type, file1) : null;
 						}
 						//'attachments' (MOST AMMO IS UNDER THIS TAB)
 						if (type[0].equals("addNewRecipe")) {
@@ -815,7 +797,7 @@ public class HMGAddAttachment
 								if (additem == null) {
 									System.out.println("[HMG] ERROR: Item not found for recipe output -> Mod: "
 											+ type[1] + " Item: " + type[2]);
-									return;
+									throw new IllegalArgumentException("recipe output was not found");
 								}
 
 								int kazu1  = parseInt(type[3]);
@@ -824,35 +806,26 @@ public class HMGAddAttachment
 								// the Gun Smithing Table; NEI reads this same registration directly.
 								ItemStack output = new ItemStack(additem, kazu1);
 
-								// inputs are mapped a..i -> positions 0..8
-								ItemStack[] inputs = new ItemStack[] {
-										itema != null ? new ItemStack(itema) : null,
-										itemb != null ? new ItemStack(itemb) : null,
-										itemc != null ? new ItemStack(itemc) : null,
-										itemd != null ? new ItemStack(itemd) : null,
-										iteme != null ? new ItemStack(iteme) : null,
-										itemf != null ? new ItemStack(itemf) : null,
-										itemg != null ? new ItemStack(itemg) : null,
-										itemh != null ? new ItemStack(itemh) : null,
-										itemi != null ? new ItemStack(itemi) : null
-								};
-
-								GunSmithRecipeRegistry.register(output,
-										GunSmithRecipeCategory.AMMO, inputs);
-
-								// Clear after successful register
-								itema = itemb = itemc = itemd = iteme = itemf = itemg = itemh = itemi = null;
+								String[] rows = new String[] { re1, re2, re3 };
+								GunSmithRecipe recipe = GunSmithRecipeRegistry.createLegacyShapedRecipe(
+										output, rows, legacyRecipeIngredients, file1, GunSmithRecipeCategory.AMMO);
+								if (recipe != null) {
+									GameRegistry.addRecipe(output,
+											GunSmithRecipeRegistry.createLegacyVanillaRecipeArguments(
+													rows, legacyRecipeIngredients));
+									GunSmithRecipeRegistry.register(recipe);
+								}
 
 							} catch (Exception e) {
 								System.out.println("[HMG] ERROR: Failed to register crafting recipe for -> "
 										+ type[1] + ":" + type[2]);
 								e.printStackTrace();
+							} finally {
+								legacyRecipeIngredients = new ItemStack[GunSmithRecipe.SLOT_COUNT];
+								re1 = "   ";
+								re2 = "   ";
+								re3 = "   ";
 							}
-
-							// Always reset shape
-							re1 = "   ";
-							re2 = "   ";
-							re3 = "   ";
 						}
 
 
@@ -891,6 +864,21 @@ public class HMGAddAttachment
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private static ItemStack resolveLegacyRecipeIngredient(String[] type, File sourceFile) {
+		if (type.length < 3) {
+			HandmadeGunsCore.Debug("[HMG] ERROR: Invalid %s ingredient in %s", type[0], sourceFile.getPath());
+			return null;
+		}
+		Item item = GameRegistry.findItem(type[1], type[2]);
+		if (item == null) {
+			Block block = GameRegistry.findBlock(type[1], type[2]);
+			if (block != null) item = Item.getItemFromBlock(block);
+		}
+		if (item == null) HandmadeGunsCore.Debug("[HMG] ERROR: Could not resolve legacy ingredient %s:%s (%s) in %s",
+				type[1], type[2], type[0], sourceFile.getPath());
+		return item == null ? null : new ItemStack(item);
 	}
 
 	private static void registerModelAttachment(HMGItemAttachmentBase attachment, String registryName) {

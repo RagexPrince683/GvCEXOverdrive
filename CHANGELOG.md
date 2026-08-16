@@ -1,5 +1,15 @@
 # Changelog
 
+## Fix attachment-pack legacy addNewRecipe shapes (PR pending)
+
+- Fix the independent `HMGAddAttachment` legacy parser missed by PR #153 / commit
+  `6bfd4fd5a90354b196f6ead74470323f22569b0e` so `ItemA` through `ItemI` remain
+  symbol definitions while `Recipe1` through `Recipe3` determine physical grid slots.
+- Register attachment and ammunition recipes in both vanilla shaped crafting and the
+  Ammo category of the canonical Gun Smithing Table registry from the same shape.
+- Resolve item-or-block symbols safely and reset all legacy recipe state after every
+  registration attempt.
+
 ## Fix legacy addNewRecipe Gun Smithing integration (PR pending)
 
 - Keep legacy shaped recipes in vanilla crafting while registering the same output

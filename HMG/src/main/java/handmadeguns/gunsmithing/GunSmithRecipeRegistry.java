@@ -40,6 +40,13 @@ public final class GunSmithRecipeRegistry {
     /** Converts a legacy three-row shape into the table's fixed row-major grid. */
     public static GunSmithRecipe createLegacyShapedRecipe(ItemStack output, String[] rows,
                                                            ItemStack[] symbols, File sourceFile) {
+        return createLegacyShapedRecipe(output, rows, symbols, sourceFile, categoryForOutput(output));
+    }
+
+    /** Converts a legacy shape while preserving a caller's historical table category. */
+    public static GunSmithRecipe createLegacyShapedRecipe(ItemStack output, String[] rows,
+                                                           ItemStack[] symbols, File sourceFile,
+                                                           GunSmithRecipeCategory category) {
         if (output == null || rows == null || rows.length != 3) return null;
         GunTableIngredient[] ingredients = new GunTableIngredient[GunSmithRecipe.SLOT_COUNT];
         for (int row = 0; row < 3; row++) {
@@ -57,7 +64,20 @@ public final class GunSmithRecipeRegistry {
                 ingredients[row * 3 + column] = normalizeIngredient(symbols[symbol - 'a']);
             }
         }
-        return new GunSmithRecipe(output, ingredients, categoryForOutput(output));
+        return new GunSmithRecipe(output, ingredients, category);
+    }
+
+    /** Builds Forge's shaped-recipe argument list from the same legacy symbol table. */
+    public static Object[] createLegacyVanillaRecipeArguments(String[] rows, ItemStack[] symbols) {
+        ArrayList<Object> recipe = new ArrayList<Object>();
+        for (int row = 0; row < 3; row++) recipe.add(rows[row]);
+        if (symbols != null) for (int i = 0; i < symbols.length; i++) {
+            if (symbols[i] != null) {
+                recipe.add(Character.valueOf((char) ('a' + i)));
+                recipe.add(symbols[i]);
+            }
+        }
+        return recipe.toArray(new Object[recipe.size()]);
     }
 
     public static GunSmithRecipeCategory categoryForOutput(ItemStack output) {

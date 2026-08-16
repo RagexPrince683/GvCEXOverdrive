@@ -100,8 +100,8 @@ The table GUI, server-side crafting transaction, and NEI handler all query that 
 registry. Gun and ammunition recipes are categorized explicitly; the table does not
 discover ammunition by scanning or guessing entries in Minecraft's crafting list.
 
-Legacy gun-file `Recipe1` through `Recipe3`, `ItemA` through `ItemI`, and
-`addNewRecipe` entries remain vanilla shaped recipes and are also added to this same
+Legacy gun- and attachment-file `Recipe1` through `Recipe3`, `ItemA` through `ItemI`,
+and `addNewRecipe` entries remain vanilla shaped recipes and are also added to this same
 registry. Shape characters retain their literal row and column positions (including
 repeats and space-filled empty slots), so `aaa` / `cbc` / `   ` becomes
 `A,A,A,C,B,C,empty,empty,empty`. Missing item/block definitions or non-space shape
