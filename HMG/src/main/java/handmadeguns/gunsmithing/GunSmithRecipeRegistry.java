@@ -37,6 +37,35 @@ public final class GunSmithRecipeRegistry {
         register(output, normalizeIngredients(inputs), category);
     }
 
+    /** Converts a legacy three-row shape into the table's fixed row-major grid. */
+    public static GunSmithRecipe createLegacyShapedRecipe(ItemStack output, String[] rows,
+                                                           ItemStack[] symbols, File sourceFile) {
+        if (output == null || rows == null || rows.length != 3) return null;
+        GunTableIngredient[] ingredients = new GunTableIngredient[GunSmithRecipe.SLOT_COUNT];
+        for (int row = 0; row < 3; row++) {
+            String shapeRow = rows[row] == null ? "" : rows[row];
+            for (int column = 0; column < shapeRow.length(); column++) {
+                char symbol = shapeRow.charAt(column);
+                if (symbol == ' ') continue;
+                if (column >= 3 || symbol < 'a' || symbol > 'i'
+                        || symbols == null || symbol - 'a' >= symbols.length
+                        || symbols[symbol - 'a'] == null) {
+                    HandmadeGunsCore.Debug("[GunSmith] Rejecting legacy recipe in %s: unresolved symbol '%s' at row %s, column %s",
+                            sourceFile == null ? "unknown file" : sourceFile.getPath(), symbol, row + 1, column + 1);
+                    return null;
+                }
+                ingredients[row * 3 + column] = normalizeIngredient(symbols[symbol - 'a']);
+            }
+        }
+        return new GunSmithRecipe(output, ingredients, categoryForOutput(output));
+    }
+
+    public static GunSmithRecipeCategory categoryForOutput(ItemStack output) {
+        Item item = output == null ? null : output.getItem();
+        if (item instanceof HMGItemCustomMagazine) return GunSmithRecipeCategory.AMMO;
+        return GunSmithRecipeCategory.GUNS;
+    }
+
     /** Compatibility adapter for old pack-facing callers; gun is the historical default. */
     @Deprecated
     public static void register(ItemStack output, ItemStack... inputs) {

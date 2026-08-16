@@ -1,5 +1,14 @@
 # Changelog
 
+## Fix legacy addNewRecipe Gun Smithing integration (PR pending)
+
+- Keep legacy shaped recipes in vanilla crafting while registering the same output
+  and positional 3x3 shape in the canonical Gun Smithing Table registry used by NEI.
+- Resolve legacy item-or-block ingredients into one safe stack representation, log
+  unresolved symbols, and reset all shape and ingredient state after each recipe.
+- Categorize custom-magazine ammunition on the Ammo tab and firearm/default outputs
+  on the Guns tab.
+
 ## HMGO Armor-Piercing Bullet Penetration (PR pending)
 
 - Allow armor-piercing projectiles to pass through intact collidable blocks whose
