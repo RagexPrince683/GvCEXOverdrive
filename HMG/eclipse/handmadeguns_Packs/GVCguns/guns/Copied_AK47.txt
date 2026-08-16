@@ -232,10 +232,9 @@ AddParts,Sys_Zero_in
 		BackParts
 
 		AddChildParts,obj1
-			RenderOnNormal
-			SetAsNormalParts
-			attachpart
-			underpart
+    			SetAsNormalParts
+    			attachpart
+    			sword
 		BackParts
 
 

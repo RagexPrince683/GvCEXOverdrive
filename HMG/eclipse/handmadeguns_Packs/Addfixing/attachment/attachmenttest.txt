@@ -1,5 +1,5 @@
 Texture,reddot
-Name,Attachment Test
+Name,Generic Red Dot
 
 Tabname,HMG_Attachments
 
