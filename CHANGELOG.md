@@ -1,5 +1,10 @@
 # Changelog
 
+## Restrict attachments for the AWW2 gun pack (PR pending)
+
+- Enable `attachRestriction` for every gun definition in the AWW2 pack so each
+  weapon accepts only its explicitly allowed attachments.
+
 ## Fix attachment-pack legacy addNewRecipe shapes (PR pending)
 
 - Fix the independent `HMGAddAttachment` legacy parser missed by PR #153 / commit

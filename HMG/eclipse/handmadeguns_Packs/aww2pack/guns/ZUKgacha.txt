@@ -1,6 +1,7 @@
+attachRestriction,true
 Texture,ukgacha
 BPItemStack,8
-BPItems,BoysMk1,Sten Mk.‡U,LeeEnfield,BrenGunMk.2,Enfield Revolver,SMLE,Rieder Automatic Rifle,Rieder Automatic Rifle Short Magazine
+BPItems,BoysMk1,Sten Mk.â€¡U,LeeEnfield,BrenGunMk.2,Enfield Revolver,SMLE,Rieder Automatic Rifle,Rieder Automatic Rifle Short Magazine
 
 Name,United Kingdom Kit
 BP,U.K._Gatcha

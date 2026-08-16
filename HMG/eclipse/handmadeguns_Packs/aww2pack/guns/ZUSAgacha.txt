@@ -1,3 +1,4 @@
+attachRestriction,true
 Texture,usagacha
 BPItemStack,7
 BPItems,M1917,M1A1,M1911,Browning_Automatic_Rifle_M1918,M3 Submachine Gun,Bazooka,M1 Garand

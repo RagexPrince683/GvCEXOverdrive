@@ -1,3 +1,4 @@
+attachRestriction,true
 BulletPower,25
 //max 25 for mk2 but 18mm isnt enough to murder someone
 BulletSpeed,15.0f
@@ -157,17 +158,17 @@ AddParts,mat1
 		AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 
-		//ƒRƒbƒLƒ“ƒOƒ‚[ƒVƒ‡ƒ“
+		//ã‚³ãƒƒã‚­ãƒ³ã‚°ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³
 		AddCockMotionKey,0,0,0,0,0,0,0,		1,0,0,0,0,0,0
-		//ƒ{ƒ‹ƒg‚ğ¶‚É‰ñ‚µ‚Ä
+		//ãƒœãƒ«ãƒˆã‚’å·¦ã«å›ã—ã¦
 		AddCockMotionKey,1,0,0,0,0,0,0,		5,0,0,0,0,0,-90
-		//ˆø‚¢‚Ä
+		//å¼•ã„ã¦
 		AddCockMotionKey,5,0,0,0,0,0,-90,		15,0,0,-1.6,0,0,-90
-		//”rä°‚µ‚Ä
+		//æ’è¢ã—ã¦
 		AddCockMotionKey,15,0,0,-1.6,0,0,-90,	20,0,0,-1.6,0,0,-90
-		//–ß‚µ‚Ä
+		//æˆ»ã—ã¦
 		AddCockMotionKey,20,0,0,-1.6,0,0,-90,	31,0,0,0,0,0,-90
-		//–ß‚·
+		//æˆ»ã™
 		AddCockMotionKey,31,0,0,0,0,0,-90,	35,0,0,0,0,0,0
 
 		AddCockMotionKey,35,0,0,0,0,0,0,		40,0,0,0,0,0,0
