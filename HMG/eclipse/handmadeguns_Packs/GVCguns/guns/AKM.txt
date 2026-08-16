@@ -37,6 +37,9 @@ Rates,2,2,2
 
 
 attachRestriction,true
+allowattach,Bullet_AP
+allowattach,pbs1
+attachmentlocation = 0, 1.8, 1.65
 //todo
 //allowattach,byfrou01_Bayonet
 

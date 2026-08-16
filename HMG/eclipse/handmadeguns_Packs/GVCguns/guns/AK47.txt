@@ -42,7 +42,8 @@ Rates,2,2,2
 
 attachRestriction,true
 //allowattach,byfrou01_Bayonet
-allowattach,attachmenttest
+//allowattach,attachmenttest
+allowattach,Bullet_AP
 attachmentlocation = 0, 1.4, 1.65
 
 opticshift1,0,-0.025,0
