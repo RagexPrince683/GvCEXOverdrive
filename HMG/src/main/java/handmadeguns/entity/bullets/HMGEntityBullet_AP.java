@@ -21,11 +21,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import net.minecraft.init.Blocks;
 
 import static handmadeguns.HandmadeGunsCore.islmmloaded;
 
 public class HMGEntityBullet_AP extends HMGEntityBulletBase implements IEntityAdditionalSpawnData
 {
+	private boolean hasPiercedBlock;
 	public HMGEntityBullet_AP(World worldIn) {
 		super(worldIn);
 	}
@@ -39,12 +41,30 @@ public class HMGEntityBullet_AP extends HMGEntityBulletBase implements IEntityAd
 	}
 
 
-	/**
-	 * Called when this EntityThrowable hits a block or entity.
-	 */
-	protected void onImpact(MovingObjectPosition var1)
-	{
-		super.onImpact(var1);
+	@Override
+	protected boolean canPenetrateBlock(MovingObjectPosition hit, Block block, int metadata) {
+		if (hit == null || hit.hitVec == null || hit.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK || block == null
+				|| block.isAir(worldObj, hit.blockX, hit.blockY, hit.blockZ)) return false;
+		float resistance = block.getExplosionResistance(this, worldObj, hit.blockX, hit.blockY, hit.blockZ,
+				hit.hitVec.xCoord, hit.hitVec.yCoord, hit.hitVec.zCoord);
+		float stoneResistance = Blocks.stone.getExplosionResistance(this, worldObj, hit.blockX, hit.blockY, hit.blockZ,
+				hit.hitVec.xCoord, hit.hitVec.yCoord, hit.hitVec.zCoord);
+		return resistance <= stoneResistance;
+	}
+
+	@Override
+	protected void onBlockPenetrated(MovingObjectPosition hit, Block block, int metadata) {
+		hasPiercedBlock = true;
+	}
+
+	@Override
+	protected float getImpactDamage() {
+		return hasPiercedBlock ? Bdamege : Bdamege * 0.90F;
+	}
+
+	@Override
+	protected float getBulletGravity() {
+		return gra * 0.90F;
 	}
 	public void writeSpawnData(ByteBuf buffer){
 		super.writeSpawnData(buffer);
