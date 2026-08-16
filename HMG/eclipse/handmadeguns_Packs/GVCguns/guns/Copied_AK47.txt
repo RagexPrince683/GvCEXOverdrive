@@ -231,6 +231,13 @@ AddParts,Sys_Zero_in
 			NeedDraw_Current_Magazine_ID_List,false,false,false,false,true
 		BackParts
 
+		AddChildParts,obj1
+			RenderOnNormal
+			SetAsNormalParts
+			attachpart
+			underpart
+		BackParts
+
 
 		AddChildParts,mat2
 		    AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0

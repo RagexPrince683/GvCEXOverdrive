@@ -337,7 +337,7 @@ AddParts,Base_Sys
 			    		AddPartsOnReloadOffsetAndRotation,0,0,0,0,90,0
 			    	BackParts
 			BackParts
-Name,H&K MG36
+Name,HK MG36
 AR,MG36
 
 

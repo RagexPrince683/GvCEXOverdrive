@@ -137,4 +137,4 @@ AddParts,mat1
     BackParts
 
 Tabname,HMG_GVCGuns
-GL,H&K169
+GL,HK169

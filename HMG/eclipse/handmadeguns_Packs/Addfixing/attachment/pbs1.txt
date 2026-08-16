@@ -3,8 +3,8 @@ Name,PBS-1 Silencer
 
 Tabname,HMG_Attachments
 
-attach3dmodel1 = pbs1
-3dmodeltex = am_suppressor
+attach3dmodel3 = pbs1.mqo
+3dmodeltex3 = am_suppressor
 InventoryScale,0.1
 InventoryOffset,-1.5,-1.1,0
 

@@ -343,7 +343,7 @@ AddParts,Base_Sys
 			    	BackParts
 			BackParts
 
-Name,H&K G36
+Name,HK G36
 AR,G36
 
 
