@@ -1673,13 +1673,9 @@ public class HMGGunMaker {
 				int attachmentSlot = type[0].charAt(type[0].length() - 1) - '0';
 				if (currentParts == null) {
 					System.err.println("[HMG] Ignoring " + type[0] + " without an AddParts or AddChildParts in gun configuration " + sourceName(currentGunConfig));
-				} else if (attachmentAnchors[attachmentSlot] == null) {
-					currentParts.attachmentAttachSlots[attachmentSlot] = true;
-					attachmentAnchors[attachmentSlot] = currentParts;
 				} else {
-					System.err.println("[HMG] Duplicate attachment anchor in gun configuration " + sourceName(currentGunConfig)
-							+ " for slot " + attachmentSlot + " on part " + currentParts.partsname
-							+ "; keeping first anchor " + attachmentAnchors[attachmentSlot].partsname);
+					currentParts.attachmentAttachSlots[attachmentSlot] = true;
+					if (attachmentAnchors[attachmentSlot] == null) attachmentAnchors[attachmentSlot] = currentParts;
 				}
 				break;
 			case "removeifattachpresent1": case "removeifattachpresent2": case "removeifattachpresent3":
