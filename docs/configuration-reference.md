@@ -177,6 +177,22 @@ anchor on that part inherit the movement. `removeifattachpresent` continues to
 control geometry visibility independently and takes precedence when its matching
 slot is occupied. Values must be exactly three finite numbers.
 
+### Firearm ADS magnification channels
+
+Gun pack `Zoom` lines define the magnification used for each sight channel:
+
+```text
+Zoom,BASE,REDDOT,SCOPE
+```
+
+ADS uses `BASE` when attachment slot 1 is empty, `REDDOT` for an
+`HMGItemAttachment_reddot`, and `SCOPE` for an `HMGItemAttachment_scope`. Other
+`HMGItemSightBase` optics use their own `zoomlevel`. These values select FOV
+magnification independently of `ZoomRender`, `ZoomRenderType`, and
+`ZoomRenderTypeTxture`, which continue to control legacy overlay rendering. A
+channel value of `1.0` therefore intentionally means no magnification; invalid,
+non-positive, NaN, or infinite magnification values safely resolve to `1.0`.
+
 The active config file is generated from the `HandmadeGuns` mod id, usually as `config/HandmadeGuns.cfg`. Defaults below are read directly from `HMG/src/main/java/handmadeguns/HandmadeGunsCore.java`.
 
 ## `Gun`

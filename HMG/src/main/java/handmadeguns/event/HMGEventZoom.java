@@ -247,7 +247,8 @@ public class HMGEventZoom {
 	//todo onRenderTickStartでマウス感度を下げ、onRenderTickEndで復帰させればズーム時の照準が楽になるだろう
 
 	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
+	// HMGFovHandler is the sole subscribed firearm FOV modifier. This legacy method
+	// remains available for reference but must not receive FOVUpdateEvent instances.
 	public void renderfov(FOVUpdateEvent event)
 	{
 		//Minecraft minecraft = FMLClientHandler.instance().getClient();
