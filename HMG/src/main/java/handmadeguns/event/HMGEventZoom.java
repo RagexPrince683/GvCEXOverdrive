@@ -68,34 +68,50 @@ public class HMGEventZoom {
 		}
 	}
 
+	private static final class SlotAttachment {
+		private final boolean occupied;
+		private final ItemStack stack;
+
+		private SlotAttachment(boolean occupied, ItemStack stack) {
+			this.occupied = occupied;
+			this.stack = stack;
+		}
+	}
+
 	/** Resolve slot 1 without assuming that the gun or its attachment list is initialized. */
 	private static ResolvedSight resolveSight(ItemStack gunStack) {
-		ItemStack sightStack = null;
+		SlotAttachment slot = getAttachmentInSlot(gunStack, 1);
+		ItemStack sightStack = slot.stack;
+
+		if (sightStack == null || sightStack.getItem() == null) {
+			return new ResolvedSight(slot.occupied ? SightChannel.UNSUPPORTED : SightChannel.BASE, null);
+		}
+		Item sight = sightStack.getItem();
+		if (sight instanceof HMGItemAttachment_reddot) return new ResolvedSight(SightChannel.RED_DOT, null);
+		if (sight instanceof HMGItemAttachment_scope) return new ResolvedSight(SightChannel.SCOPE, null);
+		if (sight instanceof HMGItemSightBase) return new ResolvedSight(SightChannel.CUSTOM, (HMGItemSightBase) sight);
+		return new ResolvedSight(SightChannel.UNSUPPORTED, null);
+	}
+
+	/** Safely load one attachment from the existing slot-tagged Items list. */
+	private static SlotAttachment getAttachmentInSlot(ItemStack gunStack, int requestedSlot) {
 		if (gunStack != null && gunStack.hasTagCompound()) {
 			net.minecraft.nbt.NBTBase itemsTag = gunStack.getTagCompound().getTag("Items");
 			if (itemsTag instanceof NBTTagList) {
 				NBTTagList tags = (NBTTagList) itemsTag;
 				for (int i = 0; i < tags.tagCount(); i++) {
 					NBTTagCompound entry = tags.getCompoundTagAt(i);
-					if (entry != null && entry.getByte("Slot") == 1) {
+					if (entry != null && entry.getByte("Slot") == requestedSlot) {
 						try {
-							sightStack = ItemStack.loadItemStackFromNBT(entry);
+							return new SlotAttachment(true, ItemStack.loadItemStackFromNBT(entry));
 						} catch (RuntimeException ignored) {
-							// Treat malformed pack/save data as an occupied, unsupported sight.
-							return new ResolvedSight(SightChannel.UNSUPPORTED, null);
+							return new SlotAttachment(true, null);
 						}
-						break;
 					}
 				}
 			}
 		}
-
-		if (sightStack == null || sightStack.getItem() == null) return new ResolvedSight(SightChannel.BASE, null);
-		Item sight = sightStack.getItem();
-		if (sight instanceof HMGItemAttachment_reddot) return new ResolvedSight(SightChannel.RED_DOT, null);
-		if (sight instanceof HMGItemAttachment_scope) return new ResolvedSight(SightChannel.SCOPE, null);
-		if (sight instanceof HMGItemSightBase) return new ResolvedSight(SightChannel.CUSTOM, (HMGItemSightBase) sight);
-		return new ResolvedSight(SightChannel.UNSUPPORTED, null);
+		return new SlotAttachment(false, null);
 	}
 
 	private static float resolveZoom(HMGItem_Unified_Guns gun, ResolvedSight sight) {
@@ -482,11 +498,8 @@ public class HMGEventZoom {
 					screenWidth = scaledresolution.getScaledWidth();
 					screenHeight = scaledresolution.getScaledHeight();
 
-					if (tags != null) {
-						NBTTagCompound tagCompound = tags.getCompoundTagAt(5);
-						ItemStack temp = ItemStack.loadItemStackFromNBT(tagCompound);
-						if (temp != null) itemss = temp.getItem();
-					}
+					ItemStack specialAttachment = getAttachmentInSlot(gunstack, 5).stack;
+					itemss = specialAttachment != null ? specialAttachment.getItem() : null;
 
 					FontRenderer fontrenderer = minecraft.fontRenderer;
 					GL11.glPushMatrix();
