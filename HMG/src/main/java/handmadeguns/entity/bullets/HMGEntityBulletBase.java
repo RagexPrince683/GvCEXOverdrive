@@ -1105,34 +1105,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 		boolean changemotionflag = false;
 //		int breakcnt = 0;
 		//反射・ヒット処理
-		Vec3 vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-		Vec3 vec31 = Vec3.createVectorHelper(this.posX + motionVec.xCoord, this.posY + motionVec.yCoord, this.posZ + motionVec.zCoord);
-		MovingObjectPosition movingobjectposition = GunsUtils.getmovingobjectPosition_forBlock(worldObj,vec3, vec31,3,null,new Material[]{Material.leaves});//衝突するブロックを調べる 葉は貫通
-		final int maxBlockPenetrationTraces = 64;
-		for (int penetrationTrace = 0; movingobjectposition != null && penetrationTrace < maxBlockPenetrationTraces; ++penetrationTrace) {
-			Block hitBlock = worldObj.getBlock(movingobjectposition.blockX, movingobjectposition.blockY, movingobjectposition.blockZ);
-			int hitMetadata = worldObj.getBlockMetadata(movingobjectposition.blockX, movingobjectposition.blockY, movingobjectposition.blockZ);
-			if (!canPenetrateBlock(movingobjectposition, hitBlock, hitMetadata)) break;
-
-			onBlockPenetrated(movingobjectposition, hitBlock, hitMetadata);
-			// Start beyond this block's voxel so its exit face cannot trap the trace.
-			Vec3 nextTraceStart = getTraceStartBeyondBlock(movingobjectposition, motionVec, vec31);
-			if (!shouldContinueAfterBlockPenetration()) {
-				if (nextTraceStart != null) {
-					this.setPosition(nextTraceStart.xCoord, nextTraceStart.yCoord, nextTraceStart.zCoord);
-				} else if (movingobjectposition.hitVec != null) {
-					this.setPosition(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
-				}
-				this.motionX = this.motionY = this.motionZ = 0.0D;
-				this.setDead();
-				return;
-			}
-			if (nextTraceStart == null) {
-				movingobjectposition = null;
-				break;
-			}
-			movingobjectposition = GunsUtils.getmovingobjectPosition_forBlock(worldObj, nextTraceStart, vec31, 3, null, new Material[]{Material.leaves});
-		}
+		MovingObjectPosition movingobjectposition = null;
 		//これをやるときに除外判定があればここまでやる必要はなかったのだ、故に作った。
 //			while (movingobjectposition != null) {
 //				hitblock = this.worldObj.getBlock(movingobjectposition.blockX, movingobjectposition.blockY, movingobjectposition.blockZ);
@@ -1233,81 +1206,104 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 
 
 
-		vec3 = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
-		vec31 = Vec3.createVectorHelper(this.posX + motionVec.xCoord, this.posY + motionVec.yCoord, this.posZ + motionVec.zCoord);
-		if (movingobjectposition != null) {
-			vec31 = Vec3.createVectorHelper(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
-		}
 		if(remainingMovelength > firstSpeed/10){
 
 		}else {
 			killCNT++;
 		}
+
 		List entitylist = this.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.addCoord(motionVec.xCoord, motionVec.yCoord, motionVec.zCoord).expand(1, 1, 1));
-		ArrayList<MovingObjectPosition_And_Entity> entities = new ArrayList<MovingObjectPosition_And_Entity>();
-		for (int j = 0; j < entitylist.size(); ++j) {
-			Entity entity1 = (Entity) entitylist.get(j);
-			if(entity1 == avoidEntity)continue;
-			if(entity1 instanceof IProjectile)continue;
-			if (entity1.canBeCollidedWith() && (ticksInAir > 8 ||
-					(iscandamageentity(entity1)))) {
-				entities.add(new MovingObjectPosition_And_Entity(entity1));
-			}
-		}
-		double d0 = 0.0D;
-		double d1;
-		float f = 0.1F;
-		if(!entities.isEmpty()) {
-			MovingObjectPosition_And_Entity backup = entities.get(0);//cnt - 1
-			for (int cnt = 0; cnt < entities.size(); cnt++) {
-				MovingObjectPosition_And_Entity movingObjectPosition_and_entity = entities.get(cnt);
-				AxisAlignedBB axisalignedbb = movingObjectPosition_and_entity.entity.boundingBox.expand((double) f, (double) f, (double) f);
-				MovingObjectPosition movingobjectposition1 = axisalignedbb.calculateIntercept(vec3, vec31);
-				movingObjectPosition_and_entity.movingObjectPosition = movingobjectposition1;
-				if (movingobjectposition1 != null) {
-					d1 = vec3.distanceTo(movingobjectposition1.hitVec);
-					if ((d1 < d0 || d0 == 0.0D) && cnt > 0) {
-						entities.set(cnt, backup);
-						entities.set(cnt-1, movingObjectPosition_and_entity);
-					}else {
-						d0 = d1;
-						backup = movingObjectPosition_and_entity;
-					}
-				}else {
-					entities.remove(cnt);
-					cnt--;
+		Set<Entity> processedEntities = new HashSet<Entity>();
+		Vec3 traceStart = Vec3.createVectorHelper(this.posX, this.posY, this.posZ);
+		Vec3 traceEnd = Vec3.createVectorHelper(this.posX + motionVec.xCoord, this.posY + motionVec.yCoord, this.posZ + motionVec.zCoord);
+		int penetratedBlockX = Integer.MIN_VALUE;
+		int penetratedBlockY = Integer.MIN_VALUE;
+		int penetratedBlockZ = Integer.MIN_VALUE;
+		boolean stopAfterPenetratedBlock = false;
+
+		/* Blocks and entities share one ordered traversal.  Processing a farther block
+		 * first can kill an AP round before a nearer entity receives its impact. */
+		final int maxCollisionTraces = 128;
+		for (int collisionTrace = 0; collisionTrace < maxCollisionTraces; ++collisionTrace) {
+			MovingObjectPosition blockHit = GunsUtils.getmovingobjectPosition_forBlock(worldObj, traceStart, traceEnd, 3, null, new Material[]{Material.leaves});
+			MovingObjectPosition_And_Entity entityHit = getNearestEntityCollision(entitylist, processedEntities, traceStart, traceEnd);
+			double blockDistance = blockHit != null && blockHit.hitVec != null ? traceStart.distanceTo(blockHit.hitVec) : Double.POSITIVE_INFINITY;
+			double entityDistance = entityHit != null ? traceStart.distanceTo(entityHit.movingObjectPosition.hitVec) : Double.POSITIVE_INFINITY;
+
+			if (blockHit == null && entityHit == null) {
+				if (stopAfterPenetratedBlock) {
+					this.setPosition(traceStart.xCoord, traceStart.yCoord, traceStart.zCoord);
+					this.motionX = this.motionY = this.motionZ = 0.0D;
+					this.setDead();
+					return;
 				}
-			}
-		}
-//				System.out.println("debug" + entities);
-		for(MovingObjectPosition_And_Entity current : entities){
-			if(!canbounce && canPenetrate_entity > 0 && canPenetrate_entity <= hitedCNT){
-				fuse--;
 				break;
 			}
-			hitedCNT++;
-			MovingObjectPosition movingobjectposition1 = current.movingObjectPosition;
-			if (movingobjectposition1 != null) {
-				vec3.xCoord = movingobjectposition1.hitVec.xCoord;
-				vec3.yCoord = movingobjectposition1.hitVec.yCoord;
-				vec3.zCoord = movingobjectposition1.hitVec.zCoord;
-
-				movingobjectposition = new MovingObjectPosition(current.entity);
-				movingobjectposition.hitVec = vec3;
-				movingobjectposition.sideHit = movingobjectposition1.sideHit;
-				movingobjectposition.hitInfo = movingobjectposition1.hitInfo;
-				avoidEntity = current.entity;
-				if (canbounce && !isDead) {
-					this.onImpact(movingobjectposition);
-					motionX *= 0.5;
-					motionY *= 0.5;
-					motionZ *= 0.5;
-					changemotionflag = true;
-				} else {
-					this.onImpact(movingobjectposition);
+			if (entityDistance < blockDistance) {
+				if(!canbounce && canPenetrate_entity > 0 && canPenetrate_entity <= hitedCNT){
+					fuse--;
+					break;
 				}
+				hitedCNT++;
+				MovingObjectPosition intercept = entityHit.movingObjectPosition;
+				movingobjectposition = new MovingObjectPosition(entityHit.entity);
+				movingobjectposition.hitVec = intercept.hitVec;
+				movingobjectposition.sideHit = intercept.sideHit;
+				movingobjectposition.hitInfo = intercept.hitInfo;
+				avoidEntity = entityHit.entity;
+				processedEntities.add(entityHit.entity);
+				this.onImpact(movingobjectposition);
+				if (canbounce && !isDead) {
+					motionX *= 0.5D;
+					motionY *= 0.5D;
+					motionZ *= 0.5D;
+					changemotionflag = true;
+				}
+				if (isDead) return;
+				traceStart = getTraceStartAfterHit(intercept.hitVec, motionVec, traceEnd);
+				if (traceStart == null) break;
+				continue;
 			}
+
+			Block hitBlock = worldObj.getBlock(blockHit.blockX, blockHit.blockY, blockHit.blockZ);
+			int hitMetadata = worldObj.getBlockMetadata(blockHit.blockX, blockHit.blockY, blockHit.blockZ);
+			boolean exitingPenetratedBlock = blockHit.blockX == penetratedBlockX && blockHit.blockY == penetratedBlockY
+					&& blockHit.blockZ == penetratedBlockZ;
+			if (exitingPenetratedBlock) {
+				traceStart = getTraceStartBeyondBlock(blockHit, motionVec, traceEnd);
+				penetratedBlockX = penetratedBlockY = penetratedBlockZ = Integer.MIN_VALUE;
+				if (stopAfterPenetratedBlock) {
+					if (traceStart != null) this.setPosition(traceStart.xCoord, traceStart.yCoord, traceStart.zCoord);
+					this.motionX = this.motionY = this.motionZ = 0.0D;
+					this.setDead();
+					return;
+				}
+				if (traceStart == null) break;
+				continue;
+			}
+			if (canPenetrateBlock(blockHit, hitBlock, hitMetadata)) {
+				onBlockPenetrated(blockHit, hitBlock, hitMetadata);
+				stopAfterPenetratedBlock = !shouldContinueAfterBlockPenetration();
+				penetratedBlockX = blockHit.blockX;
+				penetratedBlockY = blockHit.blockY;
+				penetratedBlockZ = blockHit.blockZ;
+				traceStart = getTraceStartAfterHit(blockHit.hitVec, motionVec, traceEnd);
+				if (traceStart == null) {
+					if (stopAfterPenetratedBlock) {
+						this.setPosition(blockHit.hitVec.xCoord, blockHit.hitVec.yCoord, blockHit.hitVec.zCoord);
+						this.motionX = this.motionY = this.motionZ = 0.0D;
+						this.setDead();
+						return;
+					}
+					break;
+				}
+				continue;
+			}
+
+			movingobjectposition = blockHit;
+			break;
 		}
+
 		if(killCNT>0 && fuse < 0){
 			debugBulletDeath("penetration limit");
 			this.setDead();
@@ -1446,30 +1442,46 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 		if(changemotionflag && !this.worldObj.isRemote) HMGPacketHandler.INSTANCE.sendToAll(new PacketFixClientbullet(this.getEntityId(), this));
 	}
 
-	private Vec3 getTraceStartBeyondBlock(MovingObjectPosition hit, Vec3 movement, Vec3 traceEnd) {
+	private MovingObjectPosition_And_Entity getNearestEntityCollision(List entitylist, Set<Entity> processedEntities,
+	                                                                Vec3 traceStart, Vec3 traceEnd) {
+		MovingObjectPosition_And_Entity nearest = null;
+		double nearestDistance = Double.POSITIVE_INFINITY;
+		for (int index = 0; index < entitylist.size(); ++index) {
+			Entity entity = (Entity)entitylist.get(index);
+			if (entity == avoidEntity || processedEntities.contains(entity) || entity instanceof IProjectile) continue;
+			if (!entity.canBeCollidedWith() || (ticksInAir <= 8 && !iscandamageentity(entity))) continue;
+
+			MovingObjectPosition intercept = entity.boundingBox.expand(0.1D, 0.1D, 0.1D).calculateIntercept(traceStart, traceEnd);
+			if (intercept == null || intercept.hitVec == null) continue;
+			double distance = traceStart.distanceTo(intercept.hitVec);
+			if (distance < nearestDistance) {
+				nearestDistance = distance;
+				nearest = new MovingObjectPosition_And_Entity(entity);
+				nearest.movingObjectPosition = intercept;
+			}
+		}
+		return nearest;
+	}
+
+	private Vec3 getTraceStartAfterHit(Vec3 hit, Vec3 movement, Vec3 traceEnd) {
 		double length = movement.lengthVector();
-		if (hit.hitVec == null || length < 1.0E-7D) return null;
+		if (hit == null || length < 1.0E-7D) return null;
 
 		double directionX = movement.xCoord / length;
 		double directionY = movement.yCoord / length;
 		double directionZ = movement.zCoord / length;
-		double exitDistance = Double.POSITIVE_INFINITY;
-		if (directionX > 0.0D) exitDistance = Math.min(exitDistance, (hit.blockX + 1.0D - hit.hitVec.xCoord) / directionX);
-		else if (directionX < 0.0D) exitDistance = Math.min(exitDistance, (hit.blockX - hit.hitVec.xCoord) / directionX);
-		if (directionY > 0.0D) exitDistance = Math.min(exitDistance, (hit.blockY + 1.0D - hit.hitVec.yCoord) / directionY);
-		else if (directionY < 0.0D) exitDistance = Math.min(exitDistance, (hit.blockY - hit.hitVec.yCoord) / directionY);
-		if (directionZ > 0.0D) exitDistance = Math.min(exitDistance, (hit.blockZ + 1.0D - hit.hitVec.zCoord) / directionZ);
-		else if (directionZ < 0.0D) exitDistance = Math.min(exitDistance, (hit.blockZ - hit.hitVec.zCoord) / directionZ);
-
-		if (Double.isInfinite(exitDistance) || exitDistance < 0.0D) return null;
-		double advance = exitDistance + 1.0E-5D;
-		Vec3 next = Vec3.createVectorHelper(hit.hitVec.xCoord + directionX * advance,
-				hit.hitVec.yCoord + directionY * advance, hit.hitVec.zCoord + directionZ * advance);
+		double advance = 1.0E-5D;
+		Vec3 next = Vec3.createVectorHelper(hit.xCoord + directionX * advance,
+				hit.yCoord + directionY * advance, hit.zCoord + directionZ * advance);
 		double remainingX = traceEnd.xCoord - next.xCoord;
 		double remainingY = traceEnd.yCoord - next.yCoord;
 		double remainingZ = traceEnd.zCoord - next.zCoord;
 		if (remainingX * movement.xCoord + remainingY * movement.yCoord + remainingZ * movement.zCoord <= 0.0D) return null;
 		return next;
+	}
+
+	private Vec3 getTraceStartBeyondBlock(MovingObjectPosition hit, Vec3 movement, Vec3 traceEnd) {
+		return hit == null ? null : getTraceStartAfterHit(hit.hitVec, movement, traceEnd);
 	}
 
 	boolean awayFlag = false;
