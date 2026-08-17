@@ -18,6 +18,7 @@ import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjResourceReloadListener;
 import handmadeguns.entity.*;
 import handmadeguns.entity.bullets.*;
+import handmadeguns.event.HMGFovHandler;
 import handmadeguns.event.KillFeedHUD;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import handmadeguns.network.PacketSpawnParticle;
@@ -212,6 +213,7 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 			((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new HMGObjResourceReloadListener());
 		}
 		MinecraftForge.EVENT_BUS.register(new HMGParticles());
+		MinecraftForge.EVENT_BUS.register(new HMGFovHandler());
 		MinecraftForge.EVENT_BUS.register(new HMGCustomNpcRenderCompat());
 
 

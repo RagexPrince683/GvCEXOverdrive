@@ -268,19 +268,3 @@ HMG registers a world generator for the overworld. It generates copper and alumi
 - Aluminum: 9 veins/chunk, vein size 7, Y 32-95.
 
 These ore-generation toggles are computed automatically from ore dictionary checks; no active config keys for ore generation were found in the inspected HMG code.
-
-## HandmadeGuns firearm ADS zoom directives
-
-Gun TXT files configure three independent built-in sight channels in base, red-dot,
-and scope order:
-
-| Directive | Values | Effect |
-| --- | --- | --- |
-| `Zoom` | `BASE,REDDOT,SCOPE` floats | Magnification for no optic, `HMGItemAttachment_reddot`, and `HMGItemAttachment_scope`, respectively. |
-| `ZoomRender` | one boolean | Legacy setting for the base-channel FOV magnification flag. |
-| `ZoomRenderType` | `BASE,REDDOT,SCOPE` booleans | Explicitly enables FOV magnification for each built-in channel; a disabled channel does not fall back to base. |
-| `ZoomRenderTypeTxture` | `BASE,REDDOT,SCOPE` booleans | Independently enables each built-in channel's ADS texture overlay; it does not enable FOV magnification. |
-
-A custom `HMGItemSightBase` installed in attachment slot 1 continues to use its
-own `zoomlevel` and `scopetexture`. Other attachment types in the sight slot do
-not inherit the firearm's base channel.
