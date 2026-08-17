@@ -1,5 +1,11 @@
 # Changelog
 
+## Allow numbered attachment anchors on model branches (PR pending)
+
+- Let multiple gun parts register the same numbered attachment slot so mutually
+  exclusive animated model branches can each supply the installed attachment's
+  live transform without changing per-render deduplication or fallback detection.
+
 ## Fix optic-aware HandmadeGuns ADS magnification (PR pending)
 
 - Resolve the held or placed gun's sight from attachment slot 1 and select the

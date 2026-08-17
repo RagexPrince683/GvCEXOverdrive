@@ -116,7 +116,7 @@ including all parent-part and motion transforms, before `attachmentlocation` is
 applied as a local translation and optional Y rotation. Use only one
 `SetAttachmentAttach` per gun. If a pack specifies more than one, HMG logs a
 warning, uses the first valid part in file order, and ignores the later markers.
-Numbered anchors `SetAttachmentAttach1` through `SetAttachmentAttach5` mark independent animated anchors for inventory slots `1` through `5`. The numbered anchor is preferred for its slot; singular `SetAttachmentAttach` remains the fallback for slots without a numbered anchor. Each slot keeps the first valid marker in file order and logs later duplicates with the gun, slot, and ignored part. An attachment is rendered while its selected part's complete live matrix is active, and is omitted when that part's `renderOnOff` state disables it. Legacy gun parts and attachment items do not use these directives.
+Numbered anchors `SetAttachmentAttach1` through `SetAttachmentAttach5` mark independent animated anchors for inventory slots `1` through `5`. The numbered anchor is preferred for its slot; singular `SetAttachmentAttach` remains the fallback for slots without a numbered anchor. A slot may be marked on multiple parts, such as mutually exclusive magazine-model branches; whichever marked part renders supplies its complete live matrix, while per-render slot deduplication prevents the attachment from rendering twice if multiple marked parts are active. The attachment is omitted when every marked part's `renderOnOff` state disables it. Legacy gun parts and attachment items do not use these directives.
 
 Gun parts and child parts can hide replaceable gun geometry while any kind of
 attachment is installed in a matching slot:
