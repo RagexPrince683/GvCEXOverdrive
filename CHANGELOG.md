@@ -1,5 +1,12 @@
 # Changelog
 
+## Fix optic-aware HandmadeGuns ADS magnification (PR pending)
+
+- Resolve the held or placed gun's sight from attachment slot 1 and select the
+  matching base, red-dot, scope, or custom-sight `Zoom` magnification safely.
+- Keep `HMGFovHandler` authoritative for firearm ADS FOV changes while preserving
+  the legacy zoom event handler's HUD, overlay, sensitivity, and rendering work.
+
 ## Restrict attachments for the AWW2 gun pack (PR pending)
 
 - Enable `attachRestriction` for every gun definition in the AWW2 pack so each
