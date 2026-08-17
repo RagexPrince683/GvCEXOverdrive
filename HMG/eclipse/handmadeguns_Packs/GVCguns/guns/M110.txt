@@ -2,7 +2,6 @@ BulletPower,15
 BulletSpeed,16
 BulletGravity,0.485
 
-//this FUCKING GUN IS CURSED I DONT UNDERSTAND WHY IT MUFFLES EVERY GODDAMN SOUND YOU GIVE IT FUCK THIS SHIT
 
 BlletSpread,0.0f
 ADS_Spread_coefficient,0.0
@@ -19,11 +18,11 @@ ReloadTime,50
 RemainingBullet,10
 
 Attacking,4.0f
-Zoom,4.0f,4.0f,4.0f
+Zoom,4.0f,1.0f,4.0f
 
 ZoomRender,true
 ZoomRenderType,false,false,false
-ZoomRenderTypeTxture,true,true,true
+ZoomRenderTypeTxture,true,false,true
 
 Texture,M110
 GunSound,handmadeguns.AR10,handmadeguns.supu
@@ -37,8 +36,13 @@ CustomFlash,arrow,1
 Bursts,1,0
 //Rates,1,1
 attachRestriction,true
+allowattach,attachmenttest
 allowattach,Bullet_AP
 allowattach,Bullet_AT
+
+attachmentlocation1 = 0, 1.4, 1.65
+
+opticshift1,0,-0.025,0
 
 ModelEquipped,-0.5f,0.7077f,-0.8f
 ModelHigh,0.99F,0.99F,0.99F

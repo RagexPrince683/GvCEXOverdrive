@@ -63,10 +63,14 @@ SprintingPoint,0.8f,0.2f,0.5f
 SprintingRotation,20f,60f,0f
 
 attachRestriction,true
-//todo
+allowattach,attachmenttest
 allowattach,Bullet_AP
 allowattach,Bullet_AT
 allowattach,byfrou01_Bayonet
+
+attachmentlocation1 = 0, 1.4, 1.65
+
+opticshift1,0,-0.025,0
 
 SoundSpeed,1f
 
@@ -102,7 +106,7 @@ AddParts,Sys_Zero_in
 
 	AddChildParts,mat1
 		SetAsNormalParts
-
+		SetAttachmentAttach1
 		AddReloadMotionKey,0 ,0,0,0,0,0,0,            5 ,0,0,0,0,0,0
 		AddReloadMotionKey,5 ,0,0,0,0,0,0,            15,0,0,0,15,0,30
 		AddReloadMotionKey,15,0,0,0,15,0,30,          30,0,0,0,15,0,30

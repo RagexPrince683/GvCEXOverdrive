@@ -37,12 +37,16 @@ Rates,2,2,2
 
 
 attachRestriction,true
+allowattach,attachmenttest
 allowattach,Bullet_AP
 allowattach,Bullet_AT
 allowattach,pbs1
+attachmentlocation1 = 0, 1.4, 1.65
 attachmentlocation3 = 0, 1.06, 6.15
 //todo
 //allowattach,byfrou01_Bayonet
+
+opticshift1,0,-0.025,0
 
 ModelEquipped,-0.7f,0.2f,-0.5f
 ModelHigh,0.9601,0.9601,0.9601
@@ -88,7 +92,8 @@ AddParts,Sys_Zero_in
 
 	AddChildParts,mat1
 		SetAsNormalParts
-
+		SetAttachmentAttach1
+    		SetAttachmentAttach3
 		AddReloadMotionKey,0 ,0,0,0,0,0,0,            5 ,0,0,0,0,0,0
 		AddReloadMotionKey,5 ,0,0,0,0,0,0,            15,0,0,0,15,0,30
 		AddReloadMotionKey,15,0,0,0,15,0,30,          30,0,0,0,15,0,30
@@ -133,7 +138,8 @@ AddParts,Sys_Zero_in
 
 		AddChildParts,mats1
 			SetAsNormalParts
-			SetAttachmentAttach
+			SetAttachmentAttach1
+    			SetAttachmentAttach3
 			AddSomeMotion,-1,false,      0,      1
 			AddSomeMotion,0,0,0,0     ,0,0,0,      1,0,0,0     ,0,0,0,      1
 
