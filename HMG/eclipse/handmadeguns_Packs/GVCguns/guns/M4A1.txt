@@ -42,8 +42,13 @@ attachRestriction,true
 //allowattach,Suppressor
 //allowattach,laser
 //allowattach,grip
+allowattach,attachmenttest
 allowattach,Bullet_AP
 allowattach,Bullet_AT
+
+attachmentlocation1 = 0, 1.4, 1.65
+
+opticshift1,0,0.087,-0.5
 
 ModelEquipped,-0.3f,0.2f,-0.4f
 ModelHigh,0.87325f,0.85f,0.85f
@@ -113,6 +118,7 @@ AddParts,Base_Sys
 				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 				attachpart
+				removeifattachpresent1
 				sight
     			BackParts
     			AddChildParts,mat4
@@ -175,6 +181,8 @@ AddParts,Base_Sys
 				attachpart
 				muzzlepart
     			BackParts
+
+			
 
 
 			AddChildParts,Larm
@@ -253,6 +261,7 @@ AddParts,Base_Sys
 		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 		NeedDraw_Current_Magazine_ID_List,true,false,true,true
 		AddChildParts,mat1
+			SetAttachmentAttach1
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 			RenderOnNormal
@@ -265,6 +274,16 @@ AddParts,Base_Sys
 			AddReloadMotionKey,5 ,0,0,0,0,0,0,            15,0,0,0,15,0,30
 			AddReloadMotionKey,15,0,0,0,15,0,30,          40,0,0,0,15,0,30
 			AddReloadMotionKey,40,0,0,0,15,0,30,          50,0,0,0,0,0,0
+
+			AddChildParts,frontsight
+				moveifattachpresent1,0,-0.1,0
+				RenderOnNormal
+				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+			BackParts
 
 			AddChildParts,mat20
 				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
@@ -413,6 +432,8 @@ AddParts,Base_Sys
 				AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      35,0,0,0,0,0,0
 				AddReloadMotionKey,35,0,0,0,0,0,0,          50,0,0,0,0,0,0
 			BackParts
+
+			
 
 			AddChildParts,Bolt
 			    	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
