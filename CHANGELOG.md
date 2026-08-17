@@ -5,7 +5,6 @@
 - Make `HMGEventZoom` the sole firearm FOV authority and remove the duplicate base-zoom event handler.
 - Resolve slot-1 optics safely by attachment class so base, red-dot, scope, and custom sight magnification cannot fall through to the wrong channel.
 - Keep FOV enable flags independent from ADS texture flags, preserve custom sight zoom/texture behavior, and reset invalid or inactive magnification state.
-- Reuse the safe attachment-slot reader for HUD slot-5 state so removing the old local attachment list does not leave an unresolved variable or stale item.
 
 ## Restrict attachments for the AWW2 gun pack (PR pending)
 
