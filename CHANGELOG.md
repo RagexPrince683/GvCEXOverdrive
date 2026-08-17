@@ -1,14 +1,5 @@
 # Changelog
 
-## Fix AP bullet collision ordering and block penetration (PR pending)
-
-- Trace entity and block impacts together in distance order so a farther block
-  cannot prevent a nearer entity from receiving an AP bullet hit.
-- Continue AP traces from the actual collision shape with a small forward epsilon,
-  preserving partial-block space and preventing repeat hits on the same surface.
-- Preserve AP resistance qualification, damage, gravity, and penetration limits
-  while counting only blocks actually reached by the ordered traversal.
-
 ## Restrict attachments for the AWW2 gun pack (PR pending)
 
 - Enable `attachRestriction` for every gun definition in the AWW2 pack so each
