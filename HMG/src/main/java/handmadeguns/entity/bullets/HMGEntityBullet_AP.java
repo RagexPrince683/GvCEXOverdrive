@@ -27,7 +27,7 @@ import static handmadeguns.HandmadeGunsCore.islmmloaded;
 
 public class HMGEntityBullet_AP extends HMGEntityBulletBase implements IEntityAdditionalSpawnData
 {
-	private boolean hasPiercedBlock;
+	private int penetratedBlockCount;
 	public HMGEntityBullet_AP(World worldIn) {
 		super(worldIn);
 	}
@@ -43,6 +43,8 @@ public class HMGEntityBullet_AP extends HMGEntityBulletBase implements IEntityAd
 
 	@Override
 	protected boolean canPenetrateBlock(MovingObjectPosition hit, Block block, int metadata) {
+		int penetrationLimit = Bdamege > 7 ? 2 : 1;
+		if (penetratedBlockCount >= penetrationLimit) return false;
 		if (hit == null || hit.hitVec == null || hit.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK || block == null
 				|| block.isAir(worldObj, hit.blockX, hit.blockY, hit.blockZ)) return false;
 		float resistance = block.getExplosionResistance(this, worldObj, hit.blockX, hit.blockY, hit.blockZ,
@@ -54,12 +56,12 @@ public class HMGEntityBullet_AP extends HMGEntityBulletBase implements IEntityAd
 
 	@Override
 	protected void onBlockPenetrated(MovingObjectPosition hit, Block block, int metadata) {
-		hasPiercedBlock = true;
+		penetratedBlockCount++;
 	}
 
 	@Override
 	protected float getImpactDamage() {
-		return hasPiercedBlock ? Bdamege : Bdamege * 0.90F;
+		return penetratedBlockCount > 0 ? Bdamege : Bdamege * 0.90F;
 	}
 
 	@Override
