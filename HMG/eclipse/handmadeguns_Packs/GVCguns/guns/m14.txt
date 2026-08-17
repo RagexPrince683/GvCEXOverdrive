@@ -18,7 +18,7 @@ ReloadTime,50
 RemainingBullet,10
 
 Attacking,4.0f
-Zoom,1.4f,4.0f,4.0f
+Zoom,1.0f,1.0f,4.0f
 
 ZoomRender,true
 ZoomRenderType,true,true,false
@@ -36,27 +36,39 @@ CustomFlash,arrow,1
 Bursts,1,-1,0
 Rates,1.6,1.6,1.6
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.6, 1.35
+
+opticshift1,0,-0.115,0
 allowattach,Bullet_AP
 allowattach,Bullet_AT
 
-ModelEquipped,-0.7f,0.5077f,-0.7f
+ModelEquipped,-0.2f,0.5077f,-0.7f
 ModelHigh,0.93F,0.93F,0.93F
 ModelWidthX,0.6945f,0.6945f,0.6945f
 ModelWidthZ,0.3f,0.3f,0.3f
+
+
+SimpleADSOffsetY,0.85,0.85,0.85f
+SimpleADSOffsetX,-0,0,0
+
+SimpleADSOffsetZ,0.3,0.3,0.3
+
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f
 
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-ModelArmOffsetR,0.4f,0.3577f,0.1f
+ModelArmOffsetR,0.4f,0.3577f,0.3f
 ModelArmRotationL,-0.0f,-2.0f,2.0f
-ModelArmOffsetL,0.3f,0.6f,-0.65f
+ModelArmOffsetL,0.2f,0.5f,-0.55f
 
-SprintingPoint,0.8f,0.0f,0.5f
+SprintingPoint,0.4f,0.3f,0.5f
 SprintingRotation,20f,60f,0f
 
-SoundSpeed,0.8f
+SoundSpeed,1f
 
 ScopeTexture,scope_m110.png,scope_m110.png,scope_m110.png
 RenderCross,false
@@ -97,7 +109,7 @@ AddParts,Base_Sys
 			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-			
+			SetAttachmentAttach1
 			AddReloadMotionKey,0 ,0,0,0,0,0,0,            10 ,0,0,0,0,0,0
 			AddReloadMotionKey,10 ,0,0,0,0,0,0,           30,0,0,0,15,0,30
 			AddReloadMotionKey,30,0,0,0,15,0,30,          70,0,0,0,15,0,30

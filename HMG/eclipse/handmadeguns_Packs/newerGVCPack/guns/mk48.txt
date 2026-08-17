@@ -39,6 +39,11 @@ Rates,2,1.846,1.714,1.5
 //600-650, 700-800
 
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 2, 1
+
+opticshift1,0,-0.088,0
 //allowattach,reddot
 //allowattach,scope
 //todo acog
@@ -78,7 +83,7 @@ ModelArmOffsetL,0.5f,0.4f,-0.3f
 SprintingPoint,0.5f,-0.2f,0.3f
 SprintingRotation,20f,60f,0f
 
-SoundSpeed,1.2f
+SoundSpeed,1f
 
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false
@@ -339,6 +344,7 @@ AddParts,Base_Sys
 				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+				SetAttachmentAttach1
 			BackParts
 		BackParts
 		AddChildParts,762

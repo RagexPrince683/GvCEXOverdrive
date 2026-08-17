@@ -42,7 +42,7 @@ Rates,1.411,1.411,1.411
 
 
 //ModelEquipped,-0.7f,0.7f,-0.4f
-ModelEquipped,-0.7f,0.2f,-0.5f
+ModelEquipped,-0.2f,0.2f,-0.1f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetZ,0.32,0.32,0.32
 //SimpleADSOffsetY,4,4,4
@@ -58,12 +58,17 @@ ModelArm,true
 ModelArmRotationR,-1.07f,-0.63f,-1.57f
 ModelArmOffsetR,-0.1f,0.25f,0.1f
 ModelArmRotationL,-0.0f,-2.35f,2.0f
-ModelArmOffsetL,0.23f,0.41f,-0.5f
+ModelArmOffsetL,0.23f,0.41f,0.5f
 
-SprintingPoint,0.8f,0.2f,0.5f
+SprintingPoint,0.2f,-0.6f,1.2f
 SprintingRotation,20f,60f,0f
 
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.5, 1.25
+
+opticshift1,0,-0.06,0
 allowattach,Bullet_AP
 allowattach,Bullet_AT
 //allowattach,byfrou01_Bayonet
@@ -107,7 +112,7 @@ AddParts,Sys_Zero_in
 
 	AddChildParts,mat1
 		SetAsNormalParts
-
+		SetAttachmentAttach1
 		AddReloadMotionKey,0 ,0,0,0,0,0,0,            5 ,0,0,0,0,0,0
 		AddReloadMotionKey,5 ,0,0,0,0,0,0,            15,0,0,0,15,0,30
 		AddReloadMotionKey,15,0,0,0,15,0,30,          30,0,0,0,15,0,30
@@ -140,6 +145,17 @@ AddParts,Sys_Zero_in
 
 			BackParts
 		BackParts
+
+		AddChildParts,regsight
+			SetAsNormalParts
+			removeifattachpresent1
+			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+    			RenderOnNormal
+    			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+    			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+    			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+    			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+    		BackParts
 
 
 		AddChildParts,mats0

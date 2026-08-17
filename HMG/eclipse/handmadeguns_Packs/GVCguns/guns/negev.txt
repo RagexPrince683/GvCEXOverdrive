@@ -44,6 +44,11 @@ Rates,1.5,1.411,1.1428,1.1428
 attachRestriction,true
 allowattach,Bullet_AP
 allowattach,Bullet_AT
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.1, 0.2
+
+opticshift1,0,0.03,0
 //allowattach,reddot
 //allowattach,scope
 
@@ -75,7 +80,7 @@ ModelArmOffsetL,0.6f,1.2f,-0.2f
 SprintingPoint,0.5f,-0.2f,0.5f
 SprintingRotation,20f,60f,0f
 
-SoundSpeed,0.8f
+SoundSpeed,1f
 
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false
@@ -100,6 +105,7 @@ AddParts,Base_Sys
 	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 	AddYawInfoKey,-360,0,0,0,0,-360,0		,360,0,0,0,0,360,0
 	AddChildParts,mat1
+		SetAttachmentAttach1
 		AddPartsRotationCenterAndRotationAmount,0,-2.7,6.00,0,0,0
 		RenderOnNormal
 		AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
@@ -160,6 +166,18 @@ AddParts,Base_Sys
 			AddReloadMotionKey,95,-0.5,0.75,2,0,0,0,	 98,0,0,0,0,0,0
 			AddReloadMotionKey,98,0,0,0,0,0,0,		   100,0,0,0,0,0,0
 		BackParts
+
+		AddChildParts,regsight
+			SetAsNormalParts
+			removeifattachpresent1
+			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+    			RenderOnNormal
+    			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+    			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+    			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+    			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+    		BackParts
+
 		AddChildParts,mat22
 			AddPartsRotationCenterAndRotationAmount,0,1.400,1.650,0,0,0
 			RenderOnNormal

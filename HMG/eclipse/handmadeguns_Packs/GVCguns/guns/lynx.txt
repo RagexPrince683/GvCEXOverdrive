@@ -32,11 +32,11 @@ ReloadTime,65
 RemainingBullet,5
 
 Attacking,5.0f
-Zoom,8.0F,8.0F,16.0f
+Zoom,8.0F,1.0F,16.0f
 
 ZoomRender,true
-ZoomRenderType,false,false,false
-ZoomRenderTypeTxture,true,true,true
+ZoomRenderType,false,true,false
+ZoomRenderTypeTxture,true,false,true
 
 Texture,AMR_sample
 GunSound,handmadeguns.GM6,handmadeguns.supu
@@ -55,9 +55,14 @@ allowattach,Bullet_AP
 //unreliable
 //allowattach,Bullet_Frag
 //allowattach,Bullet_AP
-allowattach,scope
+//allowattach,scope
+allowattach,attachmenttest
 
-ModelEquipped,-0.7f,0.35f,-0.8f
+attachmentlocation1 = 0, 1.6, 1.25
+
+opticshift1,0,-0.155,0.7
+
+ModelEquipped,-0.4f,0.35f,0.4f
 ModelHigh,0.99F,0.99F,0.99F
 //ModelWidthX,0.6945f,0.6945f,0.6945f
 //ModelWidthZ,0.5f,0.5f,0.5f
@@ -67,9 +72,9 @@ ModelRotationZ,180f,180f,180f
 
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-ModelArmOffsetR,0.4f,0.25f,0.33f
+ModelArmOffsetR,0.4f,0.3f,0.13f
 ModelArmRotationL,-0.0f,-1.85f,2.0f
-ModelArmOffsetL,0.4f,0.25f,-0.5f
+ModelArmOffsetL,0.4f,0.25f,0.5f
 
 SprintingPoint,0.5f,0.0f,0.5f
 SprintingRotation,20f,60f,0f
@@ -96,7 +101,7 @@ AddParts,mat1
     AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-
+    SetAttachmentAttach1
     AddReloadMotionKey,0 ,0,0,0,0,0,0,            5 ,0,0,0,0,0,0
     AddReloadMotionKey,5 ,0,0,0,0,0,0,            15,0,0,0,15,0,30
     AddReloadMotionKey,15,0,0,0,15,0,30,          30,0,0,0,15,0,30
@@ -191,6 +196,17 @@ AddParts,mat1
         AddReloadMotionKey,5,false,          10
         AddReloadMotionKey,10,0,-2,-0.5,0,0,0,      30,0,0,0,0,0,0
         AddReloadMotionKey,30,0,0,0,0,0,0,          50,0,0,0,0,0,0
+    BackParts
+
+    AddChildParts,regsight
+	SetAsNormalParts
+	removeifattachpresent1
+	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+    	RenderOnNormal
+    	AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+    	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+    	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+    	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
     BackParts
 
     AddChildParts,five

@@ -36,12 +36,17 @@ Rates,1.263,1.263
 Cycle,1
 
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.3, 1
+
+opticshift1,0,-0.04,0
 allowattach,Bullet_AP
 allowattach,Bullet_AT
 allowattach,Suppressor
 allowattach,grip
 
-ModelEquipped,-0.7f,0.4f,-0.5f
+ModelEquipped,-0.3f,0.4f,-0.3f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.775,0.775,0.775
 SimpleADSOffsetZ,0.7,0.7,0.7
@@ -51,14 +56,14 @@ ModelRotationZ,180f,180f,180f
 
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-ModelArmOffsetR,0.38F,0.3F,0.23F
+ModelArmOffsetR,0.38F,0.25F,0.3F
 ModelArmRotationL,-0.0f,-2.3f,2.0f
-ModelArmOffsetL,0.1f,0.5F,-0.4F
+ModelArmOffsetL,0.2f,0.5F,-0.10F
 
 SprintingPoint,0.5f,-0.0f,-0.3f
 SprintingRotation,-40,0f,0f
 
-SoundSpeed,1.5f
+SoundSpeed,1f
 
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false
@@ -80,7 +85,7 @@ AddParts,mat1
 	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-
+	SetAttachmentAttach1
 	AddReloadMotionKey,0 ,0,0,0,0,0,0,			5 ,0,0,0,0,0,0
 	AddReloadMotionKey,5 ,0,0,0,0,0,0,			15,0,0,0,15,0,30
 	AddReloadMotionKey,15,0,0,0,15,0,30,		  30,0,0,0,15,0,30

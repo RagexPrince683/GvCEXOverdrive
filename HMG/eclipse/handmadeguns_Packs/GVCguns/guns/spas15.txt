@@ -9,7 +9,7 @@ Recoil_sneaking,2.2
 ReloadTime,50
 //RemainingBullet,5
 Attacking,6.0f
-Zoom,1.0f,2.0f,4.0f
+Zoom,1.0f,1.0f,4.0f
 ZoomRender,true
 ZoomRenderType,true,true,true
 ZoomRenderTypeTxture,false,false,false
@@ -36,6 +36,11 @@ Bursts,1,0
 Motion,0.95
 
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.5, 1.5
+
+opticshift1,0,0.03,0
 
 //ModelEquipped,-0.7f,0.7f,0.0f
 ModelEquipped,-0.7f,0.6f,-0.5f
@@ -89,73 +94,74 @@ AddParts,Base_Sys
 			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-			
+			SetAttachmentAttach1
 			AddReloadMotionKey,0 ,0,0,0,0,0,0,            5 ,0,0,0,0,0,0
 			AddReloadMotionKey,5 ,0,0,0,0,0,0,            15,0,0,0,15,0,30
 			AddReloadMotionKey,15,0,0,0,15,0,30,          40,0,0,0,15,0,30
 			AddReloadMotionKey,40,0,0,0,15,0,30,          50,0,0,0,0,0,0
 			
-			AddChildParts,mat20
-				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-				RenderOnNormal
-				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-				attachpart
-				sight
-    			BackParts
-    			AddChildParts,mat4
-				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-				RenderOnNormal
-				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-				attachpart
-				dot
-				reticleAndPlate
-    			BackParts
-    			AddChildParts,mat5
-				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-				RenderOnNormal
-				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-				attachpart
-				scope
-    			BackParts
-    			AddChildParts,mat9
-				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-				RenderOnNormal
-				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-				attachpart
-				grip
-    			BackParts
-    			AddChildParts,mat8
-				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-				RenderOnNormal
-				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-				attachpart
-				lasersight
-    			BackParts
-    			AddChildParts,mat6
-				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-				RenderOnNormal
-				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
-				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-				attachpart
-				muzzlepart
-    			BackParts
+			//AddChildParts,mat20
+			//	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+			//	RenderOnNormal
+			//	AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+			//	attachpart
+			//	sight
+    			//BackParts
+			//you'll get your own item eventually
+    			//AddChildParts,mat4
+			//	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+			//	RenderOnNormal
+			//	AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+			//	attachpart
+			//	dot
+			//	reticleAndPlate
+    			//BackParts
+    			//AddChildParts,mat5
+			//	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+			//	RenderOnNormal
+			//	AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+			//	attachpart
+			//	scope
+    			//BackParts
+    			//AddChildParts,mat9
+			//	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+			//	RenderOnNormal
+			//	AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+			//	attachpart
+			//	grip
+    			//BackParts
+    			//AddChildParts,mat8
+			//	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+			//	RenderOnNormal
+			//	AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+			//	attachpart
+			//	lasersight
+    			//BackParts
+    			//AddChildParts,mat6
+			//	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+			//	RenderOnNormal
+			//	AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+			//	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+			//	attachpart
+			//	muzzlepart
+    			//BackParts
 			AddChildParts,Larm
 				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0

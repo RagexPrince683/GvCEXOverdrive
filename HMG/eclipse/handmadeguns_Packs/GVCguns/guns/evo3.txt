@@ -40,7 +40,13 @@ allowattach,Bullet_AP
 //unreliable
 //allowattach,Suppressor
 
-ModelEquipped,-0.3f,0.4f,-0.2f
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.6, 1.25
+
+opticshift1,0,-0.095,0
+
+ModelEquipped,-0.0f,0.4f,-0.2f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.873,0.873,0.873
 SimpleADSOffsetZ,0.6,0.6,0.6
@@ -50,11 +56,11 @@ ModelRotationZ,180f,180f,180f
 	
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-ModelArmOffsetR,0.38F,0.2F,0.25F
+ModelArmOffsetR,0.38F,0.3F,0.25F
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.2f,0.6F,-0.28F
 
-SprintingPoint,0.8f,-0.2f,0.5f
+SprintingPoint,0.2f,-0.4f,0.5f
 SprintingRotation,20f,60f,0f
 
 SoundSpeed,1.5f
@@ -79,7 +85,7 @@ AddParts,mat1
     AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-
+    SetAttachmentAttach1
     AddReloadMotionKey,0,0,0,0,0,0,0,             5,0,0,0,0,0,0
     AddReloadMotionKey,5,0,0,0,0,0,0,             10,0,0,0,-15,0,45
     AddReloadMotionKey,10,0,0,0,-15,0,45,            25,0,0,0,-15,0,45

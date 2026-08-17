@@ -6,7 +6,7 @@ BulletGravity,0.485
 Class,1
 Recoil,28
 Recoil_sneaking,18
-ReloadTime,50
+ReloadTime,25
 RemainingBullet,2
 Attacking,6.0f
 Zoom,1.0f,2.0f,4.0f
@@ -29,10 +29,15 @@ Rates,0
 InventoryScale,3
 
 attachRestriction,true
+//allowattach,attachmenttest
+
+attachmentlocation1 = 0, 0.7, 2.4
+
+opticshift1,0,-0.085,0
 //allowattach,Bullet_Dart
 //allowattach,Bullet_Frag
 
-ModelEquipped,-0.5f,-0.45f,-1f
+ModelEquipped,-0.3f,-0.55f,-0.8f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.8,0.8,0.8
 SimpleADSOffsetZ,-0.2,-0.2,-0.2

@@ -36,6 +36,11 @@ Bursts,-1,-1,-1,-1
 Rates,1.411,1.262,1.043,1.62
 
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 2, 1
+
+opticshift1,0,-0.088,0
 //allowattach,reddot
 //allowattach,scope
 //todo acog
@@ -47,7 +52,7 @@ FixAsEntity,true
 OnEntity_PlayerPosOffset,0,0,3
 
 //ModelEquipped,-0.7f,0.7f,0.0f
-ModelEquipped,-0.5f,0.5f,-0.7f
+ModelEquipped,-0.3f,0.5f,-0.5f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,1.075,1.075,1.075
 SimpleADSOffsetZ,0.6,0.6,0.6
@@ -72,10 +77,10 @@ ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.5f,0.4f,-0.3f
 
 //SprintingPoint,0.5f,0.0f,0.5f
-SprintingPoint,0.5f,-0.2f,0.3f
+SprintingPoint,0.5f,-0.1f,0.3f
 SprintingRotation,20f,60f,0f
 
-SoundSpeed,1.2f
+SoundSpeed,0.95f
 
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false
@@ -223,7 +228,7 @@ AddParts,Base_Sys
 			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-	
+			SetAttachmentAttach1
 			AddReloadMotionKey,0,0,0,0,0,0,0,			5,0,0,0,0,0,0
 			AddReloadMotionKey,5,0,0,0,0,0,0,			15,0,0,0,90,0,0
 			AddReloadMotionKey,12,0,0,0,90,0,0,			65,0,0,0,90,0,0

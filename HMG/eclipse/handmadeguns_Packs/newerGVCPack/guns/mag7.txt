@@ -35,13 +35,13 @@ attachRestriction,true
 
 ModelEquipped,-0.5f,-0.15f,-0.2f
 SimpleADSOffsetX,0,0,0
-SimpleADSOffsetY,0.65,0.65,0.65
+SimpleADSOffsetY,0.7,0.7,0.7
 SimpleADSOffsetZ,0.8,0.8,0.8
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f
 
-SprintingPoint,0.0f,0.25f,0.0f
+SprintingPoint,0.5f,0.05f,0.5f
 
 ModelArm,true
 ModelArmRotationR,-1.57f,-0.0f,-1.57f

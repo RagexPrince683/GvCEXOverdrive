@@ -9,7 +9,7 @@ Recoil_sneaking,2.8
 ReloadTime,50
 //RemainingBullet,5
 Attacking,6.0f
-Zoom,1.0f,2.0f,4.0f
+Zoom,1.0f,1.0f,4.0f
 ZoomRender,true
 ZoomRenderType,true,true,true
 ZoomRenderTypeTxture,false,false,false
@@ -37,11 +37,20 @@ Motion,0.95
 
 attachRestriction,true
 
+
 //allowattach,Bullet_AP
 //allowattach,Bullet_AT
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.55, 1.65
+
+opticshift1,0,0.01,0
 
 //ModelEquipped,-0.7f,0.7f,0.0f
-ModelEquipped,-0.7f,0.2f,-0.5f
+ModelEquipped,-0.7f,0.4f,-0.42f
+
+SprintingPoint,0.8f,-0.1f,0.5f
+SprintingRotation,20f,60f,0f
 
 ModelHigh,0.97f,0.85f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f
@@ -59,7 +68,7 @@ ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
 ModelArmOffsetR,0.4f,0.3f,0.3f
 ModelArmRotationL,-0.0f,-2.0f,2.0f
-ModelArmOffsetL,0.3f,0.3f,-0.4f
+ModelArmOffsetL,0.3f,0.5f,-0.4f
 
 AddParts,Base_Sys
 	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
@@ -77,6 +86,7 @@ AddParts,Base_Sys
 	
 	
 	AddChildParts,SYS_NormalMag_Branch
+		
 		AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 		AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 		RenderOnNormal
@@ -85,6 +95,7 @@ AddParts,Base_Sys
 		AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 		AddChildParts,body
+			SetAttachmentAttach1
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 			RenderOnNormal

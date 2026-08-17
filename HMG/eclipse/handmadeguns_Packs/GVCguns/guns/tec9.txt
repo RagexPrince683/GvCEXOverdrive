@@ -36,12 +36,19 @@ Rates,2,2,2
 //john browning would be proud
 
 attachRestriction,true
+
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 0.8, 0.1
+
+opticshift1,0,-0.044,0
+
 //allowattach,Suppressor
 
 ModelEquipped,-0.3f,0.5f,-0.2f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.523,0.523,0.523
-SimpleADSOffsetZ,0.57,0.57,0.57
+SimpleADSOffsetZ,0.4,0.4,0.4
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f
@@ -52,10 +59,10 @@ ModelArmOffsetR,0.38F,0.35F,0.4F
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.2f,0.7F,-0.2F
 
-SprintingPoint,0.8f,0.2f,0.5f
+SprintingPoint,0.8f,-0.1f,0.5f
 SprintingRotation,20f,60f,0f
 
-SoundSpeed,1.5f
+SoundSpeed,1f
 
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false
@@ -79,7 +86,7 @@ AddParts,mat1
     AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-
+    SetAttachmentAttach1
     AddReloadMotionKey,0,0,0,0,0,0,0,             5,0,0,0,0,0,0
     AddReloadMotionKey,5,0,0,0,0,0,0,             10,0,0,0,-15,0,45
     AddReloadMotionKey,10,0,0,0,-15,0,45,            25,0,0,0,-15,0,45

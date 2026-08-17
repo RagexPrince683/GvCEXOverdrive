@@ -36,6 +36,11 @@ Bursts,-1,-1,-1,1
 Rates,1.845,1.411,1.262,2
 
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 2, 1
+
+opticshift1,0,-0.088,0
 //allowattach,reddot
 //allowattach,scope
 //todo acog
@@ -46,7 +51,7 @@ Canfix,true
 FixAsEntity,true
 OnEntity_PlayerPosOffset,0,0,3
 
-ModelEquipped,-0.5f,0.5f,-0.7f
+ModelEquipped,-0.3f,0.5f,-0.3f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,1.075,1.075,1.075
 SimpleADSOffsetZ,0.5,0.5,0.5
@@ -70,7 +75,7 @@ ModelArmOffsetL,0.1f,0.3f,-0.4f
 SprintingPoint,0.5f,-0.2f,0.3f
 SprintingRotation,20f,60f,0f
 
-SoundSpeed,0.8F
+SoundSpeed,1F
 
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false
@@ -99,7 +104,7 @@ AddParts,Base_Sys
 		AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 		AddPitchInfoKey,-360,0,0,0,-360,0,0        ,360,0,0,0,360,0,0
-	
+		
 		AddReloadMotionKey,0 ,0,0,0,0,0,0,			5 ,0,0,0,0,0,0
 		AddReloadMotionKey,5 ,0,0,0,0,0,0,			15,0,0,0,0,0,-10
 		AddReloadMotionKey,15,0,0,0,0,0,-10,		  40,0,0,0,0,0,-10
@@ -155,7 +160,7 @@ AddParts,Base_Sys
 			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-	
+			SetAttachmentAttach1
 			AddReloadMotionKey,0,0,0,0,0,0,0,			5,0,0,0,0,0,0
 			AddReloadMotionKey,5,0,0,0,0,0,0,			15,0,0,0,90,0,0
 			AddReloadMotionKey,12,0,0,0,90,0,0,			65,0,0,0,90,0,0

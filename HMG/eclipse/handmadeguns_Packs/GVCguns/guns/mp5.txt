@@ -35,6 +35,11 @@ Bursts,1,-1,3,0
 Rates,1.5,1.5,1.5,1.5
 
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.3, 1.25
+
+opticshift1,0,-0.043,0
 allowattach,Bullet_AP
 //allowattach,Bullet_AT
 //unreliable
@@ -79,7 +84,7 @@ AddParts,mat1
     AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-
+    SetAttachmentAttach1
     AddReloadMotionKey,0,0,0,0,0,0,0,             5,0,0,0,0,0,0
     AddReloadMotionKey,5,0,0,0,0,0,0,             10,0,0,0,-15,0,45
     AddReloadMotionKey,10,0,0,0,-15,0,45,            25,0,0,0,-15,0,45

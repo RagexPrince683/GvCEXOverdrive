@@ -18,11 +18,11 @@ ReloadTime,200
 RemainingBullet,5
 
 Attacking,5.0f
-Zoom,4.0f,4.0f,4.0f
+Zoom,4.0f,1.0f,4.0f
 
 ZoomRender,true
-ZoomRenderType,false,false,false
-ZoomRenderTypeTxture,true,true,true
+ZoomRenderType,false,true,false
+ZoomRenderTypeTxture,true,false,true
 
 Texture,R700
 GunSound,handmadeguns.M40A5,handmadeguns.M40A5
@@ -37,6 +37,11 @@ CustomFlash,arrow,1
 Bursts,1
 //Rates,1
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.4, 1.25
+
+opticshift1,0,-0.055,-0.6
 allowattach,Bullet_AP
 allowattach,Bullet_AT
 
@@ -80,7 +85,7 @@ AddParts,mat1
 	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 	AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-
+	SetAttachmentAttach1
 	AddReloadMotionKey,0,true,	30
 	AddReloadMotionKey,30,0,0,0,0,0,0,	40,0,0,0,-5,-30,0
 	AddReloadMotionKey,30,0,0,0,-5,-30,0,	190,0,0,0,-5,-30,0
@@ -103,7 +108,7 @@ AddParts,mat1
 		AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
 		AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-
+		removeifattachpresent1
 		AddChildParts,cart_ammo
 			AddPartsRotationCenterAndRotationAmount,0,0.4703f,1.1899f,0,0,0
 			RenderOnNormal

@@ -41,11 +41,16 @@ attachRestriction,true
 //allowattach,Suppressor
 //allowattach,laser
 //allowattach,grip
+allowattach,attachmenttest
 allowattach,Bullet_AP
 allowattach,Bullet_AT
 
-ModelEquipped,-0.3f,0.2f,-0.4f
-ModelHigh,0.99f,0.99f,0.99f
+attachmentlocation1 = 0, 1.4, 1.65
+
+opticshift1,0,-0.015,0
+
+ModelEquipped,-0.3f,0.2f,-0.1f
+ModelHigh,0.95f,0.95f,0.95f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetZ,0.6,0.6,0.6
 //ModelWidthZ,0.4f,0.4f,0.4f
@@ -57,9 +62,9 @@ ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
 ModelArmOffsetR,0.4f,0.3f,0.3f
 ModelArmRotationL,-0.0f,-2.0f,2.0f
-ModelArmOffsetL,0.3f,0.3f,-0.4f
+ModelArmOffsetL,0.3f,0.6f,-0.4f
 
-SprintingPoint,0.8f,0.2f,0.5f
+SprintingPoint,0.5f,-0.1f,0.5f
 SprintingRotation,20f,60f,0f
 
 SoundSpeed,1.2f
@@ -95,6 +100,7 @@ AddParts,Base_Sys
 		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 		NeedDraw_Current_Magazine_ID_List,true,true
 		AddChildParts,mat1
+			SetAttachmentAttach1
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 			RenderOnNormal
@@ -208,6 +214,18 @@ AddParts,Base_Sys
 				AddReloadMotionKey,41,-0.3,1.3,0   ,0  ,30 ,0  ,    43,-0.3,1.3,-1  ,0,30,0
 				AddReloadMotionKey,43,-0.3,1.3,-1  ,0  ,30 ,0  ,    45,-0.3,1.3,0   ,0,30,0
 				AddReloadMotionKey,45,-0.3,1.3,0   ,0  ,30 ,0  ,    50,0   ,0  ,0   ,0,0,0
+			BackParts
+
+			AddChildParts,regsight
+				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+				AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
+				RenderOnNormal
+				AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
+				AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+				SetAsNormalParts
+				removeifattachpresent1
 			BackParts
 
 

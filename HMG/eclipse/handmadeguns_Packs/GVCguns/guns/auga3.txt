@@ -70,6 +70,11 @@ attachRestriction,true
 //allowattach,Bullet_AT
 //no either bad feed or blowing up emoji
 //allowattach,byfrou01_Bayonet
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.1, 1.25
+
+opticshift1,0,-0.036,0
 
 SoundSpeed,1f
 
@@ -111,7 +116,7 @@ AddParts,Sys_Zero_in
 
 	AddChildParts,mat1
 		SetAsNormalParts
-
+		SetAttachmentAttach1
 		AddReloadMotionKey,0 ,0,0,0,0,0,0,            5 ,0,0,0,0,0,0
 		AddReloadMotionKey,5 ,0,0,0,0,0,0,            15,0,0,0,15,0,30
 		AddReloadMotionKey,15,0,0,0,15,0,30,          30,0,0,0,15,0,30
@@ -164,7 +169,6 @@ AddParts,Sys_Zero_in
 
 		AddChildParts,Larm
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
-			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 			RenderOnNormal
 			AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
@@ -175,10 +179,10 @@ AddParts,Sys_Zero_in
 			AddReloadMotionKey,5,0,0,0,0,0,0,            10,0,-2,-1,0,0,0
 			AddReloadMotionKey,10,0,-2,-1,0,0,0,         30,0,0,-1,0,0,0
 
-			AddReloadMotionKey,30,0,0   ,-1  ,0,0, 0,    38,0,1.65,-1.8,0,0,90
-			AddReloadMotionKey,38,0,1.65,-1.8,0,0,90,    41,0,1.65,-2.8,0,0,90
-			AddReloadMotionKey,41,0,1.65,-2.8,0,0,90,    45,0,1.65,-1.8,0,0,90
-			AddReloadMotionKey,45,0,1.65,-1.8,0,0,90,    50,0,0   ,0   ,0,0,0
+			AddReloadMotionKey,30,0,0   ,-1,  0,0,0,     38,0,1.65,-1.6,0,0,90
+			AddReloadMotionKey,38,0,1.65,-1.6,0,0,90,    41,0,1.65,-1.9,0,0,90
+			AddReloadMotionKey,41,0,1.65,-1.9,0,0,90,    45,0,1.65,-1.6,0,0,90
+			AddReloadMotionKey,45,0,1.65,-1.6,0,0,90,    50,0,0,0,0,0,0
 		BackParts
 		AddChildParts,Rarm
 			AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0

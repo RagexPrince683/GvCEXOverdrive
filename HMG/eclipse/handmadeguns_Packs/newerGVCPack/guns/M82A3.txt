@@ -32,11 +32,11 @@ ReloadTime,65
 RemainingBullet,10
 
 Attacking,5.0f
-Zoom,8.0F,8.0F,16.0f
+Zoom,8.0F,1.0F,16.0f
 
 ZoomRender,true
-ZoomRenderType,false,false,false
-ZoomRenderTypeTxture,true,true,true
+ZoomRenderType,false,true,false
+ZoomRenderTypeTxture,true,false,true
 
 Texture,M82A3
 GunSound,handmadeguns.barret,handmadeguns.supu
@@ -50,13 +50,18 @@ CustomFlash,arrow,1
 Bursts,1
 //Rates,1
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 1.7, 1
+
+opticshift1,0,-0.203,0
 //allowattach,Bullet_Frag
 //allowattach,Bullet_AP
 allowattach,Bullet_AP
 allowattach,Bullet_AT
-allowattach,scope
+//allowattach,scope
 
-ModelEquipped,-0.7f,0.35f,-0.8f
+ModelEquipped,-0.1f,0.35f,0.1f
 ModelHigh,0.99F,0.99F,0.99F
 //ModelWidthX,0.6945f,0.6945f,0.6945f
 //ModelWidthZ,0.5f,0.5f,0.5f
@@ -92,6 +97,7 @@ AddParts,mat1
     AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
+    SetAttachmentAttach1
 
     AddReloadMotionKey,0 ,0,0,0,0,0,0,            5 ,0,0,0,0,0,0
     AddReloadMotionKey,5 ,0,0,0,0,0,0,            15,0,0,0,15,0,30
@@ -151,6 +157,7 @@ AddParts,mat1
     AddChildParts,mat20
     	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
     	RenderOnNormal
+	removeifattachpresent1
     	AddPartsOnADSOffsetAndRotation,0,0,0,0,0,0
     	AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
     	AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0

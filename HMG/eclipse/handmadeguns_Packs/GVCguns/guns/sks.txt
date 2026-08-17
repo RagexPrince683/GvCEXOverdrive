@@ -6,12 +6,12 @@ Recoil,5.0d
 ReloadTime,50
 RemainingBullet,10
 Attacking,6.0f
-Zoom,1.4f,4.0f,8.0f
+Zoom,1.0f,1.0f,8.0f
 ZoomRender,true
 ZoomRenderType,true,true,false
 ZoomRenderTypeTxture,false,false,true
 Texture,svt40
-SoundSpeed,1.2f
+SoundSpeed,1f
 GunSound,handmadeguns.SKS,handmadeguns.supu
 GunSoundReload,handmadeguns.f_reload_SVT
 GunSoundCooking,handmadeguns.a_cock
@@ -20,14 +20,25 @@ ObjModel,sks.mqo
 ObjTexture,a_pallete1.png
 ModelScala,0.5f
 InworldScale,1.8f
-ModelEquipped,-0.5f,0.3f,0.0f
+ModelEquipped,-0.3f,0.3f,-0.1f
 ModelHigh,1.38f,0.85f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f
 ModelWidthZ,0.0f,0.0f,0.0f
+
+SimpleADSOffsetY,0.42,0.42,0.42f
+SimpleADSOffsetX,-0,0,0
+
+SimpleADSOffsetZ,0.35,0.35,0.35
+
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f
 attachRestriction,true
+allowattach,attachmenttest
+
+attachmentlocation1 = 0, 0.7, 1.9
+
+opticshift1,0,-0.095,0
 allowattach,Bullet_AP
 allowattach,Bullet_AT
 
@@ -50,7 +61,7 @@ AddParts,mat1
     AddPartsOnRecoilOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
     AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
-
+    SetAttachmentAttach1
     AddReloadMotionKey,0 ,0,0,0,0,0,0,            5 ,0,0,0,0,0,0
     AddReloadMotionKey,5 ,0,0,0,0,0,0,            15,0,0,0,15,0,30
     AddReloadMotionKey,15,0,0,0,15,0,30,          30,0,0,0,15,0,30
