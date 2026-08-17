@@ -618,11 +618,6 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	protected void onBlockPenetrated(MovingObjectPosition hit, Block block, int metadata) {
 	}
 
-	/** Allows a projectile subtype to stop immediately after a confirmed block penetration. */
-	protected boolean shouldContinueAfterBlockPenetration() {
-		return true;
-	}
-
 	/** Returns the configured gravity applied to this projectile. */
 	protected float getBulletGravity() {
 		return this.gra;
@@ -1117,16 +1112,6 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 			onBlockPenetrated(movingobjectposition, hitBlock, hitMetadata);
 			// Start beyond this block's voxel so its exit face cannot trap the trace.
 			Vec3 nextTraceStart = getTraceStartBeyondBlock(movingobjectposition, motionVec, vec31);
-			if (!shouldContinueAfterBlockPenetration()) {
-				if (nextTraceStart != null) {
-					this.setPosition(nextTraceStart.xCoord, nextTraceStart.yCoord, nextTraceStart.zCoord);
-				} else if (movingobjectposition.hitVec != null) {
-					this.setPosition(movingobjectposition.hitVec.xCoord, movingobjectposition.hitVec.yCoord, movingobjectposition.hitVec.zCoord);
-				}
-				this.motionX = this.motionY = this.motionZ = 0.0D;
-				this.setDead();
-				return;
-			}
 			if (nextTraceStart == null) {
 				movingobjectposition = null;
 				break;
