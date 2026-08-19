@@ -7,3 +7,10 @@ Name,Grass Tint Skin
 GunSkin,true
 SkinTexture,skins/grass.png
 GunSkinItem,ar_sample_skingrass
+
+Recipe1,aa 
+Recipe2,bb 
+Recipe3,   
+ItemA,minecraft,dirt
+ItemB,minecraft,grass
+addNewRecipe,HandmadeGuns,ar_sample_skingrass,1

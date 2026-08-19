@@ -10,3 +10,11 @@ InventoryOffset,-1.2,-1.1,0
 
 RedDot,attachmenttest
 //addRecipe,reddot,1,a00,de0,000,331,0,0,265,265,0,0,0,0
+Recipe1, a 
+Recipe2,bbb
+Recipe3, c 
+ItemA,minecraft,redstone
+ItemB,HandmadeGuns,aluminumIngot
+ItemC,HandmadeGuns,polymer
+
+addNewRecipe,HandmadeGuns,attachmenttest,1

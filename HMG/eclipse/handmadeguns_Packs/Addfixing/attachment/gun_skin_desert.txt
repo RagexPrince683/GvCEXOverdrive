@@ -7,3 +7,10 @@ Name,Desert Tint Skin
 GunSkin,true
 SkinTexture,skins/desert.png
 GunSkinItem,ar_sample_skindesert
+
+Recipe1,aa 
+Recipe2,bb 
+Recipe3,   
+ItemA,minecraft,sand
+ItemB,minecraft,dirt
+addNewRecipe,HandmadeGuns,ar_sample_skindesert,1

@@ -7,3 +7,10 @@ Name,Snow Tint Skin
 GunSkin,true
 SkinTexture,skins/snow.png
 GunSkinItem,ar_sample_skinsnow
+
+Recipe1,aa 
+Recipe2,bb 
+Recipe3,   
+ItemA,minecraft,snow
+ItemB,minecraft,dirt
+addNewRecipe,HandmadeGuns,ar_sample_skinsnow,1
