@@ -52,5 +52,6 @@ DropMagazine,false
 
 InventoryScale,3.7
 
+GunSoundLV,157
 HG,Enfield Mk 2 Revolver
 Name,Enfield Mk 2 Revolver

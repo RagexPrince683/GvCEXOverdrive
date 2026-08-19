@@ -24,7 +24,7 @@ ZoomRenderTypeTxture,false,false,false
 
 Texture,PM
 GunSound,handmadeguns.Makarov,handmadeguns.supu
-GunSoundLV,4,4
+GunSoundLV,160,4
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,makarovfix.mqo
