@@ -60,7 +60,7 @@ ModelArmOffsetL,0.1f,0.7f,0.1f
 SprintingPoint,0.5f,-0.4f,-0.5f
 SprintingRotation,-50f,0f,0f
 
-SoundSpeed,0.8f
+SoundSpeed,1f
 
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false

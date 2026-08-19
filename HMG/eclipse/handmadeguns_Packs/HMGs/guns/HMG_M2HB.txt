@@ -400,7 +400,7 @@ GunSoundReloadLV,1.0f
 SprintingPoint,2.0f,-1.0f,2.0f
 SprintingRotation,50f,70f,-50f
 
-ModelEquipped,-0.75f,1.0f,2.0f
+ModelEquipped,-0.35f,1.0f,4.0f
 ModelHigh,2.2071f,0.7f,0.7f
 //ModelWidthX,0.693f,0.693f,0.693f
 //ModelWidthZ,3.0f,3.0f,3.0f
@@ -411,8 +411,8 @@ ModelRotationZ,180f,180f,180f
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
 ModelArmOffsetR,0.0f,1.0f,4.05f
-ModelArmRotationL,-0.0f,-2.3f,1.15f
-ModelArmOffsetL,0.3f,1.15f,1.85f
+ModelArmRotationL,-1.57f,-2.3f,1.15f
+ModelArmOffsetL,0.3f,1.35f,1.85f
 
 SimpleADSOffsetZ,3,3,3
 

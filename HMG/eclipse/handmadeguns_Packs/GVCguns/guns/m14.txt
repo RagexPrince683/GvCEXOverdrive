@@ -65,7 +65,7 @@ ModelArmOffsetR,0.4f,0.3577f,0.3f
 ModelArmRotationL,-0.0f,-2.0f,2.0f
 ModelArmOffsetL,0.2f,0.5f,-0.55f
 
-SprintingPoint,0.4f,0.3f,0.5f
+SprintingPoint,0.4f,0.1f,0.5f
 SprintingRotation,20f,60f,0f
 
 SoundSpeed,1f

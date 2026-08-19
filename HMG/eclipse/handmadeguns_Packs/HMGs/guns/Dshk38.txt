@@ -42,7 +42,7 @@ ModelScala,0.5
 InworldScale,1.8f
 ModelHigh,0.35,-0.0087,0.35
 SimpleADSOffsetZ,3,3,3
-ModelEquipped,-0.7F,0.35,1.0
+ModelEquipped,-0.5F,0.35,3.0
 Tabname,HMG_GVCGuns
 
 CustomFlash,CannonMuzzleFlash,3

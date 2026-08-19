@@ -42,7 +42,7 @@ Rates,1.845,1.845,1.845
 
 
 //ModelEquipped,-0.7f,0.7f,-0.4f
-ModelEquipped,-0.7f,0.2f,-0.5f
+ModelEquipped,-0.3f,0.4f,-0.55f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetZ,0,0,0
 //SimpleADSOffsetY,4,4,4
@@ -60,8 +60,8 @@ ModelArmOffsetR,-0.1f,0.25f,0.1f
 ModelArmRotationL,-0.0f,-2.35f,2.0f
 ModelArmOffsetL,0.23f,0.31f,-0.5f
 
-SprintingPoint,0.8f,0.2f,0.5f
-SprintingRotation,20f,60f,0f
+SprintingPoint,0.5f,0.2f,0.5f
+SprintingRotation,20f,60f,5f
 
 attachRestriction,true
 allowattach,attachmenttest

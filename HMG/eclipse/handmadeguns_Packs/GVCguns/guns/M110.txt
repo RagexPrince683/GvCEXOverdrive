@@ -47,7 +47,7 @@ attachmentlocation1 = 0, 1.1, 1.65
 
 opticshift1,0,0.1,-0.9
 
-ModelEquipped,-0.5f,0.7077f,-0.8f
+ModelEquipped,-0.3f,0.8f,-0.85f
 ModelHigh,0.99F,0.99F,0.99F
 ModelWidthX,0.6945f,0.6945f,0.6945f
 ModelWidthZ,0.5f,0.5f,0.5f
@@ -61,8 +61,8 @@ ModelArmOffsetR,0.4f,0.3577f,0.1f
 ModelArmRotationL,-0.0f,-2.0f,2.0f
 ModelArmOffsetL,0.3f,0.6f,-0.65f
 
-SprintingPoint,0.5f,0.0f,0.5f
-SprintingRotation,20f,60f,0f
+SprintingPoint,0.3f,0.0f,0.5f
+SprintingRotation,20f,60f,5f
 
 SoundSpeed,0.9f
 //none of this shit makes any goddamn sense

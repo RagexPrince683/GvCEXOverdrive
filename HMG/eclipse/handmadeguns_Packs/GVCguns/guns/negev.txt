@@ -61,7 +61,7 @@ OnEntity_Yoffset,0.27
 OnEntity_RotationPitchPoint,0,-0.27,0.600
 OnEntity_BarrelPoint,0,0.1,0.6
 
-ModelEquipped,-0.7f,0.55f,-0.2f
+ModelEquipped,-0.3f,0.55f,-0.0f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.745,0.745,0.745
 SimpleADSOffsetZ,0.8,0.8,0.8
@@ -73,9 +73,9 @@ OnEntity_PlayerPosOffset,0,0,3
 
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-ModelArmOffsetR,0.4f,0.38f,0.45f
+ModelArmOffsetR,0.3f,0.38f,0.45f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
-ModelArmOffsetL,0.6f,1.2f,-0.2f
+ModelArmOffsetL,0.5f,1.2f,-0.4f
 
 SprintingPoint,0.5f,-0.2f,0.5f
 SprintingRotation,20f,60f,0f

@@ -42,7 +42,7 @@ Rates,1.33
 
 attachRestriction,true
 
-ModelEquipped,-0.7f,0.7f,-0.5f
+ModelEquipped,0.1f,1.0f,0.3f
 ModelHigh,1.07F,1.07F,1.07F
 //ModelWidthX,0.0,0.694f,0.694f
 //ModelWidthZ,1.0F,1.0F,1.0F

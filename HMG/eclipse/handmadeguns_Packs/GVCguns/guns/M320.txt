@@ -27,7 +27,7 @@ ModelScala,0.5f
 InworldScale,2f
 CartridgeType,4
 
-ModelEquipped,-0.7f,0.5f,-0.65f
+ModelEquipped,-0.3f,0.5f,-0.65f
 SimpleADSOffsetX,0.25,0.25,0.25
 SimpleADSOffsetY,1,1,1
 SimpleADSOffsetZ,0.4,0.4,0.4

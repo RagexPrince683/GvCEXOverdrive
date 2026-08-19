@@ -47,10 +47,10 @@ attachmentlocation1 = 0, 1.55, 1.65
 opticshift1,0,0.01,0
 
 //ModelEquipped,-0.7f,0.7f,0.0f
-ModelEquipped,-0.7f,0.4f,-0.42f
+ModelEquipped,-0.2f,0.15f,-0.18f
 
-SprintingPoint,0.8f,-0.1f,0.5f
-SprintingRotation,20f,60f,0f
+SprintingPoint,0.3f,-0.1f,0.5f
+SprintingRotation,20f,60f,5f
 
 ModelHigh,0.97f,0.85f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f
@@ -68,7 +68,7 @@ ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
 ModelArmOffsetR,0.4f,0.3f,0.3f
 ModelArmRotationL,-0.0f,-2.0f,2.0f
-ModelArmOffsetL,0.3f,0.5f,-0.4f
+ModelArmOffsetL,0.3f,0.8f,-0.4f
 
 AddParts,Base_Sys
 	AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0

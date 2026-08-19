@@ -32,7 +32,7 @@ SimpleADSOffsetX,0.0,0.0,0.0
 SimpleADSOffsetY,1,1,1
 SimpleADSOffsetZ,0.0,0.0,0.0
 
-SprintingPoint,0.5f,-0.1f,0.5f
+SprintingPoint,0.5f,0.1f,0.5f
 
 ModelArm,true
 ModelArmRotationR,-1.57f,-0.2f,-1.57f

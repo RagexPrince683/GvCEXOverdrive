@@ -39,7 +39,7 @@ InworldScale,2.3f
 
 Motion,0.3
 
-ModelEquipped,-0.7f,0.4f,0.05f
+ModelEquipped,-0.3f,0.4f,0.35f
 //ModelHigh,0.575f,0.575f,0.575f
 
 SimpleADSOffsetX,0.18,0.18,0.18
@@ -59,7 +59,7 @@ ModelArmRotationL,-0.0f,-1.2f,2.0f
 ModelArmOffsetL,0.1f,0.4f,0.2f
 //SprintingPoint,0.0f,1f,0.2f
 //SprintingRotation,-45f,0f,10f
-SprintingPoint,0.3,-0.2,-0.2
+SprintingPoint,0.8,-0.3,0.8
 SprintingRotation,30f,45,0f
 
 BulletNameALL,byfrou01_Rocket

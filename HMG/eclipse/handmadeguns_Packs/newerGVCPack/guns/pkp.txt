@@ -59,7 +59,7 @@ OnEntity_Yoffset,0.27
 OnEntity_RotationPitchPoint,0,-0.27,0.600
 OnEntity_BarrelPoint,0,0.1,0.6
 
-ModelEquipped,-0.7f,0.35f,-0.6f
+ModelEquipped,-0.3f,0.35f,-0.1f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.995,0.995,0.995
 SimpleADSOffsetZ,0,0,0

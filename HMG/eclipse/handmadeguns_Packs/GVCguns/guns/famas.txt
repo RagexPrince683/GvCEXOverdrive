@@ -58,7 +58,7 @@ ModelArm,true
 ModelArmRotationR,-1.07f,-0.63f,-1.57f
 ModelArmOffsetR,-0.1f,0.25f,0.2f
 ModelArmRotationL,-0.0f,-2.35f,2.0f
-ModelArmOffsetL,0.23f,0.41f,-0.2f
+ModelArmOffsetL,0.23f,0.62f,-0.2f
 
 SprintingPoint,0.8f,0.2f,0.5f
 SprintingRotation,20f,60f,0f

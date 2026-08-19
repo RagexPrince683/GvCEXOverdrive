@@ -48,7 +48,7 @@ allowattach,Bullet_AP
 ModelEquipped,-0.3f,0.4f,-0.2f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.773,0.773,0.773
-SimpleADSOffsetZ,0.6,0.6,0.6
+SimpleADSOffsetZ,0.3,0.3,0.3
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f
@@ -60,7 +60,7 @@ ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.1f,0.6F,-0.38F
 
 SprintingRotation,-30,0f,0f
-SprintingPoint,0.5f,-0.0f,-0.3f
+SprintingPoint,0.0f,0.2f,-0.6f
 
 SoundSpeed,1.5f
 

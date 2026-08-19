@@ -41,11 +41,11 @@ allowattach,attachmenttest
 
 attachmentlocation1 = 0, 1.4, 1.25
 
-opticshift1,0,-0.055,-0.6
+opticshift1,0,-0.055,-0.8
 allowattach,Bullet_AP
 allowattach,Bullet_AT
 
-ModelEquipped,-0.7f,0.5f,-0.6f
+ModelEquipped,-0.2f,0.5f,-0.45f
 ModelHigh,0.99F,0.99F,0.99F
 ModelWidthX,0.6945f,0.6945f,0.6945f
 ModelWidthZ,0.5f,0.5f,0.5f
@@ -55,7 +55,7 @@ ModelRotationZ,180f,180f,180f
 
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-ModelArmOffsetR,0.4f,0.35f,0.25f
+ModelArmOffsetR,0.4f,0.25f,0.25f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.1f,0.5f,-0.5f
 
@@ -109,6 +109,7 @@ AddParts,mat1
 		AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 		AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 		removeifattachpresent1
+	BackParts
 		AddChildParts,cart_ammo
 			AddPartsRotationCenterAndRotationAmount,0,0.4703f,1.1899f,0,0,0
 			RenderOnNormal
@@ -239,7 +240,7 @@ AddParts,mat1
 					AddReloadMotionKey,190,0,0,0,		0,0,0,	200,0,0,0,0,0,0
 				BackParts
 			BackParts
-		BackParts
+		
 	BackParts
 
 Tabname,HMG_GVCGuns

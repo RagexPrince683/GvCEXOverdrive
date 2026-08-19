@@ -31,7 +31,7 @@ InventoryScale,3
 
 Motion,0.6
 
-ModelEquipped,-0.7f,0.0f,-0.55f
+ModelEquipped,0.1f,0.0f,-0.25f
 ModelHigh,0.775f,0.50f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f
 ModelWidthZ,0.8f,0.8f,0.8f

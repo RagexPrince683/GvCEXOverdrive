@@ -61,7 +61,7 @@ allowattach,Bullet_AP
 allowattach,Bullet_AT
 //allowattach,scope
 
-ModelEquipped,-0.1f,0.35f,0.1f
+ModelEquipped,-0.1f,0.55f,0.1f
 ModelHigh,0.99F,0.99F,0.99F
 //ModelWidthX,0.6945f,0.6945f,0.6945f
 //ModelWidthZ,0.5f,0.5f,0.5f
@@ -73,9 +73,9 @@ ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
 ModelArmOffsetR,0.4f,0.25f,0.33f
 ModelArmRotationL,-0.0f,-1.85f,2.0f
-ModelArmOffsetL,0.4f,0.25f,-0.5f
+ModelArmOffsetL,0.4f,0.45f,-0.5f
 
-SprintingPoint,0.5f,0.0f,0.5f
+SprintingPoint,0.5f,-0.2f,0.5f
 SprintingRotation,20f,60f,0f
 
 SoundSpeed,1

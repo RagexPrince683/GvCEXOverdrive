@@ -20,7 +20,7 @@ ObjModel,sks.mqo
 ObjTexture,a_pallete1.png
 ModelScala,0.5f
 InworldScale,1.8f
-ModelEquipped,-0.3f,0.3f,-0.1f
+ModelEquipped,-0.2f,0.3f,0.05f
 ModelHigh,1.38f,0.85f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f
 ModelWidthZ,0.0f,0.0f,0.0f
@@ -28,7 +28,7 @@ ModelWidthZ,0.0f,0.0f,0.0f
 SimpleADSOffsetY,0.42,0.42,0.42f
 SimpleADSOffsetX,-0,0,0
 
-SimpleADSOffsetZ,0.35,0.35,0.35
+SimpleADSOffsetZ,0.28,0.28,0.28
 
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
@@ -49,7 +49,7 @@ ModelArmRotationR,-1.57f,-0.2f,-1.57f
 ModelArmOffsetR,0.2f,0.5f,0.5f
 //ModelArmRotationL,-0.0f,-2.0f,2.0f
 ModelArmRotationL,-0.0f,-2.4f,2.0f
-ModelArmOffsetL,0.1f,0.6f,-0.3f
+ModelArmOffsetL,0.1f,0.7f,-0.3f
 
 //ModelArmOffsetL,0.13f,0.31f,-0.3f
 Magazine,0,HandmadeGuns,7.62mm Stripper

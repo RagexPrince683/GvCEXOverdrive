@@ -44,10 +44,10 @@ allowattach,Bullet_AP
 allowattach,Bullet_AT
 //allowattach,Suppressor
 
-ModelEquipped,-0.3f,0.4f,-0.2f
+ModelEquipped,-0.3f,0.4f,-0.1f
 SimpleADSOffsetX,0,0,0
-SimpleADSOffsetY,0.80,0.80,0.80
-SimpleADSOffsetZ,0.3,0.3,0.3
+SimpleADSOffsetY,0.802,0.802,0.802
+SimpleADSOffsetZ,0.1,0.1,0.1
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f
@@ -59,9 +59,9 @@ ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.1f,0.75F,-0.38F
 
 SprintingRotation,-30,0f,0f
-SprintingPoint,0.5f,-0.0f,-0.3f
+SprintingPoint,0.0f,-0.1f,-0.5f
 
-SoundSpeed,1.5f
+SoundSpeed,1f
 
 ScopeTexture,null.png,null.png,scope.png
 RenderCross,false

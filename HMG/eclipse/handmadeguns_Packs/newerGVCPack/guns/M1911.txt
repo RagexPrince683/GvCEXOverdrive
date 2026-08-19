@@ -45,14 +45,14 @@ allowattach,Bullet_AT
 
 //ModelEquipped,-0.7f,0.7f,0.0f
 
-ModelEquipped,-0.7f,0.7f,-0.2f
+ModelEquipped,-0.1f,0.7f,-0.3f
 
 SimpleADSOffsetX,0,0,0
 //SimpleADSOffsetY,0.0,0.0,0.0
 //SimpleADSOffsetY,0.55,0.55,0.55
-SimpleADSOffsetZ,0.7,0.7,0.7
+SimpleADSOffsetZ,0.5,0.5,0.5
 
-ModelHigh,1.27F,1.22F,1.07F
+ModelHigh,1.3F,1.3F,1.3F
 //ModelWidthX,0.694f,0.694f,0.694f
 //ModelWidthZ,1.0F,1.0F,1.0F
 ModelRotationX,180f,180f,180f
@@ -61,13 +61,13 @@ ModelRotationZ,180f,180f,180f
 	
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-ModelArmOffsetR,0.38F,0.28F,0.45F
+ModelArmOffsetR,0.32F,0.28F,0.35F
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.1f,0.53F,0.18F
 
 //SprintingRotation,-40,0f,0f
 
-SprintingPoint,0.5f,-0.4f,-0.1f
+SprintingPoint,0.0f,-0.4f,-0.1f
 SprintingRotation,-40f,0f,0f
 
 SoundSpeed,1.2f

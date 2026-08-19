@@ -36,7 +36,7 @@ InworldScale,1.8f
 
 Motion,0.6
 
-ModelEquipped,-0.7f,0.4f,0.55f
+ModelEquipped,-0.3f,0.4f,0.75f
 ModelHigh,0.775f,0.50f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f
 ModelWidthZ,1.2f,1.2f,1.2f

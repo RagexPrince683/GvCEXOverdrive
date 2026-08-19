@@ -57,7 +57,7 @@ FixAsEntity,true
 OnEntity_PlayerPosOffset,0,0,3
 
 //ModelEquipped,-0.7f,0.7f,0.0f
-ModelEquipped,-0.5f,0.5f,-0.7f
+ModelEquipped,-0.3f,0.5f,-0.3f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,1.075,1.075,1.075
 SimpleADSOffsetZ,0.6,0.6,0.6

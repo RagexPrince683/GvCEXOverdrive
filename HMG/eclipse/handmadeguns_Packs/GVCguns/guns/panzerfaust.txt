@@ -1,4 +1,4 @@
-BulletPower,200
+BulletPower,220
 BulletSpeed,0.12
 BlletSpread,1.0f
 isOneuse,true
@@ -33,10 +33,11 @@ InventoryScale,3
 Cartridge,false
 DropMagazine,false
 
-damagerange,5
+damagerange,1
+Explosion,0.5f
 
 //does nothing for some reason
-SimpleADSOffsetX,0,0,0
+SimpleADSOffsetX,0.2,0.2,0.2
 SimpleADSOffsetZ,0.5,0.5,0.5
 //ok now this doesnt work
 //SimpleADSOffsetY,2.4,2.4,2.4
@@ -45,8 +46,8 @@ SimpleADSOffsetZ,0.5,0.5,0.5
 
 Motion,0.5
 
-ModelEquipped,-0.7f,0.8f,-0.55f
-ModelHigh,0.775f,0.50f,0.85f
+ModelEquipped,-0.1f,0.8f,-0.15f
+ModelHigh,1.1f,1.1f,1.1f
 //because of this
 //ModelWidthX,0.694f,0.694f,0.694f
 //ModelWidthZ,0.8f,0.8f,0.8f

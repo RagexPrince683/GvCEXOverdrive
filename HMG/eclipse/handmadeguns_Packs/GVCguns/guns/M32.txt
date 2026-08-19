@@ -30,7 +30,7 @@ ADS_Spread_coefficient,0.1
 Motion,0.8
 
 
-ModelEquipped,-0.7f,0.5f,-0.3f
+ModelEquipped,-0.3f,0.5f,-0.3f
 ModelHigh,0.97f,0.85f,0.85f
 ModelWidthX,0.694f,0.694f,0.694f
 ModelWidthZ,0.0f,0.0f,0.0f
@@ -44,7 +44,7 @@ ModelArmOffsetR,0.3f,0.45f,0.7f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.55f,0.6f,0.1f
 
-SprintingPoint,0.5f,-0.2f,0.5f
+SprintingPoint,0.5f,-0.0f,0.5f
 
 Mat31Point,0.0f,0.2f,0.0f
 Mat31Rotation,0f,0f,60f

@@ -54,7 +54,7 @@ OnEntity_PlayerPosOffset,0,0,3
 ModelEquipped,-0.15f,0.5f,-0.3f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.975,0.975,0.975
-SimpleADSOffsetZ,0.5,0.5,0.5
+SimpleADSOffsetZ,0.1,0.1,0.1
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f

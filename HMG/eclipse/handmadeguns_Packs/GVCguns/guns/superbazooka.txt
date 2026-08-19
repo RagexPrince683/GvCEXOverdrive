@@ -31,7 +31,7 @@ Cartridge,false
 DropMagazine,false
 attachRestriction,true
 
-ModelEquipped,-0.5f,0.5f,-0.2f
+ModelEquipped,-0.3f,0.5f,0.4f
 ModelHigh,1.10f,0.85f,0.85f
 
 SimpleADSOffsetY,0.6,0.6,0.6
@@ -47,6 +47,9 @@ ModelArmRotationR,-1.57f,0f,-1.57f
 ModelArmOffsetR,0.3f,0.3f,0.5f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.2f,0.5f,-0.2f
+
+SprintingPoint,0.5f,-0.3f,0.5f
+SprintingRotation,20f,60f,5f
 
 ScopeTexture,rr.png,rr.png,scope.png
 RenderCross,false

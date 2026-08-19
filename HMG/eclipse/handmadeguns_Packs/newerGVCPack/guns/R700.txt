@@ -44,7 +44,7 @@ allowattach,Bullet_AP
 allowattach,Bullet_AT
 Motion,0.95
 
-ModelEquipped,-0.7f,0.5f,-0.6f
+ModelEquipped,-0.1f,0.5f,-0.55f
 ModelHigh,0.99F,0.99F,0.99F
 ModelWidthX,0.6945f,0.6945f,0.6945f
 ModelWidthZ,0.5f,0.5f,0.5f
@@ -58,9 +58,8 @@ ModelArmOffsetR,0.4f,0.35f,0.25f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.1f,0.5f,-0.5f
 
-SprintingPoint,0.5f,0.0f,0.5f
+SprintingPoint,0.2f,0.0f,0.3f
 SprintingRotation,20f,60f,0f
-
 SoundSpeed,1f
 
 ScopeTexture,scope_r700.png,scope_r700.png,scope_r700.png

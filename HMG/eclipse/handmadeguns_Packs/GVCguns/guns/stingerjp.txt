@@ -45,7 +45,7 @@ Magazine,0,HandmadeGuns,bullet_rr_hmgstingerjp
 
 Motion,0.8
 
-ModelEquipped,-0.7f,0.5f,-0.8f
+ModelEquipped,-0.2f,0.5f,-0.15f
 ThirdModelEquipped,0.5,0,-1.5
 SimpleADSOffsetX,0.4266,0.4266,0.4266
 SimpleADSOffsetY,0.612,0.614,0.614
@@ -56,10 +56,10 @@ ModelRotationZ2,0,0,0
 
 ModelArm,true
 ModelArmRotationR,-1.57f,-0.9f,-1.57f
-ModelArmOffsetR,-0.3f,0.2f,-0.35f
+ModelArmOffsetR,-0.2f,0.2f,0.15f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.1f,0.6f,-0.4f
-SprintingPoint,0.3,-0.2,-0.2
+SprintingPoint,0.3,-0.4,0.5
 SprintingRotation,30f,45,0f
 
 BulletNameALL,S-5

@@ -46,7 +46,7 @@ allowattach,Bullet_AT
 allowattach,Suppressor
 allowattach,grip
 
-ModelEquipped,-0.3f,0.4f,-0.3f
+ModelEquipped,0.1f,0.4f,0.1f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.775,0.775,0.775
 SimpleADSOffsetZ,0.7,0.7,0.7
@@ -56,11 +56,11 @@ ModelRotationZ,180f,180f,180f
 
 ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
-ModelArmOffsetR,0.38F,0.25F,0.3F
+ModelArmOffsetR,0.38F,0.25F,0.35F
 ModelArmRotationL,-0.0f,-2.3f,2.0f
-ModelArmOffsetL,0.2f,0.5F,-0.10F
+ModelArmOffsetL,0.2f,0.5F,0.60F
 
-SprintingPoint,0.5f,-0.0f,-0.3f
+SprintingPoint,0.0f,-0.3f,-0.3f
 SprintingRotation,-40,0f,0f
 
 SoundSpeed,1f

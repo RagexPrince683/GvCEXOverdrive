@@ -52,7 +52,7 @@ allowattach,Bullet_AT
 ModelEquipped,-0.3f,0.2f,-0.2f
 ModelHigh,0.87325f,0.85f,0.85f
 SimpleADSOffsetX,0,0,0
-SimpleADSOffsetZ,0.4,0.4,0.4
+SimpleADSOffsetZ,0.35,0.35,0.35
 //ModelWidthZ,0.4f,0.4f,0.4f
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
@@ -62,7 +62,7 @@ ModelArm,true
 ModelArmRotationR,-1.57f,0f,-1.57f
 ModelArmOffsetR,0.4f,0.3f,0.3f
 ModelArmRotationL,-0.0f,-2.0f,2.0f
-ModelArmOffsetL,0.3f,0.5f,-0.4f
+ModelArmOffsetL,0.3f,0.6f,-0.4f
 
 SprintingPoint,0.8f,0.0f,0.5f
 SprintingRotation,20f,60f,0f

@@ -45,7 +45,7 @@ opticshift1,0,-0.044,0
 
 //allowattach,Suppressor
 
-ModelEquipped,-0.3f,0.5f,-0.2f
+ModelEquipped,-0.1f,0.5f,-0.2f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.523,0.523,0.523
 SimpleADSOffsetZ,0.4,0.4,0.4
@@ -59,7 +59,7 @@ ModelArmOffsetR,0.38F,0.35F,0.4F
 ModelArmRotationL,-0.0f,-2.3f,2.0f
 ModelArmOffsetL,0.2f,0.7F,-0.2F
 
-SprintingPoint,0.8f,-0.1f,0.5f
+SprintingPoint,0.5f,-0.17f,0.5f
 SprintingRotation,20f,60f,0f
 
 SoundSpeed,1f

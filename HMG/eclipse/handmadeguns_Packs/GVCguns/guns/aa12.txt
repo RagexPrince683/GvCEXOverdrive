@@ -42,11 +42,18 @@ allowattach,Bullet_AP
 //eventually I will fix the mags/ammo to differentiate
 
 //ModelEquipped,-0.7f,0.7f,0.0f
-ModelEquipped,-0.7f,0.2f,-0.5f
+ModelEquipped,-0.2f,0.45f,-0.55f
+
+
 
 ModelHigh,0.89f,0.89f,0.89f
 ModelWidthX,0.694f,0.694f,0.694f
-ModelWidthZ,0.0f,0.0f,0.0f
+//ModelWidthZ,0.0f,0.0f,0.0f
+
+//SimpleADSOffsetY,0.42,0.42,0.42f
+SimpleADSOffsetX,-0,0,0
+
+SimpleADSOffsetZ,0.2,0.2,0.2
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f

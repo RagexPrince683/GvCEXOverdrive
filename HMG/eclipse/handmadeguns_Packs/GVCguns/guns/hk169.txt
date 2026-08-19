@@ -27,18 +27,18 @@ ModelScala,0.5f
 InworldScale,2f
 CartridgeType,4
 
-ModelEquipped,-0.7f,0.5f,-0.65f
+ModelEquipped,-0.1f,0.5f,-0.35f
 SimpleADSOffsetX,0.0,0.0,0.0
 SimpleADSOffsetY,1,1,1
-SimpleADSOffsetZ,0.8,0.8,0.8
+SimpleADSOffsetZ,0.5,0.5,0.5
 
 SprintingPoint,0.5f,-0.1f,0.5f
 
 ModelArm,true
 ModelArmRotationR,-1.57f,-0.2f,-1.57f
-ModelArmOffsetR,0.3f,0.3f,0.3f
+ModelArmOffsetR,0.3f,0.3f,0.45f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
-ModelArmOffsetL,0.1f,0.6f,-0.6f
+ModelArmOffsetL,0.1f,0.6f,-0.35f
 
 OnUnderGunOffset,0,-1.1,-1.6
 

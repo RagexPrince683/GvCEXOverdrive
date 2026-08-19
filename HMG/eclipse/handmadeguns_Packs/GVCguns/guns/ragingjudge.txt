@@ -41,22 +41,22 @@ attachRestriction,true
 //allowattach,Bullet_AP
 allowattach,Bullet_AT
 
-ModelEquipped,-0.7f,1.1f,-0.4f
+ModelEquipped,-0.1f,0.8f,-0.5f
 SimpleADSOffsetX,0,0,0
 SimpleADSOffsetY,0.55,0.55,0.55
-SimpleADSOffsetZ,0.8,0.8,0.8
+SimpleADSOffsetZ,0.3,0.3,0.3
 ModelRotationX,180f,180f,180f
 ModelRotationY,45f,45f,45
 ModelRotationZ,180f,180f,180f
 
 ModelArm,true
-ModelArmRotationR,-1.57f,0f,-1.50f
-ModelArmOffsetR,0.38f,0.38f,0.3f
+ModelArmRotationR,-1.07f,-0.63f,-1.57f
+ModelArmOffsetR,-0.1f,0.38f,0.2f
 ModelArmRotationL,-0.0f,-2.3f,2.0f
-ModelArmOffsetL,0.1f,0.7f,0.1f
+ModelArmOffsetL,0.15f,0.7f,0.1f
 
 //SprintingPoint,0.0f,-0.8f,-0.5f
-SprintingPoint,0.5f,-0.4f,-0.5f
+SprintingPoint,0.0f,-0.4f,-0.5f
 SprintingRotation,-50f,0f,0f
 
 //SoundSpeed,0.8f
