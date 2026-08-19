@@ -153,4 +153,5 @@ AddParts,mat1
 
 Tabname,HMG_GVCGuns
 
+GunSoundLV,159
 GL,M32 Milkor MGL

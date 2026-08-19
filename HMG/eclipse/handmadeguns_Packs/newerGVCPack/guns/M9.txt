@@ -23,7 +23,7 @@ ZoomRenderTypeTxture,false,false,false
 
 Texture,M9
 GunSound,handmadeguns.beretta,handmadeguns.supu
-GunSoundLV,4,4
+GunSoundLV,159,134
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,m9.mqo

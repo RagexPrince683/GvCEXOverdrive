@@ -137,4 +137,5 @@ AddParts,mat1
     BackParts
 
 Tabname,HMG_GVCGuns
+GunSoundLV,159
 GL,HK169

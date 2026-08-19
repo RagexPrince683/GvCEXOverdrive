@@ -48,5 +48,6 @@ RightType,0
 Magazine,0,HandmadeGuns,bullet_hg_hmgt8nambu
 Tabname,HMG_WW2Guns
 
+GunSoundLV,156
 HG,Type 14 Nambu
 Name,JPType 14 Nambu

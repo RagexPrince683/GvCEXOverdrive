@@ -57,7 +57,7 @@ elevationOffsets_info,50m ,90m , 130m,170m,250m,330m
 
 attachRestriction,true
 
-//パーツ追加開始
+//ﾆ恥ﾂーﾆ団窶凖�窶ｰﾃ�ﾅJﾅｽn
 
 AddParts,$body
     AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
@@ -103,6 +103,7 @@ AddParts,$body
 Name,L16 Mortar
 restrictTurretMoveSpeed,4,4
 TurretHP,20
+GunSoundLV,180
 GL,L16 Mortar
 
 //not sure what to do with this considering mcheli has mortars already too

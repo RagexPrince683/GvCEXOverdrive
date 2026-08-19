@@ -24,7 +24,7 @@ ZoomRenderTypeTxture,false,false,false
 
 Texture,M1911
 GunSound,handmadeguns.1911,handmadeguns.supu
-GunSoundLV,4,4
+GunSoundLV,157,131
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,m1911.mqo
