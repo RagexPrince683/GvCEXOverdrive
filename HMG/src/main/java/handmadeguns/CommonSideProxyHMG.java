@@ -175,6 +175,9 @@ public class CommonSideProxyHMG {
 	public void invalidateReloadableModels(){
 
 	}
+	public boolean reloadHeldItemModel(ItemStack heldItem){
+		return false;
+	}
 	public void AddModel(Object o){
 	}
 

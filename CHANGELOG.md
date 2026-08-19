@@ -1,5 +1,13 @@
 # Changelog
 
+## `/reloadsetonlyhelditem` (PR pending)
+
+- Add a player-only HMG command that selectively invalidates and reloads the model
+  resources and renderer for the currently held custom gun without running the
+  global `/reloadSettings` pack scan.
+- Add per-resource invalidation to the HMG gun, OBJ, and MQO model caches while
+  preserving their existing global-clear behavior.
+
 ## Allow numbered attachment anchors on model branches (PR pending)
 
 - Let multiple gun parts register the same numbered attachment slot so mutually
