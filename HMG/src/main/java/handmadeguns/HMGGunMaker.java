@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 
 import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
@@ -15,6 +18,7 @@ import handmadeguns.gunsmithing.GunSmithRecipe;
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.client.render.*;
 import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
+import handmadeguns.client.modelLoader.emb_modelloader.MQO_ModelLoader;
 import handmadevehicle.render.HMVVehicleParts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
@@ -51,6 +55,8 @@ public class HMGGunMaker {
 	private static final ScriptEngineManager SCRIPT_ENGINE_MANAGER = new ScriptEngineManager(null);
 	private static final Map<String, ResourceLocation> RESOURCE_LOCATION_CACHE = new HashMap<String, ResourceLocation>();
 	private static final Map<String, IModelCustom> MODEL_CACHE = new HashMap<String, IModelCustom>();
+	private static final Map<Item, File> GUN_SOURCE_FILES = new IdentityHashMap<Item, File>();
+	private static final Map<Item, Set<String>> ITEM_MODEL_PATHS = new IdentityHashMap<Item, Set<String>>();
 
 	// Safe defaults outside pack parsing; readPack still resets these for every pack.
 	public static float damageCof = 1;
@@ -989,7 +995,9 @@ public class HMGGunMaker {
 									System.out.println("Warning! Error!" + newgun.getUnlocalizedName());
 									e.printStackTrace();
 								}
+								if (isClient) recordGunSource(newgun, file1);
 								if (gunInfo.canobj && isClient) {
+									recordReloadableModel(newgun, file1, "handmadeguns:textures/model/" + objmodel);
 									IModelCustom gunobj = getCachedModel("handmadeguns:textures/model/" + objmodel);
 									ResourceLocation guntexture = getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
 									modelRegistrations++;
@@ -1097,7 +1105,9 @@ public class HMGGunMaker {
 								LanguageRegistry.instance().addNameForObject(newgun, "en_US", GunName);
 							}
 
+							if (isClient) recordGunSource(newgun, file1);
 							if (gunInfo.canobj && isClient) {
+								recordReloadableModel(newgun, file1, "handmadeguns:textures/model/" + objmodel);
 								ResourceLocation guntexture = getCachedResourceLocation("handmadeguns:textures/model/" + objtexture);
 								IModelCustom gunobj = getCachedModel("handmadeguns:textures/model/" + objmodel);
 								modelRegistrations++;
@@ -1330,6 +1340,51 @@ public class HMGGunMaker {
 
 	public static void clearCachedModels() {
 		MODEL_CACHE.clear();
+	}
+
+	public static void invalidateCachedModel(String path) {
+		MODEL_CACHE.remove(path);
+	}
+
+	private static void recordGunSource(Item item, File sourceFile) {
+		GUN_SOURCE_FILES.put(item, sourceFile);
+		ITEM_MODEL_PATHS.remove(item);
+	}
+
+	private static void recordReloadableModel(Item item, File sourceFile, String modelPath) {
+		GUN_SOURCE_FILES.put(item, sourceFile);
+		Set<String> paths = ITEM_MODEL_PATHS.get(item);
+		if (paths == null) {
+			paths = new LinkedHashSet<String>();
+			ITEM_MODEL_PATHS.put(item, paths);
+		}
+		paths.add(modelPath);
+	}
+
+	public static boolean reloadModelsForItem(Item item) {
+		File sourceFile = GUN_SOURCE_FILES.get(item);
+		Set<String> modelPaths = ITEM_MODEL_PATHS.get(item);
+		if (sourceFile == null || !sourceFile.isFile() || modelPaths == null || modelPaths.isEmpty()) return false;
+
+		// Never call the global invalidation path: this command owns only these resources.
+		for (String path : new ArrayList<String>(modelPaths)) {
+			ResourceLocation resource = getCachedResourceLocation(path);
+			invalidateCachedModel(path);
+			HMGObjModelLoader.invalidateModel(resource);
+			MQO_ModelLoader.invalidateModel(resource);
+		}
+		try {
+			File packDirectory = sourceFile.getParentFile() == null ? null : sourceFile.getParentFile().getParentFile();
+			if (packDirectory != null) HandmadeGunsCore.configurePackCoefficients(packDirectory);
+			new HMGGunMaker().load(true, sourceFile);
+			HMG_proxy.setUpModels();
+			Minecraft.getMinecraft().entityRenderer.itemRenderer.resetEquippedProgress();
+			return true;
+		} catch (RuntimeException reloadFailure) {
+			System.err.println("[HMG] Unable to reload held item model from " + sourceFile.getPath());
+			reloadFailure.printStackTrace();
+			return false;
+		}
 	}
 
 	public static IModelCustom getCachedModel(String path) {

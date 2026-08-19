@@ -22,6 +22,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import handmadeguns.blocks.HMGBlockMounter;
 import handmadeguns.command.HMG_CommandReloadparm;
+import handmadeguns.command.HMG_CommandReloadSetOnlyHeldItem;
 import handmadeguns.command.HMG_CommandReloadparmNoModel;
 import handmadeguns.command.HMG_CommandManual;
 import handmadeguns.guide.HMGGuideIntegration;
@@ -1161,6 +1162,7 @@ public class HandmadeGunsCore {
 		event.registerServerCommand(new HMG_CommandManual());
 		net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(hmg_commandReloadparm);
 		net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(hmgCommandReloadparmNoModel);
+		net.minecraftforge.client.ClientCommandHandler.instance.registerCommand(new HMG_CommandReloadSetOnlyHeldItem());
 	}
 
 	//TODO:INJ

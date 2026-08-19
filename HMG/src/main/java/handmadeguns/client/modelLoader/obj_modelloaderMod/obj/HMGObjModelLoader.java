@@ -40,6 +40,12 @@ public class HMGObjModelLoader implements IModelCustomLoader
         HMGVboModelCache.releaseAll();
     }
 
+    /** Remove one resource without disturbing models owned by other item renderers. */
+    public static void invalidateModel(ResourceLocation resource)
+    {
+        MODEL_CACHE.remove(resource.toString());
+    }
+
     public static IModelCustom loadHMGModel(ResourceLocation resource) throws ModelFormatException
     {
         if (!resource.getResourcePath().toLowerCase(Locale.ROOT).endsWith(".obj"))

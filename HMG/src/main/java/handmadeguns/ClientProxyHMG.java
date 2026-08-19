@@ -662,6 +662,10 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 		HMGObjModelLoader.clearModelCache();
 		MQO_ModelLoader.clearModelCache();
 	}
+	@Override
+	public boolean reloadHeldItemModel(ItemStack heldItem){
+		return HMGGunMaker.reloadModelsForItem(heldItem == null ? null : heldItem.getItem());
+	}
 	public void AddModel(Object o){
 		modelList.add((IModelCustom_HMG) o);
 	}

@@ -38,6 +38,12 @@ public class MQO_ModelLoader implements IModelCustomLoader
 		MODEL_CACHE.clear();
 	}
 
+	/** Remove one resource without turning a held-item refresh into a global reload. */
+	public static void invalidateModel(ResourceLocation resource)
+	{
+		MODEL_CACHE.remove(resource.toString());
+	}
+
     public IModelCustom loadInstance(ResourceLocation resource) throws ModelFormatException
     {
         String key = resource.toString();
