@@ -154,5 +154,6 @@ ScopeTexture,ironsight.png,holosight.png,leupold_itm.png
 RenderCross,false
 Automatic,true
 
+GunSoundLV,165,1
 SR,Gewehr 43
 Name,Gewehr 43

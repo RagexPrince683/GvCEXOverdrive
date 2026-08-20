@@ -159,5 +159,6 @@ Magazine,0,HandmadeGuns,thomp30
 MagazineSG,0,HandmadeGuns,bullet_shell_hmg
 MagazineGL,0,HandmadeGuns,bullet_rr_hmg
 
+GunSoundLV,164,1
 AR,M1A1 Thompson Submachine Gun
 Name,M1A1 Thompson Submachine Gun

@@ -28,7 +28,7 @@ ZoomRenderTypeTxture,false,false,false
 
 Texture,RPK74
 GunSound,handmadeguns.RPK74,handmadeguns.fire
-GunSoundLV,4,4
+GunSoundLV,165,4
 GunSoundReload,handmadeguns.reload
 
 SoundSpeed,1f

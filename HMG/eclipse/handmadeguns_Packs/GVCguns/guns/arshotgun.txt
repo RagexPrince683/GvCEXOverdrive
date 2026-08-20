@@ -304,6 +304,7 @@ Tabname,HMG_GVCGuns
 
 Name,AR-12
 guntype,1
+GunSoundLV,161,1
 Unified_guns,AR-12
 //SGF,AR12
 

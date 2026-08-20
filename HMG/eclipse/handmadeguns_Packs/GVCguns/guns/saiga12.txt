@@ -303,6 +303,7 @@ Tabname,HMG_GVCGuns
 
 Name,Saiga-12
 guntype,1
+GunSoundLV,161,1
 Unified_guns,Saiga-12
 //SGF,saiga12
 

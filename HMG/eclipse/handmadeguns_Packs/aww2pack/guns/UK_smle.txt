@@ -199,5 +199,6 @@ Automatic,false
 
 
 Tabname,HMG_WW2Guns
+GunSoundLV,165,1
 SR,Lee Enfield (Short Magazine Lee Enfield) Mk 1
 Name,Lee Enfield (Short Magazine Lee Enfield) Mk 1

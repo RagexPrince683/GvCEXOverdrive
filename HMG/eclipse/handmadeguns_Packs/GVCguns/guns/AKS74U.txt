@@ -23,7 +23,7 @@ ZoomRenderTypeTxture,false,false,true
 
 Texture,AKS74U
 GunSound,handmadeguns.AKS74U,handmadeguns.AKS74U
-GunSoundLV,4,4
+GunSoundLV,165,4
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,AK74.mqo

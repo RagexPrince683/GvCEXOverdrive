@@ -235,6 +235,7 @@ AddParts,Sys_Zero_in
 
 Tabname,HMG_GVCGuns
 Name,QBZ-95/Type 95 Automatic Rifle
+GunSoundLV,165,1
 AR,QBZ95
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280

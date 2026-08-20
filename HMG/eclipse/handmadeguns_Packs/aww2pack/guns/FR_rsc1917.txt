@@ -158,5 +158,6 @@ AddParts,mat1
     BackParts
 Tabname,HMG_WW2Guns
 
+GunSoundLV,165,1
 SR,Fusil Automatique Rifle Model 1917
 Name,Fusil Automatique Rifle Model 1917

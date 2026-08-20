@@ -1,5 +1,10 @@
 # Changelog
 
+## Audit HMG firearm sound levels (PR pending)
+
+- Audit all parser-recognized unified-gun registrations in every HMG TXT pack and add or update rounded peak impulse `GunSoundLV` data where credible firearm or close-caliber measurements apply.
+- Keep every sound-level record parser-safe with both required numeric fields, preserve unused second values for restricted non-suppressor guns, and leave ambiguous identities, launch impulses, and non-fired weapons unresolved rather than inventing measurements.
+
 ## `/reloadsetonlyhelditem` (PR pending)
 
 - Add a player-only HMG command that selectively invalidates and reloads the model

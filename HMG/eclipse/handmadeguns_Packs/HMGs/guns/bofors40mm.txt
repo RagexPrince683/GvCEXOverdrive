@@ -50,7 +50,7 @@ Turretanglelimit,15,-85,360,-360
 
 attachRestriction,true
 
-//パーツ追加開始
+//ﾆ恥ﾂーﾆ団窶凖�窶ｰﾃ�ﾅJﾅｽn
 
 AddParts,obj10
     AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
@@ -94,6 +94,7 @@ AddParts,obj10
 Name,Bofors-40mm
 restrictTurretMoveSpeed,4,4
 TurretHP,100
+GunSoundLV,180,1
 LMG,bofors_40mm
 
 

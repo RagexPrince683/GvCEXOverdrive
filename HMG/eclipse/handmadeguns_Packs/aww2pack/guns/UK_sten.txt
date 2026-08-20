@@ -159,5 +159,6 @@ AddParts,mat1
         AddReloadMotionKey,45,0,0,0,0,0,0,          50,0,0,0,0,0,0
     BackParts
 Tabname,HMG_WW2Guns
+GunSoundLV,160,1
 AR,Sten Mk.II Submachine Gun
 

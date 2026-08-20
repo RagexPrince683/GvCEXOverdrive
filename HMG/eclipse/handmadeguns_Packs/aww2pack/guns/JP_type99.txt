@@ -139,5 +139,6 @@ AddParts,mat1
 		AddReloadMotionKey,41,0,0,-1.2,0,0,0,	45,0,0,0,0,0,0
 		AddReloadMotionKey,45,0,0,0,0,0,0,		50,0,0,0,0,0,0
 	BackParts
+GunSoundLV,165,1
 LMG,Type 99 Light Machine Gun
 Name,JPType 99 Light Machine Gun

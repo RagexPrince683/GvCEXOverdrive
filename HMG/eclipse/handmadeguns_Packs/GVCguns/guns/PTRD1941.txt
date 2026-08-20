@@ -200,4 +200,5 @@ BulletNameALL,14_5mmBullet
 BulletNameCart,14_5mmCart
 Name,PTRD-41
 Tabname,HMG_GVCGuns
+GunSoundLV,172,1
 SR,PTRD1941

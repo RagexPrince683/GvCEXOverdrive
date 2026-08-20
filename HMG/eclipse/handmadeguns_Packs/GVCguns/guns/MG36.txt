@@ -340,6 +340,7 @@ AddParts,Base_Sys
 			    	BackParts
 			BackParts
 Name,HK MG36
+GunSoundLV,165,1
 AR,MG36
 
 

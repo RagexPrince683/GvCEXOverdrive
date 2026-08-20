@@ -277,6 +277,7 @@ AddParts,Base_Sys
 BulletNameALL,byfrou01_GreenTracer
 Tabname,HMG_GVCGuns
 Name,IWI Negev
+GunSoundLV,165,1
 LMG,IWI Negev
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280

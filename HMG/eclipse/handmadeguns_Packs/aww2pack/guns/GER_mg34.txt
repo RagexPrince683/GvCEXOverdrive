@@ -211,5 +211,6 @@ AddParts,Base_Sys
 			AddReloadMotionKey,91,0,0,-1.2,0,0,0,		95,0,0,0,0,0,0
 			AddReloadMotionKey,100,0,0,0,0,0,0,		100,0,0,0,0,0,0
 		BackParts
+GunSoundLV,165,1
 LMG,Maschinengewehr 34 (MG34)
 Name,Maschinengewehr 34 (MG34)

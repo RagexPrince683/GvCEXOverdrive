@@ -135,7 +135,7 @@ AddParts,mat1
 			AddReloadMotionKey,160,-0.4,0,-1.2,0,0,0,		   165,0,0,-1.2,0,0,0
 		BackParts
 
-		//”rä°‚³‚ê‚éƒJ[ƒgƒŠƒbƒW
+		//æ’è¢ã•ã‚Œã‚‹ã‚«ãƒ¼ãƒˆãƒªãƒƒã‚¸
 		AddChildParts,cart
 			AddPartsRotationCenterAndRotationAmount,0,0.4703f,1.1899f,0,0,0
 			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
@@ -152,26 +152,26 @@ AddParts,mat1
 			AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 			AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 
-			//ƒRƒbƒLƒ“ƒOƒ‚[ƒVƒ‡ƒ“
+			//ã‚³ãƒƒã‚­ãƒ³ã‚°ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³
 			AddCockMotionKey,0,0,0,0,0,0,0,		  2,0,0,0,0,0,0
-			//ƒ{ƒ‹ƒg‚ğ¶‚É‰ñ‚µ‚Ä
+			//ãƒœãƒ«ãƒˆã‚’å·¦ã«å›ã—ã¦
 			AddCockMotionKey,2,0,0,0,0,0,0,		  4,0,0,0,0,0,-90
-			//ˆø‚¢‚Ä
+			//å¼•ã„ã¦
 			AddCockMotionKey,4,0,0,0,0,0,-90,		9,0,0,-1.2,0,0,-90
-			//”rä°‚µ‚Ä
+			//æ’è¢ã—ã¦
 			AddCockMotionKey,9,0,0,-1.2,0,0,-90,	 11,0,0,-1.2,0,0,-90
-			//–ß‚µ‚Ä
+			//æˆ»ã—ã¦
 			AddCockMotionKey,11,0,0,-1.2,0,0,-90,	16,0,0,0,0,0,-90
-			//–ß‚·
+			//æˆ»ã™
 			AddCockMotionKey,16,0,0,0,0,0,-90,	   18,0,0,0,0,0,0
 
 			AddCockMotionKey,18,0,0,0,0,0,0,		 20,0,0,0,0,0,0
 
 
 			AddReloadMotionKey,0,0,0,0,0,0,0,		  4,0,0,0,0,0,0
-			//ƒ{ƒ‹ƒg‚ğ¶‚É‰ñ‚µ‚Ä
+			//ãƒœãƒ«ãƒˆã‚’å·¦ã«å›ã—ã¦
 			AddReloadMotionKey,4,0,0,0,0,0,0,		  8,0,0,0,0,0,-90
-			//ˆø‚¢‚Ä
+			//å¼•ã„ã¦
 			AddReloadMotionKey,8,0,0,0,0,0,-90,		13,0,0,-1.2,0,0,-90
 
 			AddReloadMotionKey,13,0,0,-1.2,0,0,-90,			175,0,0,-1.2,0,0,-90
@@ -242,4 +242,5 @@ AddParts,mat1
 
 Tabname,HMG_GVCGuns
 Name,Remington Model 700
+GunSoundLV,165,1
 SR,Remington Model 700

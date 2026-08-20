@@ -189,4 +189,5 @@ Tabname,HMG_GVCGuns
 Name,SKS
 //AR,SKS
 
+GunSoundLV,165,1
 SR,SKS

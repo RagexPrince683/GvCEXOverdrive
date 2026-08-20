@@ -168,6 +168,7 @@ BackParts
 
 Tabname,HMG_GVCGuns
 Name,M134 Mini-Gun
+GunSoundLV,170,1
 AR,M134
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280

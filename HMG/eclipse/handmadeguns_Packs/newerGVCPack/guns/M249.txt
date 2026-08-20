@@ -285,4 +285,5 @@ AddParts,Base_Sys
 BulletNameALL,byfrou01_PinkTracer
 Tabname,HMG_GVCGuns
 Name,FN M249 (Minimi)
+GunSoundLV,165,1
 LMG,FN M249 (Minimi)

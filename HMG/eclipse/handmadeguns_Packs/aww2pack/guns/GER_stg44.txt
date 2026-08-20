@@ -240,6 +240,7 @@ Tabname,HMG_WW2Guns
 //Name,Sturmgewehr 44 (StG-44)
 //AR,Sturmgewehr 44 (StG-44)
 Name,StG-44
+GunSoundLV,165,1
 AR,StG-44
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280

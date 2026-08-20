@@ -221,4 +221,5 @@ Tabname,HMG_GVCGuns
 Name,Modern SKS
 //AR,SKSM
 
+GunSoundLV,165,1
 SR,SKSM

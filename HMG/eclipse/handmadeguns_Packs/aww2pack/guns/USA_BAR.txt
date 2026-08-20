@@ -146,5 +146,6 @@ AddParts,mat1
         AddReloadMotionKey,45,0,0,0,0,0,0,          50,0,0,0,0,0,0
     BackParts
 
+GunSoundLV,165,1
 AR,M1918 Browning Automatic Rifle
 Name,M1918 Browning Automatic Rifle

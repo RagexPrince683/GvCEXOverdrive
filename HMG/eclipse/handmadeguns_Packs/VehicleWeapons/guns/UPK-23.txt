@@ -26,4 +26,5 @@ Turretanglelimit,0,0,0,0
 
 Tabname,VehicleWeapons
 Name,UPK-23
+GunSoundLV,180,1
 Unified_guns,UPK-23
