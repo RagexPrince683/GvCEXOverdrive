@@ -36,9 +36,6 @@ public class HGMetalBlocks {
                 .setCreativeTab(HGMetalItems.tabHmgOres);
         GameRegistry.registerBlock(aluminumOre, "aluminumOre");
 
-        GameRegistry.addSmelting(copperOre, new ItemStack(HGMetalItems.copperIngot), 0.7f);
-        GameRegistry.addSmelting(aluminumOre, new ItemStack(HGMetalItems.aluminumIngot), 0.7f);
-
         // ===== STORAGE BLOCKS =====
 
         copperBlock = new BlockCompressed(MapColor.adobeColor)
@@ -59,7 +56,18 @@ public class HGMetalBlocks {
                 .setCreativeTab(HGMetalItems.tabHmgOres);
         GameRegistry.registerBlock(aluminumBlock, "aluminumBlock");
 
-        // ===== STORAGE RECIPES =====
+        // ===== OREDICT =====
+
+        OreDictionary.registerOre("oreCopper", copperOre);
+        OreDictionary.registerOre("oreAluminum", aluminumOre);
+
+        OreDictionary.registerOre("blockCopper", copperBlock);
+        OreDictionary.registerOre("blockAluminum", aluminumBlock);
+    }
+
+    public static void registerRecipes() {
+        GameRegistry.addSmelting(copperOre, new ItemStack(HGMetalItems.copperIngot), 0.7f);
+        GameRegistry.addSmelting(aluminumOre, new ItemStack(HGMetalItems.aluminumIngot), 0.7f);
 
         GameRegistry.addRecipe(new ItemStack(copperBlock),
                 "III",
@@ -81,16 +89,8 @@ public class HGMetalBlocks {
                 new ItemStack(aluminumBlock)
         );
 
-        // ===== OREDICT =====
-
-        OreDictionary.registerOre("oreCopper", copperOre);
-        OreDictionary.registerOre("oreAluminum", aluminumOre);
-
-        OreDictionary.registerOre("blockCopper", copperBlock);
-        OreDictionary.registerOre("blockAluminum", aluminumBlock);
     }
 }
-
 
 
 

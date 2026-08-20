@@ -9,6 +9,7 @@ import java.util.List;
 
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunSmithRecipeCategory;
+import handmadeguns.gunsmithing.DeferredHMGRecipes;
 import handmadeguns.gunsmithing.GunSmithRecipe;
 import handmadeguns.items.*;
 import handmadeguns.client.render.HMGRenderItemCustom;
@@ -730,20 +731,8 @@ public class HMGAddAttachment
 								itemi = Item.getItemById(ii);
 
 
-								GameRegistry.addRecipe(new ItemStack(additem, kazu1),
-										re1,
-										re2,
-										re3,
-										'a', itema,
-										'b', itemb,
-										'c', itemc,
-										'd', itemd,
-										'e', iteme,
-										'f', itemf,
-										'g', itemg,
-										'h', itemh,
-										'i', itemi
-								);
+								DeferredHMGRecipes.queueLegacyRecipe(new ItemStack(additem, kazu1), new String[] { re1, re2, re3 },
+                                        new Item[] { itema, itemb, itemc, itemd, iteme, itemf, itemg, itemh, itemi });
 								itema = null;
 								itemb = null;
 								itemc = null;
@@ -767,7 +756,7 @@ public class HMGAddAttachment
 
 
 								if(itema != null && additem != null)
-								GameRegistry.addSmelting(itema, new ItemStack(additem), xp);
+								DeferredHMGRecipes.queueSmelting(itema, new ItemStack(additem), xp);
 								itema = null;
 							}
 						}
@@ -807,14 +796,7 @@ public class HMGAddAttachment
 								ItemStack output = new ItemStack(additem, kazu1);
 
 								String[] rows = new String[] { re1, re2, re3 };
-								GunSmithRecipe recipe = GunSmithRecipeRegistry.createLegacyShapedRecipe(
-										output, rows, legacyRecipeIngredients, file1, GunSmithRecipeCategory.AMMO);
-								if (recipe != null) {
-									GameRegistry.addRecipe(output,
-											GunSmithRecipeRegistry.createLegacyVanillaRecipeArguments(
-													rows, legacyRecipeIngredients));
-									GunSmithRecipeRegistry.register(recipe);
-								}
+								DeferredHMGRecipes.queueContentPackRecipe(output, rows, legacyRecipeIngredients, file1, GunSmithRecipeCategory.AMMO);
 
 							} catch (Exception e) {
 								System.out.println("[HMG] ERROR: Failed to register crafting recipe for -> "

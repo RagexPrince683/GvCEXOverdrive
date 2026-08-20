@@ -31,6 +31,7 @@ import handmadeguns.entity.bullets.*;
 import handmadeguns.event.*;
 import handmadeguns.compat.backtools.BackToolsRenderBridge;
 import handmadeguns.gunsmithing.GunSmithNetwork;
+import handmadeguns.gunsmithing.DeferredHMGRecipes;
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
 import handmadeguns.gunsmithing.GunSmithTable;
 import handmadeguns.gunsmithing.GunSmithTableTileEntity;
@@ -702,7 +703,12 @@ public class HandmadeGunsCore {
 	@EventHandler
 	public void init(FMLInitializationEvent pEvent) {
 
+		HGBaseItems.registerRecipes();
+		HGMetalBlocks.registerRecipes();
 		HGGunRecipes.init();
+		DeferredHMGRecipes.registerAll();
+		readPackRecipe(new File(HMG_proxy.ProxyFile(), "handmadeguns_Packs"));
+		readPackRecipe(new File(HMG_proxy.ProxyFile(), "mods/handmadeguns/addgun"));
 		// Removal must precede application so a gun crafted with its currently applied skin removes it.
 		GameRegistry.addRecipe(new handmadeguns.recipes.HMGRecipeRemoveGunSkin());
 		GameRegistry.addRecipe(new handmadeguns.recipes.HMGRecipeApplyGunSkin());
@@ -1101,9 +1107,6 @@ public class HandmadeGunsCore {
 
 		//TODO:INJECT_FUNCTION
 		//AddRecipe
-		readPackRecipe(new File(HMG_proxy.ProxyFile(), "handmadeguns_Packs"));
-		String filepath = "mods/handmadeguns/addgun";
-		readPackRecipe(new File(HMG_proxy.ProxyFile(), filepath));
 		HMG_proxy.setUpModels();
 	}
 

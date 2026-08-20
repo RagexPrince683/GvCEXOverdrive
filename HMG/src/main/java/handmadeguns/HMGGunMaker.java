@@ -16,6 +16,7 @@ import handmadeguns.items.*;
 import handmadeguns.items.guns.*;
 import handmadeguns.gunsmithing.GunSmithRecipe;
 import handmadeguns.gunsmithing.GunSmithRecipeRegistry;
+import handmadeguns.gunsmithing.DeferredHMGRecipes;
 import handmadeguns.client.render.*;
 import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGObjModelLoader;
 import handmadeguns.client.modelLoader.emb_modelloader.MQO_ModelLoader;
@@ -1187,12 +1188,8 @@ public class HMGGunMaker {
 								itemh = Item.getItemById(ih);
 								itemi = Item.getItemById(ii);
 
-								GameRegistry.addRecipe(new ItemStack(additem, num), re1, re2, re3,
-										'a', itema, 'b', itemb,
-										'c', itemc, 'd', itemd,
-										'e', iteme, 'f', itemf,
-										'g', itemg, 'h', itemh,
-										'i', itemi);
+								DeferredHMGRecipes.queueLegacyRecipe(new ItemStack(additem, num), new String[] { re1, re2, re3 },
+                                        new Item[] { itema, itemb, itemc, itemd, iteme, itemf, itemg, itemh, itemi });
 							}
 						} else if (type[0].equals("addSmelting")) {
 							Item additem = GameRegistry.findItem("HandmadeGuns", type[1]);
@@ -1203,7 +1200,7 @@ public class HMGGunMaker {
 								itema = Item.getItemById(ia);
 
 								if(itema != null && additem != null)
-								GameRegistry.addSmelting(itema, new ItemStack(additem), xp);
+								DeferredHMGRecipes.queueSmelting(itema, new ItemStack(additem), xp);
 							}
 						} else if (type[0].equals("addSmelting2")) {
 							Item additem = GameRegistry.findItem(type[1], type[2]);
@@ -1212,7 +1209,7 @@ public class HMGGunMaker {
 								itema = GameRegistry.findItem(type[3], type[4]);
 
 								if(itema != null && additem != null)
-								GameRegistry.addSmelting(itema, new ItemStack(additem), xp);
+								DeferredHMGRecipes.queueSmelting(itema, new ItemStack(additem), xp);
 							}
 						}
 
@@ -1246,15 +1243,9 @@ public class HMGGunMaker {
 								int num = parseInt(type[3]);
 
 								ItemStack output = new ItemStack(additem, num);
-								GunSmithRecipe gunSmithRecipe = GunSmithRecipeRegistry.createLegacyShapedRecipe(
-										output, new String[] { re1, re2, re3 }, legacyRecipeIngredients, file1);
-								if (gunSmithRecipe != null) {
-									GameRegistry.addRecipe(output,
-											GunSmithRecipeRegistry.createLegacyVanillaRecipeArguments(
-													new String[] { re1, re2, re3 }, legacyRecipeIngredients));
-									GunSmithRecipeRegistry.register(gunSmithRecipe);
-									HandmadeGunsCore.Debug("Loaded crafting recipe for: %s:%s x%s", type[1], type[2], num);
-								}
+								DeferredHMGRecipes.queueContentPackRecipe(output, new String[] { re1, re2, re3 },
+                                        legacyRecipeIngredients, file1, GunSmithRecipeRegistry.categoryForOutput(output));
+                                HandmadeGunsCore.Debug("Loaded crafting recipe for: %s:%s x%s", type[1], type[2], num);
 
 							} catch (Exception e) {
 								System.out.println("[HMG] ERROR: Failed to register crafting recipe for -> "
