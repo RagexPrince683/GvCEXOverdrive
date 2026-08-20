@@ -64,7 +64,7 @@ RightType,0
 Magazine,0,HandmadeGuns,null
 
 
-
+GunSoundLV,185,185
 
 Tabname,HMG_GVCGuns
 Name,AT-4

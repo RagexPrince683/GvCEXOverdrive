@@ -70,6 +70,7 @@ ReloadMotion
 5,     120f,0f,0f, 0f   , 0f   , 0f , 0f, 0f,1f,0f   , 0f   , 0f  , 0f, 0f    , 0f,0f,0f, 0f, 0f, 0f,0f,0f,0f,0f ,0f ,0f, 0f, 0f, 0f, 0f, 0f
 }
 
+GunSoundLV,188,188
 
 Tabname,HMG_GVCGuns
 Name,Mk153 SMAW

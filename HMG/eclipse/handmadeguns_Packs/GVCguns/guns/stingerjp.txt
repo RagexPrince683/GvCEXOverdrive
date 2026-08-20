@@ -116,6 +116,8 @@ AddParts,mat1
     BackParts
 BackParts
 
+GunSoundLV,165,165
+
 Tabname,HMG_GVCGuns
 Name,Type 91 Manpads
 RR,type91mp

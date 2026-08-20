@@ -107,6 +107,8 @@ AddParts,obj1
     BackParts
 BackParts
 
+GunSoundLV,165,165
+
 Tabname,HMG_GVCGuns
 Name,9K38 Igla
 RR,9k38

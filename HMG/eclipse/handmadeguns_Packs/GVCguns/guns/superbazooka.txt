@@ -58,5 +58,7 @@ RightType,0
 Magazine,0,HandmadeGuns,bullet_rr_hmgsbaz
 Tabname,HMG_GVCGuns
 
+GunSoundLV,163,163
+
 RR,M20A1 Super Bazooka
 Name,M20A1 Super Bazooka

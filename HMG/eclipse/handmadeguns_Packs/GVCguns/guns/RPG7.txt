@@ -73,6 +73,8 @@ ReloadMotion
 4,     50f,0f,0f,-0.3f, 0.3f, 0f  , 0f, 0f,0f,0f   , 0f   , 0f   , 0f, 0f    ,0f,0f,0f,0f,0f,0f,0f,0f,0f, 0f , 0f, 0f, 0f, 0f, 0f, 0f, 0f
 }
 
+GunSoundLV,182,182
+
 
 Tabname,HMG_GVCGuns
 Name,RPG-7

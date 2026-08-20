@@ -93,6 +93,8 @@ lockSound_NoStop,true
 //bulletStability,0.0002
 SACLOS_Homing,true
 
+GunSoundLV,160,160
+
 
 Tabname,HMG_GVCGuns
 Name,FGM-148 Javelin
