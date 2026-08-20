@@ -24,7 +24,7 @@ ZoomRenderTypeTxture,false,false,false
 
 Texture,deagle
 GunSound,handmadeguns.deagle,handmadeguns.supu
-GunSoundLV,163,4
+GunSoundLV,4,4
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,deagle.mqo

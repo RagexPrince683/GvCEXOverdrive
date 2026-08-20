@@ -23,7 +23,7 @@ ZoomRenderTypeTxture,false,false,false
 
 Texture,M1895Nagant
 GunSound,handmadeguns.ragingjudge,handmadeguns.ragingjudge
-GunSoundLV,164,4
+GunSoundLV,4,4
 GunSoundReload,handmadeguns.reload
 //CanObj,true
 ObjModel,raging_judge.mqo

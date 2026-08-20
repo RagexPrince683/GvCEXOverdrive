@@ -23,7 +23,7 @@ ZoomRenderTypeTxture,false,false,false
 
 Texture,G17
 GunSound,handmadeguns.glock,handmadeguns.supu
-GunSoundLV,159,127
+GunSoundLV,4,4
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,g17.mqo

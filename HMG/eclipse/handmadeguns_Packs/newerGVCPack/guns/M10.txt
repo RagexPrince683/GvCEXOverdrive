@@ -23,7 +23,7 @@ ZoomRenderTypeTxture,false,false,false
 
 Texture,M10
 GunSound,handmadeguns.mac10,handmadeguns.supu
-GunSoundLV,160,130
+GunSoundLV,4,4
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,m10.mqo

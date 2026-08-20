@@ -23,7 +23,7 @@ ZoomRenderTypeTxture,false,false,false
 
 Texture,M1895Nagant
 GunSound,handmadeguns.nagantrevolver,handmadeguns.supu
-GunSoundLV,156,4
+GunSoundLV,4,4
 GunSoundReload,handmadeguns.reload
 CanObj,true
 ObjModel,M1895Nagant.mqo
