@@ -1,5 +1,15 @@
 # Changelog
 
+## Fix HMG recipe lifecycle and Ore Dictionary consistency (PR pending)
+
+- Defer content-pack crafting, smelting, and Gun Smithing Table recipes until the
+  initialization phase, after every mod has registered its pre-initialization ores.
+- Build vanilla `ShapedOreRecipe` and Gun Smithing Table recipes from one canonical
+  normalized ingredient map so both accept the same Ore Dictionary members while
+  NBT-bearing and non-Ore-Dictionary stacks remain exact.
+- Separate polymer and metal-block recipes from their pre-initialization item,
+  block, and Ore Dictionary registration.
+
 ## Audit HMG firearm sound levels (PR pending)
 
 - Audit all parser-recognized unified-gun registrations in every HMG TXT pack and add or update rounded peak impulse `GunSoundLV` data where credible firearm or close-caliber measurements apply.

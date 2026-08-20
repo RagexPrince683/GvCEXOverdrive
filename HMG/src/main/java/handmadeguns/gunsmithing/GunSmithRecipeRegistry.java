@@ -47,6 +47,12 @@ public final class GunSmithRecipeRegistry {
     public static GunSmithRecipe createLegacyShapedRecipe(ItemStack output, String[] rows,
                                                            ItemStack[] symbols, File sourceFile,
                                                            GunSmithRecipeCategory category) {
+        return createLegacyShapedRecipe(output, rows, normalizeLegacySymbols(symbols), sourceFile, category);
+    }
+
+    public static GunSmithRecipe createLegacyShapedRecipe(ItemStack output, String[] rows,
+                                                           GunTableIngredient[] symbols, File sourceFile,
+                                                           GunSmithRecipeCategory category) {
         if (output == null || rows == null || rows.length != 3) return null;
         GunTableIngredient[] ingredients = new GunTableIngredient[GunSmithRecipe.SLOT_COUNT];
         for (int row = 0; row < 3; row++) {
@@ -61,20 +67,30 @@ public final class GunSmithRecipeRegistry {
                             sourceFile == null ? "unknown file" : sourceFile.getPath(), symbol, row + 1, column + 1);
                     return null;
                 }
-                ingredients[row * 3 + column] = normalizeIngredient(symbols[symbol - 'a']);
+                ingredients[row * 3 + column] = symbols[symbol - 'a'];
             }
         }
         return new GunSmithRecipe(output, ingredients, category);
     }
 
-    /** Builds Forge's shaped-recipe argument list from the same legacy symbol table. */
-    public static Object[] createLegacyVanillaRecipeArguments(String[] rows, ItemStack[] symbols) {
+    public static GunTableIngredient[] normalizeLegacySymbols(ItemStack[] symbols) {
+        GunTableIngredient[] normalized = new GunTableIngredient[symbols == null ? 0 : symbols.length];
+        for (int i = 0; i < normalized.length; i++)
+            if (symbols[i] != null) normalized[i] = normalizeIngredient(symbols[i]);
+        return normalized;
+    }
+
+    /** Builds a ShapedOreRecipe argument list from the canonical normalized symbols. */
+    public static Object[] createForgeRecipeArguments(String[] rows, GunTableIngredient[] symbols) {
         ArrayList<Object> recipe = new ArrayList<Object>();
         for (int row = 0; row < 3; row++) recipe.add(rows[row]);
         if (symbols != null) for (int i = 0; i < symbols.length; i++) {
             if (symbols[i] != null) {
                 recipe.add(Character.valueOf((char) ('a' + i)));
-                recipe.add(symbols[i]);
+                GunTableIngredient ingredient = symbols[i];
+                recipe.add(ingredient instanceof OreDictionaryIngredient
+                        ? ((OreDictionaryIngredient) ingredient).getOreName()
+                        : ((ExactStackIngredient) ingredient).getExactStack());
             }
         }
         return recipe.toArray(new Object[recipe.size()]);

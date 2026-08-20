@@ -36,14 +36,14 @@ public class HGBaseItems {
 
         GameRegistry.registerItem(polymer, "polymer");
 
-        // Polymer
+        OreDictionary.registerOre("ingotAnyPlastic", new ItemStack(polymer, 1, 0));
+    }
+
+    public static void registerRecipes() {
         GameRegistry.addShapelessRecipe(
                 new ItemStack(polymer, 16),
                 new ItemStack(Items.slime_ball),
                 new ItemStack(Items.reeds)
         );
-        OreDictionary.registerOre("ingotAnyPlastic", new ItemStack(polymer, 1, 0));
-
     }
 }
-
