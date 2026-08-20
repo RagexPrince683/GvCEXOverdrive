@@ -248,4 +248,5 @@ BulletNameALL,longbullet
 BulletNameCart,longcart
 Tabname,HMG_GVCGuns
 Name,Lynx GM6
+GunSoundLV,165,1
 SR,lynx

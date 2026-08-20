@@ -156,5 +156,6 @@ AddParts,mat1
 		BackParts
 	BackParts
 
+GunSoundLV,165,1
 SR,Mosin Nagant
 Name,Mosin Nagant

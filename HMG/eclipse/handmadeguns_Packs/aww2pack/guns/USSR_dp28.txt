@@ -141,5 +141,6 @@ AddParts,mat1
 		AddReloadMotionKey,45,0,0,0,0,0,0,		50,0,0,0,0,0,0
 	BackParts
 
+GunSoundLV,165,1
 LMG,DP-28 Degtyaryov Light Machine Gun
 Name,DP-28 Degtyaryov Light Machine Gun

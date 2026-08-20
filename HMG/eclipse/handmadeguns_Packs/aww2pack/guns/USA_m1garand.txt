@@ -118,5 +118,6 @@ AddParts,mat1
 		AddReloadMotionKey,45,0,0,0,0,0,0,		50,0,0,0,0,0,0
 	BackParts
 
+GunSoundLV,165,1
 SR,M1 Garand (.30-06)
 Name,M1 Garand (.30-06)

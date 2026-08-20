@@ -262,6 +262,7 @@ AddParts,Sys_Zero_in
 
 Tabname,HMG_GVCGuns
 Name,Steyr AUG A3
+GunSoundLV,165,1
 AR,Steyr AUG A3
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280

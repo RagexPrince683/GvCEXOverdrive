@@ -448,6 +448,7 @@ AddParts,Base_Sys
 
 Tabname,HMG_GVCGuns
 Name,HK416
+GunSoundLV,165,1
 AR,HK416
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280

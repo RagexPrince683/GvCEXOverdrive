@@ -280,6 +280,7 @@ AddParts,Base_Sys
 
 Tabname,HMG_GVCGuns
 Name,AR-10 (STANDARD MAG)
+GunSoundLV,165,1
 AR,AR10
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280

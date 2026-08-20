@@ -204,6 +204,7 @@ AddParts,Base_Sys
 	
 
 Name,HK G36K
+GunSoundLV,165,1
 AR,G36K
 
 

@@ -155,5 +155,6 @@ AddParts,mat1
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
     BackParts
     
+GunSoundLV,160,1
 AR,MAS-38
 Name,MAS-38

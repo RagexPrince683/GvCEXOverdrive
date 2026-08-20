@@ -299,6 +299,7 @@ Tabname,HMG_GVCGuns
 
 Name,SPAS-15
 guntype,1
+GunSoundLV,161,1
 Unified_guns,SPAS-15
 //SGF,AR12
 

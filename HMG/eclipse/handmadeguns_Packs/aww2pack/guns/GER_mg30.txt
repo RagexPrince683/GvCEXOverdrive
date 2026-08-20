@@ -144,5 +144,6 @@ AddParts,mat1
 		AddReloadMotionKey,41,0,0,-1.2,0,0,0,	45,0,0,0,0,0,0
 		AddReloadMotionKey,45,0,0,0,0,0,0,		50,0,0,0,0,0,0
 	BackParts
+GunSoundLV,165,1
 LMG,Maschinengewehr 30 (MG 30 7.92x57mm Mauser)
 Name,Maschinengewehr 30 (MG 30 7.92x57mm Mauser)

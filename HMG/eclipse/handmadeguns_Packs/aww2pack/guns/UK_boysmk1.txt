@@ -206,5 +206,6 @@ AddParts,mat1
 		BackParts
 	BackParts
 
+GunSoundLV,172,1
 AMR,Boys Anti-Tank Rifle Mk 1
 Name,Boys Anti-Tank Rifle Mk 1

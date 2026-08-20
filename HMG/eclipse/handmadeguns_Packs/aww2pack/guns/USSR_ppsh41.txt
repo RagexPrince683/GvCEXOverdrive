@@ -162,5 +162,6 @@ Magazine,0,HandmadeGuns,bullet_hg_hmgppsh
 MagazineSG,0,HandmadeGuns,bullet_shell_hmg
 MagazineGL,0,HandmadeGuns,bullet_rr_hmg
 
+GunSoundLV,160,1
 AR,PPSh-41 Submachine Gun
 Name,PPSh-41 Submachine Gun

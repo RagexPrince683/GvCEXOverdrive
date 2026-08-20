@@ -255,6 +255,7 @@ AddParts,Sys_Zero_in
 
 Tabname,HMG_GVCGuns
 Name,SA-80 L8581
+GunSoundLV,165,1
 AR,L8581
 
 //addRecipe,AR_sample,1,abc,0ef,000,265,265,265,280,265,280,280,280,280

@@ -87,6 +87,7 @@ MultiMagazine,HandmadeGuns:bullet_shell_hmg,HandmadeGuns:bullet_shell_slug,Handm
 
 Tabname,HMG_GVCGuns
 guntype,1
+GunSoundLV,161,1
 Unified_guns,M26 Mass
 
 //addRecipe,M870,1,abc,def,000,265,265,280,280,265,280,280,280,280

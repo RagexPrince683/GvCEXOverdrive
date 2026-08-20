@@ -202,7 +202,7 @@ AddParts,SYS_RotationBySight
 	            BackParts
 	        BackParts
 
-	        //”rä°‚³‚ê‚éƒJ[ƒgƒŠƒbƒW
+	        //æ’è¢ã•ã‚Œã‚‹ã‚«ãƒ¼ãƒˆãƒªãƒƒã‚¸
 	        AddChildParts,cart
 	            AddPartsRotationCenterAndRotationAmount,0,0.4703f,1.1899f,0,0,0
 	            AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
@@ -210,7 +210,7 @@ AddParts,SYS_RotationBySight
 	            AddCockMotionKey,9,0,0,-0.85,0,0,0,         12,-0.2,0,-0.85,0,0,0
 	            AddCockMotionKey,12,-0.2,0,-0.85,0,0,0,     14,-0.3,-0.4,-0.85,0,0,0
 	        BackParts
-	        //‘•“U—pƒNƒŠƒbƒv
+	        //è£…å¡«ç”¨ã‚¯ãƒªãƒƒãƒ—
 	        AddChildParts,clipplane
 	    	        AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
 	    	        AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -234,26 +234,26 @@ AddParts,SYS_RotationBySight
 	            AddPartsOnCockOffsetAndRotation,0,0,0,0,0,0
 	            AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
 
-	            //ƒRƒbƒLƒ“ƒOƒ‚[ƒVƒ‡ƒ“
+	            //ã‚³ãƒƒã‚­ãƒ³ã‚°ãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³
 	            AddCockMotionKey,0,0,0,0,0,0,0,          2,0,0,0,0,0,0
-	            //ƒ{ƒ‹ƒg‚ğ¶‚É‰ñ‚µ‚Ä
+	            //ãƒœãƒ«ãƒˆã‚’å·¦ã«å›ã—ã¦
 	            AddCockMotionKey,2,0,0,0,0,0,0,          4,0,0,0,0,0,-90
-	            //ˆø‚¢‚Ä
+	            //å¼•ã„ã¦
 	            AddCockMotionKey,4,0,0,0,0,0,-90,        9,0,0,-0.9,0,0,-90
-	            //”rä°‚µ‚Ä
+	            //æ’è¢ã—ã¦
 	            AddCockMotionKey,9,0,0,-0.9,0,0,-90,     11,0,0,-0.9,0,0,-90
-	            //–ß‚µ‚Ä
+	            //æˆ»ã—ã¦
 	            AddCockMotionKey,11,0,0,-0.9,0,0,-90,    16,0,0,0,0,0,-90
-	            //–ß‚·
+	            //æˆ»ã™
 	            AddCockMotionKey,16,0,0,0,0,0,-90,       18,0,0,0,0,0,0
 
 	            AddCockMotionKey,18,0,0,0,0,0,0,         20,0,0,0,0,0,0
 
 
 	            AddReloadMotionKey,0,0,0,0,0,0,0,          4,0,0,0,0,0,0
-	            //ƒ{ƒ‹ƒg‚ğ¶‚É‰ñ‚µ‚Ä
+	            //ãƒœãƒ«ãƒˆã‚’å·¦ã«å›ã—ã¦
 	            AddReloadMotionKey,4,0,0,0,0,0,0,          8,0,0,0,0,0,-90
-	            //ˆø‚¢‚Ä
+	            //å¼•ã„ã¦
 	            AddReloadMotionKey,8,0,0,0,0,0,-90,        13,0,0,-0.9,0,0,-90
 
 	    	    AddReloadMotionKey,9,0,0,-0.9,0,0,-90,            20,0,0,-0.9,0,0,-90
@@ -295,5 +295,6 @@ UseUnderGun'smodel,true
 UnderGunRotation,0,0,0
 UnderGunOffset,0f,0.1703,8.8311f
 //6.5x50mm Arisaka
+GunSoundLV,163,1
 SR,Type 38 Rifle (6.5x50mm Arisaka)
 Name,JPType 38 Rifle (6.5x50mm Arisaka)

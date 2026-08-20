@@ -170,4 +170,5 @@ BackParts
 
 Tabname,HMG_GVCGuns
 Name,M14 Battle Rifle
+GunSoundLV,165,1
 SR,m14

@@ -143,5 +143,6 @@ AddParts,mat1
 		AddReloadMotionKey,55,0,0,0,0,0,0,		  60,0,0,0,0,0,0
 	BackParts
 
+GunSoundLV,172,1
 AMR,PTRS-41
 Name,PTRS-41

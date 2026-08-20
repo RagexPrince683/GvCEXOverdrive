@@ -163,5 +163,6 @@ AddParts,mat1
         AddReloadMotionKey,41,0,0,-0.6,0,0,0,       45,0,0,0,0,0,0
         AddReloadMotionKey,45,0,0,0,0,0,0,          50,0,0,0,0,0,0
     BackParts
+GunSoundLV,160,1
 AR,Type 100 Submachine Gun (1944)
 Name,JPType 100 Submachine Gun (1944)

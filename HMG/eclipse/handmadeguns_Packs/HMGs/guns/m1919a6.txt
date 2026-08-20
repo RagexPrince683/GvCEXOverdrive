@@ -230,7 +230,7 @@ AddChildParts,naught
         AddBulletPositions,9,0.7828,-1.3706,0,0,0,-90 , 10,0.7828,-1.626,0,0,0,-90
 
     BackParts
-    //’e–ò1
+    //Â’eÂ–Ã²1
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -250,7 +250,7 @@ AddChildParts,naught
         AddReloadMotionKey,52,0,-0.25,-1.6,0,0,0 , 60,0,-0.25,-1.6,0,0,0
 
     BackParts
-    //’e–ò2
+    //Â’eÂ–Ã²2
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -269,7 +269,7 @@ AddChildParts,naught
         AddReloadMotionKey,58,0,0,0,0,0,0 , 60,0,0,0,0,0,0
 
     BackParts
-    //’e–ò3
+    //Â’eÂ–Ã²3
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -287,7 +287,7 @@ AddChildParts,naught
         AddReloadMotionKey,58,0.2564,0,0,0,0,0 , 60,0.2564,0,0,0,0,0
 
     BackParts
-    //’e–ò4
+    //Â’eÂ–Ã²4
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -304,7 +304,7 @@ AddChildParts,naught
         AddReloadMotionKey,58,0.5121,0,0,0,0,0 , 60,0.5121,0,0,0,0,0
 
     BackParts
-    //’e–ò5
+    //Â’eÂ–Ã²5
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -320,7 +320,7 @@ AddChildParts,naught
         AddReloadMotionKey,58,0.7143,-0.1142,0,0,0,-50.1 , 60,0.7143,-0.1142,0,0,0,-50.1
 
     BackParts
-    //’e–ò6
+    //Â’eÂ–Ã²6
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -335,7 +335,7 @@ AddChildParts,naught
         AddReloadMotionKey,58,0.7828,-0.3461,0,0,0,-90 , 60,0.7828,-0.3461,0,0,0,-90
 
     BackParts
-    //’e–ò7
+    //Â’eÂ–Ã²7
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -349,7 +349,7 @@ AddChildParts,naught
         AddReloadMotionKey,58,0.7828,-0.6021,0,0,0,-90 , 60,0.7828,-0.6021,0,0,0,-90
 
     BackParts
-    //’e–ò8
+    //Â’eÂ–Ã²8
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -362,7 +362,7 @@ AddChildParts,naught
         AddReloadMotionKey,58,0.7828,-0.8588,0,0,0,-90 , 60,0.7828,-0.8588,0,0,0,-90
 
     BackParts
-    //’e–ò9
+    //Â’eÂ–Ã²9
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0
@@ -374,7 +374,7 @@ AddChildParts,naught
         AddReloadMotionKey,58,0.7828,-1.1141,0,0,0,-90 , 60,0.7828,-1.1141,0,0,0,-90
 
     BackParts
-    //’e–ò10
+GunSoundLV,165,5.0f
     AddChildParts,bullet1
         AddPartsRotationCenterAndRotationAmount,0.0264,-1.481,0,0,0,0
         AddPartsOnReloadOffsetAndRotation,0,0,0,0,0,0

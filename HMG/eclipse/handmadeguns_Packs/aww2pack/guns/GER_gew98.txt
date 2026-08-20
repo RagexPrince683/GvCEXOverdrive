@@ -178,4 +178,5 @@ AddParts,mat1
 		BackParts
 	BackParts
 
+GunSoundLV,165,1
 SR,Gewehr 98 (7.92x57mm Mauser)

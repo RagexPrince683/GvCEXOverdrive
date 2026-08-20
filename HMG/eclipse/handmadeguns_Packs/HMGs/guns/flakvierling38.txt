@@ -46,7 +46,7 @@ Turretanglelimit,0,-85,360,-360
 
 attachRestriction,true
 
-//パーツ追加開始
+//ﾆ恥ﾂーﾆ団窶凖�窶ｰﾃ�ﾅJﾅｽn
 
 AddParts,SYS_ALL_Base
     AddPartsRotationCenterAndRotationAmount,0,0,0,0,0,0
@@ -90,6 +90,7 @@ AddParts,SYS_ALL_Base
 
 Name,Flak-38
 TurretHP,100
+GunSoundLV,180,1
 LMG,Flak-38
 
 
