@@ -35,20 +35,29 @@ public class HMGManualGunPickup {
 
     public static EntityItem getLookedAtGunItem(EntityPlayer player, double range) {
         if (player == null || player.worldObj == null) return null;
+        range = Math.max(0.1D, range);
         Vec3 start = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
         Vec3 look = player.getLook(1.0F);
         Vec3 end = start.addVector(look.xCoord * range, look.yCoord * range, look.zCoord * range);
 
+        double maximumHitDistance = range * range;
+        if (manualGunPickupRequiresLineOfSight) {
+            MovingObjectPosition blockHit = player.worldObj.rayTraceBlocks(start, end);
+            if (blockHit != null && blockHit.hitVec != null) {
+                maximumHitDistance = start.squareDistanceTo(blockHit.hitVec);
+            }
+        }
+
         AxisAlignedBB search = player.boundingBox.addCoord(look.xCoord * range, look.yCoord * range, look.zCoord * range).expand(1.0D, 1.0D, 1.0D);
         List list = player.worldObj.getEntitiesWithinAABB(EntityItem.class, search);
         EntityItem closest = null;
-        double closestDistance = range * range;
+        double closestDistance = maximumHitDistance;
 
         for (Object object : list) {
             EntityItem entityItem = (EntityItem) object;
             if (!isManualPickupEntity(entityItem)) continue;
 
-            AxisAlignedBB box = entityItem.boundingBox.expand(0.25D, 0.25D, 0.25D);
+            AxisAlignedBB box = entityItem.boundingBox.expand(0.5D, 0.5D, 0.5D);
             MovingObjectPosition hit = box.calculateIntercept(start, end);
             if (hit == null) continue;
 
@@ -74,13 +83,6 @@ public class HMGManualGunPickup {
         EntityItem lookedAt = getLookedAtGunItem(player, range);
         if (lookedAt != entityItem) return false;
 
-        if (manualGunPickupRequiresLineOfSight) {
-            Vec3 start = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
-            Vec3 target = Vec3.createVectorHelper(entityItem.posX, entityItem.posY + entityItem.height * 0.5D, entityItem.posZ);
-            MovingObjectPosition blockHit = player.worldObj.rayTraceBlocks(start, target);
-            if (blockHit != null) return false;
-        }
-
         return true;
     }
 
@@ -101,6 +103,9 @@ public class HMGManualGunPickup {
         if (pickedUp <= 0) return false;
 
         player.inventory.markDirty();
+        if (player.inventoryContainer != null) {
+            player.inventoryContainer.detectAndSendChanges();
+        }
         entityItem.playSound("random.pop", 0.2F, ((entityItem.worldObj.rand.nextFloat() - entityItem.worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         player.onItemPickup(entityItem, pickedUp);
 

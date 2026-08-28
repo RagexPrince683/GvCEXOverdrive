@@ -1,5 +1,14 @@
 # Changelog
 
+## Fix HMG manual dropped-gun pickup (PR pending)
+
+- Enable manual dropped-gun pickup by default while preserving explicit existing
+  configuration values and gun-only automatic-pickup filtering.
+- Route the pickup key and a consumed targeted right click through the existing
+  server-authoritative pickup packet and validation path.
+- Improve look-ray targeting for ground items and show a hotbar HUD prompt with
+  the player's current pickup key assignment and the targeted gun name.
+
 ## Fix HMG recipe lifecycle and Ore Dictionary consistency (PR pending)
 
 - Defer content-pack crafting, smelting, and Gun Smithing Table recipes until the
