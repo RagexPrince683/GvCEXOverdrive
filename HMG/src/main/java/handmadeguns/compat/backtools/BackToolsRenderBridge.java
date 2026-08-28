@@ -28,23 +28,31 @@ public final class BackToolsRenderBridge {
         ItemStack rememberedBackStack = getRememberedBackStack(player);
         if (rememberedBackStack == null || !(rememberedBackStack.getItem() instanceof HMGItem_Unified_Guns)) return;
 
+        // This is the one stack selected by BackTools for this player render.  A
+        // private copy keeps HMG tag initialization away from BackTools' memory;
+        // its identity also becomes the render-scope token checked downstream.
         rememberedBackStack = rememberedBackStack.copy();
         ItemStack heldStack = player.getHeldItem();
         boolean holdingAnyHmgGun = heldStack != null && heldStack.getItem() instanceof HMGItem_Unified_Guns;
-        BackItemRenderCompat.logCandidate(player, rememberedBackStack, heldStack, holdingAnyHmgGun);
-        if (holdingAnyHmgGun) {
-            suppressBackToolsLegacyRender(player, rememberedBackStack);
-            return;
-        }
-
-        GL11.glPushMatrix();
+        BackToolsRenderScope.Token scope = BackToolsRenderScope.enter(player, rememberedBackStack);
         try {
-            applyBackToolsTransform(player);
-            if (BackItemRenderCompat.renderCustomBackItem(player, rememberedBackStack, event.partialRenderTick)) {
+            BackItemRenderCompat.logCandidate(player, rememberedBackStack, heldStack, holdingAnyHmgGun);
+            if (holdingAnyHmgGun) {
                 suppressBackToolsLegacyRender(player, rememberedBackStack);
+                return;
+            }
+
+            GL11.glPushMatrix();
+            try {
+                applyBackToolsTransform(player);
+                if (BackItemRenderCompat.renderCustomBackItem(player, rememberedBackStack, event.partialRenderTick)) {
+                    suppressBackToolsLegacyRender(player, rememberedBackStack);
+                }
+            } finally {
+                GL11.glPopMatrix();
             }
         } finally {
-            GL11.glPopMatrix();
+            scope.close();
         }
     }
 

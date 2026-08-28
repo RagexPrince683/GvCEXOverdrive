@@ -607,3 +607,10 @@ CustomMagazine,12g_slug
 - Fixed the OBJ VBO renderer replacing its caller's array-buffer binding with zero and disabling the caller's vertex, normal, and texture-coordinate arrays after every gun-model group.
 - Preserve complete client-array state and restore the prior array-buffer binding and matrix mode through structured cleanup, including when model drawing fails.
 - Keep VBO upload equally isolated, preventing lazy compilation during NEI/inventory rendering from detaching a renderer-owned buffer.
+
+## (4be9060 Scope BackTools HMG rendering to player events)
+
+- Added a single-use, thread-local BackTools render scope containing the exact `RenderPlayerEvent` player and exact private `ItemStack` selected for the back render.
+- Require that scope before BackItemRenderCompat performs renderer lookup or HMG rendering, so NEI, inventory, dropped-item, and unrelated item-renderer calls cannot qualify by item class or `ENTITY` render type.
+- Guard expanded source, owner, scoped-stack, incoming-stack, render-type, and acceptance diagnostics behind the existing debug-logging configuration.
+- Re-audited the separate OBJ VBO fix: legitimate HMG renders continue to preserve caller-owned client-array, array-buffer, and matrix state.
