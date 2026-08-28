@@ -614,3 +614,9 @@ CustomMagazine,12g_slug
 - Require that scope before BackItemRenderCompat performs renderer lookup or HMG rendering, so NEI, inventory, dropped-item, and unrelated item-renderer calls cannot qualify by item class or `ENTITY` render type.
 - Guard expanded source, owner, scoped-stack, incoming-stack, render-type, and acceptance diagnostics behind the existing debug-logging configuration.
 - Re-audited the separate OBJ VBO fix: legitimate HMG renders continue to preserve caller-owned client-array, array-buffer, and matrix state.
+
+## (8978b05 Fix HandmadeGuns BackTools render ownership)
+
+- Preserve BackTools' exact remembered-versus-held stack equality behavior so switching from HMG gun A to gun B still renders remembered gun A on the player's back instead of suppressing every HMG-to-HMG switch.
+- Restrict candidate diagnostics to the compatibility package and describe their exact selected-stack equality result.
+- Document the GTNH-NEI grid path, its `INVENTORY` renderer dispatch and render-state recovery, and why changing compatibility stack identities came from per-player private back-stack copies rather than NEI clones.

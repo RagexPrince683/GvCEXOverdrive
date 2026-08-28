@@ -106,9 +106,9 @@ public final class BackItemRenderCompat {
         }
     }
 
-    public static void logCandidate(EntityPlayer player, ItemStack remembered, ItemStack held, boolean holdingAnyHmgGun) {
+    static void logCandidate(EntityPlayer player, ItemStack remembered, ItemStack held, boolean selectedStackIsHeld) {
         logState(player, remembered, held, remembered != null && remembered.getItem() instanceof HMGItem_Unified_Guns,
-                false, null, "ENTITY", holdingAnyHmgGun, "candidate holdingAnyHmgGun=" + holdingAnyHmgGun, remembered == null ? 0 : System.identityHashCode(remembered));
+                false, null, "ENTITY", selectedStackIsHeld, "candidate selectedStackIsHeld=" + selectedStackIsHeld, remembered == null ? 0 : System.identityHashCode(remembered));
     }
 
     private static void applyBackGunCorrection() {
