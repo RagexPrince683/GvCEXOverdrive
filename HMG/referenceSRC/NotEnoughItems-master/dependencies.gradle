@@ -1,0 +1,36 @@
+// Add your dependencies here
+configurations.create('gtnhlibEmbed') {
+    canBeConsumed = false
+    canBeResolved = true
+}
+
+dependencies {
+    api('com.github.GTNewHorizons:CodeChickenCore:1.4.16:dev')
+    devOnlyNonPublishable('com.github.GTNewHorizons:GTNHLib:0.11.20:dev')
+
+    shadowImplementation('org.apache.commons:commons-csv:1.10.0')
+
+    compileOnly('maven.modrinth:forge-essentials:7.5.1')
+
+    antlr('org.antlr:antlr4:4.13.2')
+    shadowImplementation('org.antlr:antlr4-runtime:4.13.2')
+
+    testImplementation(platform('org.junit:junit-bom:5.13.4'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
+    testImplementation("org.mockito:mockito-core:5.+")
+
+    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
+    testRuntimeOnly("org.lwjgl.lwjgl:lwjgl:2.9.3");
+
+    compileOnly("com.github.GTNewHorizons:GTNHLib:0.11.20") { transitive = false }
+    gtnhlibEmbed("com.github.GTNewHorizons:GTNHLib:0.11.20") { transitive = false }
+}
+
+[tasks.jar, tasks.shadowJar].each {
+    it.configure {
+        from({ project.configurations.getByName('gtnhlibEmbed').collect { zipTree(it) } }) {
+            include 'com/gtnewhorizon/gtnhlib/color/ColorResource.class'
+            include 'com/gtnewhorizon/gtnhlib/color/ColorResource$*.class'
+        }
+    }
+}

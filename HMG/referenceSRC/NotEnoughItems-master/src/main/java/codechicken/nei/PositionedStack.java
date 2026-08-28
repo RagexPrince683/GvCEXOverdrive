@@ -1,0 +1,195 @@
+package codechicken.nei;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+
+import codechicken.nei.api.ItemFilter;
+import codechicken.nei.api.ItemInfo;
+import codechicken.nei.recipe.Badge;
+import codechicken.nei.recipe.GuiRecipe;
+import codechicken.nei.recipe.StackInfo;
+
+/**
+ * Simply an {@link ItemStack} with position. Mainly used in the recipe handlers.
+ */
+public class PositionedStack {
+
+    /** Maximum chance value representing 100% probability (1 unit = 0.01%). */
+    public static final int CHANCE_FULL = 10_000;
+
+    public int relx;
+    public int rely;
+    public ItemStack[] items;
+    // compatibility dummy
+    public ItemStack item;
+
+    protected int chance = CHANCE_FULL;
+    private boolean permutated = false;
+
+    public PositionedStack(Object object, int x, int y, boolean genPerms) {
+        items = NEIServerUtils.extractRecipeItems(object);
+        relx = x;
+        rely = y;
+
+        if (genPerms) {
+            generatePermutations();
+        } else {
+            setPermutationToRender(0);
+        }
+    }
+
+    public PositionedStack(Object object, int x, int y) {
+        this(object, x, y, true);
+    }
+
+    public void generatePermutations() {
+        if (permutated) return;
+
+        List<ItemStack> stacks = new ArrayList<>();
+        for (ItemStack item : items) {
+            if (item == null || item.getItem() == null) continue;
+
+            if (item.getItemDamage() == Short.MAX_VALUE) {
+                List<ItemStack> permutations = ItemList.itemMap.get(item.getItem());
+                if (!permutations.isEmpty()) {
+                    for (ItemStack stack : permutations) {
+                        ItemStack toAdd = stack.copy();
+                        toAdd.stackSize = item.stackSize;
+                        stacks.add(toAdd);
+                    }
+                } else {
+                    ItemStack base = new ItemStack(item.getItem(), item.stackSize);
+                    base.stackTagCompound = item.stackTagCompound;
+                    stacks.add(base);
+                }
+                continue;
+            }
+
+            stacks.add(item.copy());
+        }
+        items = stacks.toArray(new ItemStack[0]);
+
+        if (items.length == 0) items = new ItemStack[] { new ItemStack(Blocks.fire) };
+
+        permutated = true;
+        setPermutationToRender(0);
+    }
+
+    public void setMaxSize(int i) {
+        for (ItemStack item : items) if (item.stackSize > i) item.stackSize = i;
+    }
+
+    public List<Badge> getBadges() {
+        return null;
+    }
+
+    public int getChance() {
+        return this.chance;
+    }
+
+    public void setChance(int chance) {
+        this.chance = chance;
+    }
+
+    public PositionedStack copy() {
+        PositionedStack pStack = new PositionedStack(
+                Arrays.stream(this.items).map(ItemStack::copy).toArray(ItemStack[]::new),
+                relx,
+                rely,
+                false);
+        pStack.permutated = this.permutated;
+        pStack.chance = this.chance;
+        return pStack;
+    }
+
+    public List<ItemStack> getFilteredPermutations() {
+        return getFilteredPermutations(null);
+    }
+
+    public List<ItemStack> getFilteredPermutations(ItemFilter additionalFilter) {
+        List<ItemStack> items = Arrays.asList(this.items);
+
+        items = filteringPermutations(items, item -> !ItemInfo.isHidden(item));
+        items = filteringPermutations(items, PresetsList.getItemFilter());
+        items = filteringPermutations(items, GuiRecipe.getSearchItemFilter());
+        items = filteringPermutations(items, additionalFilter);
+
+        items.sort(Comparator.comparing(FavoriteRecipes::containsManual).reversed());
+        return items;
+    }
+
+    private List<ItemStack> filteringPermutations(List<ItemStack> items, ItemFilter filter) {
+        if (filter == null) return items;
+        final List<ItemStack> filteredItems = items.stream().filter(filter::matches).collect(Collectors.toList());
+        return filteredItems.isEmpty() ? items : filteredItems;
+    }
+
+    public int getPermutationIndex(ItemStack stack) {
+
+        for (int index = 0; index < this.items.length; index++) {
+            if (NEIServerUtils.areStacksSameType(items[index], stack)) {
+                return index;
+            }
+        }
+
+        return -1;
+    }
+
+    public boolean setPermutationToRender(ItemStack ingredient) {
+        final int stackIndex = getPermutationIndex(ingredient);
+
+        if (stackIndex >= 0) {
+            setPermutationToRender(stackIndex);
+        }
+
+        return stackIndex >= 0;
+    }
+
+    public void setPermutationToRender(int index) {
+        this.item = this.items[index].copy();
+
+        if (this.item.getItem() == null) {
+            this.item = new ItemStack(Blocks.fire);
+        } else if (this.item.getItemDamage() == OreDictionary.WILDCARD_VALUE && this.item.getItem().isRepairable()) {
+            this.item.setItemDamage(0);
+        }
+    }
+
+    public boolean contains(int mx, int my) {
+        return mx >= this.relx - 1 && mx < this.relx + 17 && my >= this.rely - 1 && my < this.rely + 17;
+    }
+
+    public boolean contains(ItemStack ingredient) {
+        for (ItemStack item : items) if (NEIServerUtils.areStacksSameTypeCrafting(item, ingredient)) return true;
+
+        return false;
+    }
+
+    /**
+     * NBT-friendly version of {@link #contains(ItemStack)}
+     */
+    public boolean containsWithNBT(ItemStack ingredient) {
+        for (ItemStack item : items) if (StackInfo.equalItemAndNBT(item, ingredient, true)) return true;
+
+        return false;
+    }
+
+    public boolean contains(Item ingred) {
+        for (ItemStack item : items) if (item.getItem() == ingred) return true;
+
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "PositionedStack(output='" + item.toString() + "')";
+    }
+}

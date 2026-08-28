@@ -1,0 +1,168 @@
+package codechicken.nei.config;
+
+import static codechicken.lib.gui.GuiDraw.displaySize;
+import static codechicken.lib.gui.GuiDraw.getMousePosition;
+import static codechicken.nei.NEIClientUtils.translate;
+
+import java.awt.Dimension;
+import java.awt.Point;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
+
+import org.lwjgl.input.Keyboard;
+
+import codechicken.core.gui.GuiCCButton;
+import codechicken.core.gui.GuiScreenWidget;
+import codechicken.lib.config.ConfigTag;
+import codechicken.lib.math.MathHelper;
+import codechicken.lib.vec.Rectangle4i;
+import codechicken.nei.HUDRenderer;
+
+public class GuiHighlightTips extends GuiScreenWidget {
+
+    private final String name;
+    private GuiCCButton toggleButton;
+    private final Option opt;
+    private final GuiOptionList parentGui;
+    private final boolean world;
+    private Point dragDown;
+
+    public GuiHighlightTips(Option opt) {
+        super(80, 20);
+        this.opt = opt;
+        name = opt.name;
+        this.parentGui = (GuiOptionList) Minecraft.getMinecraft().currentScreen;
+        this.world = parentGui.worldConfig();
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return true;
+    }
+
+    public void addWidgets() {
+        add(toggleButton = new GuiCCButton(0, 0, 80, 20, "").setActionCommand("show"));
+        updateNames();
+    }
+
+    @Override
+    public void actionPerformed(String ident, Object... params) {
+        if (ident.equals("show")) {
+            getTag(name).setBooleanValue(!show());
+            updateNames();
+        }
+    }
+
+    private void updateNames() {
+        toggleButton.text = translate("options." + name + "." + (show() ? "show" : "hide"));
+    }
+
+    private boolean show() {
+        return renderTag(name).getBooleanValue();
+    }
+
+    private ConfigTag getTag(String s) {
+        return (world ? opt.worldConfigSet() : opt.globalConfigSet()).config.getTag(s);
+    }
+
+    private ConfigTag renderTag(String s) {
+        return (world && opt.worldSpecific(s) ? opt.worldConfigSet() : opt.globalConfigSet()).config.getTag(s);
+    }
+
+    @Override
+    public void keyTyped(char c, int keycode) {
+        if (keycode == Keyboard.KEY_ESCAPE || keycode == Keyboard.KEY_BACK) {
+            Minecraft.getMinecraft().displayGuiScreen(parentGui);
+            return;
+        }
+        super.keyTyped(c, keycode);
+    }
+
+    @Override
+    public void drawScreen(int mousex, int mousey, float f) {
+        super.drawScreen(mousex, mousey, f);
+        if (show()) {
+            ItemStack stack = new ItemStack(Blocks.redstone_block);
+            List<String> tip = Arrays
+                    .asList(stack.getDisplayName(), EnumChatFormatting.RED + translate("options." + name + ".sample"));
+            HUDRenderer.renderOverlay(stack, tip, renderPos());
+        }
+    }
+
+    public Point getPos() {
+        return new Point(renderTag(name + ".x").getIntValue(), renderTag(name + ".y").getIntValue());
+    }
+
+    public Dimension sampleSize() // copied from HUDManager when running with the sample for this gui
+    {
+        return new Dimension(101, 30);
+    }
+
+    public Point getDrag() {
+        Point mouse = getMousePosition();
+        Point drag = new Point(mouse.x - dragDown.x, mouse.y - dragDown.y);
+        Dimension size = displaySize();
+        Dimension sample = sampleSize();
+        drag.x *= 10000;
+        drag.y *= 10000;
+        drag.x /= (size.width - sample.width);
+        drag.y /= (size.height - sample.height);
+        Point pos = getPos();
+        drag.x = (int) MathHelper.clip(drag.x, -pos.x, 10000 - pos.x);
+        drag.y = (int) MathHelper.clip(drag.y, -pos.y, 10000 - pos.y);
+        return drag;
+    }
+
+    public Point renderPos() {
+        Point pos = getPos();
+        if (dragDown != null) {
+            Point drag = getDrag();
+            pos.x += drag.x;
+            pos.y += drag.y;
+        }
+
+        for (int i = 25; i < 100; i += 25) // snapping
+        {
+            if (pos.x / 100 == i) pos.x = i * 100;
+            if (pos.y / 100 == i) pos.y = i * 100;
+        }
+
+        return pos;
+    }
+
+    @Override
+    protected void mouseMovedOrUp(int x, int y, int button) {
+        if (button == 0 && dragDown != null) {
+            setPos(renderPos());
+            dragDown = null;
+        }
+    }
+
+    public Rectangle4i selectionBox() {
+        Point pos = renderPos();
+        Dimension size = displaySize();
+        Dimension rect = sampleSize();
+        return new Rectangle4i(
+                (size.width - rect.width) * pos.x / 10000,
+                (size.height - rect.height) * pos.y / 10000,
+                rect.width,
+                rect.height);
+    }
+
+    @Override
+    protected void mouseClicked(int x, int y, int button) {
+        if (button == 0 && selectionBox().contains(x, y)) dragDown = getMousePosition();
+        else super.mouseClicked(x, y, button);
+    }
+
+    private void setPos(Point p) {
+        getTag(name).setBooleanValue(show()); // duplicates global tag for the option gui if in world mode
+        getTag(name + ".x").setIntValue(p.x);
+        getTag(name + ".y").setIntValue(p.y);
+    }
+}
