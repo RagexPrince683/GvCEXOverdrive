@@ -4,6 +4,7 @@ package handmadeguns.client.modelLoader.obj_modelloaderMod.obj;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import handmadeguns.client.modelLoader.HMGModelTessellator;
 
 import javax.vecmath.Vector3d;
 import java.util.ArrayList;
@@ -60,10 +61,16 @@ public class HMGGroupObject
     public void initDisplay(){
         this.displayList = net.minecraft.client.renderer.GLAllocation.generateDisplayLists(1);
 	    org.lwjgl.opengl.GL11.glNewList(this.displayList, org.lwjgl.opengl.GL11.GL_COMPILE);
-	    net.minecraft.client.renderer.Tessellator tessellator = net.minecraft.client.renderer.Tessellator.instance;
+	    net.minecraft.client.renderer.Tessellator tessellator = HMGModelTessellator.create();
         tessellator.startDrawing(glDrawingMode);
-        render(tessellator);
-        tessellator.draw();
+        try
+        {
+            render(tessellator);
+        }
+        finally
+        {
+            tessellator.draw();
+        }
 
 	    org.lwjgl.opengl.GL11.glEndList();
 	    releaseCpuRenderData();

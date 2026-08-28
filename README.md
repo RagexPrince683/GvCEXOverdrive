@@ -11,6 +11,11 @@ lists and VBOs lazily on their first normal render. This avoids issuing model dr
 before Angelica 2.1.29 has entered a managed render frame while preserving both the
 runtime VBO path and the legacy display-list fallback.
 
+OBJ and MQO display-list compilation uses model-local Tessellators rather than the
+global renderer singleton. This keeps inventory, NEI, held, and world gun rendering
+from interrupting a Tessellator drawing session owned by Angelica/Celeritas or any
+other renderer, and requires no Angelica-specific dependency.
+
 ## Who Is This For?
 
 - **Players** who want modular firearms, ammunition, attachments, and gun-pack content in Minecraft 1.7.10.

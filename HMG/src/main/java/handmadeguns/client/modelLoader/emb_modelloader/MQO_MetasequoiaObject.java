@@ -15,6 +15,7 @@ import handmadeguns.client.modelLoader.obj_modelloaderMod.obj.HMGVertex;
 import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
+import handmadeguns.client.modelLoader.HMGModelTessellator;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelFormatException;
@@ -228,13 +229,17 @@ public class MQO_MetasequoiaObject implements IModelCustom_HMG
 
 	public void renderAllLine(int startLine, int maxLine)
 	{
-		Tessellator tessellator = Tessellator.instance;
+		Tessellator tessellator = HMGModelTessellator.create();
 
 		tessellator.startDrawing(1);
-
-		renderAllLine(tessellator, startLine, maxLine);
-
-		tessellator.draw();
+		try
+		{
+			renderAllLine(tessellator, startLine, maxLine);
+		}
+		finally
+		{
+			tessellator.draw();
+		}
 	}
 
 	public void renderAllLine(Tessellator tessellator, int startLine, int maxLine)
