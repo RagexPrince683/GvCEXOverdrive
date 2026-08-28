@@ -89,7 +89,7 @@ Important categories include:
 - `Gun` — inventory limits, muzzle flash, ADS behavior, conflict-key handling, block destruction, hit checks, and knockback.
 - `Render` — zoom rendering, FOV, player rendering, stencil use, flash effects, and VBO model rendering.
 - `Cartridge` — ejected cartridge rendering/lifetime behavior.
-- `ManualGunPickup` — optional dropped-gun pickup requiring the `Pickup HMG Gun` key.
+- `ManualGunPickup` — default dropped-gun pickup using the `Pickup HMG Gun` key or a targeted right click.
 - `GuideBook` — optional Guide-API manual registration.
 - `LMM` — LittleMaidMobX-related friendly-fire/render compatibility settings.
 
@@ -124,7 +124,7 @@ Set `Gun.cfg_blockdestroy=false` in `HandmadeGuns.cfg` to prevent HMG explosive/
 
 ### Dropped guns do not auto-pickup
 
-Check `ManualGunPickup.enableManualGunPickup`. When enabled, use the `Pickup HMG Gun` key, default `P`, while looking at a dropped HMG gun within range.
+Manual pickup is enabled by default. Use the `Pickup HMG Gun` key, default `P`, or right click while looking at a dropped HMG gun within range. Set `ManualGunPickup.enableManualGunPickup=false` to restore automatic walk-over pickup for guns.
 
 ## FAQ
 

@@ -33,7 +33,7 @@ HMG registers key bindings under the `HandmadeGuns` category. Defaults found in 
 | Zero in: Decrease | `N` |
 | Seeker Open/Close | `C` |
 | Cycle Selector | `F` |
-| Pickup HMG Gun | `P`, only used when manual pickup is enabled |
+| Pickup HMG Gun | `P`; right click also picks up a targeted dropped gun |
 
 Because several defaults overlap, review and rebind keys before playing seriously.
 
@@ -58,7 +58,7 @@ HMG adds:
 
 ## 5. Optional Manual Pickup
 
-If `ManualGunPickup.enableManualGunPickup=true`, dropped HMG guns are not picked up just by walking over them. Look at the dropped gun and press `Pickup HMG Gun`, default `P`. Servers can require line of sight and can set the pickup range.
+Manual gun pickup is enabled by default, so dropped HMG guns are not picked up just by walking over them. Look at the dropped gun and press `Pickup HMG Gun`, default `P`, or right click. A prompt above the hotbar shows the current pickup binding and targeted gun. Servers can require line of sight and can set the pickup range.
 
 ## 6. Use the Field Manual When Available
 

@@ -235,7 +235,7 @@ The active config file is generated from the `HandmadeGuns` mod id, usually as `
 
 | Key | Type | Default | Effect |
 | --- | --- | --- | --- |
-| `enableManualGunPickup` | boolean | `false` | When true, dropped HMG gun items require the `Pickup HMG Gun` key instead of normal walk-over pickup. |
+| `enableManualGunPickup` | boolean | `true` | When true, dropped HMG gun items require the pickup key or a targeted right click instead of normal walk-over pickup. |
 | `manualGunPickupRange` | double | `3.0` | Maximum pickup request distance in blocks. Source clamps config UI range from `0.1` to `8.0`. |
 | `manualGunPickupRequiresLineOfSight` | boolean | `true` | Server requires the player to look at the dropped gun with no block in the way. |
 | `manualGunPickupOnlyGuns` | boolean | `true` | Restricts manual pickup to HMG gun items. If false, other HandmadeGuns items may also use it; non-HMG items are not affected. |
