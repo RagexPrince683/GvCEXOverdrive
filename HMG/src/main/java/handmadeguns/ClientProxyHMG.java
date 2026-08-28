@@ -650,8 +650,12 @@ public class ClientProxyHMG extends CommonSideProxyHMG {
 					break;
 				}
 			}
-			modelCustom_hmg.renderAll();
 		}
+		// Model loading can finish during preInit, but rendering cannot safely begin
+		// there. In particular, a VBO draw enters fixed-function shader emulation
+		// before the first render frame has established its tracked GL state. Leave
+		// GPU resource creation lazy; normal rendering compiles each model on the
+		// client render thread when a real draw is requested.
 		modelList.clear();
 	}
 	@Override

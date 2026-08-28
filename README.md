@@ -4,6 +4,13 @@ Handmade Guns Overdrive (`HandmadeGuns`) is a Minecraft Forge 1.7.10 firearms mo
 
 The mod adds a firearms framework rather than a single fixed weapon list: gun packs can define guns, magazines, bullets, attachments, sounds, models, recipes, and scripts. The current codebase also includes HMG crafting materials, ores, a Gun Smithing Table, gun racks, placed guns, bullet entities, optional Guide-API manual support, and server/client configuration for rendering, ADS behavior, explosions, cartridges, and manual dropped-gun pickup.
 
+### Angelica compatibility
+
+HMG finishes parsing models during Forge initialization, but creates model display
+lists and VBOs lazily on their first normal render. This avoids issuing model draws
+before Angelica 2.1.29 has entered a managed render frame while preserving both the
+runtime VBO path and the legacy display-list fallback.
+
 ## Who Is This For?
 
 - **Players** who want modular firearms, ammunition, attachments, and gun-pack content in Minecraft 1.7.10.
