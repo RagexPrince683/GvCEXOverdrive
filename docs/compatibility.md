@@ -23,3 +23,13 @@ If Combatives is absent, disabled, unavailable, or rejects the base kick impulse
 Verbose recoil diagnostics can be enabled with `Compatibility.enableCombativesRecoilDebug=true`. Diagnostics log each submitted source ID, rotation, translation, timing, frequency, decay type, priority, stacking mode, acceptance result, fallback decision, weapon-state reset, aim recoil shot additions, pending and accumulated pitch/yaw, per-tick application, delayed recovery, detected player mouse deltas, weapon key, and whether new aim or legacy ownership is active. Normal gameplay should leave this disabled.
 
 Aim recoil applies most per-shot displacement over a few client ticks, waits for `combativesAimRecoilRecoveryDelayMs` after the last accepted shot, and then subtracts only the controller-owned recoil contribution. Mouse movement is preserved because recovery is contribution-based rather than locked to a pre-burst view angle; pulling down or steering into the recoil reduces the remaining recoverable contribution instead of causing a later snap back to an obsolete target.
+
+## BackTools player-back rendering
+
+HMG's optional BackTools bridge is entered only from `RenderPlayerEvent.Specials.Post`. It reads the remembered stack for that event's exact player, makes one private render copy, and opens a thread-local scope containing that player and that exact `ItemStack` object. The compatibility renderer must claim that scope before it performs renderer lookup or any HMG work; the claim is single-use and the bridge removes the scope in `finally`.
+
+Forge item render types do not identify render ownership. In particular, `ENTITY` can be requested by GUI compatibility renderers as well as world renderers. NEI, normal inventory rendering, dropped items, and unrelated held-item renders therefore cannot qualify for BackTools behavior merely because their stack is an HMG gun or their renderer is `HMGRenderItemGun_U_NEW`. A different stack of the same item type also fails the identity check.
+
+Verbose scope diagnostics use the normal `Logging.enableDebugLogging` option. They report the source event, whether a scope exists, its player and stack identity, the incoming identity, render type, and acceptance result. These diagnostics are disabled in normal production configuration.
+
+The BackTools boundary and OBJ VBO state isolation address separate problems. Limiting BackTools prevents unrelated item rendering from causing back-item work, while `HMGVboMeshGroup` still preserves the caller's client-array state, array-buffer binding, and matrix mode for every legitimate HMG render, including NEI and inventory icons.

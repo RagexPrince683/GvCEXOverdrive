@@ -3,6 +3,7 @@ package handmadeguns.compat.backtools;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import handmadeguns.HandmadeGunsCore;
 import handmadeguns.client.render.HMGRenderItemGun_U_NEW;
 import handmadeguns.items.guns.HMGItem_Unified_Guns;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -38,13 +39,22 @@ public final class BackItemRenderCompat {
 
     private BackItemRenderCompat() {}
 
-    public static boolean renderCustomBackItem(EntityPlayer player, ItemStack rememberedBackStack, float partialTicks) {
+    static boolean renderCustomBackItem(EntityPlayer player, ItemStack rememberedBackStack, float partialTicks) {
+        // Positive ownership check: neither ENTITY nor an HMG renderer implies a
+        // back render. NEI and inventory renderers routinely use both. Identity
+        // comparison intentionally rejects copies and same-item-type stacks.
+        if (!BackToolsRenderScope.claim(player, rememberedBackStack)) {
+            logState(player, rememberedBackStack, null, false, false, null, "unknown", false, "rejected_outside_scope", rememberedBackStack == null ? 0 : System.identityHashCode(rememberedBackStack));
+            return false;
+        }
         if (player == null || rememberedBackStack == null || !(rememberedBackStack.getItem() instanceof HMGItem_Unified_Guns)) {
             logState(player, rememberedBackStack, null, false, false, null, "ENTITY", false, "not_hmg", 0);
             return false;
         }
 
-        ItemStack renderStack = rememberedBackStack.copy();
+        // The bridge already supplied a private copy. Render that exact scoped
+        // object so the ownership identity remains valid through IItemRenderer.
+        ItemStack renderStack = rememberedBackStack;
         IItemRenderer renderer;
         try {
             renderer = MinecraftForgeClient.getItemRenderer(renderStack, IItemRenderer.ItemRenderType.EQUIPPED);
@@ -124,6 +134,7 @@ public final class BackItemRenderCompat {
     }
 
     private static void logState(EntityPlayer player, ItemStack remembered, ItemStack held, boolean hmg, boolean foundRenderer, IItemRenderer renderer, String renderType, boolean legacySuppressed, String result, int stackIdentity) {
+        if (!HandmadeGunsCore.isDebugMessage) return;
         String playerKey = player == null ? "unknown" : player.getCommandSenderName() + "#" + player.getEntityId();
         String rendererName = renderer == null ? "none" : renderer.getClass().getName();
         String rememberedId = stackId(remembered);
@@ -134,7 +145,11 @@ public final class BackItemRenderCompat {
         if (state.equals(LAST_DEBUG_STATE.get(playerKey)) && last != null && now - last.longValue() < DEBUG_THROTTLE_MS) return;
         LAST_DEBUG_STATE.put(playerKey, state);
         LAST_DEBUG_TIME.put(playerKey, Long.valueOf(now));
-        System.out.println("HandmadeGuns-BackToolsCompat player=" + playerKey + " remembered=" + rememberedId + " held=" + heldId + " hmg=" + hmg + " rendererFound=" + foundRenderer + " renderer=" + rendererName + " renderType=" + renderType + " customRendered=" + result.startsWith("rendered") + " legacySuppressed=" + legacySuppressed + " stackIdentity=" + stackIdentity + " result=" + result);
+        EntityPlayer scopeOwner = BackToolsRenderScope.owner();
+        ItemStack scopedStack = BackToolsRenderScope.stack();
+        String scopePlayer = scopeOwner == null ? "none" : scopeOwner.getCommandSenderName() + "#" + scopeOwner.getEntityId();
+        int scopedIdentity = scopedStack == null ? 0 : System.identityHashCode(scopedStack);
+        System.out.println("HandmadeGuns-BackToolsCompat source=RenderPlayerEvent.Specials.Post scopeActive=" + BackToolsRenderScope.isActive() + " scopeOwner=" + scopePlayer + " scopedStackIdentity=" + scopedIdentity + " incomingStackIdentity=" + stackIdentity + " player=" + playerKey + " remembered=" + rememberedId + " held=" + heldId + " hmg=" + hmg + " rendererFound=" + foundRenderer + " renderer=" + rendererName + " renderType=" + renderType + " accepted=" + !result.startsWith("rejected_") + " customRendered=" + result.startsWith("rendered") + " legacySuppressed=" + legacySuppressed + " result=" + result);
     }
 
     private static String stackId(ItemStack stack) {
