@@ -593,3 +593,11 @@ CustomMagazine,12g_slug
 - Stop using `renderAll()` as a model-initialization hook during HMG pre-initialization.
 - Keep OBJ VBO and legacy display-list creation lazy until the model's first normal
   render, after the client has entered a managed render frame.
+
+## Fix HMG-O model Tessellator ownership (4696756)
+
+- Compile OBJ and MQO model geometry with locally owned Tessellators so inventory,
+  NEI, equipped, and world item rendering cannot interrupt the global drawing
+  session used by Angelica/Celeritas or another renderer.
+- Balance every model Tessellator drawing lifecycle with `draw()` in a `finally`
+  block while retaining the existing display-list output and Forge 1.7.10 fallback.
