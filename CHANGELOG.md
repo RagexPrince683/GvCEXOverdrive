@@ -578,3 +578,9 @@ CustomMagazine,12g_slug
   re-registering items, recipes, models, or renderers.
 - Added gun `InventoryOffset,x,y,z` parsing and inventory-only rendering with
   scale-independent displacement, including the M26 grenade pack setting.
+
+## 54be881 Prevent Angelica startup VBO crash
+
+- Stop using `renderAll()` as a model-initialization hook during HMG pre-initialization.
+- Keep OBJ VBO and legacy display-list creation lazy until the model's first normal
+  render, after the client has entered a managed render frame.
