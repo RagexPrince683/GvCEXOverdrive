@@ -33,11 +33,14 @@ public final class BackToolsRenderBridge {
         // its identity also becomes the render-scope token checked downstream.
         rememberedBackStack = rememberedBackStack.copy();
         ItemStack heldStack = player.getHeldItem();
-        boolean holdingAnyHmgGun = heldStack != null && heldStack.getItem() instanceof HMGItem_Unified_Guns;
+        boolean selectedStackIsHeld = ItemStack.areItemStacksEqual(rememberedBackStack, normalizeHeldStack(heldStack));
         BackToolsRenderScope.Token scope = BackToolsRenderScope.enter(player, rememberedBackStack);
         try {
-            BackItemRenderCompat.logCandidate(player, rememberedBackStack, heldStack, holdingAnyHmgGun);
-            if (holdingAnyHmgGun) {
+            BackItemRenderCompat.logCandidate(player, rememberedBackStack, heldStack, selectedStackIsHeld);
+            if (selectedStackIsHeld) {
+                // Match BackTools' own equality guard.  Do not broaden this to
+                // "the player is holding an HMG item": when switching A -> B,
+                // A is still the exact remembered back weapon and must render.
                 suppressBackToolsLegacyRender(player, rememberedBackStack);
                 return;
             }
