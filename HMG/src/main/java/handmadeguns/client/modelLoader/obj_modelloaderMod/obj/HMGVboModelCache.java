@@ -91,10 +91,7 @@ public final class HMGVboModelCache {
         GL15.glDeleteBuffers(bufferId);
     }
 
-    static void resetClientState() {
-        bindArrayBuffer(0);
-        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-        GL11.glDisableClientState(GL11.GL_NORMAL_ARRAY);
-        GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+    static int getArrayBufferBinding() {
+        return GL11.glGetInteger(GL15.GL_ARRAY_BUFFER_BINDING);
     }
 }

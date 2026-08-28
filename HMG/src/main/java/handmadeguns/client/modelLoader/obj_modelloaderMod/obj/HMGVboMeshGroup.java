@@ -73,9 +73,13 @@ final class HMGVboMeshGroup {
                 return false;
             }
 
-            HMGVboModelCache.bindArrayBuffer(bufferId);
-            GL15.glBufferData(GL15.GL_ARRAY_BUFFER, data, GL15.GL_STATIC_DRAW);
-            HMGVboModelCache.bindArrayBuffer(0);
+            int previousArrayBuffer = HMGVboModelCache.getArrayBufferBinding();
+            try {
+                HMGVboModelCache.bindArrayBuffer(bufferId);
+                GL15.glBufferData(GL15.GL_ARRAY_BUFFER, data, GL15.GL_STATIC_DRAW);
+            } finally {
+                HMGVboModelCache.bindArrayBuffer(previousArrayBuffer);
+            }
 
             vertexCount = vertices;
             glDrawingMode = drawingMode;
@@ -95,8 +99,20 @@ final class HMGVboMeshGroup {
             return;
         }
 
+        int previousMatrixMode = GL11.glGetInteger(GL11.GL_MATRIX_MODE);
+        int previousArrayBuffer = HMGVboModelCache.getArrayBufferBinding();
+        boolean clientStatePushed = false;
         boolean textureMatrixPushed = false;
         try {
+            // Vertex-array enables, pointers and VBO bindings belong to the caller.
+            // In particular, Celeritas keeps its chunk-build buffer bound while
+            // invoking main-thread render work.  Resetting that binding to zero
+            // after every gun part detached its raw chunk buffer and made the next
+            // copyRawBuffer call fail.  Save the complete client-array state rather
+            // than assuming Minecraft entered with all arrays disabled.
+            GL11.glPushClientAttrib(GL11.GL_CLIENT_VERTEX_ARRAY_BIT);
+            clientStatePushed = true;
+
             if (HandmadeGunsCore.textureOffsetU != 0.0F || HandmadeGunsCore.textureOffsetV != 0.0F) {
                 GL11.glMatrixMode(GL11.GL_TEXTURE);
                 GL11.glPushMatrix();
@@ -114,12 +130,18 @@ final class HMGVboMeshGroup {
             GL11.glTexCoordPointer(2, GL11.GL_FLOAT, STRIDE_BYTES, UV_OFFSET);
             GL11.glDrawArrays(glDrawingMode, 0, vertexCount);
         } finally {
-            HMGVboModelCache.resetClientState();
+            if (clientStatePushed) {
+                GL11.glPopClientAttrib();
+            }
+            // GL_CLIENT_VERTEX_ARRAY_BIT includes this binding in OpenGL 1.5.
+            // Restore it explicitly as well for fixed-function compatibility
+            // layers which only emulate the array enable/pointer portion.
+            HMGVboModelCache.bindArrayBuffer(previousArrayBuffer);
             if (textureMatrixPushed) {
                 GL11.glMatrixMode(GL11.GL_TEXTURE);
                 GL11.glPopMatrix();
-                GL11.glMatrixMode(GL11.GL_MODELVIEW);
             }
+            GL11.glMatrixMode(previousMatrixMode);
         }
     }
 
