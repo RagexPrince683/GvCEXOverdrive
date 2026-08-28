@@ -601,3 +601,9 @@ CustomMagazine,12g_slug
   session used by Angelica/Celeritas or another renderer.
 - Balance every model Tessellator drawing lifecycle with `draw()` in a `finally`
   block while retaining the existing display-list output and Forge 1.7.10 fallback.
+
+## (193f051 Preserve renderer state around HMG OBJ VBO draws)
+
+- Fixed the OBJ VBO renderer replacing its caller's array-buffer binding with zero and disabling the caller's vertex, normal, and texture-coordinate arrays after every gun-model group.
+- Preserve complete client-array state and restore the prior array-buffer binding and matrix mode through structured cleanup, including when model drawing fails.
+- Keep VBO upload equally isolated, preventing lazy compilation during NEI/inventory rendering from detaching a renderer-owned buffer.

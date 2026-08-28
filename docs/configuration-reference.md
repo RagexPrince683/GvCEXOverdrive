@@ -221,7 +221,7 @@ The active config file is generated from the `HandmadeGuns` mod id, usually as `
 | `cfg_FOV` | integer | `95` | FOV value used by HMG render/handling systems. Source comments indicate some older render offsets were authored around 95 FOV. |
 | `cfg_RenderPlayer` | boolean | `false` | Legacy render-player option; source comments indicate it may have no current usages. |
 | `cfg_useStencil` | boolean | `false` | Controls stencil rendering path. |
-| `enableVBOModelRendering` | boolean | `true` | Client-side: uses OpenGL VBOs for HMG OBJ model groups when possible. Disable to force legacy display-list rendering. |
+| `enableVBOModelRendering` | boolean | `true` | Client-side: uses OpenGL VBOs for HMG OBJ model groups when possible. HMG scopes and restores the caller's array-buffer, client-array pointer/enable, and matrix-mode state around each model draw, including under fixed-function compatibility renderers. Disable to force legacy display-list rendering. |
 | `cfg_Flash` | boolean | `true` | Enables flash render effects. |
 
 ## `Cartridge`
