@@ -620,3 +620,10 @@ CustomMagazine,12g_slug
 - Preserve BackTools' exact remembered-versus-held stack equality behavior so switching from HMG gun A to gun B still renders remembered gun A on the player's back instead of suppressing every HMG-to-HMG switch.
 - Restrict candidate diagnostics to the compatibility package and describe their exact selected-stack equality result.
 - Document the GTNH-NEI grid path, its `INVENTORY` renderer dispatch and render-state recovery, and why changing compatibility stack identities came from per-player private back-stack copies rather than NEI clones.
+
+2026-08-29 00:00 — Align HMG player point of aim with Combatives
+
+- Added a cached, common-side optional bridge to Combatives' authoritative interaction ray, with exact legacy fallback when the mod or compatible API is unavailable.
+- Player-fired handheld projectiles now use synchronized effective eye geometry and gameplay body yaw/pitch while preserving elevation offsets, spread, and the existing forward spawn distance.
+- Removed the legacy post-construction head-yaw override only for projectiles that used the authoritative ray, and aligned handheld player lock-on direction and block-ray origin without changing placed guns, turrets, vehicles, or NPC firing.
+- Source-level audit and call-site searches were performed; build and in-game validation remain outstanding per the task's no-build instruction.

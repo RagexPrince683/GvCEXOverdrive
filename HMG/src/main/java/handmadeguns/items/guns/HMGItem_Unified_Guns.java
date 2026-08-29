@@ -11,6 +11,7 @@ import handmadeguns.entity.HMGEntityLaser;
 import handmadeguns.entity.HMGEntityLight;
 import handmadeguns.entity.PlacedGunEntity;
 import handmadeguns.entity.bullets.*;
+import handmadeguns.compat.HMGPointOfAimBridge;
 import handmadeguns.event.AmmoHUDRenderer;
 import handmadeguns.items.*;
 import handmadeguns.network.*;
@@ -495,7 +496,7 @@ public class HMGItem_Unified_Guns extends Item {
 								if (gunInfo.canlock && nbt.getBoolean("SeekerOpened")) {
 									lockon(itemstack, world, entity, nbt);
 								} else if (guntemp.TGT != null) {
-									Vector3d frontVec = getjavaxVecObj(getLook(1, entity.getRotationYawHead(), entity.rotationPitch));
+									Vector3d frontVec = getLockOnDirection(entity);
 									guntemp.TGT = canContinueLock(itemstack, world, entity, frontVec);
 								}
 							}
@@ -796,7 +797,10 @@ public class HMGItem_Unified_Guns extends Item {
 				guntemp.islockingentity = false;
 			}
 			try {
-				Vector3d frontVec = getjavaxVecObj(getLook(1,entity.getRotationYawHead(),entity.rotationPitch));
+				HMGPointOfAimBridge.AimRay aimRay = entity instanceof EntityPlayer
+						? HMGPointOfAimBridge.getAuthoritativeRay((EntityPlayer) entity) : null;
+				Vector3d frontVec = aimRay != null ? getjavaxVecObj(aimRay.direction)
+						: getjavaxVecObj(getLook(1,entity.getRotationYawHead(),entity.rotationPitch));
 				frontVec.scale(-1);
 				Entity prevTarget = guntemp.TGT;
 				guntemp.TGT = null;
@@ -814,7 +818,8 @@ public class HMGItem_Unified_Guns extends Item {
 					entity.worldObj.playSoundAtEntity(entity, gunInfo.lockSound_entity, 1f, gunInfo.lockpitch_entity);
 				}
 				if(gunInfo.canlockBlock){
-					Vec3 vec3 = Vec3.createVectorHelper(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
+					Vec3 vec3 = aimRay != null ? aimRay.origin
+							: Vec3.createVectorHelper(entity.posX, entity.posY + entity.getEyeHeight(), entity.posZ);
 					Vec3 playerlook = getMinecraftVecObj(frontVec);
 
 					playerlook.xCoord *= -1;
@@ -823,7 +828,8 @@ public class HMGItem_Unified_Guns extends Item {
 
 					playerlook = Vec3.createVectorHelper(playerlook.xCoord * 256, playerlook.yCoord * 256, playerlook.zCoord * 256);
 
-					Vec3 vec31 = Vec3.createVectorHelper(entity.posX + playerlook.xCoord, entity.posY + entity.getEyeHeight() + playerlook.yCoord, entity.posZ + playerlook.zCoord);
+					Vec3 vec31 = Vec3.createVectorHelper(vec3.xCoord + playerlook.xCoord,
+							vec3.yCoord + playerlook.yCoord, vec3.zCoord + playerlook.zCoord);
 					MovingObjectPosition movingobjectposition = GunsUtils.getmovingobjectPosition_forBlock(worldObj,vec3, vec31);//衝突するブロックを調べる
 					if(movingobjectposition != null && movingobjectposition.hitVec != null){
 						guntemp.LockedPosX = movingobjectposition.blockX;
@@ -923,6 +929,13 @@ public class HMGItem_Unified_Guns extends Item {
 ////                }
 //            }
 		}
+	}
+	private Vector3d getLockOnDirection(Entity entity) {
+		if (entity instanceof EntityPlayer) {
+			HMGPointOfAimBridge.AimRay aimRay = HMGPointOfAimBridge.getAuthoritativeRay((EntityPlayer) entity);
+			if (aimRay != null) return getjavaxVecObj(aimRay.direction);
+		}
+		return getjavaxVecObj(getLook(1, entity.getRotationYawHead(), entity.rotationPitch));
 	}
 	public Entity lockOn(ItemStack itemstack,World worldObj,Entity entity,Vector3d frontVec){
 		double predeg = -1;
@@ -1158,7 +1171,7 @@ public class HMGItem_Unified_Guns extends Item {
 						bulletBase.VTWidth = gunInfo.VTWidth;
 						bulletBase.seekerwidth = gunInfo.seekerSize_bullet;
 						bulletBase.resistanceinwater = firetemp.resistanceInWater;
-						if (guntemp.currentConnectedTurret == null) {
+						if (guntemp.currentConnectedTurret == null && !bulletBase.authoritativePlayerAim) {
 							bulletBase.prevRotationYaw = bulletBase.rotationYaw = wrapAngleTo180_float(entity.getRotationYawHead());
 							bulletBase.prevRotationPitch = bulletBase.rotationPitch = entity.rotationPitch;
 						}

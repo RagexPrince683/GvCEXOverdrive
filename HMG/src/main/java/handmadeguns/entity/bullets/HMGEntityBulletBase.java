@@ -16,6 +16,7 @@ import handmadeguns.HMGAddBullets;
 import handmadeguns.HMGMessageKeyPressedC;
 import handmadeguns.HMGPacketHandler;
 import handmadeguns.HandmadeGunsCore;
+import handmadeguns.compat.HMGPointOfAimBridge;
 import handmadeguns.Util.SoundInfo;
 import handmadeguns.Util.TrailInfo;
 import handmadeguns.Util.GunsUtils;
@@ -163,6 +164,7 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 	public double firstZ;
 
 	public boolean chunkLoaderBullet = false;
+	public boolean authoritativePlayerAim = false;
 
 	
 	//int i = mod_IFN_GuerrillaVsCommandGuns.RPGExplosiontime;
@@ -187,12 +189,22 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 //		System.out.println("" + bure);
 		this.thrower = par2Entity;
 		this.setSize(0.25F, 0.25F);
-		this.setLocationAndAngles(par2Entity.posX, par2Entity.posY + (double)par2Entity.getEyeHeight()*0.85, par2Entity.posZ, (par2Entity instanceof EntityLivingBase ? ((EntityLivingBase)par2Entity).rotationYawHead : par2Entity.rotationYaw), par2Entity.rotationPitch);
-		Vec3 look = GunsUtils.getLook(1.0f,par2Entity);
+		HMGPointOfAimBridge.AimRay aimRay = par2Entity instanceof EntityPlayer
+				? HMGPointOfAimBridge.getAuthoritativeRay((EntityPlayer) par2Entity) : null;
+		this.authoritativePlayerAim = aimRay != null;
+		this.setLocationAndAngles(aimRay != null ? aimRay.origin.xCoord : par2Entity.posX,
+				aimRay != null ? aimRay.origin.yCoord : par2Entity.posY + (double)par2Entity.getEyeHeight()*0.85,
+				aimRay != null ? aimRay.origin.zCoord : par2Entity.posZ,
+				aimRay != null ? par2Entity.rotationYaw : (par2Entity instanceof EntityLivingBase ? ((EntityLivingBase)par2Entity).rotationYawHead : par2Entity.rotationYaw),
+				par2Entity.rotationPitch);
+		Vec3 look = aimRay != null ? aimRay.direction : GunsUtils.getLook(1.0f,par2Entity);
 		if(look != null) {
-			firstX= this.posX = par2Entity.posX + look.xCoord/2;
-			firstY = this.posY = par2Entity.posY + look.yCoord/2 + par2Entity.getEyeHeight();
-			firstZ = this.posZ = par2Entity.posZ + look.zCoord/2;
+			double originX = aimRay != null ? aimRay.origin.xCoord : par2Entity.posX;
+			double originY = aimRay != null ? aimRay.origin.yCoord : par2Entity.posY + par2Entity.getEyeHeight();
+			double originZ = aimRay != null ? aimRay.origin.zCoord : par2Entity.posZ;
+			firstX= this.posX = originX + look.xCoord/2;
+			firstY = this.posY = originY + look.yCoord/2;
+			firstZ = this.posZ = originZ + look.zCoord/2;
 			this.motionX = look.xCoord;
 			this.motionZ = look.yCoord;
 			this.motionY = look.zCoord;
@@ -204,7 +216,8 @@ public class HMGEntityBulletBase extends Entity implements IEntityAdditionalSpaw
 		this.Bdamege = damege;
 		//this.Bspeed = bspeed;
 		//this.Bure = bure;
-		setHeadingFromThrower(thrower,bspeed,bure);
+		if (aimRay != null) this.setThrowableHeading(look.xCoord, look.yCoord, look.zCoord, bspeed, bure);
+		else setHeadingFromThrower(thrower,bspeed,bure);
 		this.bulletTypeName = bulletTypeName;
 	};
 	public void setdamage(int value){

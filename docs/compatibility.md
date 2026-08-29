@@ -2,6 +2,14 @@
 
 ## Combatives camera and aim recoil
 
+### Authoritative point of aim
+
+For handheld player-fired projectiles and their lock-on ray, HMG optionally consumes Combatives' common-side `InteractionRay.authoritative` result. This makes projectile direction use the player's gameplay `rotationYaw`/`rotationPitch` and makes the spawn/lock origin use Combatives' synchronized effective eye-above-bounding-box-floor geometry. Crawl, swim, crouch, standing, transition, and gameplay-scale eye origins therefore follow the same accepted geometry on client and server.
+
+The ray intentionally does not include Combatives' rendered camera shake, bob, lean, translation, or other presentation effects. HMG still applies its existing weapon elevation adjustment before resolving the ray, retains the half-block forward spawn, and applies the existing projectile spread afterward. ADS does not select a different gameplay ray; its existing spread multiplier remains unchanged.
+
+This integration is reflected and cached on the common side. If Combatives is absent, its class or method shape is incompatible, or invocation fails, HMG uses its exact legacy `getEyeHeight()` and `GunsUtils.getLook()` behavior. Placed guns, connected turrets, vehicles, NPCs, and unrelated `GunsUtils.getLook()` callers are not changed.
+
 HMG-Overdrive supports an optional two-layer first-person recoil integration with Combatives. When Combatives is installed, `Compatibility.enableCombativesRecoilIntegration` is enabled, and the Combatives camera API accepts the base shot impulse, HMG submits visual weapon recoil as named Combatives camera impulses under separate kick, punch, and sustained source IDs.
 
 Accepted Combatives shots also use `Compatibility.enableCombativesAimRecoilIntegration` to apply actual client aim recoil. This aim controller mutates only the local first-person player's `rotationPitch` and `rotationYaw`, so the centered vanilla crosshair, ray traces, projectile direction, and normal client-to-server rotation sync naturally follow the displaced look direction. Combatives impulses remain visual render offsets; they do not by themselves change player aim.
